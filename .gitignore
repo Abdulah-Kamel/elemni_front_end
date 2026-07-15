@@ -39,3 +39,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local AI tooling
+.opencode/
+
+# Internal planning docs & design sources — deliberately kept out of this
+# public repo. They hold unconfirmed pricing and reconstructed copy. They live
+# with the team, not on GitHub. Remove these lines if the repo ever goes private.
+/BUILD_PLAN.md
+/docs/
+/assets/

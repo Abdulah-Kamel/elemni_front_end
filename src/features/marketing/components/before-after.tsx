@@ -1,0 +1,79 @@
+import { getLocale, getTranslations } from "next-intl/server";
+import { CircleCheck, CircleX, ArrowLeft, Frown, Star } from "lucide-react";
+import { cn } from "@/src/lib/cn";
+import { Button } from "@/src/components/ui/button";
+import { Section } from "@/src/components/ui/section";
+import { Reveal } from "@/src/components/ui/reveal";
+
+export async function BeforeAfter() {
+  const t = await getTranslations("beforeAfter");
+  const locale = await getLocale();
+  const isRtl = locale === "ar";
+
+  const withItems = [1, 2, 3, 4] as const;
+  const withoutItems = [1, 2, 3, 4] as const;
+
+  return (
+    <Section id="before-after">
+      <Reveal>
+        <h2 className="mb-3 text-center text-3xl font-bold tracking-tight text-ink md:text-4xl">
+          {t("heading")}
+        </h2>
+        <p className="mx-auto mb-10 max-w-2xl text-center text-muted">
+          {t("subtitle")}
+        </p>
+      </Reveal>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        <Reveal className="h-full">
+        <div className="h-full rounded-card bg-gradient-to-br from-brand-600 to-brand-700 p-8 text-white shadow-lift">
+          <span className="mb-4 grid size-10 place-items-center rounded-full bg-white/15">
+            <Star className="size-5 fill-accent-400 text-accent-400" />
+          </span>
+          <h3 className="mb-6 text-2xl font-bold">{t("withTitle")}</h3>
+          <ul className="space-y-5">
+            {withItems.map((i) => (
+              <li key={i} className="flex items-start gap-3">
+                <CircleCheck className="size-5 text-success-500 mt-0.5 shrink-0" />
+                <div>
+                  <p className="font-bold">{t(`with.${i}.title`)}</p>
+                  <p className="text-sm text-white/80">{t(`with.${i}.desc`)}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-8">
+            <Button variant="primary" className="motion-safe:hover:-translate-y-0.5">
+              {t("with.cta")}
+              <ArrowLeft
+                aria-hidden
+                className={cn("size-4", isRtl ? "rotate-180" : "")}
+              />
+            </Button>
+          </div>
+        </div>
+        </Reveal>
+
+        <Reveal delay={80} className="h-full">
+        <div className="h-full rounded-card bg-white p-8 ring-1 ring-brand-100">
+          <span className="mb-4 grid size-10 place-items-center rounded-full bg-brand-50 text-muted">
+            <Frown className="size-5" />
+          </span>
+          <h3 className="mb-6 text-2xl font-bold text-ink">{t("withoutTitle")}</h3>
+          <ul className="space-y-5">
+            {withoutItems.map((i) => (
+              <li key={i} className="flex items-start gap-3">
+                <CircleX className="size-5 text-danger-500 mt-0.5 shrink-0" />
+                <div>
+                  <p className="font-bold text-ink">{t(`without.${i}.title`)}</p>
+                  <p className="text-sm text-muted">{t(`without.${i}.desc`)}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+        </Reveal>
+      </div>
+    </Section>
+  );
+}

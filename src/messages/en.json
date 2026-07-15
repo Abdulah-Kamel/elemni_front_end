@@ -1,0 +1,324 @@
+{
+  "brand": {
+    "name": "Elemni"
+  },
+  "nav": {
+    "home": "Home",
+    "features": "Features",
+    "pricing": "Pricing",
+    "faq": "FAQ",
+    "stories": "Success stories",
+    "login": "Log in",
+    "cta": "Start free",
+    "switchLang": "ع",
+    "menu": "Menu"
+  },
+  "hero": {
+    "badge": "Full DRM protection",
+    "title": "Stop selling your lessons in WhatsApp groups",
+    "subtitle": "An all-in-one platform that protects your videos from theft and manages your students' subscriptions automatically. Focus on teaching, we handle the rest.",
+    "ctaPrimary": "Start free",
+    "ctaSecondary": "Watch a 2-min demo",
+    "searchWord": "WhatsApp",
+    "mock": {
+      "greeting": "Good evening, Ahmed Mahmoud",
+      "earningsPill": "EGP 42,300 this month",
+      "uploadTitle": "Upload a new lesson",
+      "uploadHint": "Drag your video here",
+      "subjectLabel": "Subject",
+      "subjectValue": "Physics",
+      "gradeLabel": "Grade",
+      "gradeValue": "Grade 12",
+      "streamLabel": "Track",
+      "streamValue": "Science",
+      "progressTitle": "Electromagnetic induction lesson",
+      "progressStatus": "Uploading 60%"
+    }
+  },
+  "stats": {
+    "earnings": {
+      "label": "EGP earned by teachers",
+      "suffix": "M"
+    },
+    "students": {
+      "label": "monthly active students",
+      "suffix": ""
+    },
+    "teachers": {
+      "label": "teachers trust us",
+      "suffix": "+"
+    }
+  },
+  "features": {
+    "heading": "Features that let you focus on teaching — we handle the rest",
+    "exams": {
+      "title": "Automatic exams",
+      "desc": "Grade your students and mark answers in one click."
+    },
+    "organize": {
+      "title": "Organized by subject & grade",
+      "desc": "Easy access to every lecture by curriculum."
+    },
+    "drm": {
+      "title": "Full DRM protection",
+      "desc": "Your videos are encrypted — impossible to record or download."
+    },
+    "mobile": {
+      "title": "On any phone",
+      "desc": "A smooth experience on Android and iPhone."
+    },
+    "payments": {
+      "title": "Payments built in",
+      "desc": "Students pay, subscribe, and unlock the course in seconds."
+    },
+    "reports": {
+      "title": "Student tracking reports",
+      "desc": "Know who watched, how much, and when they solved."
+    }
+  },
+  "drmSection": {
+    "badge": "Content protection",
+    "heading": "Full DRM protection for your content",
+    "subtitle": "Forget leaked videos. Our tech ensures only your student can watch, and blocks any theft attempt.",
+    "encrypted": {
+      "title": "Encrypted streaming",
+      "desc": "The video can't be recorded or downloaded."
+    },
+    "watermark": {
+      "title": "Dynamic watermark",
+      "desc": "The student's name and number appear on screen."
+    },
+    "devices": {
+      "title": "Device limits",
+      "desc": "Students open from one device only — no sharing."
+    },
+    "instantBan": {
+      "title": "Instant ban",
+      "desc": "Automatic ban on any screen-recording attempt."
+    },
+    "mockupBadge": "Screen recording blocked",
+    "mock": {
+      "watermark": "Ahmed Mohamed — 0100 123 4567"
+    }
+  },
+  "curriculum": {
+    "heading": "Built exactly on the Egyptian curriculum",
+    "subtitle": "A smart system that makes it easy for students to find content without getting lost.",
+    "filters": {
+      "subject": "Subject",
+      "grade": "Grade",
+      "physics": "Physics",
+      "chemistry": "Chemistry",
+      "thirdSec": "Grade 12",
+      "secondSec": "Grade 11",
+      "sciMath": "Science–Math",
+      "sciBio": "Science–Bio"
+    },
+    "cta": "View all lessons",
+    "free": "Free",
+    "price": "EGP {n}",
+    "lessons": {
+      "light": {
+        "title": "Light & Vision",
+        "chapter": "Chapter 2",
+        "grade": "Grade 12"
+      },
+      "current": {
+        "title": "Magnetic effect of current",
+        "chapter": "Chapter 1",
+        "grade": "Grade 11"
+      },
+      "ohm": {
+        "title": "Electric current & Ohm's law",
+        "chapter": "Chapter 1",
+        "grade": "Grade 10"
+      }
+    }
+  },
+  "videoDemo": {
+    "heading": "See it yourself in two minutes",
+    "subtitle": "With one click you can upload a full course, protect it, and receive your earnings.",
+    "pill": {
+      "upload": "Upload a lecture",
+      "organize": "Organize the curriculum",
+      "collect": "Collect payments"
+    },
+    "timestamp": "2:10 / 0:45",
+    "url": "elemni.com/dashboard"
+  },
+  "payments": {
+    "heading": "You teach. We collect the money.",
+    "subtitle": "Collecting your earnings is easier than ever. Multiple payment methods for every student, and instant transfer to your bank or wallet.",
+    "methodsTitle": "Payment methods for everyone",
+    "calcTitle": "Simple math, guaranteed profit",
+    "calcCourseLabel": "Course price",
+    "calcCourseValue": "EGP 250",
+    "calcStudentsLabel": "Students",
+    "calcStudentsValue": "500",
+    "calcResultLabel": "Your net profit (monthly)",
+    "calcResultValue": "EGP 125,000",
+    "cardsTitle": "Student top-up cards",
+    "cardsBadge": "Exclusive",
+    "cardsDesc": "Print top-up cards with unique codes and hand them out at centers or bookshops so students without an e-wallet can pay easily.",
+    "note": "Instant transfer to your bank or wallet with no delay.",
+    "methods": {
+      "instapay": "InstaPay",
+      "fawry": "Fawry",
+      "vodafone": "Vodafone Cash",
+      "meeza": "Meeza",
+      "card": "Visa / Mastercard"
+    }
+  },
+  "comparison": {
+    "heading": "Why not just WhatsApp?",
+    "highlight": "WhatsApp",
+    "subtitle": "The old ways waste your time and effort. See how Elemni gives you a complete, professional environment.",
+    "colElemni": "Elemni",
+    "colWhatsapp": "WhatsApp + Drive",
+    "colYoutube": "YouTube (Unlisted)",
+    "colOthers": "Other platforms",
+    "rowLeak": "Leak protection",
+    "rowPay": "Automatic payments",
+    "rowOrganize": "Organized by grade & track",
+    "rowReports": "Detailed student reports",
+    "rowApp": "Dedicated mobile app",
+    "rowSetup": "Setup time",
+    "partial": "Partial",
+    "setupElemni": "5 minutes",
+    "setupWhatsapp": "Days",
+    "setupYoutube": "Hours",
+    "setupOthers": "Weeks",
+    "cta": "Start with Elemni now"
+  },
+  "beforeAfter": {
+    "heading": "Save yourself the headache",
+    "subtitle": "The difference between the tiring old way and a platform that works for you.",
+    "withTitle": "With Elemni",
+    "withoutTitle": "Your way right now",
+    "with": {
+      "1": {
+        "title": "Strong streaming protection",
+        "desc": "A moving watermark and encryption that fully blocks downloads."
+      },
+      "2": {
+        "title": "Automatic payments",
+        "desc": "The student pays and the lesson unlocks instantly, no action from you."
+      },
+      "3": {
+        "title": "Student-by-student reports",
+        "desc": "Precise analytics on each student's level and engagement."
+      },
+      "4": {
+        "title": "A permanent library",
+        "desc": "Your courses stay available and students reach them easily."
+      },
+      "cta": "Take your work to the next level"
+    },
+    "without": {
+      "1": {
+        "title": "Leaked videos",
+        "desc": "Your lessons end up on Telegram and your effort goes to waste."
+      },
+      "2": {
+        "title": "Chasing Vodafone Cash payments",
+        "desc": "Checking messages and manual transfers eats all your time."
+      },
+      "3": {
+        "title": "No real tracking",
+        "desc": "You don't know who watched or who dropped off."
+      },
+      "4": {
+        "title": "Groups rebuilt from scratch",
+        "desc": "Every term you rebuild groups and re-gather students."
+      }
+    }
+  },
+  "steps": {
+    "1": {
+      "title": "Upload your lessons",
+      "desc": "Drag in your videos and notes and let the platform process them in seconds."
+    },
+    "2": {
+      "title": "Organize your content",
+      "desc": "Split lessons into grades and lectures, and set a price per lesson or a monthly subscription."
+    },
+    "3": {
+      "title": "Share the link",
+      "desc": "Send your platform link to students; payment and account activation happen automatically."
+    },
+    "heading": "How do you start? Just 3 steps",
+    "subtitle": "The easiest platform to use — built to save your time.",
+    "cta": "Start your free trial now"
+  },
+  "migration": {
+    "1": {
+      "title": "Send us your student list and videos"
+    },
+    "2": {
+      "title": "We upload and organize everything"
+    },
+    "3": {
+      "title": "Your platform is live within 48 hours"
+    },
+    "heading": "Already have students? We'll move them with you.",
+    "cta": "Talk to our team",
+    "note": "Free for any teacher with more than 50 students."
+  },
+  "testimonials": {
+    "1": {
+      "quote": "Payment was so easy for students, and the top-up cards saved us a huge amount of time and effort.",
+      "name": "Mr. Ahmed Kamal",
+      "role": "Physics teacher – Alexandria",
+      "result": "50% sales growth"
+    },
+    "2": {
+      "quote": "Video protection was my biggest obstacle; with Elemni I upload my content 100% reassured.",
+      "name": "Ms. Mona El-Sayed",
+      "role": "Biology teacher – Giza",
+      "result": "Full content protection"
+    },
+    "3": {
+      "quote": "A powerful, easy platform. I reached many students fast and the support is excellent.",
+      "name": "Mr. Mahmoud Hassan",
+      "role": "Arabic teacher – Cairo",
+      "result": "340+ students in one term"
+    },
+    "heading": "What our success partners say"
+  },
+  "pricing": {
+    "heading": "Pricing built around your platform",
+    "cta": "Contact us",
+    "note": "No hidden fees. We agree everything with you before you start."
+  },
+  "faq": {
+    "heading": "Frequently asked questions",
+    "subtitle": "Everything you need to know to start with confidence.",
+    "q1": "Does my content stay mine?",
+    "a1": "Absolutely. Your content stays 100% yours. We only provide the platform and tools to protect and sell it safely. We claim no rights over your videos or materials.",
+    "q2": "How do students pay?",
+    "a2": "Students pay however suits them — InstaPay, Fawry, Vodafone Cash, Visa, or top-up cards — and the lesson activates instantly.",
+    "q3": "Can the videos be leaked?",
+    "a3": "Your videos are DRM-encrypted with a per-student watermark, and we block any screen-recording attempt.",
+    "q4": "Do I need technical skills?",
+    "a4": "Not at all. If you can send a video on WhatsApp, you can use Elemni — and our team helps you set up.",
+    "q5": "How much does it cost?",
+    "a5": "We're still finalising our plans. Talk to us and we'll put together an offer that fits your student numbers and your content.",
+    "q6": "Can I migrate my current students?",
+    "a6": "Yes — our team migrates your students and videos within 48 hours, free if you have more than 50 students."
+  },
+  "finalCta": {
+    "heading": "Your first lecture is 10 minutes away",
+    "subtitle": "Start your digital teaching journey easily, no complications.",
+    "emailPlaceholder": "Email address",
+    "cta": "Create your free account",
+    "note": "Join 3,000+ teachers earning on Elemni."
+  },
+  "footer": {
+    "privacy": "Privacy policy",
+    "terms": "Terms & conditions",
+    "help": "Help center",
+    "contact": "Contact us",
+    "rights": "© 2024 Elemni. All rights reserved.",
+    "madeIn": "Proudly made in Egypt 🇪🇬"
+  }
+}
