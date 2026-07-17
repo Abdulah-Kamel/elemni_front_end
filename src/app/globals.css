@@ -113,6 +113,18 @@
     background-repeat: no-repeat;
     background-position: 0 88%;
   }
+  [dir="rtl"] .text-gradient {
+    background-image: linear-gradient(to left, var(--color-brand-600) 0%, var(--color-brand-300) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  [dir="ltr"] .text-gradient {
+    background-image: linear-gradient(to right, var(--color-brand-600) 0%, var(--color-brand-300) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
 }
 
 @layer base {

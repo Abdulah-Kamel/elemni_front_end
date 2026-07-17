@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations, useLocale } from "next-intl";
-import { usePathname, useRouter, Link } from "@/src/i18n/navigation";
+import { useTranslations } from "next-intl";
+import { Link } from "@/src/i18n/navigation";
+import { LocaleSwitcher } from "@/src/components/locale-switcher";
 import { GraduationCap, Menu, X } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 
@@ -12,14 +13,6 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const tNav = useTranslations("nav");
   const tBrand = useTranslations("brand");
-  const locale = useLocale();
-  const pathname = usePathname();
-  const router = useRouter();
-
-  const toggleLang = () => {
-    const next = locale === "ar" ? "en" : "ar";
-    router.push(pathname, { locale: next });
-  };
 
   return (
     <header className="sticky top-0 z-50 border-b border-brand-100 bg-white/80 backdrop-blur">
@@ -45,13 +38,7 @@ export default function Header() {
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
-          <button
-            type="button"
-            onClick={toggleLang}
-            className="text-sm font-semibold text-brand-700 hover:text-brand-900 motion-safe:transition-colors"
-          >
-            {tNav("switchLang")}
-          </button>
+          <LocaleSwitcher />
           <Link
             href="/login"
             className="text-sm font-medium text-ink hover:text-brand-700 motion-safe:transition-colors"
@@ -91,13 +78,7 @@ export default function Header() {
             ))}
           </nav>
           <div className="flex flex-wrap items-center gap-3 border-t border-brand-100 pt-4">
-            <button
-              type="button"
-              onClick={toggleLang}
-              className="text-sm font-semibold text-brand-700"
-            >
-              {tNav("switchLang")}
-            </button>
+            <LocaleSwitcher />
             <Link
               href="/login"
               onClick={() => setOpen(false)}

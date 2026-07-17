@@ -1,9 +1,10 @@
 import { setRequestLocale } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import Header from "@/src/features/marketing/components/header";
 import Hero from "@/src/features/marketing/components/hero";
 import { StatsBar } from "@/src/features/marketing/components/stats-bar";
 import { FeaturesGrid } from "@/src/features/marketing/components/features-grid";
-import { DrmSection } from "@/src/features/marketing/components/drm-section";
+import { HlsSection } from "@/src/features/marketing/components/hls-section";
 import CurriculumSection from "@/src/features/marketing/components/curriculum-section";
 import VideoDemoSection from "@/src/features/marketing/components/video-demo";
 import PaymentsSection from "@/src/features/marketing/components/payments-section";
@@ -17,7 +18,17 @@ import { FaqSection } from "@/src/features/marketing/components/faq-section";
 import { FinalCta } from "@/src/features/marketing/components/final-cta";
 import { Footer } from "@/src/features/marketing/components/footer";
 
-export default async function MarketingPage({
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "teachers.meta" });
+  return { title: t("title"), description: t("description") };
+}
+
+export default async function TeachersPage({
   params,
 }: {
   params: Promise<{ locale: string }>;
@@ -32,7 +43,7 @@ export default async function MarketingPage({
         <Hero />
         <StatsBar />
         <FeaturesGrid />
-        <DrmSection />
+        <HlsSection />
         <CurriculumSection />
         <VideoDemoSection />
         <PaymentsSection />

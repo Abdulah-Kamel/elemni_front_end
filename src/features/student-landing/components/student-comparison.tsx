@@ -1,32 +1,32 @@
 import { getTranslations } from "next-intl/server";
 import { CircleCheck, CircleX } from "lucide-react";
 import { cn } from "@/src/lib/cn";
-import { Button } from "@/src/components/ui/button";
 import { Section } from "@/src/components/ui/section";
 import { Reveal } from "@/src/components/ui/reveal";
-import { COMPARISON_MATRIX } from "@/src/features/marketing/data";
+import { STUDENT_COMPARISON_MATRIX } from "@/src/features/marketing/data";
 
-type RowKey = keyof typeof COMPARISON_MATRIX;
-const ROW_KEYS: RowKey[] = ["leak", "pay", "organize", "reports", "setup"];
+type RowKey = keyof typeof STUDENT_COMPARISON_MATRIX;
+const ROW_KEYS: RowKey[] = ["price", "quality", "organize", "mobile", "repeat", "tracking"];
 
 const ROW_LABEL: Record<RowKey, string> = {
-  leak: "rowLeak",
-  pay: "rowPay",
+  price: "rowPrice",
+  quality: "rowQuality",
   organize: "rowOrganize",
-  reports: "rowReports",
-  setup: "rowSetup",
+  mobile: "rowMobile",
+  repeat: "rowRepeat",
+  tracking: "rowTracking",
 };
 
-type ColKey = "elemni" | "whatsapp" | "youtube" | "others";
-const COL_KEYS: { key: ColKey; msgKey: "colElemni" | "colWhatsapp" | "colYoutube" | "colOthers" }[] = [
+type ColKey = "elemni" | "youtube" | "tutor" | "books";
+const COL_KEYS: { key: ColKey; msgKey: "colElemni" | "colYoutube" | "colTutor" | "colBooks" }[] = [
   { key: "elemni", msgKey: "colElemni" },
-  { key: "whatsapp", msgKey: "colWhatsapp" },
   { key: "youtube", msgKey: "colYoutube" },
-  { key: "others", msgKey: "colOthers" },
+  { key: "tutor", msgKey: "colTutor" },
+  { key: "books", msgKey: "colBooks" },
 ];
 
-export async function ComparisonTable() {
-  const t = await getTranslations("comparison");
+export async function StudentComparison() {
+  const t = await getTranslations("studentLanding.comparison");
 
   function renderCell(value: boolean | "partial" | string) {
     if (typeof value === "boolean") {
@@ -43,13 +43,6 @@ export async function ComparisonTable() {
         </span>
       );
     }
-    if (value === "leaked") {
-      return (
-        <span className="inline-flex items-center rounded-full bg-danger-500/15 px-2.5 py-0.5 text-xs font-semibold text-danger-600">
-          {t("leaked")}
-        </span>
-      );
-    }
     return <span className="text-sm">{t(value)}</span>;
   }
 
@@ -59,10 +52,10 @@ export async function ComparisonTable() {
   return (
     <Section className="bg-brand-50" id="comparison">
       <Reveal>
-        <h2 className="mb-3 text-center text-3xl font-bold tracking-tight text-ink md:text-4xl">
-          {headingWords[0]}
+        <h2 className="mb-3 text-center text-3xl font-bold tracking-tight md:text-4xl">
+          <span className="text-gradient">{headingWords[0]}</span>
           <span className="underline-accent text-brand-600">{highlight}</span>
-          {headingWords[1]}
+          <span className="text-gradient">{headingWords[1]}</span>
         </h2>
         <p className="mx-auto mb-10 max-w-2xl text-center text-muted">{t("subtitle")}</p>
       </Reveal>
@@ -94,7 +87,7 @@ export async function ComparisonTable() {
           </thead>
           <tbody>
             {ROW_KEYS.map((rowKey) => {
-              const row = COMPARISON_MATRIX[rowKey];
+              const row = STUDENT_COMPARISON_MATRIX[rowKey];
               return (
                 <tr key={rowKey} className="border-t border-brand-100">
                   <td className="px-4 py-3 text-start text-sm font-medium text-ink bg-white">
@@ -123,10 +116,6 @@ export async function ComparisonTable() {
             })}
           </tbody>
         </table>
-      </Reveal>
-
-      <Reveal delay={160} className="mt-10 text-center">
-        <Button variant="primary">{t("cta")}</Button>
       </Reveal>
     </Section>
   );

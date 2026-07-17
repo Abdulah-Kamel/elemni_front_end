@@ -5,16 +5,16 @@ import { Section } from "@/src/components/ui/section";
 import { Badge } from "@/src/components/ui/button";
 import { Reveal } from "@/src/components/ui/reveal";
 
-const DRM_ITEMS = ["encrypted", "watermark", "devices", "instantBan"] as const;
+const DRM_ITEMS = ["encrypted", "watermark", "devices"] as const;
 
-export async function DrmSection() {
-  const t = await getTranslations("drmSection");
+export async function HlsSection() {
+  const t = await getTranslations("hlsSection");
 
   const heading = t("heading");
-  const [before, after] = heading.split("DRM");
+  const [before, after] = heading.split("HLS");
 
   return (
-    <Section className="bg-brand-900" id="drm">
+    <Section className="bg-brand-900" id="hls">
       <div className="grid items-center gap-10 md:grid-cols-2">
         <div>
           <Reveal>
@@ -24,7 +24,9 @@ export async function DrmSection() {
 
             <h2 className="mt-4 mb-4 text-3xl font-black text-white md:text-4xl">
               {before}
-              {after !== undefined && <span className="text-accent-400">DRM</span>}
+              {after !== undefined && (
+                <span className="text-accent-400">HLS</span>
+              )}
               {after}
             </h2>
 

@@ -10,11 +10,10 @@
     "stories": "Success stories",
     "login": "Log in",
     "cta": "Start free",
-    "switchLang": "ع",
     "menu": "Menu"
   },
   "hero": {
-    "badge": "Full DRM protection",
+    "badge": "Full HLS protection",
     "title": "Stop selling your lessons in WhatsApp groups",
     "subtitle": "An all-in-one platform that protects your videos from theft and manages your students' subscriptions automatically. Focus on teaching, we handle the rest.",
     "ctaPrimary": "Start free",
@@ -59,8 +58,8 @@
       "title": "Organized by subject & grade",
       "desc": "Easy access to every lecture by curriculum."
     },
-    "drm": {
-      "title": "Full DRM protection",
+    "hls": {
+      "title": "Full HLS protection",
       "desc": "Your videos are encrypted — impossible to record or download."
     },
     "mobile": {
@@ -76,13 +75,13 @@
       "desc": "Know who watched, how much, and when they solved."
     }
   },
-  "drmSection": {
+  "hlsSection": {
     "badge": "Content protection",
-    "heading": "Full DRM protection for your content",
+    "heading": "Full HLS protection for your content",
     "subtitle": "Forget leaked videos. Our tech ensures only your student can watch, and blocks any theft attempt.",
     "encrypted": {
       "title": "Encrypted streaming",
-      "desc": "The video can't be recorded or downloaded."
+      "desc": "The video can't be downloaded."
     },
     "watermark": {
       "title": "Dynamic watermark",
@@ -181,9 +180,9 @@
     "rowPay": "Automatic payments",
     "rowOrganize": "Organized by grade & track",
     "rowReports": "Detailed student reports",
-    "rowApp": "Dedicated mobile app",
     "rowSetup": "Setup time",
     "partial": "Partial",
+    "leaked": "Leaked",
     "setupElemni": "5 minutes",
     "setupWhatsapp": "Days",
     "setupYoutube": "Hours",
@@ -320,5 +319,240 @@
     "contact": "Contact us",
     "rights": "© 2024 Elemni. All rights reserved.",
     "madeIn": "Proudly made in Egypt 🇪🇬"
+  },
+  "studentLanding": {
+    "meta": {
+      "title": "Elemni — Your Learning Platform",
+      "description": "Explore lessons and courses across subjects, grades, and tracks"
+    },
+    "hero": {
+      "headlineLine1": "Learn from the best",
+      "headlineLine2": "teachers..",
+      "headlineLine3": "Anytime, anywhere.",
+      "paragraph": "An all-in-one platform offering high-quality video lessons and organised content for every grade, with easy payment options — so you can focus on your study and future.",
+      "ctaPrimary": "Start learning",
+      "ctaSecondary": "Browse teachers",
+      "ctaSignup": "Sign up free",
+      "ctaSignin": "Sign in",
+      "proofValue": "180,000+ students",
+      "proofLabel": "Studying with us right now",
+      "nowPlayingTitle": "Physics lesson",
+      "nowPlayingLabel": "Now playing"
+    },
+    "nav": {
+      "features": "Features",
+      "courses": "Courses",
+      "teachers": "Teachers",
+      "how": "How it works",
+      "testimonials": "Testimonials",
+      "faq": "FAQ"
+    },
+    "footer": {
+      "copyright": "© 2026 Elemni Egypt. All rights reserved."
+    },
+    "featured": {
+      "title": "Featured Content",
+      "viewAll": "View all"
+    },
+    "subjects": {
+      "title": "Browse by Subject"
+    },
+    "features": {
+      "heading": "Why students choose Elemni",
+      "organize": {
+        "title": "Lessons organized by curriculum",
+        "desc": "Every lesson sorted by subject, grade, and track — you'll never get lost."
+      },
+      "mobile": {
+        "title": "Watch on any device",
+        "desc": "Access lessons from your phone, tablet, or laptop."
+      },
+      "payments": {
+        "title": "Easy & secure payment",
+        "desc": "InstaPay, Vodafone Cash, Fawry, Visa — every way you need."
+      },
+      "exams": {
+        "title": "Quizzes & reviews",
+        "desc": "Test yourself and track your level after every lesson."
+      },
+      "pricing": {
+        "title": "Prices for every budget",
+        "desc": "Affordable lesson prices for everyone."
+      },
+      "progress": {
+        "title": "Track your progress",
+        "desc": "See what you've completed and what's next."
+      }
+    },
+    "steps": {
+      "heading": "How to start learning? Just 3 steps",
+      "subtitle": "The easiest way to study — built to get you learning fast.",
+      "1": {
+        "title": "Browse lessons",
+        "desc": "Find your lesson by subject and grade."
+      },
+      "2": {
+        "title": "Subscribe & pay",
+        "desc": "Pick your payment method and subscribe."
+      },
+      "3": {
+        "title": "Watch & learn",
+        "desc": "Watch lessons any time, anywhere."
+      },
+      "cta": "Start free now"
+    },
+    "testimonials": {
+      "heading": "Students like you — their success started here",
+      "1": {
+        "quote": "After starting with Elemni, my physics grade completely changed. The explanations are simple and payment is easy.",
+        "name": "Ahmed Khaled",
+        "role": "High school student — Cairo",
+        "result": "30% grade improvement"
+      },
+      "2": {
+        "quote": "I used to pay so much for private tutoring. Now I study for much less.",
+        "name": "Mariam Ali",
+        "role": "High school student — Giza",
+        "result": "Saved 60% on tutoring costs"
+      },
+      "3": {
+        "quote": "A simple, organised platform. I love that I can rewatch lessons anytime.",
+        "name": "Youssef Omar",
+        "role": "High school student — Alexandria",
+        "result": "Consistent study habits"
+      }
+    },
+    "faq": {
+      "heading": "Frequently asked questions",
+      "subtitle": "Everything you need to know to start learning.",
+      "q1": "How can I pay?",
+      "a1": "You can pay via InstaPay, Vodafone Cash, Fawry, or Visa/Mastercard. All methods are available.",
+      "q2": "Can I watch from my phone?",
+      "a2": "Absolutely. The platform works on any phone, tablet, or laptop.",
+      "q3": "Are there free lessons?",
+      "a3": "Free lessons are always available so you can try the platform. Then subscribe to what suits you.",
+      "q4": "What if I don't have a bank account?",
+      "a4": "You don't need one. Pay in cash via Fawry or use top-up cards.",
+      "q5": "Can I download lessons?",
+      "a5": "Lessons are available for online viewing only to protect content, but you can rewatch anytime.",
+      "q6": "How do I access my purchased lessons?",
+      "a6": "All purchased lessons are in your personal library — accessible anytime."
+    },
+    "comparison": {
+      "heading": "Why Elemni over anything else?",
+      "highlight": "Elemni",
+      "subtitle": "Old ways cost you time and money. See the difference.",
+      "colElemni": "Elemni",
+      "colYoutube": "YouTube",
+      "colTutor": "Private tutors",
+      "colBooks": "Textbooks",
+      "rowPrice": "Affordable pricing",
+      "rowQuality": "High-quality explanations",
+      "rowOrganize": "Organised by curriculum",
+      "rowMobile": "Watch on any device",
+      "rowRepeat": "Rewatch anytime",
+      "rowTracking": "Progress tracking",
+      "partial": "Partial"
+    },
+    "beforeAfter": {
+      "heading": "Studying on your own vs studying with Elemni",
+      "subtitle": "See the difference for yourself.",
+      "withTitle": "With Elemni",
+      "withoutTitle": "Your way right now",
+      "with": {
+        "1": {
+          "title": "Organised lessons",
+          "desc": "Every lesson sorted by subject and grade."
+        },
+        "2": {
+          "title": "Affordable prices",
+          "desc": "Pay much less than private tutoring."
+        },
+        "3": {
+          "title": "Learn anytime",
+          "desc": "Rewatch purchased lessons whenever you want."
+        },
+        "4": {
+          "title": "Real progress",
+          "desc": "A tracking system to know your level."
+        },
+        "cta": "Start your learning journey"
+      },
+      "without": {
+        "1": {
+          "title": "Scattered content",
+          "desc": "Multiple sources, nothing organised."
+        },
+        "2": {
+          "title": "High costs",
+          "desc": "Private tutoring costs thousands."
+        },
+        "3": {
+          "title": "Wasted time",
+          "desc": "Travel, waiting, commuting every day."
+        },
+        "4": {
+          "title": "No tracking",
+          "desc": "No way to measure progress or performance."
+        }
+      }
+    },
+    "teachers": {
+      "badge": "Top Teachers",
+      "heading": "Your favorite teachers in one place",
+      "subtitle": "Choose from the best teachers in the country and start studying in a new way.",
+      "card1": {
+        "name": "Mr. Mahmoud El-Said",
+        "role": "Arabic language star — Secondary school",
+        "subject": "Arabic",
+        "rating": "4.9",
+        "students": "12K students"
+      },
+      "card2": {
+        "name": "Ms. Sarah Gamal",
+        "role": "Mathematics teacher — High school",
+        "subject": "Math",
+        "rating": "4.8",
+        "students": "8K students"
+      },
+      "card3": {
+        "name": "Mr. Hassan Ali",
+        "role": "15 years of experience teaching Biology",
+        "subject": "Biology",
+        "rating": "4.9",
+        "students": "15K students"
+      },
+      "cta": "View courses",
+      "viewAll": "View all teachers"
+    },
+    "bento": {
+      "heading": "Why study on Elemni?",
+      "subtitle": "We've provided all the tools you need to focus on studying and achieve your goals.",
+      "card1": { "title": "Fast & easy payment", "body": "Pay the way that works for you — Vodafone Cash, Fawry, or InstaPay." },
+      "card2": { "title": "Full HD video quality", "body": "Watch your lessons in high quality and clear audio, and replay them anytime." },
+      "card3": { "title": "Auto quizzes & reviews", "body": "Test yourself after every lesson and see your results instantly to find your weak spots." },
+      "card4": { "title": "Smart subject organisation", "body": "Content organised by subject, grade, and track — find any lesson in seconds." }
+    },
+    "mobile": {
+      "headingLine1": "Study from your phone",
+      "headingLine2": "anytime, anywhere",
+      "paragraph": "Download the Elemni app and keep your courses in your pocket. Track your lessons, solve assignments, and study offline anytime.",
+      "check1": "Offline viewing — save lessons and study without internet",
+      "check2": "Notifications for new lessons and exams",
+      "check3": "Simple, fast interface made for mobile",
+      "toast": "Lesson downloaded successfully"
+    },
+    "finalCta": {
+      "heading": "Are you a teacher?",
+      "paragraph": "Join teachers who use Elemni to sell and protect their lessons. An all-in-one platform that connects you with students and safeguards your content.",
+      "cta": "Contact us"
+    }
+  },
+  "teachers": {
+    "meta": {
+      "title": "Elemni for Teachers",
+      "description": "An all-in-one platform for teachers to upload, sell, and protect lessons"
+    },
+    "backToStudent": "Back to Student Page"
   }
 }
