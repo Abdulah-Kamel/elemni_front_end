@@ -5,7 +5,7 @@ import { Section } from "@/src/components/ui/section";
 import { Badge } from "@/src/components/ui/button";
 import { Reveal } from "@/src/components/ui/reveal";
 
-const DRM_ITEMS = ["encrypted", "watermark", "devices"] as const;
+const HLS_ITEMS = ["encrypted", "watermark", "devices"] as const;
 
 export async function HlsSection() {
   const t = await getTranslations("hlsSection");
@@ -34,7 +34,7 @@ export async function HlsSection() {
           </Reveal>
 
           <ul className="space-y-4">
-            {DRM_ITEMS.map((key, i) => (
+            {HLS_ITEMS.map((key, i) => (
               <Reveal key={key} delay={i * 80}>
                 <li className="flex gap-3">
                   <CircleCheck
@@ -52,10 +52,10 @@ export async function HlsSection() {
         </div>
 
         {/*
-          Decorative mockup illustrating what the *API-side* DRM produces.
+          Decorative mockup illustrating what the *API-side* HLS produces.
           This is marketing artwork with sample data — it is NOT enforcement.
           Real watermarking/device limits are burned in server-side at license
-          issuance (see CLAUDE.md "DRM"). Never treat this overlay as a control.
+          issuance (see CLAUDE.md "HLS"). Never treat this overlay as a control.
         */}
         <Reveal delay={120}>
           <div

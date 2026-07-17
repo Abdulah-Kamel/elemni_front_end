@@ -59,7 +59,7 @@
       "desc": "Easy access to every lecture by curriculum."
     },
     "hls": {
-      "title": "Full HLS protection",
+      "title": "Adaptive HLS streaming",
       "desc": "Your videos are encrypted — impossible to record or download."
     },
     "mobile": {
@@ -297,7 +297,7 @@
     "q2": "How do students pay?",
     "a2": "Students pay however suits them — InstaPay, Fawry, Vodafone Cash, Visa, or top-up cards — and the lesson activates instantly.",
     "q3": "Can the videos be leaked?",
-    "a3": "Your videos are DRM-encrypted with a per-student watermark, and we block any screen-recording attempt.",
+    "a3": "Your videos are HLS-encrypted with a per-student watermark, and we block any screen-recording attempt.",
     "q4": "Do I need technical skills?",
     "a4": "Not at all. If you can send a video on WhatsApp, you can use Elemni — and our team helps you set up.",
     "q5": "How much does it cost?",

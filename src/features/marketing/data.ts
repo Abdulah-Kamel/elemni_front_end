@@ -44,7 +44,7 @@ export const LESSONS = [
 export const FEATURE_ICONS = [
   { key: "exams", icon: ClipboardCheck as LucideIcon, tint: "success" },
   { key: "organize", icon: Folder as LucideIcon, tint: "amber" },
-  { key: "drm", icon: GraduationCap as LucideIcon, tint: "pink" },
+  { key: "hls", icon: GraduationCap as LucideIcon, tint: "pink" },
   { key: "mobile", icon: Smartphone as LucideIcon, tint: "blue" },
   { key: "payments", icon: Banknote as LucideIcon, tint: "orange" },
   { key: "reports", icon: LineChart as LucideIcon, tint: "violet" },

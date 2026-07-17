@@ -27,7 +27,7 @@ const FEATURE_ITEMS: {
     chipClass: "bg-accent-400/10 text-accent-600",
   },
   {
-    key: "drm",
+    key: "hls",
     icon: ShieldCheck,
     chipClass: "bg-pink-100 text-pink-600",
   },
