@@ -79,7 +79,7 @@ export default function Navbar({ onOpenAuth, onSearchChange, searchQuery, isDark
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
 
-            <div className="relative flex items-center">
+            <div className="hidden sm:flex relative items-center">
               {showSearchInput ? (
                 <div className="flex items-center bg-[#F8FAFC] dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full px-3 py-1.5 shadow-inner transition-all">
                   <Search className="w-4 h-4 text-slate-400 ml-2" />
@@ -148,7 +148,18 @@ export default function Navbar({ onOpenAuth, onSearchChange, searchQuery, isDark
             <span className="text-xs font-bold text-slate-600 dark:text-slate-300 font-cairo">مظهر المنصة</span>
           </div>
 
-          <div className="pt-2 flex flex-col gap-2 font-cairo">
+          <div className="relative pt-2">
+            <Search className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => onSearchChange(e.target.value)}
+              placeholder="ابحث عن معلم..."
+              className="w-full pr-10 pl-4 py-2.5 bg-[#F8FAFC] dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-[#0F172A] dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary font-cairo"
+            />
+          </div>
+
+          <div className="flex flex-col gap-2 font-cairo">
             <button
               onClick={() => { setMobileMenuOpen(false); onOpenAuth("signin"); }}
               className="w-full py-3 text-center text-sm font-semibold text-[#0F172A] dark:text-white bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center gap-2 cursor-pointer"
