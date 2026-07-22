@@ -1,56 +1,42 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
-/*
- * ---------------------------------------------------------------------------
- * BRAND RAMP — indigo, anchored on #5145E5. This is the chosen brand colour.
- *
- * NOTE: this is a deliberate departure from the original design mockups, which
- * use purple #7B2CBF (kept commented below — those values were sampled
- * pixel-by-pixel from the mockups, not guessed). The mockups are therefore NOT
- * the colour reference any more; this file is. Don't "correct" the code back
- * to purple to match them — update the mockups instead.
- *
- * To flip back: comment the INDIGO block, uncomment the PURPLE block, and swap
- * the two gradient start colours below. Every component reads these tokens by
- * name, so nothing else changes.
- * ---------------------------------------------------------------------------
- */
 @theme {
-  /* --- INDIGO (active) — hue 245, derived from the #5145E5 anchor -------- */
-  --color-brand-50: #f4f3fc;
-  --color-brand-100: #e4e2f8;
-  --color-brand-200: #c8c4f3;
-  --color-brand-300: #a6a0ee;
-  --color-brand-400: #7b73e8;
-  --color-brand-500: #655be6;
-  --color-brand-600: #5145e5; /* anchor — white-on-this = 6.30:1, passes AA */
-  --color-brand-700: #2e22c3;
-  --color-brand-900: #1e1867;
+  /* --- SKY BLUE — anchored on #0284C7, aligned with redesign ------------ */
+  --color-brand-50: #f0f9ff;
+  --color-brand-100: #e0f2fe;
+  --color-brand-200: #bae6fd;
+  --color-brand-300: #7dd3fc;
+  --color-brand-400: #38bdf8;
+  --color-brand-500: #0ea5e9;
+  --color-brand-600: #0284c7; /* anchor */
+  --color-brand-700: #0369a1;
+  --color-brand-900: #0c4a6e;
 
-  /* --- PURPLE (original mockup palette) — uncomment to revert -----------
-  --color-brand-50: #f3e8ff;
-  --color-brand-100: #e9d5ff;
-  --color-brand-200: #d8b4fe;
-  --color-brand-300: #c77dff;
-  --color-brand-400: #b15ef5;
-  --color-brand-500: #9b47de;
-  --color-brand-600: #7b2cbf;
-  --color-brand-700: #661fa6;
-  --color-brand-900: #3c096c;
-  ----------------------------------------------------------------------- */
+  /* --- ORANGE accent (redesign palette) --- */
+  --color-accent-400: #fb923c;
+  --color-accent-500: #f97316;
+  --color-accent-600: #ea580c;
 
-  --color-accent-400: #ffc24d;
-  --color-accent-500: #ffb020;
-  --color-accent-600: #d98c00;
+  /* --- Semantic tokens from redesign --- */
+  --color-primary: #0284c7;
+  --color-primary-hover: #0369a1;
+  --color-primary-light: #f0f9ff;
+  --color-primary-light-hover: #e0f2fe;
+  --color-accent: #f97316;
+  --color-accent-hover: #ea580c;
+  --color-accent-light: #fff7ed;
+  --color-success: #22c55e;
+  --color-error: #ef4444;
+  --color-warning: #f59e0b;
 
-  --color-success-500: #2ed3b7;
-  /* Darker teal for text/icons on light backgrounds — success-500 is ~1.9:1 on
-     white, which fails WCAG. Use -700 wherever the colour carries meaning. */
-  --color-success-700: #0d8f7b;
-  --color-danger-500: #e85d5d;
-  --color-ink: #1a1523;
-  --color-muted: #6b6478;
-  --color-page: #faf8ff;
+  /* --- Legacy semantic tokens --- */
+  --color-success-500: #22c55e;
+  --color-success-700: #16a34a;
+  --color-danger-500: #ef4444;
+  --color-ink: #0f172a;
+  --color-muted: #64748b;
+  --color-page: #f8fafc;
 
   --radius-card: 1.5rem;
 
@@ -92,23 +78,20 @@
 }
 
 @layer utilities {
-  /* Original mockup start colour was #7b2cbf; swap back here if reverting the
-     ramp above to purple. */
   .bg-hero-gradient {
-    background-image: linear-gradient(135deg, #5145e5 0%, #c77dff 100%);
+    background-image: linear-gradient(135deg, #0284c7 0%, #7dd3fc 100%);
   }
-  /* Original mockup start colour was #7b2cbf. */
   .bg-cta-gradient {
-    background-image: linear-gradient(155deg, #5145e5 0%, #d53f8c 100%);
+    background-image: linear-gradient(155deg, #0284c7 0%, #38bdf8 100%);
   }
   .shadow-soft {
-    box-shadow: 0 20px 50px -20px rgba(81, 69, 229, 0.25);
+    box-shadow: 0 20px 50px -20px rgba(2, 132, 199, 0.25);
   }
   .shadow-lift {
-    box-shadow: 0 28px 64px -18px rgba(81, 69, 229, 0.38);
+    box-shadow: 0 28px 64px -18px rgba(2, 132, 199, 0.38);
   }
   .underline-accent {
-    background-image: linear-gradient(#ffb020, #ffb020);
+    background-image: linear-gradient(#f97316, #f97316);
     background-size: 100% 8px;
     background-repeat: no-repeat;
     background-position: 0 88%;
@@ -135,6 +118,11 @@
     background-color: var(--color-page);
     color: var(--color-ink);
     -webkit-font-smoothing: antialiased;
+  }
+  .dark {
+    --color-page: #0b132b;
+    --color-ink: #f8fafc;
+    --color-muted: #94a3b8;
   }
 }
 
