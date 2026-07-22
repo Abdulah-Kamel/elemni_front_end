@@ -122,7 +122,7 @@ export default function Navbar({ onOpenAuth, onSearchChange, searchQuery, isDark
 
             <button
               onClick={() => onOpenAuth("signup")}
-              className="px-4 sm:px-5 py-2.5 bg-primary hover:bg-primary-hover active:scale-95 text-white font-extrabold text-xs sm:text-sm rounded-xl shadow-md shadow-primary/25 transition-all cursor-pointer flex items-center gap-2 font-cairo shrink-0"
+              className="hidden sm:inline-flex px-4 sm:px-5 py-2.5 bg-primary hover:bg-primary-hover active:scale-95 text-white font-extrabold text-xs sm:text-sm rounded-xl shadow-md shadow-primary/25 transition-all cursor-pointer items-center gap-2 font-cairo shrink-0"
             >
               <UserPlus className="w-4 h-4" />
               <span>اعمل حساب جديد !</span>
