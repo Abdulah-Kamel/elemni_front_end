@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
 import { Teacher } from "../../types";
 import { Users, Briefcase, CheckCircle2, Search, Video, Award, BookOpen, ChevronDown, Sparkles } from "lucide-react";
 import { Reveal } from "@/src/components/ui/reveal";
@@ -184,10 +185,10 @@ export default function TeacherGrid({ teachers, onSelectTeacher, onBookTeacher, 
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-2.5 pt-2">
-                    <button onClick={() => onSelectTeacher(teacher)} className="py-2.5 px-3 bg-slate-100 hover:bg-primary-light text-slate-800 hover:text-primary font-bold text-xs rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1">
+                    <Link href={`/ar/teachers/${teacher.id}`} className="py-2.5 px-3 bg-slate-100 hover:bg-primary-light text-slate-800 hover:text-primary font-bold text-xs rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1">
                       <Video className="w-3.5 h-3.5 text-primary" />
                       <span>الملف الشخصي</span>
-                    </button>
+                    </Link>
                     <button onClick={() => onBookTeacher(teacher)} className="py-2.5 px-3 bg-primary hover:bg-primary-hover text-white font-bold text-xs rounded-xl shadow-md shadow-primary/20 transition-all cursor-pointer flex items-center justify-center gap-1">
                       <span>عرض الكورسات</span>
                     </button>

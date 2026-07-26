@@ -1,0 +1,152 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* ==========================================================================
+     🎨 MAIN COLOR PALETTE CONFIGURATION (EDTECH UI/UX GOLDEN RULES)
+     Change colors in this single location to update the entire application!
+     ========================================================================== */
+
+  /* 60% Dominant Neutral Canvas & Backgrounds */
+  --color-canvas: #F8FAFC;
+  --color-canvas-card: #FFFFFF;
+
+  /* 30% Secondary (Typography, Navigation & High Contrast Structure) */
+  --color-slate-headline: #0F172A;
+  --color-slate-body: #1E293B;
+
+  /* 10% Brand Primary (Deep Blue - Stability, Focus & Low Anxiety) */
+  --color-primary: #0284C7;             /* Primary Brand Color */
+  --color-primary-hover: #0369A1;       /* Hover / Active state */
+  --color-primary-light: #F0F9FF;       /* Soft Light Tint (Backgrounds, Pill Badges) */
+  --color-primary-light-hover: #E0F2FE; /* Hover state for Light Soft Tint */
+
+  /* Bright Accent (Highlights & High-Priority CTAs) */
+  --color-accent: #F97316;              /* Bright Orange Accent */
+  --color-accent-hover: #EA580C;        /* Accent Hover */
+  --color-accent-light: #FFF7ED;        /* Accent Light Tint */
+
+  /* Functional Semantic Feedback Colors (Rule 2) */
+  --color-success: #22C55E;             /* Green: Quiz Success, Completed Lessons */
+  --color-error: #EF4444;               /* Red: Failed Quiz, System Error */
+  --color-warning: #F59E0B;             /* Amber: In-Progress, Quiz Deadlines */
+}
+
+body {
+  background-color: #F8FAFC;
+  color: #0F172A;
+  font-family: 'Cairo', 'Almarai', system-ui, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ==========================================================================
+   🌙 DARK MODE THEME STYLING
+   ========================================================================== */
+.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  background-color: #0B132B !important;
+  color: #F8FAFC !important;
+}
+
+.dark .bg-\[\#F8FAFC\] {
+  background-color: #0B132B !important;
+}
+
+.dark .bg-white {
+  background-color: #1C2541 !important;
+  color: #F8FAFC !important;
+}
+
+.dark .bg-\[\#F1F5F9\], .dark .bg-slate-50, .dark .bg-slate-100 {
+  background-color: #1E293B !important;
+}
+
+.dark .text-\[\#0F172A\], .dark .text-slate-800, .dark .text-slate-900 {
+  color: #F8FAFC !important;
+}
+
+.dark .text-\[\#334155\], .dark .text-slate-700, .dark .text-slate-600 {
+  color: #CBD5E1 !important;
+}
+
+.dark .text-slate-500, .dark .text-slate-400 {
+  color: #94A3B8 !important;
+}
+
+.dark .border-slate-100, .dark .border-slate-200, .dark .border-slate-200\/80, .dark .border-slate-200\/90 {
+  border-color: #334155 !important;
+}
+
+.dark .bg-primary-light {
+  background-color: rgba(2, 132, 199, 0.2) !important;
+  color: #38BDF8 !important;
+}
+
+.dark header {
+  background-color: rgba(15, 23, 42, 0.95) !important;
+  border-color: #334155 !important;
+}
+
+@layer utilities {
+  .font-cairo {
+    font-family: 'Cairo', 'Almarai', system-ui, sans-serif;
+  }
+  .font-almarai {
+    font-family: 'Almarai', 'Cairo', system-ui, sans-serif;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar for modern RTL experience */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0369a1;
+}
+
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(1deg);
+  }
+}
+
+.animate-float {
+  animation: float-slow 4s ease-in-out infinite;
+}
+
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.05);
+  }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s ease-in-out infinite;
+}

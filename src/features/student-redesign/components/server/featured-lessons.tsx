@@ -10,7 +10,7 @@ const lessons = [
 
 export default function FeaturedLessons() {
   return (
-    <Section id="featured-lessons" className="bg-white">
+    <Section id="featured-lessons">
       <Reveal>
         <div className="mb-4 text-center">
           <span className="inline-block rounded-full bg-primary-light px-4 py-1.5 text-xs font-bold text-primary">دروس مميزة</span>

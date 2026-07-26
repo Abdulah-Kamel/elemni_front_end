@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { Teacher, Course } from "../../types";
-import { X, Users, Briefcase, Calendar, CheckCircle2, Play, BookOpen, Clock, ArrowLeft, Sparkles } from "lucide-react";
+import { X, Play, BookOpen, Clock, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 interface TeacherModalProps {
   teacher: Teacher | null;
   onClose: () => void;
   onBook: (teacher: Teacher, selectedCourseTitle?: string) => void;
+  onViewFullProfile?: (teacher: Teacher) => void;
 }
 
 export default function TeacherModal({ teacher, onClose, onBook }: TeacherModalProps) {
@@ -95,6 +97,14 @@ export default function TeacherModal({ teacher, onClose, onBook }: TeacherModalP
           ) : (
             <p className="text-xs text-slate-500 bg-[#F8FAFC] p-4 rounded-xl text-center">لا توجد كورسات معروضة حالياً.</p>
           )}
+        </div>
+
+        <div className="pt-2 border-t border-slate-100 text-center mb-2">
+          <Link href={`/ar/teachers/${teacher.id}`}
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline">
+            <span>عرض الملف الشخصي الكامل</span>
+            <ArrowLeft className="w-3 h-3" />
+          </Link>
         </div>
 
         <div className="flex flex-wrap gap-1.5 text-xs text-slate-600 pt-3 border-t border-slate-100">

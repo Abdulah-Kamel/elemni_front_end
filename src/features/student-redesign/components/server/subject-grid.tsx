@@ -11,7 +11,7 @@ const subjects = [
 
 export default function SubjectGrid() {
   return (
-    <Section id="subjects" className="bg-[#F8FAFC]">
+    <Section id="subjects" className="bg-white dark:bg-[#0B132B]">
       <Reveal>
         <div className="mb-4 text-center">
           <span className="inline-block rounded-full bg-primary-light px-4 py-1.5 text-xs font-bold text-primary">المواد الدراسية</span>

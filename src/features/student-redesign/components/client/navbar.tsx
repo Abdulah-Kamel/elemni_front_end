@@ -10,9 +10,10 @@ interface NavbarProps {
   searchQuery: string;
   isDarkMode: boolean;
   onToggleDarkMode: () => void;
+  onGoHome?: () => void;
 }
 
-export default function Navbar({ onOpenAuth, onSearchChange, searchQuery, isDarkMode, onToggleDarkMode }: NavbarProps) {
+export default function Navbar({ onOpenAuth, onSearchChange, searchQuery, isDarkMode, onToggleDarkMode, onGoHome }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showSearchInput, setShowSearchInput] = useState(false);
@@ -35,7 +36,7 @@ export default function Navbar({ onOpenAuth, onSearchChange, searchQuery, isDark
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 sm:gap-4">
-            <a href="#" className="flex items-center gap-2.5 group focus:outline-none shrink-0">
+            <a href="#" onClick={(e) => { e.preventDefault(); onGoHome?.(); }} className="flex items-center gap-2.5 group focus:outline-none shrink-0 cursor-pointer">
               <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-md shadow-primary/20 group-hover:scale-105 transition-transform">
                 <GraduationCap className="w-6 h-6 stroke-[2.2]" />
               </div>

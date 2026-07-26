@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import "./redesign.css";
 
 import { TEACHERS_DATA } from "./data/mock-data";
@@ -10,6 +11,8 @@ import Navbar from "./components/client/navbar";
 import Hero from "./components/server/hero";
 import TeacherGrid from "./components/server/teacher-grid";
 import Features from "./components/server/features";
+import PaymentMethods from "./components/server/payment-methods";
+import TeacherJoinCTA from "./components/server/teacher-join-cta";
 import SubjectGrid from "./components/server/subject-grid";
 import FeaturedLessons from "./components/server/featured-lessons";
 import BentoGrid from "./components/server/bento-grid";
@@ -35,6 +38,7 @@ export default function StudentLandingPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const stored = localStorage.getItem("elemni-dark-mode");
@@ -100,7 +104,10 @@ export default function StudentLandingPage() {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0B132B] text-[#0F172A] dark:text-[#F8FAFC] font-cairo antialiased selection:bg-[#0284C7] selection:text-white dir-rtl">
-      <ToastNotification message={toastMessage} onClear={() => setToastMessage(null)} />
+      <ToastNotification
+        message={toastMessage}
+        onClear={() => setToastMessage(null)}
+      />
 
       <Navbar
         onOpenAuth={handleOpenAuth}
@@ -111,9 +118,20 @@ export default function StudentLandingPage() {
       />
 
       <main>
-        <Hero onOpenAuth={handleOpenAuth} onOpenVideoTour={() => setVideoModalOpen(true)} onExploreTeachers={scrollToTeachers} />
-        <TeacherGrid teachers={TEACHERS_DATA} onSelectTeacher={(t) => setSelectedTeacher(t)} onBookTeacher={(t) => handleBookTeacher(t)} searchQuery={searchQuery} />
-        <Features onExploreFeature={handleExploreFeature} />
+        <Hero
+          onOpenAuth={handleOpenAuth}
+          onOpenVideoTour={() => setVideoModalOpen(true)}
+          onExploreTeachers={scrollToTeachers}
+        />
+        <TeacherGrid
+          teachers={TEACHERS_DATA}
+          onSelectTeacher={(t) => setSelectedTeacher(t)}
+          onBookTeacher={(t) => handleBookTeacher(t)}
+          searchQuery={searchQuery}
+        />
+        <Features onExploreFeature={handleExploreFeature} />{" "}
+        {/* <PaymentMethods /> */}
+        <TeacherJoinCTA onJoinAsTeacher={() => router.push("/teachers")} />
         <SubjectGrid />
         <FeaturedLessons />
         <BentoGrid />
@@ -129,9 +147,21 @@ export default function StudentLandingPage() {
       <Footer />
       <WhatsAppButton />
 
-      <AuthModal isOpen={authModalOpen} initialMode={authMode} onClose={() => setAuthModalOpen(false)} onSuccess={handleAuthSuccess} />
-      <TeacherModal teacher={selectedTeacher} onClose={() => setSelectedTeacher(null)} onBook={handleBookTeacher} />
-      <VideoModal isOpen={videoModalOpen} onClose={() => setVideoModalOpen(false)} />
+      <AuthModal
+        isOpen={authModalOpen}
+        initialMode={authMode}
+        onClose={() => setAuthModalOpen(false)}
+        onSuccess={handleAuthSuccess}
+      />
+      <TeacherModal
+        teacher={selectedTeacher}
+        onClose={() => setSelectedTeacher(null)}
+        onBook={handleBookTeacher}
+      />
+      <VideoModal
+        isOpen={videoModalOpen}
+        onClose={() => setVideoModalOpen(false)}
+      />
     </div>
   );
 }

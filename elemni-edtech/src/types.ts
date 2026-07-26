@@ -12,11 +12,11 @@ export interface Teacher {
   name: string;
   title: string;
   subject: string;
-  subjects?: string[];
-  category: string;
-  grade: string;
-  gradeLabel: string;
-  gradesList?: string[];
+  subjects?: string[]; // Multiple subjects e.g. ["الأحياء", "العلوم المتكاملة"]
+  category: string; // e.g. 'math', 'science', 'languages', 'humanities'
+  grade: string; // e.g. 'sec3', 'sec2', 'sec1'
+  gradeLabel: string; // 'الصف الثالث الثانوي'
+  gradesList?: string[]; // Multiple grades e.g. ["الصف الأول الثانوي", "الصف الثاني الثانوي", "الصف الثالث الثانوي"]
   avatar: string;
   studentCount: number;
   experienceYears: number;
@@ -31,7 +31,7 @@ export interface Teacher {
 
 export interface Feature {
   id: string;
-  icon: string;
+  icon: string; // Lucide icon name
   title: string;
   subtitle: string;
   description: string;
