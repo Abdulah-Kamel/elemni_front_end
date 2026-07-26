@@ -88,15 +88,6 @@ export default function StudentLandingPage() {
     }
   };
 
-  const handleExploreFeature = (featureId: string) => {
-    if (featureId === "f2") {
-      const quizElement = document.getElementById("quiz");
-      quizElement?.scrollIntoView({ behavior: "smooth" });
-    } else {
-      handleOpenAuth("signup");
-    }
-  };
-
   const scrollToTeachers = () => {
     const el = document.getElementById("teachers");
     el?.scrollIntoView({ behavior: "smooth" });
@@ -125,11 +116,9 @@ export default function StudentLandingPage() {
         />
         <TeacherGrid
           teachers={TEACHERS_DATA}
-          onSelectTeacher={(t) => setSelectedTeacher(t)}
-          onBookTeacher={(t) => handleBookTeacher(t)}
           searchQuery={searchQuery}
         />
-        <Features onExploreFeature={handleExploreFeature} />{" "}
+        <Features />{" "}
         {/* <PaymentMethods /> */}
         <TeacherJoinCTA onJoinAsTeacher={() => router.push("/teachers")} />
         <SubjectGrid />

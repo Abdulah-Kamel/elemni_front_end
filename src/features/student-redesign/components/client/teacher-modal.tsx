@@ -9,7 +9,6 @@ interface TeacherModalProps {
   teacher: Teacher | null;
   onClose: () => void;
   onBook: (teacher: Teacher, selectedCourseTitle?: string) => void;
-  onViewFullProfile?: (teacher: Teacher) => void;
 }
 
 export default function TeacherModal({ teacher, onClose, onBook }: TeacherModalProps) {

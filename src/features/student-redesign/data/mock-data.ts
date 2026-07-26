@@ -125,7 +125,7 @@ export const TEACHERS_DATA: Teacher[] = [
     category: 'languages',
     grade: 'sec3',
     gradeLabel: 'الصف الثالث الثانوي',
-    avatar: 'https://images.unsplash.com/photo-1580894732413-802c63efefec?auto=format&fit=crop&q=80&w=400',
+    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=400',
     studentCount: 1600,
     experienceYears: 11,
     pricePerSession: 55,
