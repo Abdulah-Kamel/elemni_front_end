@@ -65,7 +65,7 @@ export async function apiFetch<T>(
         ok: false,
         error: {
           type: statusToType(response.status),
-          message: body?.error?.message,
+          message: body?.detail ?? body?.error?.message,
           fields: body?.error?.fields,
           requestId: body?.error?.requestId,
         },

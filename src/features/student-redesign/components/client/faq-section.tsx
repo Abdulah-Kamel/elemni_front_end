@@ -5,6 +5,7 @@ import { FAQ_ITEMS } from "../../data/mock-data";
 import { ChevronDown, HelpCircle, MessageSquare } from "lucide-react";
 import { cn } from "@/src/lib/cn";
 import { Reveal } from "@/src/components/ui/reveal";
+import { AnimatePresence, m } from "motion/react";
 
 export default function FaqSection() {
   const [openId, setOpenId] = useState<string | null>("faq1");
@@ -40,7 +41,9 @@ export default function FaqSection() {
                 )}>
                   <button
                     onClick={() => toggleItem(item.id)}
-                    className="w-full p-5 text-right font-bold text-base text-[#0F172A] flex items-center justify-between gap-4 cursor-pointer focus:outline-none"
+                    aria-expanded={isOpen}
+                    aria-controls={`${item.id}-answer`}
+                    className="flex w-full cursor-pointer items-center justify-between gap-4 p-5 text-start text-base font-bold text-[#0F172A] focus:outline-none"
                   >
                     <span className="flex-1 font-cairo">{item.question}</span>
                     <div className={cn(
@@ -50,11 +53,22 @@ export default function FaqSection() {
                       <ChevronDown className="w-4 h-4" />
                     </div>
                   </button>
-                  {isOpen && (
-                    <div className="px-5 pb-5 pt-1 text-sm text-[#334155] leading-relaxed text-right border-t border-slate-100">
-                      <p>{item.answer}</p>
-                    </div>
-                  )}
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <m.div
+                        id={`${item.id}-answer`}
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ height: { duration: 0.3 }, opacity: { duration: 0.2 } }}
+                        className="overflow-hidden"
+                      >
+                        <div className="border-t border-slate-100 px-5 pb-5 pt-4 text-start text-sm leading-relaxed text-[#334155]">
+                          <p>{item.answer}</p>
+                        </div>
+                      </m.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               );
             })}
@@ -62,7 +76,7 @@ export default function FaqSection() {
         </Reveal>
 
         <Reveal>
-          <div className="mt-12 p-6 rounded-2xl bg-primary-light border border-primary/20 flex flex-col sm:flex-row items-center justify-between gap-4 text-right">
+          <div className="mt-12 flex flex-col items-center justify-between gap-4 rounded-2xl border border-primary/20 bg-primary-light p-6 text-start sm:flex-row">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center shrink-0">
                 <MessageSquare className="w-5 h-5" />

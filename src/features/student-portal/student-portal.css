@@ -1,0 +1,23 @@
+.student-portal-sidebar,
+.student-portal-drawer {
+  right: 0;
+}
+
+.student-portal-header {
+  right: 0;
+  left: 0;
+}
+
+.student-portal-drawer-close {
+  left: 1rem;
+}
+
+@media (min-width: 48rem) {
+  .student-portal-header {
+    right: 16rem;
+  }
+
+  .student-portal-main {
+    margin-right: 16rem;
+  }
+}

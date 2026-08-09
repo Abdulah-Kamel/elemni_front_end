@@ -1,30 +1,42 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import Link from "next/link";
-import { Teacher } from "../../types";
-import { Search, Award, BookOpen, ChevronDown, Sparkles, ArrowLeft } from "lucide-react";
+import { Link } from "@/src/i18n/navigation";
+import type { TeacherSummary } from "../../types";
+import { Search, Award, BookOpen, ChevronDown, Sparkles, ArrowLeft, CircleAlert } from "lucide-react";
 import { cn } from "@/src/lib/cn";
 import { Reveal } from "@/src/components/ui/reveal";
+import { AnimatePresence, m } from "motion/react";
+import Image from "next/image";
+import type { GradeDto, StreamDto } from "@/src/lib/student-api/contract";
 
 interface TeacherGridProps {
-  teachers: Teacher[];
+  teachers: TeacherSummary[];
+  grades: GradeDto[];
+  streams: StreamDto[];
   searchQuery: string;
+  loadError?: boolean;
 }
 
-export default function TeacherGrid({ teachers, searchQuery }: TeacherGridProps) {
+export default function TeacherGrid({ teachers, grades, streams, searchQuery, loadError = false }: TeacherGridProps) {
   const [selectedGrade, setSelectedGrade] = useState("all");
   const [selectedStream, setSelectedStream] = useState("all");
   const [internalSearch, setInternalSearch] = useState("");
 
-  const gradeOptions = [
+  const gradeOptions = grades.length ? [
+    { value: "all", label: "جميع الصفوف الدراسية" },
+    ...grades.map((grade) => ({ value: String(grade.id), label: grade.name })),
+  ] : [
     { value: "all", label: "جميع الصفوف الدراسية" },
     { value: "sec3", label: "الصف الثالث الثانوي" },
     { value: "sec2", label: "الصف الثاني الثانوي" },
     { value: "sec1", label: "الصف الأول الثانوي" },
   ];
 
-  const streamOptions = [
+  const streamOptions = streams.length ? [
+    { value: "all", label: "جميع الشعب والتخصصات" },
+    ...streams.map((stream) => ({ value: String(stream.id), label: stream.name })),
+  ] : [
     { value: "all", label: "جميع الشعب والتخصصات" },
     { value: "general", label: "عام" },
     { value: "science", label: "علمي علوم" },
@@ -40,12 +52,14 @@ export default function TeacherGrid({ teachers, searchQuery }: TeacherGridProps)
 
       let matchesGrade = true;
       if (selectedGrade !== "all") {
-        matchesGrade = teacher.grade === selectedGrade || (teacher.gradesList || []).some((g) => g.includes(selectedGrade));
+        matchesGrade = teacher.grade === selectedGrade || teacher.gradeIds?.includes(selectedGrade) === true;
       }
 
       let matchesStream = true;
       if (selectedStream !== "all") {
-        if (selectedStream === "science") {
+        if (teacher.streamIds?.length) {
+          matchesStream = teacher.streamIds.includes(selectedStream);
+        } else if (selectedStream === "science") {
           matchesStream = teacher.category === "science" || allSubjectText.includes("فيزياء") || allSubjectText.includes("أحياء") || allSubjectText.includes("كيمياء") || allSubjectText.includes("علوم");
         } else if (selectedStream === "math") {
           matchesStream = teacher.category === "math" || allSubjectText.includes("رياضيات") || allSubjectText.includes("ميكانيكا") || allSubjectText.includes("جبر");
@@ -96,35 +110,35 @@ export default function TeacherGrid({ teachers, searchQuery }: TeacherGridProps)
           <div className="bg-white dark:bg-slate-800 rounded-3xl p-4 sm:p-6 shadow-md border border-slate-200/80 dark:border-slate-700 max-w-4xl mx-auto mb-12 space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="relative">
-                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 text-right font-cairo">الصف الدراسي</label>
+                <label className="mb-1.5 block text-start text-xs font-bold text-slate-500 dark:text-slate-400 font-cairo">الصف الدراسي</label>
                 <div className="relative">
                   <select value={selectedGrade} onChange={(e) => setSelectedGrade(e.target.value)}
-                    className="w-full appearance-none bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl py-3 pr-10 pl-10 text-sm font-bold text-[#0F172A] dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white dark:focus:bg-slate-900 transition-all cursor-pointer font-cairo">
+                    className="w-full cursor-pointer appearance-none rounded-2xl border border-slate-200 bg-slate-50 py-3 pe-10 ps-10 text-sm font-bold text-[#0F172A] transition-all focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:bg-slate-900 font-cairo">
                     {gradeOptions.map((opt) => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                   </select>
-                  <BookOpen className="w-5 h-5 text-primary absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  <ChevronDown className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <BookOpen className="pointer-events-none absolute start-3 top-1/2 size-5 -translate-y-1/2 text-primary" />
+                  <ChevronDown className="pointer-events-none absolute end-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
                 </div>
               </div>
               <div className="relative">
-                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 text-right font-cairo">الشعبة / التخصص</label>
+                <label className="mb-1.5 block text-start text-xs font-bold text-slate-500 dark:text-slate-400 font-cairo">الشعبة / التخصص</label>
                 <div className="relative">
                   <select value={selectedStream} onChange={(e) => setSelectedStream(e.target.value)}
-                    className="w-full appearance-none bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl py-3 pr-10 pl-10 text-sm font-bold text-[#0F172A] dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white dark:focus:bg-slate-900 transition-all cursor-pointer font-cairo">
+                    className="w-full cursor-pointer appearance-none rounded-2xl border border-slate-200 bg-slate-50 py-3 pe-10 ps-10 text-sm font-bold text-[#0F172A] transition-all focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:bg-slate-900 font-cairo">
                     {streamOptions.map((opt) => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                   </select>
-                  <Sparkles className="w-5 h-5 text-primary absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  <ChevronDown className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <Sparkles className="pointer-events-none absolute start-3 top-1/2 size-5 -translate-y-1/2 text-primary" />
+                  <ChevronDown className="pointer-events-none absolute end-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
                 </div>
               </div>
               <div className="relative">
-                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 text-right font-cairo">البحث باسم المعلم أو المادة</label>
+                <label className="mb-1.5 block text-start text-xs font-bold text-slate-500 dark:text-slate-400 font-cairo">البحث باسم المعلم أو المادة</label>
                 <div className="relative">
                   <input type="text" value={internalSearch} onChange={(e) => setInternalSearch(e.target.value)} placeholder="ابحث هنا..."
-                    className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl py-3 pr-10 pl-10 text-sm text-[#0F172A] dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white dark:focus:bg-slate-900 transition-all font-cairo" />
-                  <Search className="w-5 h-5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2" />
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pe-10 ps-10 text-sm text-[#0F172A] placeholder-slate-400 transition-all focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:bg-slate-900 font-cairo" />
+                  <Search className="absolute start-3 top-1/2 size-5 -translate-y-1/2 text-slate-400" />
                   {internalSearch && (
-                    <button onClick={() => setInternalSearch("")} className="absolute left-3 top-1/2 -translate-y-1/2 text-xs bg-slate-200 text-slate-600 rounded-full w-5 h-5 flex items-center justify-center hover:bg-slate-300 cursor-pointer">✕</button>
+                    <button onClick={() => setInternalSearch("")} className="absolute end-3 top-1/2 flex size-5 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-slate-200 text-xs text-slate-600 hover:bg-slate-300">✕</button>
                   )}
                 </div>
               </div>
@@ -138,10 +152,18 @@ export default function TeacherGrid({ teachers, searchQuery }: TeacherGridProps)
           </div>
         </Reveal>
 
+        {loadError && (
+          <div className="mx-auto mb-8 flex max-w-3xl items-center gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-bold text-amber-900 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-200">
+            <CircleAlert className="size-5 shrink-0" />
+            <span>تعذر تحميل المدرسين من الخادم. تحقق من اتصال خدمة الـ API ثم أعد المحاولة.</span>
+          </div>
+        )}
+
         {displayedTeachers.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-stretch">
-              {displayedTeachers.map((teacher, i) => {
+            <div className="grid grid-cols-1 items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <AnimatePresence mode="popLayout" initial={false}>
+              {displayedTeachers.map((teacher) => {
                 const subjectsList = teacher.subjects?.length ? teacher.subjects : [teacher.subject];
                 const gradesList = teacher.gradesList?.length ? teacher.gradesList : [teacher.gradeLabel];
                 const maxVisibleGrades = 2;
@@ -149,16 +171,30 @@ export default function TeacherGrid({ teachers, searchQuery }: TeacherGridProps)
                 const remainingCount = gradesList.length - visibleGrades.length;
 
                 return (
-                  <Reveal key={teacher.id} delay={i * 60}>
-                    <Link href={`/ar/teachers/${teacher.id}`}
+                  <m.div
+                    layout
+                    key={teacher.id}
+                    initial={{ opacity: 0, y: 18, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 12, scale: 0.97 }}
+                    transition={{ layout: { type: "spring", bounce: 0.16, duration: 0.5 } }}
+                    className="h-full transition-transform duration-300 hover:-translate-y-1.5"
+                  >
+                    <Link href={`/teachers/${teacher.id}`} prefetch={false}
                       className={cn(
-                        "bg-[#EBF5FB] dark:bg-slate-800/95 rounded-[28px] p-5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-sky-100/90 dark:border-slate-700 flex flex-col justify-between h-full group relative overflow-hidden cursor-pointer"
+                        "group relative flex h-full cursor-pointer flex-col justify-between overflow-hidden rounded-2xl border border-sky-100/90 bg-white p-4 shadow-sm transition-shadow duration-300 hover:shadow-xl hover:shadow-sky-900/10 dark:border-slate-700 dark:bg-slate-800/95"
                       )}
                     >
                       <div className="flex flex-col flex-1">
-                        <div className="relative w-full aspect-square rounded-[22px] overflow-hidden bg-gradient-to-b from-sky-100 to-slate-200 dark:from-slate-700 dark:to-slate-900 shadow-md mb-4 shrink-0">
-                          <img src={teacher.avatar} alt={teacher.name}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <div className="relative mb-4 h-48 w-full shrink-0 overflow-hidden rounded-xl bg-gradient-to-b from-sky-100 to-slate-200 shadow-md sm:h-52 dark:from-slate-700 dark:to-slate-900">
+                          <Image
+                            src={teacher.avatar}
+                            alt={teacher.name}
+                            fill
+                            loading="lazy"
+                            sizes="(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) 50vw, 33vw"
+                            className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                          />
                         </div>
                         <div className="text-center px-1 mb-2">
                           <h3 className="text-xl font-black text-slate-900 dark:text-white group-hover:text-primary transition-colors leading-tight truncate">{teacher.name}</h3>
@@ -191,9 +227,10 @@ export default function TeacherGrid({ teachers, searchQuery }: TeacherGridProps)
                         </div>
                       </div>
                     </Link>
-                  </Reveal>
+                  </m.div>
                 );
               })}
+              </AnimatePresence>
             </div>
             <Reveal>
               <div className="mt-10 text-center">
@@ -208,9 +245,13 @@ export default function TeacherGrid({ teachers, searchQuery }: TeacherGridProps)
         ) : (
           <div className="text-center py-12 bg-white rounded-3xl border border-slate-200/80 max-w-lg mx-auto space-y-3">
             <Search className="w-10 h-10 text-slate-300 mx-auto" />
-            <h3 className="text-lg font-bold text-[#0F172A]">لم نجد معلمين يطابقون بحثك</h3>
-            <p className="text-xs text-slate-500">جرب البحث بكلمات أخرى أو اختر صف دراسي مختلف.</p>
-            <button onClick={() => { setSelectedGrade("all"); setSelectedStream("all"); setInternalSearch(""); }} className="mt-2 text-xs font-bold text-primary hover:underline cursor-pointer">إعادة ضبط جميع الفلاتر</button>
+            <h3 className="text-lg font-bold text-[#0F172A]">
+              {teachers.length ? "لم نجد معلمين يطابقون بحثك" : "لا يوجد مدرسون منشورون حالياً"}
+            </h3>
+            <p className="text-xs text-slate-500">
+              {teachers.length ? "جرب البحث بكلمات أخرى أو اختر صف دراسي مختلف." : "سيظهر المدرسون هنا بعد إضافتهم وتفعيل حساباتهم من لوحة الإدارة."}
+            </p>
+            {teachers.length > 0 && <button onClick={() => { setSelectedGrade("all"); setSelectedStream("all"); setInternalSearch(""); }} className="mt-2 text-xs font-bold text-primary hover:underline cursor-pointer">إعادة ضبط جميع الفلاتر</button>}
           </div>
         )}
       </div>

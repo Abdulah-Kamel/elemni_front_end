@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const envSchema = z.object({
-  API_URL: z.string().url().optional().default("http://localhost:9999"),
+  API_URL: z.string().url().optional().default("http://localhost:8001"),
   CONTACT_EMAIL: z.string().email().optional().default("mero@elemni.com"),
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
 });

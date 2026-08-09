@@ -6,13 +6,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "perf:audit": "npm run build && lhci autorun"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.3.2",
     "autoprefixer": "^10.5.3",
     "clsx": "^2.1.1",
     "lucide-react": "^1.24.0",
+    "motion": "^13.0.0",
     "next": "16.2.10",
     "next-intl": "^4.13.2",
     "postcss": "^8.5.19",
@@ -21,6 +23,7 @@
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
+    "@lhci/cli": "^0.15.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

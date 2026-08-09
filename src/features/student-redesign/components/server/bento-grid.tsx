@@ -63,11 +63,11 @@ export default function BentoGrid() {
         {cards.map(({ key, span, bg, icon: Icon, tileBg }, i) => (
           <Reveal key={key} delay={i * 60} className={span}>
             <div
-              className={cn("h-full rounded-2xl border border-sky-100 p-6", bg)}
+              className={cn("group h-full rounded-2xl border border-sky-100 p-6 transition-transform transition-shadow duration-300 hover:-translate-y-1.5 hover:shadow-lg", bg)}
             >
               <div
                 className={cn(
-                  "mb-4 inline-flex rounded-2xl p-3",
+                  "mb-4 inline-flex rounded-2xl p-3 transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110",
                   tileBg,
                   "text-white",
                 )}

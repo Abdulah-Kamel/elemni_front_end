@@ -1,0 +1,52 @@
+{
+  "ci": {
+    "collect": {
+      "chromePath": "/opt/google/chrome/chrome",
+      "startServerCommand": "npm run start -- -p 3100",
+      "startServerReadyPattern": "Ready in|Local:",
+      "url": ["http://localhost:3100/"],
+      "numberOfRuns": 3,
+      "settings": {
+        "onlyCategories": ["performance"],
+        "chromeFlags": "--no-sandbox --disable-dev-shm-usage",
+        "formFactor": "mobile",
+        "screenEmulation": {
+          "mobile": true,
+          "width": 412,
+          "height": 915,
+          "deviceScaleFactor": 2.625,
+          "disabled": false
+        },
+        "throttlingMethod": "simulate"
+      }
+    },
+    "assert": {
+      "assertions": {
+        "categories:performance": [
+          "error",
+          { "minScore": 0.85, "aggregationMethod": "median" }
+        ],
+        "first-contentful-paint": [
+          "error",
+          { "maxNumericValue": 1800, "aggregationMethod": "median" }
+        ],
+        "largest-contentful-paint": [
+          "error",
+          { "maxNumericValue": 2500, "aggregationMethod": "median" }
+        ],
+        "total-blocking-time": [
+          "error",
+          { "maxNumericValue": 200, "aggregationMethod": "median" }
+        ],
+        "cumulative-layout-shift": [
+          "error",
+          { "maxNumericValue": 0.1, "aggregationMethod": "median" }
+        ]
+      }
+    },
+    "upload": {
+      "target": "filesystem",
+      "outputDir": ".lighthouseci"
+    }
+  }
+}

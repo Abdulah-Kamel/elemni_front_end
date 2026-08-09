@@ -1,4 +1,15 @@
 import { Teacher, Feature, Testimonial, FAQItem, QuizQuestion } from '../types';
+import teacherAhmad from "@/src/assets/images/student-redesign/teacher-ahmad.webp";
+import teacherMahmoud from "@/src/assets/images/student-redesign/teacher-mahmoud.webp";
+import teacherSara from "@/src/assets/images/student-redesign/teacher-sara.webp";
+import teacherNourhan from "@/src/assets/images/student-redesign/teacher-nourhan.webp";
+import teacherOmar from "@/src/assets/images/student-redesign/teacher-omar.webp";
+import teacherLaila from "@/src/assets/images/student-redesign/teacher-laila.webp";
+import teacherRania from "@/src/assets/images/student-redesign/teacher-rania.webp";
+import teacherTarek from "@/src/assets/images/student-redesign/teacher-tarek.webp";
+import testimonialZiad from "@/src/assets/images/student-redesign/testimonial-ziad.webp";
+import testimonialMariam from "@/src/assets/images/student-redesign/testimonial-mariam.webp";
+import testimonialOmar from "@/src/assets/images/student-redesign/testimonial-omar.webp";
 
 export const TEACHERS_DATA: Teacher[] = [
   {
@@ -9,7 +20,7 @@ export const TEACHERS_DATA: Teacher[] = [
     category: 'math',
     grade: 'sec3',
     gradeLabel: 'الصف الثالث الثانوي',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400',
+    avatar: teacherAhmad,
     studentCount: 1250,
     experienceYears: 12,
     pricePerSession: 60,
@@ -53,7 +64,7 @@ export const TEACHERS_DATA: Teacher[] = [
     category: 'science',
     grade: 'sec3',
     gradeLabel: 'الصف الثالث الثانوي',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400',
+    avatar: teacherMahmoud,
     studentCount: 2100,
     experienceYears: 15,
     pricePerSession: 70,
@@ -89,7 +100,7 @@ export const TEACHERS_DATA: Teacher[] = [
     category: 'languages',
     grade: 'sec3',
     gradeLabel: 'الصف الثالث الثانوي',
-    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
+    avatar: teacherSara,
     studentCount: 980,
     experienceYears: 8,
     pricePerSession: 50,
@@ -125,7 +136,7 @@ export const TEACHERS_DATA: Teacher[] = [
     category: 'languages',
     grade: 'sec3',
     gradeLabel: 'الصف الثالث الثانوي',
-    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=400',
+    avatar: teacherNourhan,
     studentCount: 1600,
     experienceYears: 11,
     pricePerSession: 55,
@@ -161,7 +172,7 @@ export const TEACHERS_DATA: Teacher[] = [
     category: 'science',
     grade: 'sec2',
     gradeLabel: 'الصف الثاني الثانوي',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400',
+    avatar: teacherOmar,
     studentCount: 820,
     experienceYears: 9,
     pricePerSession: 50,
@@ -189,7 +200,7 @@ export const TEACHERS_DATA: Teacher[] = [
     category: 'science',
     grade: 'sec3',
     gradeLabel: 'الصف الثالث الثانوي',
-    avatar: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=400',
+    avatar: teacherLaila,
     studentCount: 1350,
     experienceYears: 10,
     pricePerSession: 55,
@@ -217,7 +228,7 @@ export const TEACHERS_DATA: Teacher[] = [
     category: 'humanities',
     grade: 'sec3',
     gradeLabel: 'الصف الثالث الثانوي',
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400',
+    avatar: teacherRania,
     studentCount: 750,
     experienceYears: 14,
     pricePerSession: 45,
@@ -245,7 +256,7 @@ export const TEACHERS_DATA: Teacher[] = [
     category: 'humanities',
     grade: 'sec1',
     gradeLabel: 'الصف الأول الثانوي',
-    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400',
+    avatar: teacherTarek,
     studentCount: 620,
     experienceYears: 7,
     pricePerSession: 40,
@@ -329,7 +340,7 @@ export const TESTIMONIALS: Testimonial[] = [
     grade: 'المركز الثالث على الجمهورية - علمي علوم',
     school: 'مدرسة المتفوقين للعلوم والتكنولوجيا STEM',
     score: '99.2%',
-    avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=200',
+    avatar: testimonialZiad,
     comment: 'منصة علمني كانت السر الحقيقي لتفوقي في الفيزياء والأحياء. الكورسات المباشرة مع د. محمود صبري وحل بنوك أسئلة الكورس جعلت الامتحانات أسهل بكثير!',
     teacherName: 'د. محمود صبري'
   },
@@ -339,7 +350,7 @@ export const TESTIMONIALS: Testimonial[] = [
     grade: 'الأولى على المحافظة - الشعبة الأدبية',
     school: 'مدرسة الثانوية بنات الرسمية',
     score: '98.5%',
-    avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=200',
+    avatar: testimonialMariam,
     comment: 'كنت أعاني جداً في بلاغة اللغة العربية والتاريخ حتى اشتركت في كورسات الأستاذة ليلى والأستاذ طارق على علمني. أسلوب شرح ممتاز ومتابعة دقيقة!',
     teacherName: 'أ. ليلى حسن'
   },
@@ -349,7 +360,7 @@ export const TESTIMONIALS: Testimonial[] = [
     grade: 'طالب في كلية الهندسة - شعبة رياضة',
     school: 'مدرسة النصر الثانوية',
     score: '97.8%',
-    avatar: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&q=80&w=200',
+    avatar: testimonialOmar,
     comment: 'أستاذ أحمد المنصوري رجل أسطوري في كورسات الرياضيات. مراجعات الكورس على منصة علمني وفّرت عليّ الكثير وضمنت لي دخول هندسة.',
     teacherName: 'أ. أحمد المنصوري'
   }

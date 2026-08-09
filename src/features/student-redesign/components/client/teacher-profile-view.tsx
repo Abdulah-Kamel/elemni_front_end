@@ -2,17 +2,38 @@
 
 import { useState } from "react";
 import { Teacher } from "../../types";
-import { BookOpen, Clock, CheckCircle2, ArrowRight, Award, Sparkles, Share2, Check } from "lucide-react";
+import { BookOpen, Clock, CheckCircle2, ArrowRight, Award, Sparkles, Share2, Check, MapPin, LoaderCircle, CircleAlert, PlayCircle, FileText, ClipboardList, ChevronDown } from "lucide-react";
 import { cn } from "@/src/lib/cn";
-import Link from "next/link";
+import { Link } from "@/src/i18n/navigation";
+import { Reveal } from "@/src/components/ui/reveal";
+import { AnimatePresence, m } from "motion/react";
+import Image from "next/image";
+import profileBackground from "@/src/assets/images/student-redesign/profile-background.webp";
+import lessonCalculus from "@/src/assets/images/student-redesign/lesson-calculus.webp";
+import lessonMechanics from "@/src/assets/images/student-redesign/lesson-mechanics.webp";
+import lessonStudySkills from "@/src/assets/images/student-redesign/lesson-study-skills.webp";
+import lessonArabic from "@/src/assets/images/student-redesign/lesson-arabic.webp";
+
+const courseThumbnails = [
+  lessonCalculus,
+  lessonMechanics,
+  lessonStudySkills,
+  lessonArabic,
+];
 
 interface TeacherProfileViewProps {
   teacher: Teacher;
+  onRequireAuth: () => void;
 }
 
-export default function TeacherProfileView({ teacher }: TeacherProfileViewProps) {
+export default function TeacherProfileView({ teacher, onRequireAuth }: TeacherProfileViewProps) {
   const [copiedLink, setCopiedLink] = useState(false);
-  const [subscribedCourses, setSubscribedCourses] = useState<Record<string, boolean>>({});
+  const [subscribedCourses, setSubscribedCourses] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(teacher.courses.map((course) => [course.id, course.isSubscribed === true])),
+  );
+  const [expandedCourses, setExpandedCourses] = useState<Record<string, boolean>>({});
+  const [processingCourse, setProcessingCourse] = useState<string | null>(null);
+  const [checkoutError, setCheckoutError] = useState("");
 
   const handleShare = () => {
     if (navigator.clipboard) {
@@ -22,20 +43,57 @@ export default function TeacherProfileView({ teacher }: TeacherProfileViewProps)
     }
   };
 
+  const handleCourseAction = async (courseId: string, isSubscribed: boolean) => {
+    if (isSubscribed) {
+      setExpandedCourses((current) => ({ ...current, [courseId]: !current[courseId] }));
+      return;
+    }
+
+    setProcessingCourse(courseId);
+    setCheckoutError("");
+    const response = await fetch("/api/student/payments/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ course_id: Number(courseId) }),
+    }).catch(() => null);
+
+    if (response?.status === 401) {
+      setProcessingCourse(null);
+      onRequireAuth();
+      return;
+    }
+    if (response?.status === 409) {
+      setSubscribedCourses((current) => ({ ...current, [courseId]: true }));
+      setProcessingCourse(null);
+      return;
+    }
+    if (!response?.ok) {
+      const body = await response?.json().catch(() => null);
+      setCheckoutError(body?.detail ?? "تعذر بدء عملية الدفع حالياً.");
+      setProcessingCourse(null);
+      return;
+    }
+
+    const body = await response.json();
+    window.location.assign(body.redirect_url);
+  };
+
   return (
-    <div className="min-h-screen bg-page text-ink dir-rtl pb-20">
-      <div className="relative bg-gradient-to-br from-slate-900 via-sky-950 to-slate-950 text-white overflow-hidden shadow-xl">
-        <div className="absolute inset-0 opacity-25 bg-cover bg-center mix-blend-overlay pointer-events-none"
-          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=1600')" }}
+    <div dir="rtl" className="bg-page text-ink pb-16">
+      <div className="relative overflow-hidden bg-slate-950 pt-24 text-white shadow-xl">
+        <Image
+          src={profileBackground}
+          alt=""
+          fill
+          sizes="100vw"
+          className="pointer-events-none object-cover object-center opacity-25 mix-blend-overlay"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0B132B] via-slate-900/80 to-transparent pointer-events-none" />
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-sky-500/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute inset-0 bg-slate-950/80 pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 relative z-10 flex items-center justify-between">
-          <Link href="/" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-extrabold text-xs sm:text-sm backdrop-blur-md transition-all">
+          <Link href="/browse-teachers" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-extrabold text-xs sm:text-sm backdrop-blur-md transition-all">
             <ArrowRight className="w-4 h-4" />
-            <span>العودة للرئيسية</span>
+            <span>كل المدرسين</span>
           </Link>
 
           <button onClick={handleShare} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 border border-sky-400/30 text-sky-200 font-extrabold text-xs sm:text-sm backdrop-blur-md transition-all cursor-pointer">
@@ -45,21 +103,36 @@ export default function TeacherProfileView({ teacher }: TeacherProfileViewProps)
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-16 sm:pb-20 relative z-10">
-          <div className="flex flex-col md:flex-row items-center md:items-end gap-6 sm:gap-8 text-center md:text-right">
-            <div className="relative shrink-0 group">
+          <div className="flex flex-col md:flex-row items-center md:items-end gap-6 sm:gap-8 text-center md:text-start">
+            <m.div
+              initial={{ opacity: 0, scale: 0.94 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="relative shrink-0 group"
+            >
               <div className="w-44 h-52 sm:w-56 sm:h-64 md:w-64 md:h-72 rounded-3xl p-1.5 bg-gradient-to-tr from-amber-400/80 via-sky-400/80 to-primary/80 shadow-2xl">
                 <div className="w-full h-full rounded-[20px] overflow-hidden bg-slate-900 border border-white/10 relative">
-                  <img src={teacher.avatar} alt={teacher.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <Image
+                    src={teacher.avatar}
+                    alt={teacher.name}
+                    fill
+                    sizes="(max-width: 639px) 176px, (max-width: 767px) 224px, 256px"
+                    className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent opacity-60" />
-                  <div className="absolute bottom-3 right-3 bg-emerald-500 border-2 border-slate-900 px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1.5">
+                  <div className="absolute bottom-3 end-3 bg-emerald-500 border-2 border-slate-900 px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1.5">
                     <CheckCircle2 className="w-4 h-4 text-white stroke-[3]" />
                     <span className="text-[11px] font-black text-white">معلم موثوق</span>
                   </div>
                 </div>
               </div>
-            </div>
+            </m.div>
 
-            <div className="space-y-3 flex-1">
+            <m.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="space-y-3 flex-1"
+            >
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
                 <span className="bg-amber-400 text-slate-950 font-black text-xs px-3 py-1 rounded-full flex items-center gap-1 shadow-md">
                   <Sparkles className="w-3.5 h-3.5" />
@@ -83,10 +156,43 @@ export default function TeacherProfileView({ teacher }: TeacherProfileViewProps)
                   <span>{teacher.courses.length} كورسات متاحة</span>
                 </div>
               </div>
-            </div>
+            </m.div>
           </div>
         </div>
       </div>
+
+      <section className="border-b border-slate-200/70 bg-white py-10 dark:border-slate-800 dark:bg-slate-900">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[1.4fr_1fr] lg:px-8">
+          <Reveal>
+            <div>
+              <p className="mb-2 text-xs font-extrabold text-primary">عن المدرس</p>
+              <h2 className="text-2xl font-black text-ink">خبرة تساعدك تفهم، مش تحفظ</h2>
+              <p className="mt-3 max-w-3xl text-sm font-medium leading-7 text-muted">{teacher.bio}</p>
+              <div className="mt-5 flex flex-wrap gap-2">
+                {teacher.specialties.map((specialty) => (
+                  <span key={specialty} className="rounded-lg border border-sky-200 bg-sky-50 px-3 py-1.5 text-xs font-bold text-sky-800 dark:border-slate-700 dark:bg-slate-800 dark:text-sky-300">
+                    {specialty}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </Reveal>
+          <Reveal delay={80}>
+            <div className="grid h-full grid-cols-2 gap-px overflow-hidden rounded-xl border border-slate-200 bg-slate-200 dark:border-slate-700 dark:bg-slate-700">
+              <div className="bg-page p-4">
+                <BookOpen className="mb-3 size-5 text-primary" />
+                <strong className="block text-xl font-black">{teacher.courses.length}</strong>
+                <span className="text-xs text-muted">كورسات منشورة</span>
+              </div>
+              <div className="bg-page p-4">
+                <MapPin className="mb-3 size-5 text-accent" />
+                <strong className="block text-sm font-black leading-6">{teacher.location ?? "أونلاين"}</strong>
+                <span className="text-xs text-muted">مكان التدريس</span>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
         <section className="space-y-6">
@@ -101,24 +207,41 @@ export default function TeacherProfileView({ teacher }: TeacherProfileViewProps)
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+            {checkoutError && (
+              <div role="alert" className="col-span-full flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-300">
+                <CircleAlert className="size-5 shrink-0" />
+                <span>{checkoutError}</span>
+              </div>
+            )}
             {teacher.courses.map((course, index) => {
               const isSubscribed = subscribedCourses[course.id];
-              const thumbnails = [
-                "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&q=80&w=800",
-                "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&q=80&w=800",
-                "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800",
-                "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=800",
-              ];
-              const thumbnail = thumbnails[index % thumbnails.length];
+              const thumbnail = course.image ?? courseThumbnails[index % courseThumbnails.length];
+              const isProcessing = processingCourse === course.id;
+              const isExpanded = expandedCourses[course.id];
 
               return (
-                <div key={course.id} className="bg-white dark:bg-slate-800/95 rounded-[28px] overflow-hidden border border-slate-200/90 dark:border-slate-700 shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+                <m.article
+                  key={course.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  whileHover={{ y: -5 }}
+                  transition={{ delay: index * 0.06 }}
+                  className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-md hover:shadow-2xl dark:border-slate-700 dark:bg-slate-800/95"
+                >
                   <div>
                     <div className="relative w-full aspect-video overflow-hidden bg-slate-900">
-                      <img src={thumbnail} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <Image
+                        src={thumbnail}
+                        alt={course.title}
+                        fill
+                        loading="lazy"
+                        sizes="(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) 50vw, 33vw"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
-                      <div className="absolute top-3 right-3 bg-primary/90 text-white text-[11px] font-black px-3 py-1 rounded-full backdrop-blur-md shadow-sm">{teacher.subject}</div>
-                      <div className="absolute bottom-3 left-3 bg-slate-900/80 text-slate-200 text-[11px] font-bold px-2.5 py-1 rounded-lg backdrop-blur-md flex items-center gap-1">
+                      <div className="absolute end-3 top-3 bg-primary/90 text-white text-[11px] font-black px-3 py-1 rounded-full backdrop-blur-md shadow-sm">{teacher.subject}</div>
+                      <div className="absolute bottom-3 start-3 bg-slate-900/80 text-slate-200 text-[11px] font-bold px-2.5 py-1 rounded-lg backdrop-blur-md flex items-center gap-1">
                         <Clock className="w-3 h-3 text-sky-400" />
                         <span>{course.duration}</span>
                       </div>
@@ -142,20 +265,64 @@ export default function TeacherProfileView({ teacher }: TeacherProfileViewProps)
                     <div className="flex items-center justify-between gap-3 pt-3 border-t border-slate-100 dark:border-slate-700/80">
                       <div>
                         <span className="text-2xl font-black text-ink font-cairo">{course.price}</span>
-                        <span className="text-xs font-bold text-muted mr-1">ج.م / الشهر</span>
+                        <span className="ms-1 text-xs font-bold text-muted">ج.م / الشهر</span>
                       </div>
-                      <button onClick={() => setSubscribedCourses((p) => ({ ...p, [course.id]: true }))}
-                        disabled={isSubscribed}
+                      <button onClick={() => handleCourseAction(course.id, isSubscribed)}
+                        disabled={isProcessing}
                         className={cn(
                           "py-2.5 px-5 font-black text-xs sm:text-sm rounded-xl shadow-md transition-all cursor-pointer flex items-center gap-2",
-                          isSubscribed ? "bg-emerald-600 text-white cursor-default" : "bg-primary hover:bg-primary-hover text-white active:scale-95 shadow-primary/20"
+                          isSubscribed ? "bg-emerald-600 text-white" : "bg-primary hover:bg-primary-hover text-white active:scale-95 shadow-primary/20"
                         )}
                       >
-                        {isSubscribed ? <><Check className="w-4 h-4" /><span>تم الاشتراك!</span></> : <><BookOpen className="w-4 h-4" /><span>اشترك الآن</span></>}
+                        <AnimatePresence mode="wait" initial={false}>
+                          <m.span
+                            key={isSubscribed ? "subscribed" : "subscribe"}
+                            initial={{ opacity: 0, y: 6 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -6 }}
+                            className="flex items-center gap-2"
+                          >
+                            {isProcessing ? <><LoaderCircle className="w-4 h-4 animate-spin" /><span>جاري التحويل</span></> : isSubscribed ? <><ChevronDown className={cn("w-4 h-4 transition-transform", isExpanded && "rotate-180")} /><span>محتوى الكورس</span></> : <><BookOpen className="w-4 h-4" /><span>اشترك الآن</span></>}
+                          </m.span>
+                        </AnimatePresence>
                       </button>
                     </div>
                   </div>
-                </div>
+                  {isSubscribed && isExpanded && (
+                    <div className="border-t border-slate-200 bg-slate-50 px-5 py-4 dark:border-slate-700 dark:bg-slate-900/60">
+                      {course.chapters?.length ? (
+                        <div className="space-y-4">
+                          {course.chapters.map((chapter) => (
+                            <div key={chapter.id}>
+                              {chapter.title && <h4 className="mb-2 text-sm font-black text-ink">{chapter.title}</h4>}
+                              <div className="space-y-2">
+                                {chapter.lessons.map((lesson) => (
+                                  <div key={lesson.id} className="border-b border-slate-200 pb-2 last:border-0 dark:border-slate-700">
+                                    <p className="text-xs font-extrabold text-ink">{lesson.title}</p>
+                                    <div className="mt-2 flex flex-wrap gap-2">
+                                      {lesson.items.map((item) => (
+                                        <span key={item.id} className="inline-flex items-center gap-1.5 text-[11px] font-bold text-muted">
+                                          {item.hasVideo ? <PlayCircle className="size-3.5 text-primary" /> : item.hasDocument ? <FileText className="size-3.5 text-emerald-600" /> : <ClipboardList className="size-3.5 text-amber-600" />}
+                                          {item.videoUrl ? (
+                                            <a href={item.videoUrl} target="_blank" rel="noreferrer" className="text-primary hover:underline">{item.title}</a>
+                                          ) : item.documentPath ? (
+                                            <a href={item.documentPath} target="_blank" rel="noreferrer" className="text-primary hover:underline">{item.title}</a>
+                                          ) : item.title}
+                                        </span>
+                                      ))}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-xs font-bold text-muted">لم يضف المدرس محتوى للكورس بعد.</p>
+                      )}
+                    </div>
+                  )}
+                </m.article>
               );
             })}
           </div>

@@ -1,18 +1,8 @@
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { routing } from "@/src/i18n/routing";
-import { TEACHERS_DATA } from "@/src/features/student-redesign/data/mock-data";
-import TeacherProfileView from "@/src/features/student-redesign/components/client/teacher-profile-view";
-
-export function generateStaticParams() {
-  const params: { locale: string; id: string }[] = [];
-  for (const locale of routing.locales) {
-    for (const teacher of TEACHERS_DATA) {
-      params.push({ locale, id: teacher.id });
-    }
-  }
-  return params;
-}
+import TeacherProfileShell from "@/src/features/student-redesign/components/client/teacher-profile-shell";
+import { toTeacher } from "@/src/lib/student-api/adapters";
+import { getPublicTeacher, getPublicTeacherCourses, getPublicTeachers } from "@/src/lib/student-api/public";
 
 export default async function TeacherProfilePage({
   params,
@@ -22,8 +12,26 @@ export default async function TeacherProfilePage({
   const { locale, id } = await params;
   setRequestLocale(locale);
 
-  const teacher = TEACHERS_DATA.find((t) => t.id === id);
-  if (!teacher) notFound();
+  const [teacherResult, coursesResult] = await Promise.all([
+    getPublicTeacher(id),
+    getPublicTeacherCourses(id),
+  ]);
+  let teacherData;
+  if (teacherResult.ok) {
+    teacherData = teacherResult.data;
+  } else {
+    const teachersResult = await getPublicTeachers();
+    teacherData = teachersResult.ok
+      ? teachersResult.data.find((teacher) => teacher.slug === id)
+      : undefined;
+    if (!teacherData && teacherResult.error.status === 404) notFound();
+    if (!teacherData) throw new Error(teacherResult.error.message);
+  }
 
-  return <TeacherProfileView teacher={teacher} />;
+  const teacher = toTeacher(
+    teacherData,
+    coursesResult.ok ? coursesResult.data : [],
+  );
+
+  return <TeacherProfileShell teacher={teacher} locale={locale} />;
 }

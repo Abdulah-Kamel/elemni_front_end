@@ -1,10 +1,12 @@
-import { GraduationCap, Phone, Mail, MapPin, Send, Heart } from "lucide-react";
+import { GraduationCap, Phone, Mail, MapPin, Send } from "lucide-react";
 
-export default function Footer() {
+export default function Footer({ homeHref = "" }: { homeHref?: string }) {
+  const landingHref = (hash: string) => `${homeHref}${hash}`;
+
   return (
     <footer className="bg-[#0F172A] text-white pt-16 pb-12 border-t border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-slate-800 text-right">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-slate-800 text-start">
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-lg">
@@ -69,18 +71,18 @@ export default function Footer() {
           </div>
 
           <div className="space-y-3">
-            <h4 className="text-sm font-extrabold text-primary-light font-cairo border-r-2 border-primary pr-2">
+            <h4 className="border-s-2 border-primary ps-2 text-sm font-extrabold text-primary-light font-cairo">
               روابط السريعة
             </h4>
             <ul className="space-y-2 text-xs text-slate-400">
               <li>
-                <a href="#hero" className="hover:text-white transition-colors">
+                <a href={landingHref("#hero")} className="hover:text-white transition-colors">
                   الرئيسية
                 </a>
               </li>
               <li>
                 <a
-                  href="#teachers"
+                  href={landingHref("#teachers")}
                   className="hover:text-white transition-colors"
                 >
                   المدرسون والكورسات
@@ -88,14 +90,14 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="#features"
+                  href={landingHref("#features")}
                   className="hover:text-white transition-colors"
                 >
                   المميزات والتطبيقات
                 </a>
               </li>
               <li>
-                <a href="#faq" className="hover:text-white transition-colors">
+                <a href={landingHref("#faq")} className="hover:text-white transition-colors">
                   الأسئلة الشائعة
                 </a>
               </li>
@@ -103,13 +105,13 @@ export default function Footer() {
           </div>
 
           <div className="space-y-3">
-            <h4 className="text-sm font-extrabold text-primary-light font-cairo border-r-2 border-primary pr-2">
+            <h4 className="border-s-2 border-primary ps-2 text-sm font-extrabold text-primary-light font-cairo">
               المناهج والدعم
             </h4>
             <ul className="space-y-2 text-xs text-slate-400">
               <li>
                 <a
-                  href="#teachers"
+                  href={landingHref("#teachers")}
                   className="hover:text-white transition-colors"
                 >
                   الصف الثالث الثانوي
@@ -117,7 +119,7 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="#teachers"
+                  href={landingHref("#teachers")}
                   className="hover:text-white transition-colors"
                 >
                   الصف الثاني الثانوي
@@ -125,14 +127,14 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="#teachers"
+                  href={landingHref("#teachers")}
                   className="hover:text-white transition-colors"
                 >
                   الصف الأول الثانوي
                 </a>
               </li>
               <li>
-                <a href="#faq" className="hover:text-white transition-colors">
+                <a href={landingHref("#faq")} className="hover:text-white transition-colors">
                   الأسئلة الشائعة
                 </a>
               </li>
@@ -145,7 +147,7 @@ export default function Footer() {
           </div>
 
           <div className="space-y-3">
-            <h4 className="text-sm font-extrabold text-primary-light font-cairo border-r-2 border-primary pr-2">
+            <h4 className="border-s-2 border-primary ps-2 text-sm font-extrabold text-primary-light font-cairo">
               تواصل معنا
             </h4>
             <div className="space-y-2 text-xs text-slate-400">
@@ -165,7 +167,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 text-center sm:text-right">
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 text-center sm:text-start">
           <p>© 2026 منصة علمني (ELEMNI). جميع الحقوق محفوظة.</p>
         </div>
       </div>

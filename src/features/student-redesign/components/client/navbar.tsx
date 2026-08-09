@@ -1,8 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Search, User, GraduationCap, Sun, Moon, UserPlus, X, Menu } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Search, User, GraduationCap, Sun, Moon, UserPlus, X, Menu, Users, Sparkles, Route, CircleHelp, BookMarked, LayoutDashboard, LogOut } from "lucide-react";
 import { cn } from "@/src/lib/cn";
+import { AnimatePresence, m } from "motion/react";
+import { Link } from "@/src/i18n/navigation";
+import type { UserDto } from "@/src/lib/student-api/contract";
 
 interface NavbarProps {
   onOpenAuth: (mode: "signin" | "signup") => void;
@@ -11,24 +14,67 @@ interface NavbarProps {
   isDarkMode: boolean;
   onToggleDarkMode: () => void;
   onGoHome?: () => void;
+  showSearch?: boolean;
+  landingBaseHref?: string;
 }
 
-export default function Navbar({ onOpenAuth, onSearchChange, searchQuery, isDarkMode, onToggleDarkMode, onGoHome }: NavbarProps) {
+const navItems = [
+  { hash: "#teachers", label: "المدرسون", icon: Users },
+  { hash: "#features", label: "المميزات", icon: Sparkles },
+  { hash: "#how", label: "كيف تبدأ", icon: Route },
+  { hash: "#faq", label: "الأسئلة الشائعة", icon: CircleHelp },
+];
+
+export default function Navbar({ onSearchChange, searchQuery, isDarkMode, onToggleDarkMode, onGoHome, showSearch = true, landingBaseHref = "" }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showSearchInput, setShowSearchInput] = useState(false);
+  const [currentUser, setCurrentUser] = useState<UserDto | null>(null);
+
+  const loadSession = useCallback(async () => {
+    const response = await fetch("/api/student/auth/me", { cache: "no-store" }).catch(() => null);
+    if (!response?.ok) {
+      setCurrentUser(null);
+      return;
+    }
+    setCurrentUser(await response.json());
+  }, []);
 
   useEffect(() => {
+    const timer = window.setTimeout(() => void loadSession(), 0);
+    window.addEventListener("student-session-changed", loadSession);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("student-session-changed", loadSession);
+    };
+  }, [loadSession]);
+
+  const logout = async () => {
+    await fetch("/api/student/auth/logout", { method: "POST" }).catch(() => null);
+    setCurrentUser(null);
+    setMobileMenuOpen(false);
+    window.dispatchEvent(new Event("student-session-changed"));
+  };
+
+  useEffect(() => {
+    let frameId: number | null = null;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      if (frameId !== null) return;
+      frameId = window.requestAnimationFrame(() => {
+        setIsScrolled(window.scrollY > 20);
+        frameId = null;
+      });
     };
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (frameId !== null) window.cancelAnimationFrame(frameId);
+    };
   }, []);
 
   return (
     <header className={cn(
-      "fixed top-0 right-0 left-0 z-50 transition-all duration-300",
+      "fixed inset-x-0 top-0 z-50 transition-all duration-300",
       isScrolled
         ? "bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-sm border-b border-slate-100 dark:border-slate-800 py-3"
         : "bg-white dark:bg-slate-900 py-4"
@@ -36,7 +82,7 @@ export default function Navbar({ onOpenAuth, onSearchChange, searchQuery, isDark
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 sm:gap-4">
-            <a href="#" onClick={(e) => { e.preventDefault(); onGoHome?.(); }} className="flex items-center gap-2.5 group focus:outline-none shrink-0 cursor-pointer">
+            <a href={`${landingBaseHref}#hero`} onClick={(e) => { if (onGoHome) { e.preventDefault(); onGoHome(); } }} className="flex items-center gap-2.5 group focus:outline-none shrink-0 cursor-pointer">
               <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-md shadow-primary/20 group-hover:scale-105 transition-transform">
                 <GraduationCap className="w-6 h-6 stroke-[2.2]" />
               </div>
@@ -71,6 +117,18 @@ export default function Navbar({ onOpenAuth, onSearchChange, searchQuery, isDark
             </button>
           </div>
 
+          <nav aria-label="التنقل الرئيسي" className="hidden items-center gap-1 lg:flex">
+            {navItems.map((item) => (
+              <a
+                key={item.hash}
+                href={`${landingBaseHref}${item.hash}`}
+                className="rounded-lg px-3 py-2 text-xs font-bold text-slate-600 transition-colors hover:bg-sky-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-sky-300"
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+
           <div className="flex items-center gap-3 sm:gap-5">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -80,10 +138,17 @@ export default function Navbar({ onOpenAuth, onSearchChange, searchQuery, isDark
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
 
-            <div className="hidden sm:flex relative items-center">
+            {showSearch && <div className="hidden sm:flex relative items-center">
+              <AnimatePresence mode="wait" initial={false}>
               {showSearchInput ? (
-                <div className="flex items-center bg-[#F8FAFC] dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full px-3 py-1.5 shadow-inner transition-all">
-                  <Search className="w-4 h-4 text-slate-400 ml-2" />
+                <m.div
+                  key="search-input"
+                  initial={{ opacity: 0, width: 40 }}
+                  animate={{ opacity: 1, width: "auto" }}
+                  exit={{ opacity: 0, width: 40 }}
+                  className="flex items-center overflow-hidden rounded-full border border-slate-200 bg-[#F8FAFC] px-3 py-1.5 shadow-inner dark:border-slate-700 dark:bg-slate-800"
+                >
+                  <Search className="me-2 size-4 shrink-0 text-slate-400" />
                   <input
                     type="text"
                     value={searchQuery}
@@ -97,43 +162,74 @@ export default function Navbar({ onOpenAuth, onSearchChange, searchQuery, isDark
                       setShowSearchInput(false);
                       onSearchChange("");
                     }}
-                    className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 mr-1 text-xs cursor-pointer"
+                    className="ms-1 cursor-pointer text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                    aria-label="إغلاق البحث"
                   >
                     ✕
                   </button>
-                </div>
+                </m.div>
               ) : (
-                <button
+                <m.button
+                  key="search-button"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
                   onClick={() => setShowSearchInput(true)}
                   className="p-2 text-slate-700 dark:text-slate-300 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors cursor-pointer"
                   title="بحث"
                 >
                   <Search className="w-5 h-5" />
-                </button>
+                </m.button>
               )}
-            </div>
+              </AnimatePresence>
+            </div>}
 
-            <button
-              onClick={() => onOpenAuth("signin")}
-              className="hidden sm:flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200 hover:text-primary transition-colors cursor-pointer font-cairo shrink-0"
-            >
-              <span>سجل دخولك</span>
-              <User className="w-4 h-4 text-primary" />
-            </button>
+            {currentUser ? (
+              <div className="hidden items-center gap-2 sm:flex">
+                <Link href="/dashboard" className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-extrabold text-primary hover:bg-sky-50 dark:hover:bg-slate-800">
+                  <LayoutDashboard className="size-4" />
+                  <span>لوحتي</span>
+                </Link>
+                <Link href="/my-courses" className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-extrabold text-primary hover:bg-sky-50 dark:hover:bg-slate-800">
+                  <BookMarked className="size-4" />
+                  <span>كورساتي</span>
+                </Link>
+                <span className="max-w-28 truncate text-xs font-bold text-slate-700 dark:text-slate-200">{currentUser.name}</span>
+                <button onClick={logout} title="تسجيل الخروج" aria-label="تسجيل الخروج" className="cursor-pointer rounded-lg p-2 text-slate-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-slate-800">
+                  <LogOut className="size-4" />
+                </button>
+              </div>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="hidden sm:flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200 hover:text-primary transition-colors cursor-pointer font-cairo shrink-0"
+                >
+                  <span>سجل دخولك</span>
+                  <User className="w-4 h-4 text-primary" />
+                </Link>
 
-            <button
-              onClick={() => onOpenAuth("signup")}
-              className="hidden sm:inline-flex px-4 sm:px-5 py-2.5 bg-primary hover:bg-primary-hover active:scale-95 text-white font-extrabold text-xs sm:text-sm rounded-xl shadow-md shadow-primary/25 transition-all cursor-pointer items-center gap-2 font-cairo shrink-0"
-            >
-              <UserPlus className="w-4 h-4" />
-              <span>اعمل حساب جديد !</span>
-            </button>
+                <Link
+                  href="/register"
+                  className="hidden sm:inline-flex px-4 sm:px-5 py-2.5 bg-primary hover:bg-primary-hover active:scale-95 text-white font-extrabold text-xs sm:text-sm rounded-xl shadow-md shadow-primary/25 transition-all cursor-pointer items-center gap-2 font-cairo shrink-0"
+                >
+                  <UserPlus className="w-4 h-4" />
+                  <span>اعمل حساب جديد !</span>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
 
+      <AnimatePresence initial={false}>
       {mobileMenuOpen && (
-        <div className="sm:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 pt-3 pb-6 space-y-3 shadow-xl mt-3">
+        <m.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          className="mt-3 space-y-3 overflow-hidden border-b border-slate-200 bg-white px-4 pb-6 pt-3 shadow-xl dark:border-slate-800 dark:bg-slate-900 sm:hidden"
+        >
           <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
             <button
               type="button"
@@ -149,35 +245,72 @@ export default function Navbar({ onOpenAuth, onSearchChange, searchQuery, isDark
             <span className="text-xs font-bold text-slate-600 dark:text-slate-300 font-cairo">مظهر المنصة</span>
           </div>
 
-          <div className="relative pt-2">
-            <Search className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2" />
+          {showSearch && <div className="relative pt-2">
+            <Search className="absolute end-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
               placeholder="ابحث عن معلم..."
-              className="w-full pr-10 pl-4 py-2.5 bg-[#F8FAFC] dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-[#0F172A] dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary font-cairo"
+              className="w-full rounded-xl border border-slate-200 bg-[#F8FAFC] py-2.5 pe-4 ps-10 text-sm text-[#0F172A] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary dark:border-slate-700 dark:bg-slate-800 dark:text-white font-cairo"
             />
-          </div>
+          </div>}
+
+          <nav aria-label="التنقل الرئيسي للموبايل" className="grid grid-cols-2 gap-2 border-b border-slate-100 pb-3 dark:border-slate-800">
+            {navItems.map(({ hash, label, icon: Icon }) => (
+              <a
+                key={hash}
+                href={`${landingBaseHref}${hash}`}
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex min-h-11 items-center gap-2 rounded-xl bg-slate-50 px-3 py-2 text-xs font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-200"
+              >
+                <Icon className="size-4 text-primary" />
+                <span>{label}</span>
+              </a>
+            ))}
+          </nav>
 
           <div className="flex flex-col gap-2 font-cairo">
-            <button
-              onClick={() => { setMobileMenuOpen(false); onOpenAuth("signin"); }}
+            {currentUser ? (
+              <>
+                <div className="rounded-xl bg-slate-50 px-3 py-2 text-sm font-bold text-ink dark:bg-slate-800">{currentUser.name}</div>
+                <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)} className="flex w-full items-center justify-center gap-2 rounded-xl border border-sky-200 bg-sky-50 py-3 text-sm font-bold text-primary dark:border-slate-700 dark:bg-slate-800">
+                  <LayoutDashboard className="size-4" />
+                  <span>لوحة الطالب</span>
+                </Link>
+                <Link href="/my-courses" onClick={() => setMobileMenuOpen(false)} className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-bold text-white">
+                  <BookMarked className="size-4" />
+                  <span>كورساتي</span>
+                </Link>
+                <button onClick={logout} className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-red-50 py-3 text-sm font-bold text-red-700 dark:bg-red-950/30 dark:text-red-300">
+                  <LogOut className="size-4" />
+                  <span>تسجيل الخروج</span>
+                </button>
+              </>
+            ) : (
+              <>
+            <Link
+              href="/login"
+              onClick={() => setMobileMenuOpen(false)}
               className="w-full py-3 text-center text-sm font-semibold text-[#0F172A] dark:text-white bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center gap-2 cursor-pointer"
             >
               <User className="w-4 h-4 text-primary" />
               <span>سجل دخولك</span>
-            </button>
-            <button
-              onClick={() => { setMobileMenuOpen(false); onOpenAuth("signup"); }}
+            </Link>
+            <Link
+              href="/register"
+              onClick={() => setMobileMenuOpen(false)}
               className="w-full py-3 text-center text-sm font-bold text-white bg-primary hover:bg-primary-hover rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer"
             >
               <UserPlus className="w-4 h-4" />
               <span>اعمل حساب جديد !</span>
-            </button>
+            </Link>
+              </>
+            )}
           </div>
-        </div>
+        </m.div>
       )}
+      </AnimatePresence>
     </header>
   );
 }

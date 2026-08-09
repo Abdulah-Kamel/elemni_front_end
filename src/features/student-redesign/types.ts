@@ -5,6 +5,33 @@ export interface Course {
   price: number;
   duration: string;
   sessionsCount: number;
+  image?: ImageSource;
+  isSubscribed?: boolean;
+  chapters?: CourseChapter[];
+}
+
+export interface CourseItem {
+  id: number;
+  title: string;
+  hasVideo: boolean;
+  hasDocument: boolean;
+  hasExam: boolean;
+  videoUrl?: string;
+  documentPath?: string;
+}
+
+export interface CourseLesson {
+  id: number;
+  title: string;
+  description?: string;
+  durationMinutes?: number;
+  items: CourseItem[];
+}
+
+export interface CourseChapter {
+  id: number;
+  title: string;
+  lessons: CourseLesson[];
 }
 
 export interface Teacher {
@@ -17,7 +44,9 @@ export interface Teacher {
   grade: string;
   gradeLabel: string;
   gradesList?: string[];
-  avatar: string;
+  gradeIds?: string[];
+  streamIds?: string[];
+  avatar: ImageSource;
   studentCount: number;
   experienceYears: number;
   pricePerSession: number;
@@ -27,7 +56,25 @@ export interface Teacher {
   specialties: string[];
   schedule: string[];
   courses: Course[];
+  location?: string;
 }
+
+export type TeacherSummary = Pick<
+  Teacher,
+  | "id"
+  | "name"
+  | "title"
+  | "subject"
+  | "subjects"
+  | "category"
+  | "grade"
+  | "gradeLabel"
+  | "gradesList"
+  | "gradeIds"
+  | "streamIds"
+  | "avatar"
+  | "bio"
+>;
 
 export interface Feature {
   id: string;
@@ -45,7 +92,7 @@ export interface Testimonial {
   grade: string;
   school: string;
   score: string;
-  avatar: string;
+  avatar: ImageSource;
   comment: string;
   teacherName: string;
 }
@@ -65,3 +112,6 @@ export interface QuizQuestion {
   correctAnswer: number;
   explanation: string;
 }
+import type { ImageProps } from "next/image";
+
+export type ImageSource = ImageProps["src"];

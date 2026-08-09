@@ -1,6 +1,7 @@
 import { TESTIMONIALS } from "../../data/mock-data";
 import { Quote, Award, CheckCircle2 } from "lucide-react";
 import { Reveal } from "@/src/components/ui/reveal";
+import Image from "next/image";
 
 export default function Testimonials() {
   return (
@@ -23,17 +24,25 @@ export default function Testimonials() {
           {TESTIMONIALS.map((t, i) => (
             <Reveal key={t.id} delay={i * 80}>
               <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 flex flex-col justify-between relative h-full">
-                <Quote className="w-10 h-10 text-primary-light absolute top-6 left-6 -scale-x-100" />
+                <Quote className="w-10 h-10 text-primary-light absolute top-6 end-6 -scale-x-100" />
                 <div>
                   <div className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-800 font-extrabold text-xs px-3 py-1 rounded-full mb-4">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                     <span>المجموع: {t.score}</span>
                   </div>
-                  <p className="text-sm text-[#334155] leading-relaxed font-medium mb-6 text-right relative z-10">&quot;{t.comment}&quot;</p>
+                  <p className="text-sm text-[#334155] leading-relaxed font-medium mb-6 text-start relative z-10">&quot;{t.comment}&quot;</p>
                 </div>
                 <div className="pt-4 border-t border-slate-100 flex items-center gap-3">
-                  <img src={t.avatar} alt={t.name} className="w-12 h-12 rounded-full object-cover border-2 border-primary-light" />
-                  <div className="text-right">
+                  <Image
+                    src={t.avatar}
+                    alt={t.name}
+                    width={48}
+                    height={48}
+                    loading="lazy"
+                    sizes="48px"
+                    className="size-12 rounded-full border-2 border-primary-light object-cover"
+                  />
+                  <div className="text-start">
                     <h4 className="font-extrabold text-sm text-[#0F172A]">{t.name}</h4>
                     <p className="text-xs text-primary font-bold">{t.grade}</p>
                     <p className="text-[10px] text-slate-400">{t.school}</p>

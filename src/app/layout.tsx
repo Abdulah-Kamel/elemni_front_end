@@ -18,6 +18,8 @@ const inter = Inter({
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
+      lang="ar"
+      dir="rtl"
       suppressHydrationWarning
       className={`${cairo.variable} ${inter.variable}`}
     >

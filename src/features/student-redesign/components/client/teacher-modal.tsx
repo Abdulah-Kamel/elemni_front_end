@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { Teacher, Course } from "../../types";
-import { X, Play, BookOpen, Clock, ArrowLeft } from "lucide-react";
+import { X, Play, Clock, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface TeacherModalProps {
   teacher: Teacher | null;
@@ -23,21 +24,24 @@ export default function TeacherModal({ teacher, onClose, onBook }: TeacherModalP
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in overflow-y-auto">
-      <div className="bg-white rounded-3xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl relative border border-slate-100 text-right mt-4 mb-8">
+      <div className="bg-white rounded-3xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl relative border border-slate-100 text-start mt-4 mb-8">
         <button
           onClick={onClose}
-          className="absolute top-4 left-4 p-1.5 text-slate-400 hover:text-[#0F172A] hover:bg-slate-100 rounded-full transition-all cursor-pointer z-10"
+          className="absolute top-4 end-4 p-1.5 text-slate-400 hover:text-[#0F172A] hover:bg-slate-100 rounded-full transition-all cursor-pointer z-10"
         >
           <X className="w-5 h-5" />
         </button>
 
         <div className="flex items-center gap-4 pb-4 border-b border-slate-100">
-          <img
+          <Image
             src={teacher.avatar}
             alt={teacher.name}
-            className="w-16 h-16 rounded-2xl object-cover border-2 border-primary-light shrink-0"
+            width={64}
+            height={64}
+            sizes="64px"
+            className="size-16 shrink-0 rounded-2xl border-2 border-primary-light object-cover"
           />
-          <div className="text-right flex-1 min-w-0">
+          <div className="text-start flex-1 min-w-0">
             <span className="bg-primary-light text-primary font-bold text-[11px] px-2 py-0.5 rounded-md inline-block mb-1">
               {teacher.gradeLabel}
             </span>
@@ -49,10 +53,16 @@ export default function TeacherModal({ teacher, onClose, onBook }: TeacherModalP
         <div className="my-4 rounded-2xl overflow-hidden bg-slate-900 relative aspect-video shadow-md">
           {!isPlayingVideo ? (
             <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-black/80 via-black/40 to-transparent p-3 text-center">
-              <img src={teacher.avatar} alt="preview" className="absolute inset-0 w-full h-full object-cover opacity-40" />
+              <Image
+                src={teacher.avatar}
+                alt=""
+                fill
+                sizes="(max-width: 672px) calc(100vw - 2rem), 672px"
+                className="object-cover opacity-40"
+              />
               <div className="relative z-10">
                 <button onClick={() => setIsPlayingVideo(true)} className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all mx-auto">
-                  <Play className="w-6 h-6 fill-current mr-0.5" />
+                  <Play className="w-6 h-6 fill-current" />
                 </button>
                 <p className="text-white font-bold text-xs mt-2">شاهد فيديو تعريفي</p>
               </div>
@@ -76,7 +86,7 @@ export default function TeacherModal({ teacher, onClose, onBook }: TeacherModalP
           {teacher.courses && teacher.courses.length > 0 ? (
             teacher.courses.map((course) => (
               <div key={course.id} className="p-3 rounded-2xl bg-[#F8FAFC] border border-slate-200 flex items-center justify-between gap-3">
-                <div className="text-right flex-1 min-w-0">
+                <div className="text-start flex-1 min-w-0">
                   <h5 className="font-extrabold text-sm text-[#0F172A]">{course.title}</h5>
                   <div className="flex items-center gap-2 text-[11px] text-slate-500">
                     <span>{course.duration}</span>
@@ -84,7 +94,7 @@ export default function TeacherModal({ teacher, onClose, onBook }: TeacherModalP
                     <span>{course.sessionsCount} حصص</span>
                   </div>
                 </div>
-                <div className="text-left shrink-0">
+                <div className="text-end shrink-0">
                   <span className="text-lg font-black text-primary font-cairo">{course.price}</span>
                   <span className="text-[11px] text-slate-500"> ج.م</span>
                   <button onClick={() => handleEnrollClick(course)} className="block w-full mt-1 px-3 py-1 bg-primary hover:bg-primary-hover text-white font-bold text-[11px] rounded-lg transition-all cursor-pointer">

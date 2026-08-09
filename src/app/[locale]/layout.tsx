@@ -23,6 +23,8 @@ export default async function LocaleLayout({
     <NextIntlClientProvider messages={messages}>
       <HtmlLangDir locale={locale} />
       <div
+        lang={locale}
+        dir={locale === "ar" ? "rtl" : "ltr"}
         className={
           locale === "ar"
             ? "font-[family-name:var(--font-cairo)]"

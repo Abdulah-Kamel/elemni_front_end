@@ -1,38 +1,64 @@
-import { Play } from "lucide-react";
+import { BookOpen, Clock } from "lucide-react";
+import Image from "next/image";
+import { Link } from "@/src/i18n/navigation";
 import { Section } from "@/src/components/ui/section";
 import { Reveal } from "@/src/components/ui/reveal";
+import type { PublicCourseDto } from "@/src/lib/student-api/contract";
+import lessonFallback from "@/src/assets/images/student-redesign/lesson-calculus.webp";
 
-const lessons = [
-  { id: "l1", title: "أقوى شرح للتفاضل والتكامل", desc: "شرح مبسط مع أمثلة محلولة", image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&q=80&w=400", duration: "45:00" },
-  { id: "l2", title: "فيزياء — الكهربية", desc: "أساسيات الكهربية والتيار", image: "https://images.unsplash.com/photo-1581092335397-9583eb92a232?auto=format&fit=crop&q=80&w=400", duration: "38:15" },
-  { id: "l3", title: "قواعد اللغة العربية", desc: "النحو والإعراب للمبتدئين", image: "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?auto=format&fit=crop&q=80&w=400", duration: "52:30" },
-];
+export interface FeaturedCourse {
+  course: PublicCourseDto;
+  teacherName: string;
+  teacherSlug: string;
+}
 
-export default function FeaturedLessons() {
+function courseImage(src: string | null) {
+  return src && (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("/"))
+    ? src
+    : lessonFallback;
+}
+
+function durationLabel(minutes: number | null) {
+  if (!minutes) return null;
+  return minutes < 60 ? `${minutes} دقيقة` : `${Math.round(minutes / 60)} ساعة`;
+}
+
+export default function FeaturedLessons({ courses }: { courses: FeaturedCourse[] }) {
+  if (!courses.length) return null;
+
   return (
-    <Section id="featured-lessons">
+    <Section id="featured-courses">
       <Reveal>
         <div className="mb-4 text-center">
-          <span className="inline-block rounded-full bg-primary-light px-4 py-1.5 text-xs font-bold text-primary">دروس مميزة</span>
+          <span className="inline-block rounded-full bg-primary-light px-4 py-1.5 text-xs font-bold text-primary">كورسات متاحة</span>
         </div>
-        <h2 className="mb-3 text-center text-3xl font-black text-[#0F172A] md:text-4xl font-cairo">أشهر الدروس على المنصة</h2>
-        <p className="mx-auto mb-10 max-w-2xl text-center text-sm text-[#334155]">تصفح الدروس الأكثر مشاهدة وابدأ التعلم فوراً.</p>
+        <h2 className="mb-3 text-center text-3xl font-black text-[#0F172A] md:text-4xl font-cairo">ابدأ بأحدث كورسات المنصة</h2>
+        <p className="mx-auto mb-10 max-w-2xl text-center text-sm text-[#334155]">كورسات منشورة فعلياً من مكتبات المدرسين على علمني.</p>
       </Reveal>
       <div className="grid gap-6 md:grid-cols-3">
-        {lessons.map(({ id, title, desc, image, duration }, i) => (
-          <Reveal key={id} delay={i * 80} className="h-full">
-            <div className="group relative h-full overflow-hidden rounded-2xl bg-slate-900">
-              <img src={image} alt={title} className="h-48 w-full object-cover opacity-80 transition-all duration-500 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-              <div className="absolute bottom-0 p-5 text-white">
-                <span className="mb-1 inline-block rounded-full bg-primary/80 px-2.5 py-0.5 text-[11px] font-bold">{duration}</span>
-                <h3 className="text-lg font-bold">{title}</h3>
-                <p className="mt-1 text-xs text-slate-300">{desc}</p>
+        {courses.map(({ course, teacherName, teacherSlug }, index) => (
+          <Reveal key={course.id} delay={index * 80} className="h-full">
+            <Link href={`/teachers/${teacherSlug}`} className="group flex h-full flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition-transform hover:-translate-y-1 dark:border-slate-700 dark:bg-slate-800">
+              <div className="relative aspect-video w-full overflow-hidden bg-slate-900">
+                <Image
+                  src={courseImage(course.img)}
+                  alt={course.title}
+                  fill
+                  loading="lazy"
+                  sizes="(max-width: 767px) calc(100vw - 2rem), 33vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                />
               </div>
-              <div className="absolute left-1/2 top-1/3 -translate-x-1/2 grid size-12 place-items-center rounded-full bg-white/90 text-primary opacity-0 transition-all group-hover:opacity-100">
-                <Play className="size-5 fill-primary" />
+              <div className="flex flex-1 flex-col p-5">
+                <p className="text-xs font-extrabold text-primary">{course.subject_name ?? teacherName}</p>
+                <h3 className="mt-2 line-clamp-2 text-lg font-black text-ink">{course.title}</h3>
+                <p className="mt-2 line-clamp-2 text-xs leading-6 text-muted">{course.description ?? `كورس مقدم من ${teacherName}`}</p>
+                <div className="mt-auto flex items-center justify-between gap-3 border-t border-slate-100 pt-4 text-xs font-bold text-muted dark:border-slate-700">
+                  <span className="flex items-center gap-1.5"><BookOpen className="size-4 text-primary" />{course.lesson_count} درس</span>
+                  {durationLabel(course.total_duration_minutes) && <span className="flex items-center gap-1.5"><Clock className="size-4 text-emerald-600" />{durationLabel(course.total_duration_minutes)}</span>}
+                </div>
               </div>
-            </div>
+            </Link>
           </Reveal>
         ))}
       </div>
