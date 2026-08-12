@@ -1,7 +1,13 @@
 import { getLocale } from "next-intl/server";
 import "./redesign.css";
 
-import { getGrades, getPublicTeachers, getStreams, getSubjects, getTeacherCoursesPreview } from "@/src/lib/student-api/public";
+import {
+  getGrades,
+  getPublicCourses,
+  getPublicTeachers,
+  getStreams,
+  getSubjects,
+} from "@/src/lib/student-api/public";
 import { toTeacherSummary } from "@/src/lib/student-api/adapters";
 import LandingInteractiveShell from "./components/client/landing-interactive-shell";
 import Features from "./components/server/features";
@@ -20,25 +26,32 @@ import WhatsAppButton from "./components/client/whatsapp-button";
 export default async function StudentLandingPage() {
   const locale = await getLocale();
   const teacherJoinHref = locale === "ar" ? "/teachers" : `/${locale}/teachers`;
-  const [teachersResult, gradesResult, streamsResult, subjectsResult] = await Promise.all([
+  const [
+    coursesResult,
+    teachersResult,
+    gradesResult,
+    streamsResult,
+    subjectsResult,
+  ] = await Promise.all([
+    getPublicCourses(),
     getPublicTeachers(),
     getGrades(),
     getStreams(),
     getSubjects(),
   ]);
-  const teachers = teachersResult.ok ? teachersResult.data.map(toTeacherSummary) : [];
-  const coursePreviews = teachersResult.ok
-    ? await Promise.all(
-        teachersResult.data.slice(0, 6).map(async (teacher) => ({
-          teacher,
-          result: await getTeacherCoursesPreview(teacher.slug),
-        })),
-      )
+  const teachers = teachersResult.ok
+    ? teachersResult.data.map(toTeacherSummary)
     : [];
-  const featuredCourses = coursePreviews
-    .flatMap(({ teacher, result }) =>
-      result.ok && result.data[0]
-        ? [{ course: result.data[0], teacherName: teacher.name, teacherSlug: teacher.slug }]
+  const featuredCourses = (coursesResult.ok ? coursesResult.data : [])
+    .flatMap((course) =>
+      course.teacher_slug
+        ? [
+            {
+              course,
+              teacherName: course.teacher_name || "مدرس علمني",
+              teacherSlug: course.teacher_slug,
+            },
+          ]
         : [],
     )
     .slice(0, 3);
@@ -53,7 +66,9 @@ export default async function StudentLandingPage() {
         <>
           <Features />
           <TeacherJoinCTA href={teacherJoinHref} />
-          <SubjectGrid subjects={subjectsResult.ok ? subjectsResult.data : []} />
+          <SubjectGrid
+            subjects={subjectsResult.ok ? subjectsResult.data : []}
+          />
           <FeaturedLessons courses={featuredCourses} />
           <BentoGrid />
           <StepsSection />

@@ -23,7 +23,10 @@ export function getPublicTeachers(params?: {
   if (params?.streamId) query.set("stream_id", String(params.streamId));
   if (params?.search) query.set("search", params.search);
   const suffix = query.size ? `?${query}` : "";
-  return backendFetch<PublicTeacherDto[]>(`/api/v1/teachers${suffix}`, publicCache);
+  return backendFetch<PublicTeacherDto[]>(
+    `/api/v1/teachers${suffix}`,
+    publicCache,
+  );
 }
 
 export function getPublicTeacher(slug: string) {
@@ -33,9 +36,9 @@ export function getPublicTeacher(slug: string) {
   );
 }
 
-export function getTeacherCoursesPreview(slug: string, limit = 1) {
+export function getPublicCourses(limit = 100) {
   return backendFetch<PublicCourseDto[]>(
-    `/api/v1/teachers/${encodeURIComponent(slug)}/courses?limit=${limit}`,
+    `/api/v1/catalog/courses?limit=${limit}`,
     publicCache,
   );
 }
@@ -47,7 +50,9 @@ export async function getPublicTeacherCourses(slug: string) {
     {
       cache: accessToken ? "no-store" : undefined,
       next: accessToken ? undefined : { revalidate: 300 },
-      headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
+      headers: accessToken
+        ? { Authorization: `Bearer ${accessToken}` }
+        : undefined,
     },
   );
   if (!list.ok || !accessToken) return list;
@@ -57,7 +62,10 @@ export async function getPublicTeacherCourses(slug: string) {
       if (!course.is_subscribed) return course;
       const detail = await backendFetch<PublicCourseDto>(
         `/api/v1/teachers/${encodeURIComponent(slug)}/courses/${course.id}`,
-        { cache: "no-store", headers: { Authorization: `Bearer ${accessToken}` } },
+        {
+          cache: "no-store",
+          headers: { Authorization: `Bearer ${accessToken}` },
+        },
       );
       return detail.ok ? detail.data : course;
     }),

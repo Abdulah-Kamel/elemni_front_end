@@ -1,7 +1,15 @@
 import { redirect } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
-import ExploreCourses, { type ExploreCourseEntry } from "@/src/features/student-portal/components/explore-courses";
-import { getGrades, getPublicTeachers, getStreams, getSubjects, getTeacherCoursesPreview } from "@/src/lib/student-api/public";
+import ExploreCourses, {
+  type ExploreCourseEntry,
+} from "@/src/features/student-portal/components/explore-courses";
+import {
+  getGrades,
+  getPublicCourses,
+  getPublicTeachers,
+  getStreams,
+  getSubjects,
+} from "@/src/lib/student-api/public";
 import { getAccessToken } from "@/src/lib/student-api/session";
 
 export const metadata = { title: "استكشف الكورسات | بوابة الطالب | علمني" };
@@ -13,38 +21,41 @@ export default async function ExploreCoursesPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  if (!(await getAccessToken())) redirect(locale === "ar" ? "/login" : `/${locale}/login`);
+  if (!(await getAccessToken()))
+    redirect(locale === "ar" ? "/login" : `/${locale}/login`);
 
-  const [teachers, grades, streams, subjects] = await Promise.all([
+  const [courses, teachers, grades, streams, subjects] = await Promise.all([
+    getPublicCourses(),
     getPublicTeachers(),
     getGrades(),
     getStreams(),
     getSubjects(),
   ]);
 
-  const courseResults = teachers.ok
-    ? await Promise.all(
-        teachers.data.map(async (teacher) => ({
-          teacher,
-          courses: await getTeacherCoursesPreview(teacher.slug, 100),
-        })),
-      )
-    : [];
-
-  const catalog: ExploreCourseEntry[] = courseResults.flatMap(({ teacher, courses }) =>
-    courses.ok
-      ? courses.data.map((course) => ({
-          course,
-          teacher: {
-            name: teacher.name,
-            slug: teacher.slug,
-            img: teacher.img,
-            subjects: teacher.subjects.map((subject) => subject.name),
-            grades: teacher.grades.map((grade) => grade.name),
-          },
-        }))
-      : [],
+  const teachersBySlug = new Map(
+    (teachers.ok ? teachers.data : []).map((teacher) => [
+      teacher.slug,
+      teacher,
+    ]),
   );
+  const catalog: ExploreCourseEntry[] = courses.ok
+    ? courses.data.flatMap((course) => {
+        if (!course.teacher_slug) return [];
+        const teacher = teachersBySlug.get(course.teacher_slug);
+        return [
+          {
+            course,
+            teacher: {
+              name: course.teacher_name || teacher?.name || "مدرس علمني",
+              slug: course.teacher_slug,
+              img: teacher?.img ?? null,
+              subjects: teacher?.subjects.map((subject) => subject.name) ?? [],
+              grades: teacher?.grades.map((grade) => grade.name) ?? [],
+            },
+          },
+        ];
+      })
+    : [];
 
   return (
     <ExploreCourses
@@ -53,7 +64,7 @@ export default async function ExploreCoursesPage({
       grades={grades.ok ? grades.data : []}
       streams={streams.ok ? streams.data : []}
       subjects={subjects.ok ? subjects.data : []}
-      loadError={!teachers.ok || courseResults.some(({ courses }) => !courses.ok)}
+      loadError={!courses.ok || !teachers.ok}
     />
   );
 }

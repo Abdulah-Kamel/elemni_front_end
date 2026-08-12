@@ -28,7 +28,10 @@ export interface PublicTeacherDto {
   has_library: boolean;
 }
 
-export interface PublicTeacherDetailDto extends Omit<PublicTeacherDto, "has_library"> {
+export interface PublicTeacherDetailDto extends Omit<
+  PublicTeacherDto,
+  "has_library"
+> {
   location: string | null;
   experience: number | null;
   course_count: number;
@@ -78,6 +81,8 @@ export interface PublicCourseDto {
   chapters: PublicChapterDto[];
   is_subscribed: boolean;
   created_at: string;
+  teacher_name: string | null;
+  teacher_slug: string | null;
 }
 
 export interface UserDto {
