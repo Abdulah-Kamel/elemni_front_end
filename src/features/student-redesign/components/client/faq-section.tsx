@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { FAQ_ITEMS } from "../../data/mock-data";
-import { ChevronDown, HelpCircle, MessageSquare } from "lucide-react";
+import { ChevronDown, MessageSquare } from "lucide-react";
 import { cn } from "@/src/lib/cn";
 import { Reveal } from "@/src/components/ui/reveal";
 import { AnimatePresence, m } from "motion/react";
+import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 
 export default function FaqSection() {
   const [openId, setOpenId] = useState<string | null>("faq1");
@@ -19,11 +20,11 @@ export default function FaqSection() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <Reveal>
           <div className="text-center space-y-3 mb-14">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary-light text-primary font-bold text-xs sm:text-sm">
-              <HelpCircle className="w-4 h-4" />
-              <span>إجابات سريعة لاستفساراتك</span>
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-black text-[#0F172A] font-cairo">الأسئلة الشائعة</h2>
+            <h2 className="text-3xl sm:text-4xl font-black text-[#0F172A] font-cairo">
+              <MarkerHighlight color="yellow" variant={1}>
+                الأسئلة الشائعة
+              </MarkerHighlight>
+            </h2>
             <p className="text-sm sm:text-base text-[#334155]">
               كل ما تحتاج معرفته عن التسجيل، الحصص المباشرة، وطرق الاشتراك على منصة علمني.
             </p>

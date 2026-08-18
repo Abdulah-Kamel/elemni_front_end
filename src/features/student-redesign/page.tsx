@@ -10,14 +10,13 @@ import {
 } from "@/src/lib/student-api/public";
 import { toTeacherSummary } from "@/src/lib/student-api/adapters";
 import LandingInteractiveShell from "./components/client/landing-interactive-shell";
-import Features from "./components/server/features";
 import TeacherJoinCTA from "./components/server/teacher-join-cta";
 import SubjectGrid from "./components/server/subject-grid";
 import FeaturedLessons from "./components/server/featured-lessons";
 import BentoGrid from "./components/server/bento-grid";
-import StepsSection from "./components/server/steps-section";
 import Comparison from "./components/server/comparison";
 import MobileApp from "./components/server/mobile-app";
+import InteractiveWhiteboard3D from "./components/client/interactive-whiteboard-3d";
 import FaqSection from "./components/client/faq-section";
 import FinalCta from "./components/server/final-cta";
 import Footer from "./components/server/footer";
@@ -64,14 +63,13 @@ export default async function StudentLandingPage() {
       streams={streamsResult.ok ? streamsResult.data : []}
       afterTeachers={
         <>
-          <Features />
           <TeacherJoinCTA href={teacherJoinHref} />
           <SubjectGrid
             subjects={subjectsResult.ok ? subjectsResult.data : []}
           />
           <FeaturedLessons courses={featuredCourses} />
           <BentoGrid />
-          <StepsSection />
+          <InteractiveWhiteboard3D />
           <Comparison />
           <MobileApp />
         </>

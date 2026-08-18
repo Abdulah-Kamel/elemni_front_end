@@ -3,6 +3,7 @@ import type { LucideIcon } from "lucide-react";
 import { Section } from "@/src/components/ui/section";
 import { Reveal } from "@/src/components/ui/reveal";
 import { cn } from "@/src/lib/cn";
+import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 
 const cards: {
   key: string;
@@ -11,35 +12,35 @@ const cards: {
   icon: LucideIcon;
   tileBg: string;
 }[] = [
-  {
-    key: "card1",
-    span: "md:col-span-1",
-    bg: "bg-white",
-    icon: Wallet,
-    tileBg: "bg-primary",
-  },
-  {
-    key: "card2",
-    span: "md:col-span-2",
-    bg: "bg-white",
-    icon: MonitorPlay,
-    tileBg: "bg-primary",
-  },
-  {
-    key: "card3",
-    span: "md:col-span-2",
-    bg: "bg-white",
-    icon: FileCheck,
-    tileBg: "bg-primary",
-  },
-  {
-    key: "card4",
-    span: "md:col-span-1",
-    bg: "bg-white",
-    icon: LayoutGrid,
-    tileBg: "bg-primary",
-  },
-];
+    {
+      key: "card1",
+      span: "md:col-span-1",
+      bg: "bg-white",
+      icon: Wallet,
+      tileBg: "bg-primary",
+    },
+    {
+      key: "card2",
+      span: "md:col-span-2",
+      bg: "bg-white",
+      icon: MonitorPlay,
+      tileBg: "bg-primary",
+    },
+    {
+      key: "card3",
+      span: "md:col-span-2",
+      bg: "bg-white",
+      icon: FileCheck,
+      tileBg: "bg-primary",
+    },
+    {
+      key: "card4",
+      span: "md:col-span-1",
+      bg: "bg-white",
+      icon: LayoutGrid,
+      tileBg: "bg-primary",
+    },
+  ];
 
 const content = {
   card1: { title: "ادفع بالطريقة اللي تناسبك", items: ["فوري — كاش — تحويل بنكي", "بطاقة ائتمان — ميزة", "محافظ الموبايل 24/7"] },
@@ -53,17 +54,24 @@ export default function BentoGrid() {
     <Section id="why" className="bg-sky-50">
       <Reveal>
         <h2 className="mb-3 text-center text-3xl font-black text-[#0F172A] md:text-4xl font-cairo">
-          ليه علمني؟
+          ليه{" "}
+          <MarkerHighlight color="yellow" variant={1}>
+            علمني؟
+          </MarkerHighlight>
         </h2>
         <p className="mx-auto mb-10 max-w-2xl text-center text-sm text-[#334155]">
-          منصة متكاملة بتوفرلك كل اللي تحتاجه للتفوق.
+          منصة متكاملة بتوفرلك كل اللي تحتاجه{" "}
+          <MarkerHighlight color="sky" variant={2}>
+            للتفوق
+          </MarkerHighlight>
+          .
         </p>
       </Reveal>
       <div className="grid gap-5 md:grid-cols-3">
         {cards.map(({ key, span, bg, icon: Icon, tileBg }, i) => (
           <Reveal key={key} delay={i * 60} className={span}>
             <div
-              className={cn("group h-full rounded-2xl border border-sky-100 p-6 transition-transform transition-shadow duration-300 hover:-translate-y-1.5 hover:shadow-lg", bg)}
+              className={cn("group h-full rounded-2xl border border-sky-100 p-6 transition-transform duration-300 hover:-translate-y-1.5 hover:shadow-lg", bg)}
             >
               <div
                 className={cn(
@@ -75,7 +83,7 @@ export default function BentoGrid() {
                 <Icon size={24} />
               </div>
               {"desc" in content[key as keyof typeof content] &&
-              "items" in content[key as keyof typeof content] === false ? (
+                "items" in content[key as keyof typeof content] === false ? (
                 <>
                   <h3 className="mb-1 text-lg font-bold text-[#0F172A] font-cairo">
                     {

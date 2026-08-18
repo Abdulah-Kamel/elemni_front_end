@@ -1,6 +1,7 @@
-import { UserPlus, Sparkles, CheckCircle2, ArrowLeft, ShieldCheck, TrendingUp } from "lucide-react";
+import { UserPlus, CheckCircle2, ArrowLeft, ShieldCheck, TrendingUp } from "lucide-react";
 import Image from "next/image";
 import teacherJoin from "@/src/assets/images/student-redesign/teacher-join.webp";
+import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 
 interface TeacherJoinCTAProps {
   href: string;
@@ -11,11 +12,11 @@ export default function TeacherJoinCTA({ href }: TeacherJoinCTAProps) {
     <section className="py-16 sm:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative rounded-[36px] sm:rounded-[44px] bg-[#0A263B] text-white overflow-hidden shadow-2xl border border-sky-900/60 flex flex-col lg:flex-row items-stretch">
-          <div className="lg:w-[42%] bg-[#CBE4F9] relative p-6 sm:p-10 flex items-center justify-center overflow-hidden min-h-[380px] sm:min-h-[440px]">
-            <div className="absolute -top-12 -end-16 w-52 h-96 bg-[#0A263B] -rotate-45 transform pointer-events-none" />
-            <div className="absolute -bottom-16 -start-16 w-52 h-96 bg-[#0A263B] -rotate-45 transform pointer-events-none" />
-            <div className="absolute top-1/2 start-0 w-32 h-64 bg-[#0A263B] -rotate-12 transform pointer-events-none opacity-90" />
-            <div className="relative z-10 w-full max-w-[320px] aspect-[4/5] rounded-[28px] border-2 border-sky-300/80 bg-[#C0DFF8] shadow-xl overflow-hidden group">
+          <div className="lg:w-[42%] bg-[#CBE4F9] relative p-6 sm:p-10 flex items-center justify-center overflow-hidden min-h-95 sm:min-h-110">
+            <div className="absolute -top-12 -inset-e-16 w-52 h-96 bg-[#0A263B] -rotate-45 transform pointer-events-none" />
+            <div className="absolute -bottom-16 -inset-s-16 w-52 h-96 bg-[#0A263B] -rotate-45 transform pointer-events-none" />
+            <div className="absolute top-1/2 inset-s-0 w-32 h-64 bg-[#0A263B] -rotate-12 transform pointer-events-none opacity-90" />
+            <div className="relative z-10 w-full max-w-[320px] aspect-4/5 rounded-[28px] border-2 border-sky-300/80 bg-[#C0DFF8] shadow-xl overflow-hidden group">
               <Image
                 src={teacherJoin}
                 alt="معلم متميز"
@@ -28,13 +29,11 @@ export default function TeacherJoinCTA({ href }: TeacherJoinCTAProps) {
           </div>
 
           <div className="lg:w-[58%] p-8 sm:p-12 lg:p-14 flex flex-col justify-center space-y-6 text-end relative z-10">
-            <div className="self-start inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#133A57] border border-sky-600/30 text-sky-300 font-extrabold text-xs sm:text-sm">
-              <Sparkles className="w-4 h-4 text-amber-400 fill-amber-400" />
-              <span>انضم لكادر المعلمين المتميزين</span>
-            </div>
-
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white leading-tight font-cairo">
-              انضم لنخبة المعلمين على منصة <span className="text-amber-400">علمني</span>
+              انضم لنخبة المعلمين على{" "}
+              <MarkerHighlight color="yellow" variant={1}>
+                منصة علمني
+              </MarkerHighlight>
             </h2>
 
             <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-medium max-w-xl">

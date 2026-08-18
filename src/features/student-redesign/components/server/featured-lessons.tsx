@@ -5,6 +5,7 @@ import { Section } from "@/src/components/ui/section";
 import { Reveal } from "@/src/components/ui/reveal";
 import type { PublicCourseDto } from "@/src/lib/student-api/contract";
 import lessonFallback from "@/src/assets/images/student-redesign/lesson-calculus.webp";
+import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 
 export interface FeaturedCourse {
   course: PublicCourseDto;
@@ -29,11 +30,15 @@ export default function FeaturedLessons({ courses }: { courses: FeaturedCourse[]
   return (
     <Section id="featured-courses">
       <Reveal>
-        <div className="mb-4 text-center">
-          <span className="inline-block rounded-full bg-primary-light px-4 py-1.5 text-xs font-bold text-primary">كورسات متاحة</span>
-        </div>
-        <h2 className="mb-3 text-center text-3xl font-black text-[#0F172A] md:text-4xl font-cairo">ابدأ بأحدث كورسات المنصة</h2>
-        <p className="mx-auto mb-10 max-w-2xl text-center text-sm text-[#334155]">كورسات منشورة فعلياً من مكتبات المدرسين على علمني.</p>
+        <h2 className="mb-3 text-center text-3xl font-black text-[#0F172A] md:text-4xl font-cairo">
+          ابدأ بأحدث{" "}
+          <MarkerHighlight color="pink" variant={1}>
+            كورسات المنصة
+          </MarkerHighlight>
+        </h2>
+        <p className="mx-auto mb-10 max-w-2xl text-center text-sm text-[#334155]">
+          كورسات منشورة فعلياً من مكتبات المدرسين على علمني.
+        </p>
       </Reveal>
       <div className="grid gap-6 md:grid-cols-3">
         {courses.map(({ course, teacherName, teacherSlug }, index) => (
