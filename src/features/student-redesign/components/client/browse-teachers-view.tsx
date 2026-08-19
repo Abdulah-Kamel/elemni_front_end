@@ -7,6 +7,7 @@ import type { TeacherSummary } from "../../types";
 import type { GradeDto, StreamDto } from "@/src/lib/student-api/contract";
 import { Search, BookOpen, Sparkles, ChevronDown, ChevronRight, ArrowLeft, ChevronLeft, CircleAlert } from "lucide-react";
 import { cn } from "@/src/lib/cn";
+import { ModernSelect } from "@/src/components/ui/modern-select";
 
 const ITEMS_PER_PAGE = 8;
 
@@ -27,26 +28,26 @@ function BrowseTeachersView({
   const [page, setPage] = useState(1);
 
   const gradeOptions = useMemo(() => grades.length ? [
-      { value: "all", label: "جميع الصفوف الدراسية" },
-      ...grades.map((grade) => ({ value: String(grade.id), label: grade.name })),
-    ] : [
-      { value: "all", label: "جميع الصفوف الدراسية" },
-      { value: "sec3", label: "الصف الثالث الثانوي" },
-      { value: "sec2", label: "الصف الثاني الثانوي" },
-      { value: "sec1", label: "الصف الأول الثانوي" },
-    ], [grades]);
+    { value: "all", label: "جميع الصفوف الدراسية" },
+    ...grades.map((grade) => ({ value: String(grade.id), label: grade.name })),
+  ] : [
+    { value: "all", label: "جميع الصفوف الدراسية" },
+    { value: "sec3", label: "الصف الثالث الثانوي" },
+    { value: "sec2", label: "الصف الثاني الثانوي" },
+    { value: "sec1", label: "الصف الأول الثانوي" },
+  ], [grades]);
 
   const streamOptions = useMemo(() => streams.length ? [
-      { value: "all", label: "جميع الشعب والتخصصات" },
-      ...streams.map((stream) => ({ value: String(stream.id), label: stream.name })),
-    ] : [
-      { value: "all", label: "جميع الشعب والتخصصات" },
-      { value: "general", label: "عام" },
-      { value: "science", label: "علمي علوم" },
-      { value: "math", label: "علمي رياضة" },
-      { value: "humanities", label: "أدبي / مواد أدبية" },
-      { value: "languages", label: "اللغات واللغويات" },
-    ], [streams]);
+    { value: "all", label: "جميع الشعب والتخصصات" },
+    ...streams.map((stream) => ({ value: String(stream.id), label: stream.name })),
+  ] : [
+    { value: "all", label: "جميع الشعب والتخصصات" },
+    { value: "general", label: "عام" },
+    { value: "science", label: "علمي علوم" },
+    { value: "math", label: "علمي رياضة" },
+    { value: "humanities", label: "أدبي / مواد أدبية" },
+    { value: "languages", label: "اللغات واللغويات" },
+  ], [streams]);
 
   const filteredTeachers = useMemo(() => {
     return teachers.filter((teacher) => {
@@ -99,37 +100,47 @@ function BrowseTeachersView({
 
         {/* Filters */}
         <div className="bg-white dark:bg-slate-800 rounded-3xl p-4 sm:p-6 shadow-md border border-slate-200/80 dark:border-slate-700 mb-8 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="relative">
-              <label className="block text-xs font-bold text-muted mb-1.5 text-start font-cairo">الصف الدراسي</label>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+            <ModernSelect
+              label="الصف الدراسي"
+              options={gradeOptions}
+              value={selectedGrade}
+              onChange={handleFilterChange(setSelectedGrade)}
+              icon={BookOpen}
+            />
+            <ModernSelect
+              label="الشعبة / التخصص"
+              options={streamOptions}
+              value={selectedStream}
+              onChange={handleFilterChange(setSelectedStream)}
+              icon={Sparkles}
+            />
+            <div className="relative text-start font-cairo">
+              <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 font-cairo">
+                البحث باسم المعلم أو المادة
+              </label>
               <div className="relative">
-                <select value={selectedGrade} onChange={(e) => handleFilterChange(setSelectedGrade)(e.target.value)}
-                  className="w-full appearance-none bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl py-3 ps-10 pe-10 text-sm font-bold text-ink focus:outline-none focus:ring-2 focus:ring-primary transition-all cursor-pointer font-cairo">
-                  {gradeOptions.map((opt) => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-                </select>
-                <BookOpen className="w-5 h-5 text-primary absolute start-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                <ChevronDown className="w-4 h-4 text-slate-400 absolute end-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-              </div>
-            </div>
-            <div className="relative">
-              <label className="block text-xs font-bold text-muted mb-1.5 text-start font-cairo">الشعبة / التخصص</label>
-              <div className="relative">
-                <select value={selectedStream} onChange={(e) => handleFilterChange(setSelectedStream)(e.target.value)}
-                  className="w-full appearance-none bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl py-3 ps-10 pe-10 text-sm font-bold text-ink focus:outline-none focus:ring-2 focus:ring-primary transition-all cursor-pointer font-cairo">
-                  {streamOptions.map((opt) => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-                </select>
-                <Sparkles className="w-5 h-5 text-primary absolute start-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                <ChevronDown className="w-4 h-4 text-slate-400 absolute end-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-              </div>
-            </div>
-            <div className="relative">
-              <label className="block text-xs font-bold text-muted mb-1.5 text-start font-cairo">بحث</label>
-              <div className="relative">
-                <input type="text" value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }} placeholder="ابحث عن معلم..."
-                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl py-3 ps-10 pe-10 text-sm text-ink placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary transition-all font-cairo" />
-                <Search className="w-5 h-5 text-slate-400 absolute start-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setPage(1);
+                  }}
+                  placeholder="ابحث عن معلم..."
+                  className="w-full rounded-2xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-900/80 py-3 pe-10 ps-10 text-sm font-bold text-ink placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-cairo backdrop-blur-sm"
+                />
+                <Search className="w-4 h-4 text-slate-400 absolute inset-s-3 top-1/2 -translate-y-1/2 stroke-[2.2]" />
                 {searchQuery && (
-                  <button onClick={() => { setSearchQuery(""); setPage(1); }} className="absolute end-3 top-1/2 -translate-y-1/2 text-xs bg-slate-200 text-slate-600 rounded-full w-5 h-5 flex items-center justify-center hover:bg-slate-300 cursor-pointer">✕</button>
+                  <button
+                    onClick={() => {
+                      setSearchQuery("");
+                      setPage(1);
+                    }}
+                    className="absolute inset-e-3 top-1/2 -translate-y-1/2 text-xs bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-full w-5 h-5 flex items-center justify-center hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors cursor-pointer"
+                  >
+                    ✕
+                  </button>
                 )}
               </div>
             </div>
@@ -164,7 +175,7 @@ function BrowseTeachersView({
                   className="bg-[#EBF5FB] dark:bg-slate-800/95 rounded-[28px] p-5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-sky-100/90 dark:border-slate-700 flex flex-col justify-between h-full group relative overflow-hidden cursor-pointer"
                 >
                   <div className="flex flex-col flex-1">
-                    <div className="relative w-full aspect-square rounded-[22px] overflow-hidden bg-gradient-to-b from-sky-100 to-slate-200 dark:from-slate-700 dark:to-slate-900 shadow-md mb-4 shrink-0">
+                    <div className="relative w-full aspect-square rounded-[22px] overflow-hidden bg-linear-to-b from-sky-100 to-slate-200 dark:from-slate-700 dark:to-slate-900 shadow-md mb-4 shrink-0">
                       <Image
                         src={teacher.avatar}
                         alt={teacher.name}

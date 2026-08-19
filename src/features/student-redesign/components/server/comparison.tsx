@@ -2,6 +2,7 @@ import { CircleCheck, CircleX } from "lucide-react";
 import { Section } from "@/src/components/ui/section";
 import { Reveal } from "@/src/components/ui/reveal";
 import { cn } from "@/src/lib/cn";
+import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 
 const matrix = {
   price: { elemni: true, youtube: "partial", tutor: false, books: false },
@@ -32,8 +33,15 @@ export default function Comparison() {
   return (
     <Section id="comparison" className="bg-white">
       <Reveal>
-        <h2 className="mb-3 text-center text-3xl font-bold tracking-tight text-[#0F172A] md:text-4xl font-cairo">ليه علمني أحسن اختيار؟</h2>
-        <p className="mx-auto mb-10 max-w-2xl text-center text-[#334155]">قارن بنفسك الفرق بين علمني وطرق المذاكرة التقليدية.</p>
+        <h2 className="mb-3 text-center text-3xl font-bold tracking-tight text-[#0F172A] md:text-4xl font-cairo">
+          ليه علمني{" "}
+          <MarkerHighlight color="yellow" variant={3}>
+            أحسن اختيار؟
+          </MarkerHighlight>
+        </h2>
+        <p className="mx-auto mb-10 max-w-2xl text-center text-[#334155]">
+          قارن بنفسك الفرق بين علمني وطرق المذاكرة التقليدية.
+        </p>
       </Reveal>
       <div className="overflow-x-auto rounded-2xl border border-sky-100">
         <table className="w-full text-right text-sm">
