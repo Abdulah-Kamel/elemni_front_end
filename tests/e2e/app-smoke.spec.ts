@@ -22,3 +22,9 @@ test("browse teachers route still renders after moving to the teachers feature",
   await page.goto("/browse-teachers");
   await expect(page.getByRole("heading", { level: 1, name: "جميع المدرسين" })).toBeVisible();
 });
+
+test("public teacher profile route still renders after moving to the teachers feature", async ({ page }) => {
+  await page.goto("/teachers/ahmed-hassan");
+  await expect(page).toHaveURL(/\/teachers\/ahmed-hassan$/);
+  await expect(page.getByRole("heading", { level: 1, name: "Ahmed Hassan" })).toBeVisible();
+});
