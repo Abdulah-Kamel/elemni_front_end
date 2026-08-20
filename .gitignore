@@ -43,6 +43,7 @@ next-env.d.ts
 
 # local AI tooling
 .opencode/
+/.worktrees/
 
 # Internal planning docs & design sources — deliberately kept out of this
 # public repo. They hold unconfirmed pricing and reconstructed copy. They live
