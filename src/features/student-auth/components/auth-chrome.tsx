@@ -2,8 +2,8 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { MotionProvider } from "@/src/components/ui/motion-provider";
-import Navbar from "@/src/features/student-redesign/components/client/navbar";
-import Footer from "@/src/features/student-redesign/components/server/footer";
+import Navbar from "@/src/features/landing/components/client/navbar";
+import Footer from "@/src/features/landing/components/server/footer";
 
 export default function AuthChrome({
   children,

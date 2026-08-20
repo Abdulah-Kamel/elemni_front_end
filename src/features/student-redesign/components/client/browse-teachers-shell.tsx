@@ -6,10 +6,13 @@ import type { GradeDto, StreamDto } from "@/src/lib/student-api/contract";
 import type { TeacherSummary } from "../../types";
 import { MotionProvider } from "@/src/components/ui/motion-provider";
 import BrowseTeachersView from "./browse-teachers-view";
-import Navbar from "./navbar";
-import Footer from "../server/footer";
+import Navbar from "@/src/features/landing/components/client/navbar";
+import Footer from "@/src/features/landing/components/server/footer";
 
-const AuthModal = dynamic(() => import("./auth-modal"), { ssr: false });
+const AuthModal = dynamic(
+  () => import("@/src/features/landing/components/client/auth-modal"),
+  { ssr: false },
+);
 
 export default function BrowseTeachersShell({
   locale,

@@ -4,12 +4,15 @@ import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { useRouter } from "@/src/i18n/navigation";
 import type { Teacher } from "../../types";
-import Navbar from "./navbar";
+import Navbar from "@/src/features/landing/components/client/navbar";
 import TeacherProfileView from "./teacher-profile-view";
-import Footer from "../server/footer";
+import Footer from "@/src/features/landing/components/server/footer";
 import { MotionProvider } from "@/src/components/ui/motion-provider";
 
-const AuthModal = dynamic(() => import("./auth-modal"), { ssr: false });
+const AuthModal = dynamic(
+  () => import("@/src/features/landing/components/client/auth-modal"),
+  { ssr: false },
+);
 const ToastNotification = dynamic(() => import("./toast-notification"), {
   ssr: false,
 });

@@ -7,7 +7,7 @@ import type { GradeDto, StreamDto } from "@/src/lib/student-api/contract";
 import { MotionProvider } from "@/src/components/ui/motion-provider";
 import Navbar from "./navbar";
 import Hero from "../server/hero";
-import TeacherGrid from "../server/teacher-grid";
+import TeacherGrid from "@/src/features/student-redesign/components/server/teacher-grid";
 import InteractiveQuiz from "./interactive-quiz";
 import LandingRevealController from "./landing-reveal-controller";
 import { useRouter } from "@/src/i18n/navigation";

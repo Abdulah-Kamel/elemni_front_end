@@ -1,5 +1,5 @@
 import { setRequestLocale } from "next-intl/server";
-import StudentLandingPage from "@/src/features/student-redesign/page";
+import LandingPage from "@/src/features/landing/page";
 
 export async function generateMetadata() {
   return {
@@ -16,5 +16,5 @@ export default async function Page({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  return <StudentLandingPage />;
+  return <LandingPage />;
 }

@@ -1,5 +1,11 @@
 import { expect, test } from "@playwright/test";
 
+test("landing route still renders the student landing page after moving feature ownership", async ({ page }) => {
+  await page.goto("/");
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByRole("link", { name: /ابدأ/i })).toBeVisible();
+});
+
 test("public and guarded student routes keep their current baseline behavior", async ({ page }) => {
   await page.goto("/ar/");
   await expect(page).toHaveURL(/\/$/);
