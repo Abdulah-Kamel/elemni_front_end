@@ -37,6 +37,17 @@ test("public teacher profile route still renders after moving to the teachers fe
   await expect(page.getByRole("heading", { level: 1, name: "Ahmed Hassan" })).toBeVisible();
 });
 
+test("teacher marketing moves to /for-teachers", async ({ page }) => {
+  await page.goto("/for-teachers");
+  await expect(page).toHaveURL(/\/for-teachers$/);
+  await expect(page.getByRole("heading", { level: 1, name: "بطّل تبيع دروسك في جروبات الواتساب" })).toBeVisible();
+});
+
+test("legacy teachers marketing redirects to /for-teachers", async ({ page }) => {
+  await page.goto("/teachers");
+  await expect(page).toHaveURL(/\/for-teachers$/);
+});
+
 test("course discovery and detail routes remain guarded after moving to the courses feature", async ({ page }) => {
   await page.goto("/explore");
   await expect(page).toHaveURL(/\/login$/);
