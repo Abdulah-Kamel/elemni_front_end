@@ -16,10 +16,10 @@ import {
 import { GlobalLoading } from "@/src/components/ui/global-loading";
 import { Link, useRouter } from "@/src/i18n/navigation";
 import { AnimatePresence, m } from "motion/react";
-import { portalCardLiftClass, portalContainerVariants, portalImageZoomClass, portalItemVariants } from "./portal-motion";
+import { portalCardLiftClass, portalContainerVariants, portalImageZoomClass, portalItemVariants } from "./dashboard-motion";
 import type { EnrollmentDto, MyCoursesDto, UserDto } from "@/src/lib/student-api/contract";
 import lessonFallback from "@/src/assets/images/student-redesign/lesson-study-skills.webp";
-import StudentPortalShell from "./student-portal-shell";
+import DashboardShell from "./dashboard-shell";
 
 type CourseSort = "recent" | "expiring" | "title";
 
@@ -132,7 +132,7 @@ export default function MyCourses() {
   const hasFilters = Boolean(search) || subject !== "all";
 
   return (
-    <StudentPortalShell user={user} active="courses">
+    <DashboardShell user={user} active="courses">
       {loading ? (
         <GlobalLoading variant="content" message="جاري تحميل كورساتك..." />
       ) : error ? (
@@ -235,6 +235,6 @@ export default function MyCourses() {
           </m.section>
         </m.div>
       )}
-    </StudentPortalShell>
+    </DashboardShell>
   );
 }

@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import StudentDashboard, {
   type CourseRecommendation,
-} from "@/src/features/student-portal/components/student-dashboard";
+} from "@/src/features/dashboard/components/student-dashboard";
 import {
   getGrades,
   getPublicCourses,
