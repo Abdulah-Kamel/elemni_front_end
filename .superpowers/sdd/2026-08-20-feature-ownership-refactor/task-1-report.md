@@ -36,3 +36,8 @@ Verification after the fix:
 
 - `npm test`: passed (1 Vitest file / 1 test; 1 Playwright test). The two reported Vitest setup warnings are gone. Playwright still emits the environment-level `NO_COLOR`/`FORCE_COLOR` warning.
 - `npm run build`: passed on Next.js 16.2.10.
+
+## Round 2 Warning Fix
+
+- Updated the `test:e2e` script to clear inherited `NO_COLOR` and `FORCE_COLOR` variables before launching Playwright.
+- `npm test`: passed (1 Vitest file / 1 test; 1 Playwright test) with warning-free test output in this runner.

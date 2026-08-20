@@ -10,7 +10,7 @@
     "perf:audit": "npm run build && lhci autorun",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
-    "test:e2e": "playwright test",
+    "test:e2e": "NO_COLOR= FORCE_COLOR= playwright test",
     "test": "npm run test:unit && npm run test:e2e"
   },
   "dependencies": {
