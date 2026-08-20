@@ -26,3 +26,13 @@
 The brief's sample URL assertions expected `/ar` and `/ar/browse-teachers` (and `/ar/login`), but this repository configures `next-intl` with `localePrefix: "as-needed"`. Arabic is the default locale, so the running app redirects these to `/`, `/browse-teachers`, and `/login`. The smoke test asserts the actual current baseline behavior.
 
 `npm install` reports 15 existing audit vulnerabilities (2 low, 1 moderate, 12 high); dependency remediation was not part of this task.
+
+## Round 1 Warning Fix
+
+- Removed the deprecated `vite-tsconfig-paths` plugin and enabled native Vite `resolve.tsconfigPaths` support.
+- Replaced the warning-producing `globalThis.localStorage?.getItem` probe with an unconditional jsdom localStorage shim in test setup.
+
+Verification after the fix:
+
+- `npm test`: passed (1 Vitest file / 1 test; 1 Playwright test). The two reported Vitest setup warnings are gone. Playwright still emits the environment-level `NO_COLOR`/`FORCE_COLOR` warning.
+- `npm run build`: passed on Next.js 16.2.10.
