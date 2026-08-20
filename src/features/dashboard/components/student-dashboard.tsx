@@ -21,7 +21,7 @@ import { Link, useRouter } from "@/src/i18n/navigation";
 import { portalContainerVariants, portalItemVariants } from "./dashboard-motion";
 import type { GradeDto, MyCoursesDto, PublicCourseDto, StreamDto, UserDto } from "@/src/lib/student-api/contract";
 import lessonFallback from "@/src/assets/images/student-redesign/lesson-study-skills.webp";
-import DashboardShell from "./dashboard-shell";
+import StudentAppShell from "@/src/features/shared/components/student-app-shell";
 
 export interface CourseRecommendation {
   course: PublicCourseDto;
@@ -108,7 +108,7 @@ export default function StudentDashboard({ recommendations, grades, streams }: {
   const primary = enrollments[0];
 
   return (
-    <DashboardShell user={user} active="dashboard">
+    <StudentAppShell user={user} active="dashboard">
       {loading ? <DashboardLoading /> : error ? (
           <div className="mx-auto flex min-h-[70vh] max-w-xl items-center justify-center px-4"><div role="alert" className="w-full rounded-xl border border-red-200 bg-red-50 p-5 text-center text-sm font-bold text-red-700"><CircleAlert className="mx-auto mb-3 size-7" />{error}<button onClick={() => void loadDashboard()} className="mt-4 block w-full cursor-pointer text-[#0369A1] hover:underline">إعادة المحاولة</button></div></div>
         ) : (
@@ -171,6 +171,6 @@ export default function StudentDashboard({ recommendations, grades, streams }: {
           </m.section>}
         </m.div>
         )}
-    </DashboardShell>
+    </StudentAppShell>
   );
 }

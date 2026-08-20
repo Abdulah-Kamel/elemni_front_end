@@ -19,7 +19,7 @@ import { AnimatePresence, m } from "motion/react";
 import { portalCardLiftClass, portalContainerVariants, portalImageZoomClass, portalItemVariants } from "./dashboard-motion";
 import type { EnrollmentDto, MyCoursesDto, UserDto } from "@/src/lib/student-api/contract";
 import lessonFallback from "@/src/assets/images/student-redesign/lesson-study-skills.webp";
-import DashboardShell from "./dashboard-shell";
+import StudentAppShell from "@/src/features/shared/components/student-app-shell";
 
 type CourseSort = "recent" | "expiring" | "title";
 
@@ -132,7 +132,7 @@ export default function MyCourses() {
   const hasFilters = Boolean(search) || subject !== "all";
 
   return (
-    <DashboardShell user={user} active="courses">
+    <StudentAppShell user={user} active="courses">
       {loading ? (
         <GlobalLoading variant="content" message="جاري تحميل كورساتك..." />
       ) : error ? (
@@ -235,6 +235,6 @@ export default function MyCourses() {
           </m.section>
         </m.div>
       )}
-    </DashboardShell>
+    </StudentAppShell>
   );
 }

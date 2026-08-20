@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { m } from "motion/react";
 import { Hand } from "lucide-react";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";

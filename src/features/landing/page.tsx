@@ -16,7 +16,7 @@ import FeaturedLessons from "./components/server/featured-lessons";
 import BentoGrid from "./components/server/bento-grid";
 import Comparison from "./components/server/comparison";
 import MobileApp from "./components/server/mobile-app";
-import InteractiveWhiteboard3D from "@/src/features/student-redesign/components/client/interactive-whiteboard-3d";
+import InteractiveWhiteboard3D from "./components/client/interactive-whiteboard-3d";
 import FaqSection from "./components/client/faq-section";
 import FinalCta from "./components/server/final-cta";
 import Footer from "./components/server/footer";

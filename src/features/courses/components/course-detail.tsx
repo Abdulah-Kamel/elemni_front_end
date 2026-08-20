@@ -32,7 +32,7 @@ import type {
   StudentCourseDetailDto,
   UserDto,
 } from "@/src/lib/student-api/contract";
-import StudentPortalShell from "@/src/features/student-portal/components/student-portal-shell";
+import StudentAppShell from "@/src/features/shared/components/student-app-shell";
 
 function formatDuration(minutes: number | null) {
   if (!minutes) return "المدة غير محددة";
@@ -296,7 +296,7 @@ export default function CourseDetail({
   };
 
   return (
-    <StudentPortalShell user={user} active={enrolled ? "courses" : "discover"}>
+    <StudentAppShell user={user} active={enrolled ? "courses" : "discover"}>
       {loading ? (
         <GlobalLoading variant="content" message="جاري تجهيز محتوى الكورس..." />
       ) : error || !detail || !course ? (
@@ -468,6 +468,6 @@ export default function CourseDetail({
           </m.section>
         </m.div>
       )}
-    </StudentPortalShell>
+    </StudentAppShell>
   );
 }
