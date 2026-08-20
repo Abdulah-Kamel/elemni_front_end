@@ -10,8 +10,8 @@ test("public and guarded student routes keep their current baseline behavior", a
   await page.goto("/ar/");
   await expect(page).toHaveURL(/\/$/);
 
-  await page.goto("/ar/browse-teachers");
-  await expect(page).toHaveURL(/\/browse-teachers$/);
+  await page.goto("/ar/teachers");
+  await expect(page).toHaveURL(/\/teachers$/);
   await expect(page.getByRole("heading", { level: 1, name: "جميع المدرسين" })).toBeVisible();
 
   await page.goto("/ar/dashboard");
@@ -26,8 +26,8 @@ test("dashboard and my-courses stay auth-guarded after moving to the dashboard f
   await expect(page).toHaveURL(/\/login$/);
 });
 
-test("browse teachers route still renders after moving to the teachers feature", async ({ page }) => {
-  await page.goto("/browse-teachers");
+test("teachers route still renders after moving to the teachers feature", async ({ page }) => {
+  await page.goto("/teachers");
   await expect(page.getByRole("heading", { level: 1, name: "جميع المدرسين" })).toBeVisible();
 });
 
@@ -37,15 +37,22 @@ test("public teacher profile route still renders after moving to the teachers fe
   await expect(page.getByRole("heading", { level: 1, name: "Ahmed Hassan" })).toBeVisible();
 });
 
+test("teachers becomes the canonical public teacher area", async ({ page }) => {
+  await page.goto("/teachers");
+  await expect(page).toHaveURL(/\/teachers$/);
+  await expect(page.getByRole("heading", { level: 1, name: "جميع المدرسين" })).toBeVisible();
+
+  await page.goto("/browse-teachers");
+  await expect(page).toHaveURL(/\/teachers$/);
+
+  await page.goto("/explore/teachers/ahmed-hassan");
+  await expect(page).toHaveURL(/\/teachers\/ahmed-hassan$/);
+});
+
 test("teacher marketing moves to /for-teachers", async ({ page }) => {
   await page.goto("/for-teachers");
   await expect(page).toHaveURL(/\/for-teachers$/);
   await expect(page.getByRole("heading", { level: 1, name: "بطّل تبيع دروسك في جروبات الواتساب" })).toBeVisible();
-});
-
-test("legacy teachers marketing redirects to /for-teachers", async ({ page }) => {
-  await page.goto("/teachers");
-  await expect(page).toHaveURL(/\/for-teachers$/);
 });
 
 test("course discovery and detail routes remain guarded after moving to the courses feature", async ({ page }) => {
