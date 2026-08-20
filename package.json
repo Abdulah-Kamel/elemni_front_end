@@ -10,7 +10,7 @@
     "perf:audit": "npm run build && lhci autorun",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
-    "test:e2e": "NO_COLOR= FORCE_COLOR= playwright test",
+    "test:e2e": "cross-env NO_COLOR= FORCE_COLOR= playwright test",
     "test": "npm run test:unit && npm run test:e2e"
   },
   "dependencies": {
@@ -38,6 +38,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6.1.0",
+    "cross-env": "^10.1.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
     "jsdom": "^30.0.1",

@@ -41,3 +41,14 @@ Verification after the fix:
 
 - Updated the `test:e2e` script to clear inherited `NO_COLOR` and `FORCE_COLOR` variables before launching Playwright.
 - `npm test`: passed (1 Vitest file / 1 test; 1 Playwright test) with warning-free test output in this runner.
+
+## Round 3 Portability and Storage Fix
+
+- Added `cross-env` and changed the Playwright script to use cross-platform environment normalization.
+- The unit setup now installs a complete in-memory `Storage` implementation without probing Node 26's warning-producing global getter, preserving `length`, `key`, `clear`, `getItem`, `removeItem`, and `setItem` semantics.
+- `npm test`: passed (1 Vitest file / 1 test; 1 Playwright test) with the three setup/environment warnings resolved.
+
+## Round 3 Verification
+
+- `npm run test:unit -- src/features/student-auth/components/auth-page-shell.test.tsx`: passed without warnings.
+- `npm test`: passed (1 Vitest file / 1 test; 1 Playwright test) without warnings.
