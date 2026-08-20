@@ -1,5 +1,5 @@
 import teacherFallback from "@/src/assets/images/student-redesign/teacher-ahmad.webp";
-import type { Course, Teacher, TeacherSummary } from "@/src/features/student-redesign/types";
+import type { Course, Teacher, TeacherSummary } from "@/src/features/teachers/types";
 import type {
   PublicCourseDto,
   PublicTeacherDetailDto,

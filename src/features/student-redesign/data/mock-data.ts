@@ -1,4 +1,5 @@
-import { Teacher, Feature, Testimonial, FAQItem, QuizQuestion } from '../types';
+import type { Teacher } from "@/src/features/teachers/types";
+import type { Feature, Testimonial, FAQItem, QuizQuestion } from "../types";
 import teacherAhmad from "@/src/assets/images/student-redesign/teacher-ahmad.webp";
 import teacherMahmoud from "@/src/assets/images/student-redesign/teacher-mahmoud.webp";
 import teacherSara from "@/src/assets/images/student-redesign/teacher-sara.webp";

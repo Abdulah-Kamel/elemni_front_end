@@ -13,7 +13,7 @@ const AuthModal = dynamic(
   () => import("@/src/features/landing/components/client/auth-modal"),
   { ssr: false },
 );
-const ToastNotification = dynamic(() => import("./toast-notification"), {
+const ToastNotification = dynamic(() => import("@/src/features/student-redesign/components/client/toast-notification"), {
   ssr: false,
 });
 

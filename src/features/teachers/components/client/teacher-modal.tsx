@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Teacher, Course } from "../../types";
+import type { Course, Teacher } from "../../types";
 import { X, Play, Clock, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";

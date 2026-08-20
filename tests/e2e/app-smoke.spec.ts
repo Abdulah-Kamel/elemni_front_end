@@ -17,3 +17,8 @@ test("public and guarded student routes keep their current baseline behavior", a
   await page.goto("/ar/dashboard");
   await expect(page).toHaveURL(/\/login$/);
 });
+
+test("browse teachers route still renders after moving to the teachers feature", async ({ page }) => {
+  await page.goto("/browse-teachers");
+  await expect(page.getByRole("heading", { level: 1, name: "جميع المدرسين" })).toBeVisible();
+});

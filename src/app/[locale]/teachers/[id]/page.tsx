@@ -1,6 +1,6 @@
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import TeacherProfileShell from "@/src/features/student-redesign/components/client/teacher-profile-shell";
+import TeacherProfileShell from "@/src/features/teachers/components/client/teacher-profile-shell";
 import { toTeacher } from "@/src/lib/student-api/adapters";
 import { getPublicTeacher, getPublicTeacherCourses, getPublicTeachers } from "@/src/lib/student-api/public";
 

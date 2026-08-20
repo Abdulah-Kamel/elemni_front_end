@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { Link } from "@/src/i18n/navigation";
-import type { TeacherSummary } from "../../types";
+import type { TeacherSummary } from "@/src/features/teachers/types";
 import { Search, BookOpen, ChevronDown, Sparkles, ArrowLeft, CircleAlert } from "lucide-react";
 import { cn } from "@/src/lib/cn";
 import { Reveal } from "@/src/components/ui/reveal";

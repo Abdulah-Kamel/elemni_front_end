@@ -1,5 +1,5 @@
 import { setRequestLocale } from "next-intl/server";
-import BrowseTeachersShell from "@/src/features/student-redesign/components/client/browse-teachers-shell";
+import BrowseTeachersShell from "@/src/features/teachers/components/client/browse-teachers-shell";
 import { toTeacherSummary } from "@/src/lib/student-api/adapters";
 import { getGrades, getPublicTeachers, getStreams } from "@/src/lib/student-api/public";
 

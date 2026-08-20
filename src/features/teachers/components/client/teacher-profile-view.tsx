@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Teacher } from "../../types";
+import type { Teacher } from "../../types";
 import { BookOpen, Clock, CheckCircle2, ArrowRight, Award, Sparkles, Share2, Check, MapPin, LoaderCircle, CircleAlert, PlayCircle, FileText, ClipboardList, ChevronDown } from "lucide-react";
 import { cn } from "@/src/lib/cn";
 import { Link } from "@/src/i18n/navigation";
