@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
-import CourseDetail from "@/src/features/student-portal/components/course-detail";
+import CourseDetail from "@/src/features/courses/components/course-detail";
 import { getGrades, getStreams } from "@/src/lib/student-api/public";
 import { getAccessToken } from "@/src/lib/student-api/session";
 

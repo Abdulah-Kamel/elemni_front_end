@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { Link, useRouter } from "@/src/i18n/navigation";
 import { AnimatePresence, m } from "motion/react";
-import { portalCardLiftClass, portalContainerVariants, portalImageZoomClass, portalItemVariants, scrollIntoViewById } from "./portal-motion";
+import { portalCardLiftClass, portalContainerVariants, portalImageZoomClass, portalItemVariants, scrollIntoViewById } from "./course-motion";
 import type {
   GradeDto,
   MyCoursesDto,
@@ -29,7 +29,7 @@ import type {
 } from "@/src/lib/student-api/contract";
 import lessonFallback from "@/src/assets/images/student-redesign/lesson-study-skills.webp";
 import teacherFallback from "@/src/assets/images/student-redesign/teacher-ahmad.webp";
-import StudentPortalShell from "./student-portal-shell";
+import StudentPortalShell from "@/src/features/student-portal/components/student-portal-shell";
 
 export interface ExploreCourseEntry {
   course: PublicCourseDto;

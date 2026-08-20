@@ -23,7 +23,7 @@ import {
 import { GlobalLoading } from "@/src/components/ui/global-loading";
 import { Link, useRouter } from "@/src/i18n/navigation";
 import { AnimatePresence, m, useReducedMotion } from "motion/react";
-import { portalContainerVariants, portalItemVariants, scrollIntoViewById } from "./portal-motion";
+import { portalContainerVariants, portalItemVariants, scrollIntoViewById } from "./course-motion";
 import type {
   GradeDto,
   PublicItemDto,
@@ -32,7 +32,7 @@ import type {
   StudentCourseDetailDto,
   UserDto,
 } from "@/src/lib/student-api/contract";
-import StudentPortalShell from "./student-portal-shell";
+import StudentPortalShell from "@/src/features/student-portal/components/student-portal-shell";
 
 function formatDuration(minutes: number | null) {
   if (!minutes) return "المدة غير محددة";

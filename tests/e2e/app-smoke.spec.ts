@@ -28,3 +28,11 @@ test("public teacher profile route still renders after moving to the teachers fe
   await expect(page).toHaveURL(/\/teachers\/ahmed-hassan$/);
   await expect(page.getByRole("heading", { level: 1, name: "Ahmed Hassan" })).toBeVisible();
 });
+
+test("course discovery and detail routes remain guarded after moving to the courses feature", async ({ page }) => {
+  await page.goto("/explore");
+  await expect(page).toHaveURL(/\/login$/);
+
+  await page.goto("/courses/1");
+  await expect(page).toHaveURL(/\/login$/);
+});

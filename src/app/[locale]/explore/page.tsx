@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import ExploreCourses, {
   type ExploreCourseEntry,
-} from "@/src/features/student-portal/components/explore-courses";
+} from "@/src/features/courses/components/explore-courses";
 import {
   getGrades,
   getPublicCourses,
