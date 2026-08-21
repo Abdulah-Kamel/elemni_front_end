@@ -78,6 +78,7 @@ test("a freshly registered student can open migrated authenticated surfaces and 
   await page.goto("/dashboard");
   await expect(page).not.toHaveURL(/\/login$/);
   await expect(page.getByRole("navigation", { name: "بوابة الطالب" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 2, name: "ملخص دراستك" })).toBeVisible();
   await expect(page.locator('a[href^="/explore/teachers/"]')).toHaveCount(0);
 
   await page.goto("/my-courses");
