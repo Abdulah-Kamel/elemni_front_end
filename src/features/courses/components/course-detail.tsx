@@ -325,7 +325,7 @@ export default function CourseDetail({
                 </div>
                 <h1 id="course-title" className="text-3xl font-black leading-tight text-[#1B1B24] sm:text-4xl">{course.title}</h1>
                 {detail.teacher && (
-                  <Link href={`/explore/teachers/${detail.teacher.slug}`} className="mt-5 flex w-fit items-center gap-3 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0284C7]">
+                  <Link href={`/teachers/${detail.teacher.slug}`} className="mt-5 flex w-fit items-center gap-3 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0284C7]">
                     <TeacherAvatar name={detail.teacher.name} image={detail.teacher.img} />
                     <span><strong className="block text-sm font-black">{detail.teacher.name}</strong><span className="text-xs text-[#777587]">مدرس {course.subject_name || "الكورس"}</span></span>
                   </Link>

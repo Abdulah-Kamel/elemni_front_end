@@ -33,7 +33,7 @@ export default function SubjectGrid({ subjects }: { subjects: SubjectDto[] }) {
           return (
             <Reveal key={subject.id} delay={index * 60} className="h-full">
               <Link
-                href="/browse-teachers"
+                href="/teachers"
                 className="group flex h-full w-full flex-col items-center rounded-lg border border-sky-100 bg-white p-6 text-center transition-transform duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg"
               >
                 <div className="mb-3 grid size-16 place-items-center rounded-lg bg-primary-light transition-transform duration-300 group-hover:scale-105">

@@ -24,7 +24,7 @@ import WhatsAppButton from "./components/client/whatsapp-button";
 
 export default async function StudentLandingPage() {
   const locale = await getLocale();
-  const teacherJoinHref = locale === "ar" ? "/teachers" : `/${locale}/teachers`;
+  const teacherJoinHref = locale === "ar" ? "/for-teachers" : `/${locale}/for-teachers`;
   const [
     coursesResult,
     teachersResult,

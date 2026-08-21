@@ -91,7 +91,7 @@ export default function TeacherProfileView({ teacher, onRequireAuth }: TeacherPr
         <div className="absolute inset-0 bg-slate-950/80 pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 relative z-10 flex items-center justify-between">
-          <Link href="/browse-teachers" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-extrabold text-xs sm:text-sm backdrop-blur-md transition-all">
+          <Link href="/teachers" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-extrabold text-xs sm:text-sm backdrop-blur-md transition-all">
             <ArrowRight className="w-4 h-4" />
             <span>كل المدرسين</span>
           </Link>

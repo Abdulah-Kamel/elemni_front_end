@@ -77,7 +77,7 @@ function CourseCard({ entry, enrolled }: { entry: ExploreCourseEntry; enrolled: 
       <div className="mt-4 flex flex-1 flex-col">
         <span className="w-fit rounded-lg bg-[#0284C7]/5 px-2.5 py-1 text-xs font-bold text-[#0369A1]">{course.subject_name || "كورس تعليمي"}</span>
         <h3 className="mt-3 line-clamp-2 min-h-14 text-lg font-black leading-7 text-[#1B1B24]">{course.title}</h3>
-        <Link href={`/explore/teachers/${teacher.slug}`} className="mt-1 inline-flex w-fit items-center gap-1.5 text-xs font-bold text-[#777587] hover:text-[#0369A1]"><UserRound className="size-3.5" />{teacher.name}</Link>
+        <Link href={`/teachers/${teacher.slug}`} className="mt-1 inline-flex w-fit items-center gap-1.5 text-xs font-bold text-[#777587] hover:text-[#0369A1]"><UserRound className="size-3.5" />{teacher.name}</Link>
         <p className="mt-3 line-clamp-2 text-xs leading-5 text-[#777587]">{course.description || `${course.lesson_count} درس في ${course.subject_name || "هذا التخصص"}.`}</p>
 
         <div className="mt-4 flex flex-wrap gap-4 border-t border-[#E2E0EF] pt-4 text-xs font-bold text-[#777587]">
@@ -105,7 +105,7 @@ function TeacherCard({ teacher, courseCount }: { teacher: PublicTeacherDto; cour
         <h3 className="truncate text-lg font-black sm:text-xl">{teacher.name}</h3>
         <p className="mt-1 line-clamp-1 text-xs font-bold text-[#0284C7]">{subjects.join("، ") || "مدرس على منصة علمني"}</p>
         <div className="mt-3 flex flex-wrap gap-3 text-xs font-bold text-[#777587]"><span>{courseCount} كورسات</span><span>{teacher.grades.length} صفوف دراسية</span></div>
-        <Link href={`/explore/teachers/${teacher.slug}`} className="mt-4 inline-flex h-9 items-center gap-2 rounded-lg border border-[#BAE6FD] px-4 text-xs font-black text-[#0369A1] hover:bg-[#E0F2FE]">عرض المدرس<ArrowLeft className="size-3.5" /></Link>
+        <Link href={`/teachers/${teacher.slug}`} className="mt-4 inline-flex h-9 items-center gap-2 rounded-lg border border-[#BAE6FD] px-4 text-xs font-black text-[#0369A1] hover:bg-[#E0F2FE]">عرض المدرس<ArrowLeft className="size-3.5" /></Link>
       </div>
     </article>
   );
