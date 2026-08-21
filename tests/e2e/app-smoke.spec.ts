@@ -75,11 +75,19 @@ test("a freshly registered student can open migrated authenticated surfaces and 
   await page.getByRole("button", { name: "إنشاء الحساب" }).click();
   await expect(page).toHaveURL(/\/onboarding$/);
 
-  for (const path of ["/dashboard", "/my-courses", "/explore"]) {
-    await page.goto(path);
-    await expect(page).not.toHaveURL(/\/login$/);
-    await expect(page.getByRole("navigation", { name: "بوابة الطالب" })).toBeVisible();
-  }
+  await page.goto("/dashboard");
+  await expect(page).not.toHaveURL(/\/login$/);
+  await expect(page.getByRole("navigation", { name: "بوابة الطالب" })).toBeVisible();
+  await expect(page.locator('a[href^="/explore/teachers/"]')).toHaveCount(0);
+
+  await page.goto("/my-courses");
+  await expect(page).not.toHaveURL(/\/login$/);
+  await expect(page.getByRole("navigation", { name: "بوابة الطالب" })).toBeVisible();
+
+  await page.goto("/explore");
+  await expect(page).not.toHaveURL(/\/login$/);
+  await expect(page.getByRole("navigation", { name: "بوابة الطالب" })).toBeVisible();
+  await expect(page.locator('a[href="/browse-teachers"]')).toHaveCount(0);
 
   await expect(page.locator('a[href^="/explore/teachers/"]')).toHaveCount(0);
   await expect(page.locator('a[href^="/teachers/"]').first()).toBeVisible();

@@ -273,7 +273,7 @@ export default function ExploreCourses({
 
         {!!teachers.length && (
           <m.section className="pt-12" aria-labelledby="featured-teachers-heading" variants={portalItemVariants}>
-            <div className="mb-5 flex items-center justify-between"><h2 id="featured-teachers-heading" className="text-2xl font-black">أبرز المدرسين</h2><Link href="/browse-teachers" className="inline-flex items-center gap-1 text-xs font-black text-[#0369A1] hover:underline">كل المدرسين<ArrowLeft className="size-3.5" /></Link></div>
+            <div className="mb-5 flex items-center justify-between"><h2 id="featured-teachers-heading" className="text-2xl font-black">أبرز المدرسين</h2><Link href="/teachers" className="inline-flex items-center gap-1 text-xs font-black text-[#0369A1] hover:underline">كل المدرسين<ArrowLeft className="size-3.5" /></Link></div>
             <div className="grid gap-5 lg:grid-cols-2">{teachers.slice(0, 4).map((item) => <TeacherCard key={item.slug} teacher={item} courseCount={catalog.filter(({ teacher: courseTeacher }) => courseTeacher.slug === item.slug).length} />)}</div>
           </m.section>
         )}
