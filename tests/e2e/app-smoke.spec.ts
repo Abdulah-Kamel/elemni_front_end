@@ -26,6 +26,11 @@ test("dashboard and my-courses stay auth-guarded after moving to the dashboard f
   await expect(page).toHaveURL(/\/login$/);
 });
 
+test("onboarding stays auth-guarded after moving to onboarding feature", async ({ page }) => {
+  await page.goto("/onboarding");
+  await expect(page).toHaveURL(/\/login$/);
+});
+
 test("teachers route still renders after moving to the teachers feature", async ({ page }) => {
   await page.goto("/teachers");
   await expect(page.getByRole("heading", { level: 1, name: "جميع المدرسين" })).toBeVisible();

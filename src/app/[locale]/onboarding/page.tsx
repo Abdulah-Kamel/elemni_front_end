@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
-import OnboardingFlow from "@/src/features/student-onboarding/components/onboarding-flow";
+import OnboardingFlow from "@/src/features/onboarding/components/onboarding-flow";
 import { getGrades, getStreams, getSubjects } from "@/src/lib/student-api/public";
 import { getAccessToken } from "@/src/lib/student-api/session";
 
