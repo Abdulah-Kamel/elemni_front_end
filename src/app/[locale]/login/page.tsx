@@ -1,6 +1,6 @@
 import { setRequestLocale } from "next-intl/server";
-import AuthPageShell from "@/src/features/student-auth/components/auth-page-shell";
-import StudentAuthForm from "@/src/features/student-auth/components/student-auth-form";
+import AuthPageShell from "@/src/features/auth/components/auth-page-shell";
+import StudentAuthForm from "@/src/features/auth/components/student-auth-form";
 
 export const metadata = { title: "تسجيل الدخول | علمني" };
 

@@ -1,6 +1,6 @@
 import { setRequestLocale } from "next-intl/server";
-import AuthPageShell from "@/src/features/student-auth/components/auth-page-shell";
-import { ResetPasswordForm } from "@/src/features/student-auth/components/password-recovery-form";
+import AuthPageShell from "@/src/features/auth/components/auth-page-shell";
+import { ResetPasswordForm } from "@/src/features/auth/components/password-recovery-form";
 
 export const metadata = { title: "تعيين كلمة مرور جديدة | علمني" };
 

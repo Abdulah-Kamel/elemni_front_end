@@ -6,9 +6,9 @@ import { Link } from "@/src/i18n/navigation";
 import AuthCard from "./auth-card";
 
 const inputClass =
-  "h-12 w-full rounded-lg border border-[#E2E0EF] bg-white pe-11 ps-4 text-sm text-[#1B1B24] outline-none transition focus:border-[#4F46E5] focus:ring-2 focus:ring-[#4F46E5]/10 placeholder:text-[#A6A3B5]";
+  "h-12 w-full rounded-lg border border-[#E2E0EF] bg-white pe-11 ps-4 text-sm text-[#1B1B24] outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10 placeholder:text-[#A6A3B5]";
 const ltrInputClass =
-  "h-12 w-full rounded-lg border border-[#E2E0EF] bg-white py-0 pl-11 pr-4 text-left text-sm text-[#1B1B24] outline-none transition focus:border-[#4F46E5] focus:ring-2 focus:ring-[#4F46E5]/10 placeholder:text-[#A6A3B5]";
+  "h-12 w-full rounded-lg border border-[#E2E0EF] bg-white py-0 pl-11 pr-4 text-left text-sm text-[#1B1B24] outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10 placeholder:text-[#A6A3B5]";
 
 export function ForgotPasswordForm() {
   const [submitting, setSubmitting] = useState(false);
@@ -53,7 +53,7 @@ export function ForgotPasswordForm() {
             <p className="mt-2 text-sm leading-6 text-[#777587]">
               إذا كان البريد مسجلاً لدينا فستصلك رسالة الاستعادة خلال دقائق.
             </p>
-            <Link href="/login" className="mt-6 inline-flex h-11 items-center justify-center rounded-xl bg-[#4F46E5] px-6 text-sm font-bold text-white hover:bg-[#3525CD]">
+            <Link href="/login" className="mt-6 inline-flex h-11 items-center justify-center rounded-xl bg-primary px-6 text-sm font-bold text-white hover:bg-primary-hover">
               العودة لتسجيل الدخول
             </Link>
           </div>
@@ -67,14 +67,14 @@ export function ForgotPasswordForm() {
               </div>
             </div>
             {error && <div role="alert" className="flex gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm font-bold text-red-700"><CircleAlert className="size-4.5 shrink-0" />{error}</div>}
-            <button type="submit" disabled={submitting} className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#4F46E5] font-bold text-white hover:bg-[#3525CD] disabled:cursor-wait disabled:opacity-70">
+            <button type="submit" disabled={submitting} className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary font-bold text-white hover:bg-primary-hover disabled:cursor-wait disabled:opacity-70">
               {submitting && <LoaderCircle className="size-5 animate-spin" />}
               {submitting ? "جاري الإرسال..." : "إرسال رابط الاستعادة"}
             </button>
           </form>
         )}
       </AuthCard>
-      {!sent && <p className="mt-6 text-center text-sm"><Link href="/login" className="font-bold text-[#3525CD] hover:underline">العودة لتسجيل الدخول</Link></p>}
+      {!sent && <p className="mt-6 text-center text-sm"><Link href="/login" className="font-bold text-primary hover:underline">العودة لتسجيل الدخول</Link></p>}
     </div>
   );
 }
@@ -120,7 +120,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
             <CheckCircle2 className="mx-auto size-11 text-emerald-600" />
             <h1 className="mt-4 text-2xl font-black">تم تحديث كلمة المرور</h1>
             <p className="mt-2 text-sm text-[#777587]">يمكنك الآن الدخول باستخدام كلمة المرور الجديدة.</p>
-            <Link href="/login" className="mt-6 inline-flex h-11 items-center justify-center rounded-xl bg-[#4F46E5] px-6 text-sm font-bold text-white hover:bg-[#3525CD]">تسجيل الدخول</Link>
+            <Link href="/login" className="mt-6 inline-flex h-11 items-center justify-center rounded-xl bg-primary px-6 text-sm font-bold text-white hover:bg-primary-hover">تسجيل الدخول</Link>
           </div>
         ) : (
           <>
@@ -138,14 +138,14 @@ export function ResetPasswordForm({ token }: { token: string }) {
                     <div className="relative">
                       <LockKeyhole className="pointer-events-none absolute end-3.5 top-1/2 size-4.5 -translate-y-1/2 text-[#777587]" />
                       <input id={field.id} name={field.id} type={showPassword ? "text" : "password"} autoComplete="new-password" required minLength={8} className={`${inputClass} ps-11`} />
-                      <button type="button" onClick={() => setShowPassword((current) => !current)} aria-label={showPassword ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"} className="absolute start-2.5 top-1/2 flex size-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-[#777587] hover:bg-[#F5F2FF]">
+                      <button type="button" onClick={() => setShowPassword((current) => !current)} aria-label={showPassword ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"} className="absolute start-2.5 top-1/2 flex size-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-[#777587] hover:bg-primary-light hover:text-primary">
                         {showPassword ? <EyeOff className="size-4.5" /> : <Eye className="size-4.5" />}
                       </button>
                     </div>
                   </div>
                 ))}
                 {error && <div role="alert" className="flex gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm font-bold text-red-700"><CircleAlert className="size-4.5 shrink-0" />{error}</div>}
-                <button type="submit" disabled={submitting} className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#4F46E5] font-bold text-white hover:bg-[#3525CD] disabled:cursor-wait disabled:opacity-70">
+                <button type="submit" disabled={submitting} className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary font-bold text-white hover:bg-primary-hover disabled:cursor-wait disabled:opacity-70">
                   {submitting && <LoaderCircle className="size-5 animate-spin" />}{submitting ? "جاري الحفظ..." : "حفظ كلمة المرور"}
                 </button>
               </form>

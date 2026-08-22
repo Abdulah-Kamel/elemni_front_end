@@ -31,6 +31,28 @@ test("teachers route still renders after moving to the teachers feature", async 
   await expect(page.getByRole("heading", { level: 1, name: "جميع المدرسين" })).toBeVisible();
 });
 
+test("auth routes still render after moving to auth feature", async ({ page }) => {
+  await page.goto("/login");
+  await expect(
+    page.getByRole("heading", { level: 1, name: "أهلاً بيك من تاني" }),
+  ).toBeVisible();
+
+  await page.goto("/register");
+  await expect(
+    page.getByRole("heading", { level: 1, name: "إنشاء حساب جديد" }),
+  ).toBeVisible();
+
+  await page.goto("/forgot-password");
+  await expect(
+    page.getByRole("heading", { level: 1, name: "استعادة كلمة المرور" }),
+  ).toBeVisible();
+
+  await page.goto("/reset-password?token=demo-token");
+  await expect(
+    page.getByRole("heading", { level: 1, name: "كلمة مرور جديدة" }),
+  ).toBeVisible();
+});
+
 test("public teacher profile route still renders after moving to the teachers feature", async ({ page }) => {
   await page.goto("/teachers/ahmed-hassan");
   await expect(page).toHaveURL(/\/teachers\/ahmed-hassan$/);

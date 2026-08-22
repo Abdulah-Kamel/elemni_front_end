@@ -44,7 +44,7 @@ function Field({
         {label}
       </label>
       <div className="group relative">
-        <Icon className="pointer-events-none absolute end-3.5 top-1/2 size-4.5 -translate-y-1/2 text-[#777587] transition-colors group-focus-within:text-[#4F46E5]" />
+        <Icon className="pointer-events-none absolute end-3.5 top-1/2 size-4.5 -translate-y-1/2 text-[#777587] transition-colors group-focus-within:text-primary" />
         {children}
       </div>
       {hint && <p className="mt-1.5 text-[11px] text-[#777587]">{hint}</p>}
@@ -53,9 +53,9 @@ function Field({
 }
 
 const inputClass =
-  "h-12 w-full rounded-lg border border-[#E2E0EF] bg-white pe-11 ps-4 text-sm text-[#1B1B24] outline-none transition focus:border-[#4F46E5] focus:ring-2 focus:ring-[#4F46E5]/10 placeholder:text-[#A6A3B5]";
+  "h-12 w-full rounded-lg border border-[#E2E0EF] bg-white pe-11 ps-4 text-sm text-[#1B1B24] outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10 placeholder:text-[#A6A3B5]";
 const ltrInputClass =
-  "h-12 w-full rounded-lg border border-[#E2E0EF] bg-white py-0 pl-11 pr-4 text-left text-sm text-[#1B1B24] outline-none transition focus:border-[#4F46E5] focus:ring-2 focus:ring-[#4F46E5]/10 placeholder:text-[#A6A3B5]";
+  "h-12 w-full rounded-lg border border-[#E2E0EF] bg-white py-0 pl-11 pr-4 text-left text-sm text-[#1B1B24] outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10 placeholder:text-[#A6A3B5]";
 
 export default function StudentAuthForm({ mode }: { mode: AuthMode }) {
   const router = useRouter();
@@ -189,7 +189,7 @@ export default function StudentAuthForm({ mode }: { mode: AuthMode }) {
               type="button"
               onClick={() => setShowPassword((current) => !current)}
               aria-label={showPassword ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"}
-              className="absolute start-2.5 top-1/2 flex size-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-[#777587] hover:bg-[#F5F2FF] hover:text-[#3525CD]"
+              className="absolute start-2.5 top-1/2 flex size-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-[#777587] hover:bg-primary-light hover:text-primary"
             >
               {showPassword ? <EyeOff className="size-4.5" /> : <Eye className="size-4.5" />}
             </button>
@@ -210,7 +210,7 @@ export default function StudentAuthForm({ mode }: { mode: AuthMode }) {
                 type="button"
                 onClick={() => setShowConfirmation((current) => !current)}
                 aria-label={showConfirmation ? "إخفاء تأكيد كلمة المرور" : "إظهار تأكيد كلمة المرور"}
-                className="absolute start-2.5 top-1/2 flex size-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-[#777587] hover:bg-[#F5F2FF] hover:text-[#3525CD]"
+                className="absolute start-2.5 top-1/2 flex size-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-[#777587] hover:bg-primary-light hover:text-primary"
               >
                 {showConfirmation ? <EyeOff className="size-4.5" /> : <Eye className="size-4.5" />}
               </button>
@@ -219,7 +219,7 @@ export default function StudentAuthForm({ mode }: { mode: AuthMode }) {
 
           {!isRegister && (
             <div className="text-start">
-              <Link href="/forgot-password" className="text-sm font-bold text-[#3525CD] hover:underline">
+              <Link href="/forgot-password" className="text-sm font-bold text-primary hover:underline">
                 نسيت كلمة المرور؟
               </Link>
             </div>
@@ -235,7 +235,7 @@ export default function StudentAuthForm({ mode }: { mode: AuthMode }) {
           <button
             type="submit"
             disabled={submitting}
-            className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#4F46E5] text-base font-bold text-white transition hover:bg-[#3525CD] disabled:cursor-wait disabled:opacity-70"
+            className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary text-base font-bold text-white transition hover:bg-primary-hover disabled:cursor-wait disabled:opacity-70"
           >
             {submitting ? (
               <><LoaderCircle className="size-5 animate-spin" /> جاري المتابعة...</>
@@ -256,7 +256,7 @@ export default function StudentAuthForm({ mode }: { mode: AuthMode }) {
         {isRegister ? "عندك حساب بالفعل؟ " : "مش عندك حساب؟ "}
         <Link
           href={isRegister ? "/login" : "/register"}
-          className="font-bold text-[#3525CD] hover:underline"
+          className="font-bold text-primary hover:underline"
         >
           {isRegister ? "تسجيل الدخول" : "إنشاء حساب جديد"}
         </Link>
