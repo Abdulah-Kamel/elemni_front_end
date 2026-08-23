@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowLeft,
   CircleAlert,
@@ -60,10 +60,15 @@ const ltrInputClass =
 export default function StudentAuthForm({ mode }: { mode: AuthMode }) {
   const router = useRouter();
   const isRegister = mode === "register";
+  const [isHydrated, setIsHydrated] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -234,7 +239,7 @@ export default function StudentAuthForm({ mode }: { mode: AuthMode }) {
 
           <button
             type="submit"
-            disabled={submitting}
+            disabled={!isHydrated || submitting}
             className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary text-base font-bold text-white transition hover:bg-primary-hover disabled:cursor-wait disabled:opacity-70"
           >
             {submitting ? (
