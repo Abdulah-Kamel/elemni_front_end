@@ -39,7 +39,7 @@ function CourseRow({ enrollment }: { enrollment: EnrollmentDto }) {
   const { course } = enrollment;
 
   return (
-    <article className={`group flex flex-col overflow-hidden rounded-2xl border border-[#E2E0EF] bg-white ${portalCardLiftClass} hover:border-[#BAE6FD] hover:shadow-[0_4px_12px_rgba(2,132,199,0.04)] md:min-h-56 md:flex-row-reverse`}>
+    <Link href={`/courses/${course.id}`} aria-label={`فتح كورس ${course.title}`} className={`group flex flex-col overflow-hidden rounded-2xl border border-[#E2E0EF] bg-white ${portalCardLiftClass} hover:border-[#BAE6FD] hover:shadow-[0_4px_12px_rgba(2,132,199,0.04)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0284C7] focus-visible:ring-offset-2 md:min-h-56 md:flex-row-reverse`}>
       <div className="relative aspect-video shrink-0 overflow-hidden bg-[#F0F9FF] md:aspect-auto md:w-60">
         <Image
           src={course.img || lessonFallback}
@@ -65,11 +65,8 @@ function CourseRow({ enrollment }: { enrollment: EnrollmentDto }) {
           <span className="inline-flex items-center gap-1.5"><CalendarClock className="size-4 text-[#0284C7]" />متاح حتى {formatDate(enrollment.expires_at)}</span>
         </div>
 
-        <Link href={`/courses/${course.id}`} className="mt-5 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#0284C7] px-6 text-sm font-black text-white transition-colors hover:bg-[#0369A1] sm:w-fit">
-          فتح الكورس<ArrowLeft className="size-4" />
-        </Link>
       </div>
-    </article>
+    </Link>
   );
 }
 
