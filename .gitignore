@@ -31,8 +31,9 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files (keep the checked-in template)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -44,10 +45,20 @@ next-env.d.ts
 # local AI tooling
 .opencode/
 /.worktrees/
+.superpowers/
+.claude/
+.codex/
+.agents/
+.specify/
+design/
+test-results/
 
 # Internal planning docs & design sources — deliberately kept out of this
 # public repo. They hold unconfirmed pricing and reconstructed copy. They live
 # with the team, not on GitHub. Remove these lines if the repo ever goes private.
 /BUILD_PLAN.md
-/docs/
 /assets/
+
+# `docs/` is the tracked documentation home; the legacy top-level `specs/`
+# root is retired in favor of `docs/specs/`.
+/specs/

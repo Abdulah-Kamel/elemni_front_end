@@ -1,196 +1,188 @@
-# Elemni — Web Frontend
+# Elemni Frontend
 
-Frontend for **Elemni** (إلمني), a learning platform for Egyptian teachers. Teachers
-upload video lessons, organise them by subject / grade / stream, protect them with
-DRM, and sell them to students.
+Frontend for Elemni's public teacher discovery and student experience. The repo currently includes:
 
-Arabic-first (RTL) with full English support. This repo is **frontend only** — all
-business logic, persistence, payments, DRM licensing, and video processing live
-behind a separate backend API.
+- the public student landing page
+- public teacher discovery and teacher profile pages
+- teacher-marketing pages
+- student authentication and onboarding
+- the authenticated student portal: dashboard, my courses, explore, and course detail
+- Next route handlers that proxy authenticated student requests to the backend API
 
-> **Status:** early. The only feature built so far is the public marketing landing
-> page. There is no auth, no dashboard, and no API integration yet.
-
----
+This is still a frontend-only repo. Business rules, authorization, payments, and protected content policy remain backend-owned.
 
 ## Stack
 
-| | |
-|---|---|
-| Framework | Next.js **16.2.10** (App Router, Turbopack) |
-| UI | React **19.2.4**, Server Components by default |
-| Styling | Tailwind CSS **v4** (CSS-first `@theme`, no `tailwind.config.js`) |
-| i18n | next-intl **v4** — `ar` (default, RTL) + `en` (LTR) |
-| Icons | lucide-react |
+- Next.js 16.2.10 App Router
+- React 19
+- TypeScript 5
+- Tailwind CSS v4
+- next-intl
+- motion
+- Vitest
+- Playwright
 
-Requires **Node >= 20.9**. Package manager is **npm**.
-
----
+Package manager: `npm`
 
 ## Getting started
 
 ```bash
+cp .env.example .env.local
 npm install
-npm run dev          # http://localhost:3000
+npm run dev
 ```
 
-### Scripts
+Open `http://localhost:3000`.
 
-| Script | What it does |
-|---|---|
-| `npm run dev` | Dev server |
-| `npm run build` | Production build — **the real typecheck gate** (`tsc` runs here) |
+`src/env.ts` currently reads:
+
+- `API_URL`
+- `CONTACT_EMAIL`
+
+`.env.example` also includes `ASSETS_URL` as a template placeholder for backend/public asset origins, but it is not currently read by `src/env.ts`.
+
+## Scripts
+
+| Script | Purpose |
+| --- | --- |
+| `npm run dev` | Start the dev server |
+| `npm run build` | Production build and TypeScript gate |
 | `npm run start` | Serve the production build |
 | `npm run lint` | ESLint |
+| `npm run test:unit` | Vitest unit/component tests |
+| `npm run test:unit:watch` | Vitest watch mode |
+| `npm run test:e2e` | Playwright end-to-end tests |
+| `npm run test` | Unit tests, then e2e tests |
+| `npm run perf:audit` | Build, then Lighthouse CI |
 
-> **Run `npm run lint` explicitly.** Next 16 does **not** run ESLint as part of
-> `next build`, so a green build does not mean a clean lint.
+Notes:
 
-There is **no test runner wired up** — `npm test` does not exist. Adding tests means
-adding the dependency and the script first.
+- `next build` does not replace `npm run lint`; run both when needed.
+- `npm run test` starts with unit tests and then runs Playwright.
 
----
+## Current route surface
 
-## Routing & i18n
+Public:
 
-Locales are `ar` (default) and `en`, with `localePrefix: "as-needed"`:
+- `/`
+- `/teachers`
+- `/teachers/[id]`
+- `/browse-teachers`
+- `/for-teachers`
 
-| URL | Renders |
-|---|---|
-| `/` | Arabic, RTL (`/ar` **redirects here** — the default locale is unprefixed) |
-| `/en` | English, LTR |
+Student auth:
 
-`<html lang>` and `dir` are set per locale in `src/app/[locale]/layout.tsx`.
-Fonts are Cairo (AR) and Inter (EN) via `next/font`.
+- `/login`
+- `/register`
+- `/forgot-password`
+- `/reset-password`
 
-**Rules:**
+Authenticated student:
 
-- **No hardcoded user-facing strings.** Every word goes through next-intl and lives
-  in `src/messages/{ar,en}.json`. Both files must stay key-for-key identical.
-- **RTL is the default, not an afterthought.** Use logical Tailwind utilities only —
-  `ms`/`me`, `ps`/`pe`, `start`/`end`, `text-start`/`text-end`. Never `ml`/`mr`/
-  `pl`/`pr`/`left`/`right`/`text-left`/`text-right`.
-- Watch out for **physical transforms**: `-translate-x-1/2` does not mirror in RTL
-  and will mis-centre things. Prefer a flex-centred wrapper.
-- Direction-implying icons (arrows, chevrons) must mirror in RTL.
-- Numerals: Arabic-Indic in Arabic UI via `Intl.NumberFormat("ar-EG")`; Latin digits
-  in IDs, URLs, and code.
+- `/onboarding`
+- `/dashboard`
+- `/my-courses`
+- `/explore`
+- `/courses/[courseId]`
 
-**Check every UI change in both directions before merging.**
+Backend-for-frontend routes:
 
----
+- `/api/student/auth/*`
+- `/api/student/my-courses`
+- `/api/student/my-courses/[courseId]`
+- `/api/student/payments/checkout`
 
-## Project structure
+## Architecture
 
-```
+The repo is feature-first.
+
+```text
 src/
-  app/
-    [locale]/
-      (marketing)/          # the landing page
-      layout.tsx            # html/body, fonts, NextIntlClientProvider
-    globals.css             # Tailwind v4 @theme — design tokens live here
-  components/ui/            # shared primitives only (Button, Section, Reveal, Counter)
-  features/
-    marketing/
-      components/           # the 15 landing sections
-      data.ts               # non-string sample data (icons, matrices, image paths)
-  i18n/                     # routing / request / navigation
-  lib/cn.ts
-  messages/{ar,en}.json     # ALL user-facing copy
-  middleware.ts
-public/placeholders/        # SVG placeholder art
+  app/                  Thin App Router entrypoints
+  components/ui/        Shared UI primitives
+  features/             Feature-owned UI and view logic
+  i18n/                 next-intl routing helpers
+  lib/student-api/      Backend boundary for the student-facing app
+  messages/             AR/EN copy
+  proxy.ts              Locale proxy
 ```
 
-Feature-first, not type-first. Used by one feature → it lives in that feature.
-Promote to shared on the **third** usage, not the second. **No barrel files.**
+Current feature ownership:
 
-> The path alias is `@/*` → **repo root** (not `src`), so imports read
-> `@/src/features/...`.
+- `src/features/landing` — public student landing page
+- `src/features/marketing` — teacher-marketing surface
+- `src/features/teachers` — teacher browse/profile experience
+- `src/features/auth` — login/register/reset flows
+- `src/features/onboarding` — student onboarding
+- `src/features/dashboard` — dashboard and my-courses UI
+- `src/features/courses` — explore and course detail UI
+- `src/features/portal` — authenticated student shell
 
----
+### Backend boundary
 
-## Design system
+The active integration layer is `src/lib/student-api/*`:
 
-Tokens are defined in `src/app/globals.css` under `@theme`. **Never hardcode a hex
-value in a component** — add or use a token.
+- `backend.ts` — server-side backend fetch wrapper
+- `session.ts` — httpOnly cookie session handling and refresh flow
+- `public.ts` — public catalog/teacher reads
+- `contract.ts` — DTOs
+- `adapters.ts` — DTO → UI shaping
 
-| Token | Value | Used for |
-|---|---|---|
-| `brand-600` | `#5145E5` | Primary indigo |
-| `brand-900` | `#1E1867` | Dark sections (DRM) |
-| `brand-50` | `#F4F3FC` | Lavender section backgrounds |
-| `accent-500` | `#FFB020` | **Amber — all primary CTAs** |
-| `success-500` / `success-700` | `#2ED3B7` / `#0D8F7B` | Teal accents / teal **text** |
+`src/lib/api/index.ts` exists, but it currently has no call sites. New student-facing backend work should extend `src/lib/student-api/*` unless you are deliberately consolidating the API layer.
 
-Two things to know:
+### Routing rules
 
-- **The brand indigo is a deliberate departure from the original design mockups**,
-  which used purple `#7B2CBF`. The mockups are no longer the colour reference —
-  `globals.css` is. The purple ramp is kept commented in that file if you need to
-  flip back. Don't "fix" the code back to purple to match an old mockup.
-- Use **`success-700` for teal text/icons on light backgrounds**. `success-500` is
-  only ~1.9:1 on white and fails WCAG; `-700` is the accessible counterpart.
+- App routes should stay thin and compose feature modules.
+- Authenticated browser actions should go through Next route handlers, not directly to the backend API.
+- Server Components are the default. Add `"use client"` only where state, effects, event handlers, or browser APIs are required.
 
-### Animation
+## i18n and RTL
 
-One mechanism, no animation libraries:
+- Locales: `ar` and `en`
+- Default locale: `ar`
+- `localePrefix: "as-needed"`
+- `localeDetection: false`
 
-- `<Reveal>` — IntersectionObserver fade-up on scroll. Stagger lists with
-  `delay={i * 80}`. Never nest a `Reveal` inside a `Reveal`.
-- `<Counter>` — counts up on scroll, locale-aware formatting.
-- Keyframes (`fade-up`, `float`, `pulse-ring`) are declared in `globals.css`.
+Keep all user-facing copy in:
 
-**Every animation must be `motion-safe:`-prefixed**, and only `opacity` and
-`transform` are animated — never `height`/`top`/`left`/`width`/`margin`. A global
-`prefers-reduced-motion` guard is in `globals.css` as a backstop. Users are on
-Egyptian mobile networks; budget for 3G, not your laptop.
+- `src/messages/ar.json`
+- `src/messages/en.json`
 
----
+Use logical direction utilities only: `ms/me`, `ps/pe`, `start/end`, `text-start/text-end`.
 
-## The boundary (important)
+## Tests
 
-**This repo owns:** rendering, routing, i18n/RTL, form UX, accessibility, performance.
+Current tracked test coverage includes:
 
-**This repo does NOT own:** business rules, authorization, money maths, DRM policy,
-or the source of truth for anything.
+- unit/component tests under `src/features/**`
+- Playwright smoke coverage in `tests/e2e/app-smoke.spec.ts`
 
-If you find yourself writing a rule here — a tier limit, a commission percentage —
-**stop.** It belongs in the API. The frontend may *display* a rule the API tells it
-about; it may never *be* the rule.
+When changing route ownership, auth guards, or shared shells, keep a focused preserved-behavior test in place before moving code.
 
-- **Money is displayed, never computed.** Figures on the landing page are static
-  display copy. No arithmetic, no live calculators.
-- **DRM is enforced server-side**, at license issuance and in the transcode
-  pipeline. This repo configures a player and renders marketing copy. Do **not**
-  implement client-side "enforcement" (device checks, CSS watermark overlays) — it
-  is trivially bypassed. The watermark in the DRM section is an explicitly
-  decorative mockup with sample data, not a control.
+## Docs
 
-See `CLAUDE.md` for the full architecture rules.
+Tracked repo docs now live under `docs/`:
 
----
+- `docs/reference/` — reference material such as backend business flow
+- `docs/specs/` — product/design/spec documents
+- `docs/superpowers/` — historical planning and execution notes
 
-## Known gaps
+## Repo policy
 
-Honest list of what is stubbed:
+Tracked:
 
-- **Pricing shows a contact CTA, not tiers.** The pricing model is not decided yet,
-  so no prices or commission rates ship. Do not reintroduce numbers from old
-  mockups — when pricing exists it comes from the API.
-- **CTAs link nowhere.** Buttons and the email capture in the final CTA are inert
-  (`// TODO: wire to signup`). No form submission, no analytics.
-- **Imagery is placeholder SVG** (`public/placeholders/`), not final artwork.
-- **No tests.** Intended stack is Vitest + MSW + Playwright; none installed.
-- Curriculum filter chips are decorative and non-interactive by design.
+- source, configs, tests, and `docs/`
+- `.env.example`
 
----
+Local-only and ignored:
 
-## Conventions
-
-- Files `kebab-case.ts`, components `PascalCase`.
-- `any` is banned — use `unknown` plus a parse.
-- Server Components by default. `"use client"` needs a reason (state, effects, event
-  handlers, browser APIs) and should be pushed as far down the tree as possible.
-  Currently only 4 files have it.
-- When the API arrives: one fetch wrapper in `src/lib/api/`, `zod`-parse every
-  response at the boundary, tokens in httpOnly cookies only — never `localStorage`.
+- `.env.local`
+- `.next/`
+- `node_modules/`
+- `test-results/`
+- `design/`
+- `assets/`
+- `.specify/`
+- `.superpowers/`
+- `.claude/`
+- other local agent/tool state

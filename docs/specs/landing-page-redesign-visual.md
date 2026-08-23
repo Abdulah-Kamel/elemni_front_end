@@ -5,8 +5,9 @@ written out. There is no reference image to consult. If a detail is not in this
 file, ask — do not invent it.
 
 This is a **restyle and re-section** of the existing landing page. The token
-system, Cairo font, RTL discipline, `Reveal` component, and `motion-safe:`
-rules from BUILD_PLAN.md all still apply unless explicitly overridden below.
+system in `src/app/globals.css`, Cairo font, RTL discipline, `Reveal`
+component, and motion/accessibility rules documented in `CLAUDE.md` all still
+apply unless explicitly overridden below.
 
 **Audience note:** this page addresses **students**, not teachers. Copy is
 second person to a student ("اتعلم", "ذاكر", "حصصك"). Do not carry over
