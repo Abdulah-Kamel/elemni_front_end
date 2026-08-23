@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import { describe, expect, it, vi } from "vitest";
-import StudentAppShell from "./student-app-shell";
+import StudentPortalShell from "@/src/features/portal/components/portal-shell";
 
 vi.mock("next/navigation", async (importOriginal) => ({
   ...(await importOriginal<typeof import("next/navigation")>()),
@@ -9,13 +9,13 @@ vi.mock("next/navigation", async (importOriginal) => ({
   usePathname: () => "/dashboard",
 }));
 
-describe("StudentAppShell", () => {
+describe("StudentPortalShell", () => {
   it("renders authenticated student content inside the shared portal navigation", () => {
     render(
       <NextIntlClientProvider locale="ar" messages={{}}>
-        <StudentAppShell user={{ id: 1, name: "أحمد علي" } as never} active="courses">
+        <StudentPortalShell user={{ id: 1, name: "أحمد علي" } as never} active="courses">
           <p>محتوى الدورة</p>
-        </StudentAppShell>
+        </StudentPortalShell>
       </NextIntlClientProvider>,
     );
 

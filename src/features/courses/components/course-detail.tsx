@@ -32,7 +32,7 @@ import type {
   StudentCourseDetailDto,
   UserDto,
 } from "@/src/lib/student-api/contract";
-import StudentAppShell from "@/src/features/shared/components/student-app-shell";
+import StudentAppShell from "@/src/features/portal/components/portal-shell";
 
 function formatDuration(minutes: number | null) {
   if (!minutes) return "المدة غير محددة";

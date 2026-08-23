@@ -19,7 +19,7 @@ import { AnimatePresence, m } from "motion/react";
 import { portalCardLiftClass, portalContainerVariants, portalImageZoomClass, portalItemVariants } from "./dashboard-motion";
 import type { EnrollmentDto, MyCoursesDto, UserDto } from "@/src/lib/student-api/contract";
 import lessonFallback from "@/src/assets/images/student-redesign/lesson-study-skills.webp";
-import StudentAppShell from "@/src/features/shared/components/student-app-shell";
+import StudentAppShell from "@/src/features/portal/components/portal-shell";
 
 type CourseSort = "recent" | "expiring" | "title";
 

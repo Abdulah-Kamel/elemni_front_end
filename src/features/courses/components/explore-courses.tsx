@@ -29,7 +29,7 @@ import type {
 } from "@/src/lib/student-api/contract";
 import lessonFallback from "@/src/assets/images/student-redesign/lesson-study-skills.webp";
 import teacherFallback from "@/src/assets/images/student-redesign/teacher-ahmad.webp";
-import StudentAppShell from "@/src/features/shared/components/student-app-shell";
+import StudentAppShell from "@/src/features/portal/components/portal-shell";
 
 export interface ExploreCourseEntry {
   course: PublicCourseDto;

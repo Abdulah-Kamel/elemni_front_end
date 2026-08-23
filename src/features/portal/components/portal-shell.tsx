@@ -16,7 +16,7 @@ import {
 import { Link, useRouter } from "@/src/i18n/navigation";
 import { MotionProvider } from "@/src/components/ui/motion-provider";
 import type { UserDto } from "@/src/lib/student-api/contract";
-import "../styles/student-app-shell.css";
+import "../styles/portal-shell.css";
 
 const enabledNav = [
   { label: "الرئيسية", href: "/dashboard", icon: Home, id: "dashboard" },

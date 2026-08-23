@@ -21,7 +21,7 @@ import { Link, useRouter } from "@/src/i18n/navigation";
 import { portalContainerVariants, portalItemVariants } from "./dashboard-motion";
 import type { GradeDto, MyCoursesDto, PublicCourseDto, StreamDto, UserDto } from "@/src/lib/student-api/contract";
 import lessonFallback from "@/src/assets/images/student-redesign/lesson-study-skills.webp";
-import StudentAppShell from "@/src/features/shared/components/student-app-shell";
+import StudentAppShell from "@/src/features/portal/components/portal-shell";
 
 export interface CourseRecommendation {
   course: PublicCourseDto;
