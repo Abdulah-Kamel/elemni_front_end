@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { X, User, Phone, Lock, GraduationCap, ArrowLeft, LoaderCircle, Mail, CircleAlert } from "lucide-react";
 import { cn } from "@/src/lib/cn";
+import { notifyStudentSessionChanged } from "@/src/lib/student-api/session-events";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -46,7 +47,7 @@ export default function AuthModal({ isOpen, initialMode, onClose, onSuccess }: A
     }
 
     const user = await response.json();
-    window.dispatchEvent(new Event("student-session-changed"));
+    notifyStudentSessionChanged("login");
     onSuccess(user.name ?? name ?? "الطالب");
     onClose();
     setSubmitted(false);

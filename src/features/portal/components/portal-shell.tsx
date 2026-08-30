@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { Link, useRouter } from "@/src/i18n/navigation";
 import { MotionProvider } from "@/src/components/ui/motion-provider";
+import { notifyStudentSessionChanged } from "@/src/lib/student-api/session-events";
 import type { UserDto } from "@/src/lib/student-api/contract";
 import "../styles/portal-shell.css";
 
@@ -80,7 +81,7 @@ export default function StudentPortalShell({ children, user, active = "dashboard
 
   const logout = async () => {
     await fetch("/api/student/auth/logout", { method: "POST" }).catch(() => null);
-    window.dispatchEvent(new Event("student-session-changed"));
+    notifyStudentSessionChanged("logout");
     router.replace("/login");
   };
 

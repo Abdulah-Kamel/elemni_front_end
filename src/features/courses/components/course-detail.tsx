@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import {
   ArrowLeft,
   BookOpen,
@@ -29,10 +30,17 @@ import type {
   PublicItemDto,
   PublicLessonDto,
   StreamDto,
-  StudentCourseDetailDto,
-  UserDto,
 } from "@/src/lib/student-api/contract";
 import StudentAppShell from "@/src/features/portal/components/portal-shell";
+import {
+  getStudentErrorMessage,
+  isStudentUnauthorized,
+} from "@/src/lib/student-api/client";
+import {
+  useCurrentStudent,
+  useStudentCourse,
+} from "@/src/features/student/hooks/use-student-queries";
+import { studentQueryKeys } from "@/src/features/student/query-keys";
 
 function formatDuration(minutes: number | null) {
   if (!minutes) return "المدة غير محددة";
@@ -191,53 +199,49 @@ export default function CourseDetail({
   streams: StreamDto[];
 }) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const reduced = useReducedMotion() === true;
-  const [detail, setDetail] = useState<StudentCourseDetailDto | null>(null);
-  const [user, setUser] = useState<UserDto | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [checkoutError, setCheckoutError] = useState("");
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [expandedChapterId, setExpandedChapterId] = useState<number | null>(null);
   const [expandedLessonId, setExpandedLessonId] = useState<number | null>(null);
   const [activeVideo, setActiveVideo] = useState<{ item: PublicItemDto; lesson: PublicLessonDto } | null>(null);
 
-  const loadCourse = useCallback(async () => {
-    setLoading(true);
-    setError("");
-    const teacherQuery = teacherSlug ? `?teacher=${encodeURIComponent(teacherSlug)}` : "";
-    const [courseResponse, userResponse] = await Promise.all([
-      fetch(`/api/student/my-courses/${courseId}${teacherQuery}`, { cache: "no-store" }).catch(() => null),
-      fetch("/api/student/auth/me", { cache: "no-store" }).catch(() => null),
-    ]);
-    if (courseResponse?.status === 401 || userResponse?.status === 401) {
-      router.replace("/login");
-      return;
-    }
-    if (!courseResponse?.ok) {
-      const body = await courseResponse?.json().catch(() => null);
-      setError(body?.detail ?? "تعذر تحميل تفاصيل الكورس حالياً.");
-      setLoading(false);
-      return;
-    }
-    const courseDetail = await courseResponse.json() as StudentCourseDetailDto;
-    setDetail(courseDetail);
-    const firstChapter = courseDetail.course.chapters.find((chapter) => chapter.lessons.length);
-    setExpandedChapterId(firstChapter?.id ?? null);
-    setExpandedLessonId(firstChapter?.lessons[0]?.id ?? null);
-    const firstPlayableVideo = courseDetail.course.chapters
-      .flatMap((chapter) => chapter.lessons)
-      .flatMap((lesson) => lesson.items.map((item) => ({ item, lesson })))
-      .find(({ item }) => Boolean(item.bunny_stream_embed_url));
-    setActiveVideo(firstPlayableVideo ?? null);
-    if (userResponse?.ok) setUser(await userResponse.json());
-    setLoading(false);
-  }, [courseId, router, teacherSlug]);
+  const courseQuery = useStudentCourse(courseId, teacherSlug);
+  const userQuery = useCurrentStudent();
+  const detail = courseQuery.data;
+  const user = userQuery.data ?? null;
+  const unauthorized =
+    isStudentUnauthorized(courseQuery.error) ||
+    isStudentUnauthorized(userQuery.error);
+  const loading = courseQuery.isPending || userQuery.isPending;
+  const error = getStudentErrorMessage(
+    courseQuery.error,
+    "تعذر تحميل تفاصيل الكورس حالياً.",
+  );
 
   useEffect(() => {
-    const timer = window.setTimeout(() => void loadCourse(), 0);
+    if (unauthorized) router.replace("/login");
+  }, [router, unauthorized]);
+
+  useEffect(() => {
+    if (!detail) return;
+    const timer = window.setTimeout(() => {
+      const firstChapter = detail.course.chapters.find((chapter) => chapter.lessons.length);
+      setExpandedChapterId(firstChapter?.id ?? null);
+      setExpandedLessonId(firstChapter?.lessons[0]?.id ?? null);
+      const firstPlayableVideo = detail.course.chapters
+        .flatMap((chapter) => chapter.lessons)
+        .flatMap((lesson) => lesson.items.map((item) => ({ item, lesson })))
+        .find(({ item }) => Boolean(item.bunny_stream_embed_url));
+      setActiveVideo(firstPlayableVideo ?? null);
+    }, 0);
     return () => window.clearTimeout(timer);
-  }, [loadCourse]);
+  }, [detail]);
+
+  const loadCourse = () => {
+    void Promise.all([courseQuery.refetch(), userQuery.refetch()]);
+  };
 
   const course = detail?.course;
   const enrolled = Boolean(detail?.enrollment);
@@ -281,7 +285,12 @@ export default function CourseDetail({
     }
     if (response?.status === 409) {
       setCheckoutLoading(false);
-      await loadCourse();
+      await Promise.all([
+        courseQuery.refetch(),
+        queryClient.invalidateQueries({
+          queryKey: studentQueryKeys.myCourses(),
+        }),
+      ]);
       return;
     }
     if (!response?.ok) {

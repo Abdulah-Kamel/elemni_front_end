@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowLeft,
   BookOpen,
@@ -17,7 +17,15 @@ import { GlobalLoading } from "@/src/components/ui/global-loading";
 import { Link, useRouter } from "@/src/i18n/navigation";
 import { AnimatePresence, m } from "motion/react";
 import { portalCardLiftClass, portalContainerVariants, portalImageZoomClass, portalItemVariants } from "./dashboard-motion";
-import type { EnrollmentDto, MyCoursesDto, UserDto } from "@/src/lib/student-api/contract";
+import type { EnrollmentDto } from "@/src/lib/student-api/contract";
+import {
+  getStudentErrorMessage,
+  isStudentUnauthorized,
+} from "@/src/lib/student-api/client";
+import {
+  useCurrentStudent,
+  useMyCourses,
+} from "@/src/features/student/hooks/use-student-queries";
 import lessonFallback from "@/src/assets/images/student-redesign/lesson-study-skills.webp";
 import StudentAppShell from "@/src/features/portal/components/portal-shell";
 
@@ -72,40 +80,29 @@ function CourseRow({ enrollment }: { enrollment: EnrollmentDto }) {
 
 export default function MyCourses() {
   const router = useRouter();
-  const [data, setData] = useState<MyCoursesDto | null>(null);
-  const [user, setUser] = useState<UserDto | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const coursesQuery = useMyCourses();
+  const userQuery = useCurrentStudent();
+  const data = coursesQuery.data;
+  const user = userQuery.data ?? null;
+  const unauthorized =
+    isStudentUnauthorized(coursesQuery.error) ||
+    isStudentUnauthorized(userQuery.error);
+  const loading = coursesQuery.isPending || userQuery.isPending;
+  const error = getStudentErrorMessage(
+    coursesQuery.error ?? userQuery.error,
+    "تعذر تحميل كورساتك حالياً.",
+  );
   const [search, setSearch] = useState("");
   const [subject, setSubject] = useState("all");
   const [sort, setSort] = useState<CourseSort>("recent");
 
-  const loadCourses = useCallback(async () => {
-    setLoading(true);
-    setError("");
-    const [coursesResponse, userResponse] = await Promise.all([
-      fetch("/api/student/my-courses", { cache: "no-store" }).catch(() => null),
-      fetch("/api/student/auth/me", { cache: "no-store" }).catch(() => null),
-    ]);
-    if (coursesResponse?.status === 401 || userResponse?.status === 401) {
-      router.replace("/login");
-      return;
-    }
-    if (!coursesResponse?.ok) {
-      const body = await coursesResponse?.json().catch(() => null);
-      setError(body?.detail ?? "تعذر تحميل كورساتك حالياً.");
-      setLoading(false);
-      return;
-    }
-    setData(await coursesResponse.json());
-    if (userResponse?.ok) setUser(await userResponse.json());
-    setLoading(false);
-  }, [router]);
-
   useEffect(() => {
-    const timer = window.setTimeout(() => void loadCourses(), 0);
-    return () => window.clearTimeout(timer);
-  }, [loadCourses]);
+    if (unauthorized) router.replace("/login");
+  }, [router, unauthorized]);
+
+  const loadCourses = () => {
+    void Promise.all([coursesQuery.refetch(), userQuery.refetch()]);
+  };
 
   const enrollments = data?.items ?? [];
   const subjects = Array.from(new Set(enrollments.map((item) => item.course.subject_name).filter((value): value is string => Boolean(value))));

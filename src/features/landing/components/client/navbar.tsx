@@ -5,7 +5,8 @@ import { Search, User, GraduationCap, Sun, Moon, UserPlus, X, Menu, Users, Spark
 import { cn } from "@/src/lib/cn";
 import { AnimatePresence, m } from "motion/react";
 import { Link } from "@/src/i18n/navigation";
-import type { UserDto } from "@/src/lib/student-api/contract";
+import { notifyStudentSessionChanged } from "@/src/lib/student-api/session-events";
+import { useCurrentStudent } from "@/src/features/student/hooks/use-student-queries";
 
 interface NavbarProps {
   onOpenAuth: (mode: "signin" | "signup") => void;
@@ -29,31 +30,12 @@ export default function Navbar({ onSearchChange, searchQuery, isDarkMode, onTogg
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showSearchInput, setShowSearchInput] = useState(false);
-  const [currentUser, setCurrentUser] = useState<UserDto | null>(null);
-
-  const loadSession = useCallback(async () => {
-    const response = await fetch("/api/student/auth/me", { cache: "no-store" }).catch(() => null);
-    if (!response?.ok) {
-      setCurrentUser(null);
-      return;
-    }
-    setCurrentUser(await response.json());
-  }, []);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => void loadSession(), 0);
-    window.addEventListener("student-session-changed", loadSession);
-    return () => {
-      window.clearTimeout(timer);
-      window.removeEventListener("student-session-changed", loadSession);
-    };
-  }, [loadSession]);
+  const { data: currentUser } = useCurrentStudent();
 
   const logout = async () => {
     await fetch("/api/student/auth/logout", { method: "POST" }).catch(() => null);
-    setCurrentUser(null);
     setMobileMenuOpen(false);
-    window.dispatchEvent(new Event("student-session-changed"));
+    notifyStudentSessionChanged("logout");
   };
 
   useEffect(() => {

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
   BookOpen,
@@ -19,7 +19,15 @@ import { GlobalLoading } from "@/src/components/ui/global-loading";
 import { m } from "motion/react";
 import { Link, useRouter } from "@/src/i18n/navigation";
 import { portalContainerVariants, portalItemVariants } from "./dashboard-motion";
-import type { GradeDto, MyCoursesDto, PublicCourseDto, StreamDto, UserDto } from "@/src/lib/student-api/contract";
+import type { GradeDto, PublicCourseDto, StreamDto } from "@/src/lib/student-api/contract";
+import {
+  getStudentErrorMessage,
+  isStudentUnauthorized,
+} from "@/src/lib/student-api/client";
+import {
+  useCurrentStudent,
+  useMyCourses,
+} from "@/src/features/student/hooks/use-student-queries";
 import lessonFallback from "@/src/assets/images/student-redesign/lesson-study-skills.webp";
 import StudentAppShell from "@/src/features/portal/components/portal-shell";
 
@@ -50,49 +58,44 @@ function DashboardLoading() {
 
 export default function StudentDashboard({ recommendations, grades, streams }: { recommendations: CourseRecommendation[]; grades: GradeDto[]; streams: StreamDto[] }) {
   const router = useRouter();
-  const [user, setUser] = useState<UserDto | null>(null);
-  const [courses, setCourses] = useState<MyCoursesDto | null>(null);
   const [profileLabel, setProfileLabel] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  const loadDashboard = useCallback(async () => {
-    setLoading(true);
-    setError("");
-    const [userResponse, coursesResponse] = await Promise.all([
-      fetch("/api/student/auth/me", { cache: "no-store" }).catch(() => null),
-      fetch("/api/student/my-courses", { cache: "no-store" }).catch(() => null),
-    ]);
-    if (userResponse?.status === 401 || coursesResponse?.status === 401) {
-      router.replace("/login");
-      return;
-    }
-    if (!userResponse?.ok || !coursesResponse?.ok) {
-      setError("تعذر تحميل بيانات الصفحة الرئيسية حالياً.");
-      setLoading(false);
-      return;
-    }
-    setUser(await userResponse.json());
-    setCourses(await coursesResponse.json());
-
-    const rawDraft = localStorage.getItem("elemni-student-onboarding-v1");
-    if (rawDraft) {
-      try {
-        const draft = JSON.parse(rawDraft) as OnboardingDraft;
-        const grade = grades.find((item) => item.id === draft.grade_id)?.name;
-        const stream = streams.find((item) => item.id === draft.stream_id)?.name;
-        setProfileLabel([grade, stream].filter(Boolean).join(" - "));
-      } catch {
-        localStorage.removeItem("elemni-student-onboarding-v1");
-      }
-    }
-    setLoading(false);
-  }, [grades, router, streams]);
+  const userQuery = useCurrentStudent();
+  const coursesQuery = useMyCourses();
+  const user = userQuery.data ?? null;
+  const courses = coursesQuery.data;
+  const unauthorized =
+    isStudentUnauthorized(userQuery.error) ||
+    isStudentUnauthorized(coursesQuery.error);
+  const loading = userQuery.isPending || coursesQuery.isPending;
+  const error = getStudentErrorMessage(
+    coursesQuery.error ?? userQuery.error,
+    "تعذر تحميل بيانات الصفحة الرئيسية حالياً.",
+  );
 
   useEffect(() => {
-    const timer = window.setTimeout(() => void loadDashboard(), 0);
+    if (unauthorized) router.replace("/login");
+  }, [router, unauthorized]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      const rawDraft = localStorage.getItem("elemni-student-onboarding-v1");
+      if (rawDraft) {
+        try {
+          const draft = JSON.parse(rawDraft) as OnboardingDraft;
+          const grade = grades.find((item) => item.id === draft.grade_id)?.name;
+          const stream = streams.find((item) => item.id === draft.stream_id)?.name;
+          setProfileLabel([grade, stream].filter(Boolean).join(" - "));
+        } catch {
+          localStorage.removeItem("elemni-student-onboarding-v1");
+        }
+      }
+    }, 0);
     return () => window.clearTimeout(timer);
-  }, [loadDashboard]);
+  }, [grades, streams]);
+
+  const loadDashboard = () => {
+    void Promise.all([userQuery.refetch(), coursesQuery.refetch()]);
+  };
 
   const summary = useMemo(() => {
     const items = courses?.items ?? [];

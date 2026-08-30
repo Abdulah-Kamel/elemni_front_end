@@ -1,9 +1,11 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import type { Teacher } from "../../types";
 import { BookOpen, Clock, CheckCircle2, ArrowRight, Award, Sparkles, Share2, Check, MapPin, LoaderCircle, CircleAlert, PlayCircle, FileText, ClipboardList, ChevronDown } from "lucide-react";
 import { cn } from "@/src/lib/cn";
+import { studentQueryKeys } from "@/src/features/student/query-keys";
 import { Link } from "@/src/i18n/navigation";
 import { Reveal } from "@/src/components/ui/reveal";
 import { AnimatePresence, m } from "motion/react";
@@ -27,6 +29,7 @@ interface TeacherProfileViewProps {
 }
 
 export default function TeacherProfileView({ teacher, onRequireAuth }: TeacherProfileViewProps) {
+  const queryClient = useQueryClient();
   const [copiedLink, setCopiedLink] = useState(false);
   const [subscribedCourses, setSubscribedCourses] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(teacher.courses.map((course) => [course.id, course.isSubscribed === true])),
@@ -64,6 +67,9 @@ export default function TeacherProfileView({ teacher, onRequireAuth }: TeacherPr
     }
     if (response?.status === 409) {
       setSubscribedCourses((current) => ({ ...current, [courseId]: true }));
+      await queryClient.invalidateQueries({
+        queryKey: studentQueryKeys.myCourses(),
+      });
       setProcessingCourse(null);
       return;
     }

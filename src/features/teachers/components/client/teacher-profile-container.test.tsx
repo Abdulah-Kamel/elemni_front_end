@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { describe, expect, it, vi } from "vitest";
 import type { Teacher } from "../../types";
 import TeacherProfileView from "./teacher-profile-view";
@@ -69,11 +70,17 @@ const teacher: Teacher = {
 
 describe("TeacherProfileView production experience", () => {
   it("expands a subscribed course without navigating away", () => {
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+
     render(
-      <TeacherProfileView
-        teacher={teacher}
-        onRequireAuth={() => undefined}
-      />,
+      <QueryClientProvider client={queryClient}>
+        <TeacherProfileView
+          teacher={teacher}
+          onRequireAuth={() => undefined}
+        />
+      </QueryClientProvider>,
     );
 
     expect(screen.queryByText("مقدمة في النهايات")).not.toBeInTheDocument();

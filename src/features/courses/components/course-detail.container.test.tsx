@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { StudentCourseDetailDto } from "@/src/lib/student-api/contract";
 import CourseDetail from "./course-detail";
@@ -125,13 +126,19 @@ describe("CourseDetail production experience", () => {
       });
     });
 
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+
     render(
-      <CourseDetail
-        courseId={12}
-        teacherSlug="ahmad-ali"
-        grades={[{ id: 3, name: "الصف الثالث الثانوي", level: "secondary" }]}
-        streams={[{ id: 1, name: "علمي علوم", slug: "science" }]}
-      />,
+      <QueryClientProvider client={queryClient}>
+        <CourseDetail
+          courseId={12}
+          teacherSlug="ahmad-ali"
+          grades={[{ id: 3, name: "الصف الثالث الثانوي", level: "secondary" }]}
+          streams={[{ id: 1, name: "علمي علوم", slug: "science" }]}
+        />
+      </QueryClientProvider>,
     );
 
     expect(

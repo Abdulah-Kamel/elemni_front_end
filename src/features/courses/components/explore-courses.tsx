@@ -21,13 +21,16 @@ import { AnimatePresence, m } from "motion/react";
 import { portalCardLiftClass, portalContainerVariants, portalImageZoomClass, portalItemVariants, scrollIntoViewById } from "./course-motion";
 import type {
   GradeDto,
-  MyCoursesDto,
   PublicCourseDto,
   PublicTeacherDto,
   StreamDto,
   SubjectDto,
-  UserDto,
 } from "@/src/lib/student-api/contract";
+import { isStudentUnauthorized } from "@/src/lib/student-api/client";
+import {
+  useCurrentStudent,
+  useMyCourses,
+} from "@/src/features/student/hooks/use-student-queries";
 import lessonFallback from "@/src/assets/images/student-redesign/lesson-study-skills.webp";
 import teacherFallback from "@/src/assets/images/student-redesign/teacher-ahmad.webp";
 import StudentAppShell from "@/src/features/portal/components/portal-shell";
@@ -133,9 +136,14 @@ export default function ExploreCourses({
   const router = useRouter();
   const searchParams = useSearchParams();
   const view: ExploreView = searchParams.get("view") === "teachers" ? "teachers" : "courses";
-  const [user, setUser] = useState<UserDto | null>(null);
-  const [enrolledCourseIds, setEnrolledCourseIds] = useState<number[]>([]);
   const [profile, setProfile] = useState<OnboardingDraft | null>(null);
+  const userQuery = useCurrentStudent();
+  const coursesQuery = useMyCourses();
+  const user = userQuery.data ?? null;
+  const enrolledCourseIds = coursesQuery.data?.items.map((item) => item.course_id) ?? [];
+  const unauthorized =
+    isStudentUnauthorized(userQuery.error) ||
+    isStudentUnauthorized(coursesQuery.error);
   const [search, setSearch] = useState("");
   const [courseGrade, setCourseGrade] = useState("all");
   const [courseStream, setCourseStream] = useState("all");
@@ -149,32 +157,21 @@ export default function ExploreCourses({
   const [teacherPage, setTeacherPage] = useState(1);
 
   useEffect(() => {
-    const timer = window.setTimeout(async () => {
-      const rawDraft = localStorage.getItem("elemni-student-onboarding-v1");
-      if (rawDraft) {
-        try {
-          setProfile(JSON.parse(rawDraft) as OnboardingDraft);
-        } catch {
-          localStorage.removeItem("elemni-student-onboarding-v1");
-        }
-      }
+    if (unauthorized) router.replace("/login");
+  }, [router, unauthorized]);
 
-      const [userResponse, coursesResponse] = await Promise.all([
-        fetch("/api/student/auth/me", { cache: "no-store" }).catch(() => null),
-        fetch("/api/student/my-courses", { cache: "no-store" }).catch(() => null),
-      ]);
-      if (userResponse?.status === 401 || coursesResponse?.status === 401) {
-        router.replace("/login");
-        return;
-      }
-      if (userResponse?.ok) setUser(await userResponse.json());
-      if (coursesResponse?.ok) {
-        const myCourses = await coursesResponse.json() as MyCoursesDto;
-        setEnrolledCourseIds(myCourses.items.map((item) => item.course_id));
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      const rawDraft = localStorage.getItem("elemni-student-onboarding-v1");
+      if (!rawDraft) return;
+      try {
+        setProfile(JSON.parse(rawDraft) as OnboardingDraft);
+      } catch {
+        localStorage.removeItem("elemni-student-onboarding-v1");
       }
     }, 0);
     return () => window.clearTimeout(timer);
-  }, [router]);
+  }, []);
 
   const changeCourseFilter = (setter: (value: string) => void, value: string) => {
     setter(value);

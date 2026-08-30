@@ -13,6 +13,7 @@ import {
   UserRound,
 } from "lucide-react";
 import { Link, useRouter } from "@/src/i18n/navigation";
+import { notifyStudentSessionChanged } from "@/src/lib/student-api/session-events";
 import AuthCard from "./auth-card";
 
 type AuthMode = "login" | "register";
@@ -110,7 +111,7 @@ export default function StudentAuthForm({ mode }: { mode: AuthMode }) {
       return;
     }
 
-    window.dispatchEvent(new Event("student-session-changed"));
+    notifyStudentSessionChanged("login");
     router.replace("/onboarding");
   };
 
