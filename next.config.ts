@@ -10,6 +10,10 @@ const imageOrigins = [
 ].filter((origin): origin is string => Boolean(origin));
 
 const nextConfig: NextConfig = {
+  transpilePackages: ["next-intl", "@swc/helpers"],
+  experimental: {
+    globalNotFound: true,
+  },
   images: {
     remotePatterns: imageOrigins.map((origin) => new URL("/**", origin)),
   },

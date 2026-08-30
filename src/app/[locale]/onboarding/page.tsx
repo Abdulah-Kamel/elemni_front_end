@@ -5,6 +5,7 @@ import { getGrades, getStreams, getSubjects } from "@/src/lib/student-api/public
 import { getAccessToken } from "@/src/lib/student-api/session";
 
 export const metadata = { title: "جهز تجربتك التعليمية | علمني" };
+export const dynamic = "force-dynamic";
 
 export default async function OnboardingPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

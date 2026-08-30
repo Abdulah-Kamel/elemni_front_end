@@ -85,7 +85,6 @@ export default function LandingInteractiveShell({
         <Hero
           onOpenAuth={handleOpenAuth}
           onOpenVideoTour={() => setVideoModalOpen(true)}
-          onExploreTeachers={scrollToTeachers}
         />
         <TeacherGrid teachers={teachers} grades={grades} streams={streams} searchQuery={searchQuery} loadError={teachersLoadError} />
         {afterTeachers}

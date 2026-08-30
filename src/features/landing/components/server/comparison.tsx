@@ -44,7 +44,7 @@ export default function Comparison() {
         </p>
       </Reveal>
       <div className="overflow-x-auto rounded-2xl border border-sky-100">
-        <table className="w-full text-right text-sm">
+        <table className="w-full text-end text-sm">
           <thead>
             <tr>
               <th className="p-4 font-bold text-[#0F172A] border-l border-sky-100">الميزة</th>

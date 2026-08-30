@@ -23,12 +23,14 @@
   --color-primary-hover: #0369a1;
   --color-primary-light: #f0f9ff;
   --color-primary-light-hover: #e0f2fe;
+  --color-primary-foreground: #ffffff;
   --color-accent: #f97316;
   --color-accent-hover: #ea580c;
   --color-accent-light: #fff7ed;
   --color-success: #22c55e;
   --color-error: #ef4444;
   --color-warning: #f59e0b;
+  --color-destructive: #ef4444;
 
   /* --- Legacy semantic tokens --- */
   --color-success-500: #22c55e;
@@ -37,6 +39,12 @@
   --color-ink: #0f172a;
   --color-muted: #64748b;
   --color-page: #f8fafc;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f1f5f9;
+  --color-surface-subtle: #e2e8f0;
+  --color-foreground: #0f172a;
+  --color-muted-foreground: #64748b;
+  --color-border: #e2e8f0;
 
   --radius-card: 1.5rem;
 
@@ -123,6 +131,12 @@
     --color-page: #0b132b;
     --color-ink: #f8fafc;
     --color-muted: #94a3b8;
+    --color-surface: #0f172a;
+    --color-surface-muted: #162033;
+    --color-surface-subtle: #1e293b;
+    --color-foreground: #f8fafc;
+    --color-muted-foreground: #94a3b8;
+    --color-border: #1e293b;
   }
 }
 

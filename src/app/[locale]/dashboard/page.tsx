@@ -11,6 +11,7 @@ import {
 import { getAccessToken } from "@/src/lib/student-api/session";
 
 export const metadata = { title: "الرئيسية | بوابة الطالب | علمني" };
+export const dynamic = "force-dynamic";
 
 export default async function StudentDashboardPage({
   params,

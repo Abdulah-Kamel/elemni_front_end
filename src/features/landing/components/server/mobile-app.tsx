@@ -103,7 +103,7 @@ export default function MobileApp() {
                 initial={{ opacity: 0, y: -20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: 0.5 }}
-                className="absolute -top-6 -right-6 z-30 transform rotate-[8deg]"
+                className="absolute -top-6 -end-6 z-30 transform rotate-[8deg]"
               >
                 <div className="bg-amber-100 text-amber-950 px-3.5 py-2 rounded-2xl border border-amber-300 shadow-md font-black text-xs select-none">
                   <MarkerHighlight color="yellow" variant={1}>
@@ -117,7 +117,7 @@ export default function MobileApp() {
                 initial={{ opacity: 0, y: -20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6, duration: 0.5 }}
-                className="absolute top-12 -left-8 z-30 transform -rotate-12"
+                className="absolute top-12 -start-8 z-30 transform -rotate-12"
               >
                 <div className="bg-purple-100 text-purple-950 px-3.5 py-2 rounded-2xl border border-purple-300 shadow-md font-black text-xs select-none">
                   <MarkerHighlight color="purple" variant={2}>
@@ -131,7 +131,7 @@ export default function MobileApp() {
                 initial={{ opacity: 0, x: 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.7, duration: 0.5 }}
-                className="absolute top-1/2 -right-10 z-30 transform rotate-6"
+                className="absolute top-1/2 -end-10 z-30 transform rotate-6"
               >
                 <div className="bg-rose-100 text-rose-950 px-3.5 py-2 rounded-2xl border border-rose-300 shadow-md font-black text-xs select-none">
                   <MarkerHighlight color="pink" variant={3}>
@@ -145,7 +145,7 @@ export default function MobileApp() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.8, duration: 0.5 }}
-                className="absolute -bottom-4 -left-6 z-30 transform -rotate-6"
+                className="absolute -bottom-4 -start-6 z-30 transform -rotate-6"
               >
                 <div className="bg-emerald-100 text-emerald-950 px-3.5 py-2 rounded-2xl border border-emerald-300 shadow-md font-black text-xs select-none">
                   <MarkerHighlight color="emerald" variant={4}>
@@ -159,7 +159,7 @@ export default function MobileApp() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.9, duration: 0.5 }}
-                className="absolute -bottom-6 -right-4 z-30 transform rotate-10"
+                className="absolute -bottom-6 -end-4 z-30 transform rotate-10"
               >
                 <div className="bg-sky-100 text-sky-950 px-3 py-1.5 rounded-xl border border-sky-300 shadow-sm font-black text-[11px] select-none">
                   <MarkerHighlight color="sky" variant={1}>
@@ -172,7 +172,7 @@ export default function MobileApp() {
               <div className="relative rounded-[3rem] border-10 border-slate-900 dark:border-slate-800 bg-slate-950 p-3 shadow-[0_25px_60px_-15px_rgba(123,44,191,0.25)] ring-1 ring-slate-800">
 
                 {/* Speaker & Notch */}
-                <div className="absolute top-4 left-1/2 -translate-x-1/2 w-28 h-5 bg-slate-900 rounded-full z-40 flex items-center justify-between px-3">
+                <div className="absolute top-4 start-1/2 ltr:-translate-x-1/2 rtl:translate-x-1/2 w-28 h-5 bg-slate-900 rounded-full z-40 flex items-center justify-between px-3">
                   <div className="w-3 h-3 rounded-full bg-slate-950 border border-slate-800" />
                   <div className="w-2.5 h-2.5 rounded-full bg-blue-900/60" />
                 </div>

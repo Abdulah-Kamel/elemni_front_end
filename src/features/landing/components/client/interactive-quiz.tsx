@@ -82,7 +82,7 @@ export default function InteractiveQuiz({ onExploreTeachers }: InteractiveQuizPr
                 <div className="bg-primary h-full transition-all duration-300" style={{ width: `${((currentQuestionIndex + 1) / QUIZ_QUESTIONS.length) * 100}%` }} />
               </div>
 
-              <h3 className="text-lg sm:text-xl font-black text-[#0F172A] leading-relaxed mb-6 text-right font-cairo">{currentQ.question}</h3>
+              <h3 className="text-lg sm:text-xl font-black text-[#0F172A] leading-relaxed mb-6 text-end font-cairo">{currentQ.question}</h3>
 
               <div className="space-y-3 mb-6">
                 {currentQ.options.map((option, idx) => {
@@ -102,7 +102,7 @@ export default function InteractiveQuiz({ onExploreTeachers }: InteractiveQuizPr
                       onClick={() => handleSelectOption(idx)}
                       disabled={isAnswered}
                       className={cn(
-                        "w-full p-4 text-right rounded-2xl border text-sm transition-all cursor-pointer flex items-center justify-between gap-3",
+                        "w-full p-4 text-end rounded-2xl border text-sm transition-all cursor-pointer flex items-center justify-between gap-3",
                         buttonStyle
                       )}
                     >
@@ -115,7 +115,7 @@ export default function InteractiveQuiz({ onExploreTeachers }: InteractiveQuizPr
               </div>
 
               {isAnswered && (
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 mb-6 text-right text-xs leading-relaxed text-[#334155]">
+                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 mb-6 text-end text-xs leading-relaxed text-[#334155]">
                   <span className="font-extrabold text-primary block mb-1">💡 الشرح والتوضيح العلمي:</span>
                   <p>{currentQ.explanation}</p>
                 </div>

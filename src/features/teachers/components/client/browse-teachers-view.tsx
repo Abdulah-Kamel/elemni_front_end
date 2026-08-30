@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Link } from "@/src/i18n/navigation";
 import type { TeacherSummary } from "../../types";
 import type { GradeDto, StreamDto } from "@/src/lib/student-api/contract";
-import { Search, BookOpen, Sparkles, ChevronDown, ChevronRight, ArrowLeft, ChevronLeft, CircleAlert } from "lucide-react";
+import { Search, BookOpen, Sparkles, ChevronRight, ArrowLeft, ChevronLeft, CircleAlert } from "lucide-react";
 import { cn } from "@/src/lib/cn";
 import { ModernSelect } from "@/src/components/ui/modern-select";
 

@@ -13,6 +13,7 @@ import {
 import { getAccessToken } from "@/src/lib/student-api/session";
 
 export const metadata = { title: "استكشف الكورسات | بوابة الطالب | علمني" };
+export const dynamic = "force-dynamic";
 
 export default async function ExploreCoursesPage({
   params,

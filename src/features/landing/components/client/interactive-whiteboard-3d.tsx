@@ -757,7 +757,7 @@ export default function InteractiveWhiteboard3D() {
     const planeIntersect = new THREE.Vector3();
 
     let draggedGroup: THREE.Group | null = null;
-    let dragOffset = new THREE.Vector3();
+    const dragOffset = new THREE.Vector3();
     let targetZ = 0.05;
 
     const getNDCCoordinates = (e: MouseEvent | TouchEvent) => {

@@ -9,13 +9,11 @@ import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 interface HeroProps {
   onOpenAuth: (mode: "signup" | "signin") => void;
   onOpenVideoTour: () => void;
-  onExploreTeachers: () => void;
 }
 
 export default function Hero({
   onOpenAuth,
   onOpenVideoTour,
-  onExploreTeachers,
 }: HeroProps) {
   return (
     <section

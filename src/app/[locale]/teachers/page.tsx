@@ -3,6 +3,8 @@ import BrowseTeachersShell from "@/src/features/teachers/components/client/brows
 import { toTeacherSummary } from "@/src/lib/student-api/adapters";
 import { getGrades, getPublicTeachers, getStreams } from "@/src/lib/student-api/public";
 
+export const dynamic = "force-dynamic";
+
 export default async function TeachersPage({
   params,
 }: {

@@ -3,7 +3,8 @@ import { describe, expect, it, vi } from "vitest";
 import OnboardingFlow from "./onboarding-flow";
 
 vi.mock("next/image", () => ({
-  default: ({ fill: _fill, src, alt, ...props }: React.ComponentProps<"img"> & { fill?: boolean }) => (
+  default: ({ src, alt, ...props }: React.ComponentProps<"img"> & { fill?: boolean }) => (
+    // eslint-disable-next-line @next/next/no-img-element
     <img
       {...props}
       src={typeof src === "string" ? src : undefined}

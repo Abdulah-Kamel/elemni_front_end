@@ -272,7 +272,7 @@ export default function InteractiveWhiteboardMobile() {
                   ref={(el) => {
                     pinRefs.current[note.id] = el;
                   }}
-                  className="absolute -top-2 left-1/2 -translate-x-1/2 flex flex-col items-center z-30"
+                  className="absolute -top-2 start-1/2 ltr:-translate-x-1/2 rtl:translate-x-1/2 flex flex-col items-center z-30"
                 >
                   <div
                     className="w-4 h-4 rounded-full border-2 border-white shadow-md flex items-center justify-center"
