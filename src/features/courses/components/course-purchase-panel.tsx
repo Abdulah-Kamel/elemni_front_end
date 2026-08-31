@@ -46,7 +46,7 @@ export default function CoursePurchasePanel({
           <p className="text-xs font-bold text-[#6B7E8F]">{t("checkoutPrice")}</p>
           <p className="mt-1 text-3xl font-black tracking-[-0.03em] text-[#0F2638]">
             {formatPrice(enrollment?.course_price ?? course.price, locale)}
-            <span className="ms-1 text-sm font-bold text-[#6B7E8F]">ج.م</span>
+            <span className="ms-1 text-sm font-bold text-[#6B7E8F]">{t("currency")}</span>
           </p>
         </div>
         {enrolled ? (

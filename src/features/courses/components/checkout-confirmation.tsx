@@ -110,7 +110,7 @@ export default function CheckoutConfirmation({
             <h3 className="truncate text-sm font-black text-[#0F2638]">{course.title}</h3>
             {teacher && <p className="mt-1 truncate text-xs text-[#6B7E8F]">{teacher.name}</p>}
             <p className="mt-2 text-lg font-black text-[#075985]">
-              {formatPrice(course.price, locale)} <span className="text-xs">ج.م</span>
+              {formatPrice(course.price, locale)} <span className="text-xs">{t("currency")}</span>
             </p>
           </div>
         </div>

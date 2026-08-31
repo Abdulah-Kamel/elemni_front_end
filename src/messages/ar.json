@@ -571,6 +571,7 @@
     "lessons": "{count} درس",
     "minutes": "{count} دقيقة",
     "hours": "{count} ساعات",
+    "currency": "ج.م",
     "durationUnknown": "المدة غير محددة",
     "exams": "{count} اختبار",
     "chapters": "{count} وحدات",
