@@ -7,8 +7,7 @@ export default function CourseDetailSkeleton({ label }: { label: string }) {
     >
       <div className="mb-6 h-5 w-36 animate-pulse rounded bg-[#D8E3EC]" />
       <div className="grid items-start gap-8 lg:grid-cols-[minmax(19rem,24rem)_minmax(0,1fr)]">
-        <div className="order-1 h-72 animate-pulse rounded-2xl bg-[#EAF2F7]" />
-        <div className="order-2 min-w-0 space-y-8">
+        <div className="order-1 min-w-0 space-y-8 lg:order-2">
           <div className="grid overflow-hidden rounded-[1.75rem] bg-[#DDEAF2] lg:grid-cols-[minmax(0,1fr)_36%]">
             <div className="order-2 space-y-5 p-7 lg:order-1">
               <div className="h-5 w-40 animate-pulse rounded bg-[#C6D9E5]" />
@@ -22,6 +21,7 @@ export default function CourseDetailSkeleton({ label }: { label: string }) {
           <div className="h-16 animate-pulse rounded-xl bg-[#EAF2F7]" />
           <div className="h-64 animate-pulse rounded-2xl bg-[#EAF2F7]" />
         </div>
+        <div className="order-2 h-72 animate-pulse rounded-2xl bg-[#EAF2F7] lg:order-1" />
       </div>
     </div>
   );

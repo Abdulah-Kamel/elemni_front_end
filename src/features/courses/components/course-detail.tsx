@@ -205,18 +205,7 @@ export default function CourseDetail({
           </Link>
 
           <div className="grid items-start gap-8 lg:grid-cols-[minmax(19rem,24rem)_minmax(0,1fr)]">
-            <aside className="order-1">
-              <CoursePurchasePanel
-                course={course}
-                enrollment={detail.enrollment}
-                isAuthenticated={isAuthenticated}
-                loading={checkoutLoading}
-                onPurchase={openCheckout}
-                onContinue={startCourse}
-              />
-            </aside>
-
-            <div className="order-2 min-w-0 space-y-8">
+            <div className="order-1 min-w-0 space-y-8 lg:order-2">
               <m.div variants={portalItemVariants}>
                 <CourseHero
                   course={course}
@@ -305,6 +294,17 @@ export default function CourseDetail({
                 )}
               </m.section>
             </div>
+
+            <aside className="order-2 lg:order-1">
+              <CoursePurchasePanel
+                course={course}
+                enrollment={detail.enrollment}
+                isAuthenticated={isAuthenticated}
+                loading={checkoutLoading}
+                onPurchase={openCheckout}
+                onContinue={startCourse}
+              />
+            </aside>
           </div>
         </m.div>
       )}
