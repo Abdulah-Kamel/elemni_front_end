@@ -1,4 +1,4 @@
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import CourseDetail from "@/src/features/courses/components/course-detail";
 import { getGrades, getStreams } from "@/src/lib/student-api/public";
@@ -19,9 +19,7 @@ export default async function CourseDetailPage({
 
   const parsedCourseId = Number(courseId);
   if (!Number.isInteger(parsedCourseId) || parsedCourseId <= 0) notFound();
-  if (!(await getAccessToken())) {
-    redirect(locale === "ar" ? "/login" : `/${locale}/login`);
-  }
+  const isAuthenticated = Boolean(await getAccessToken());
 
   const [grades, streams] = await Promise.all([getGrades(), getStreams()]);
   return (
@@ -30,6 +28,7 @@ export default async function CourseDetailPage({
       teacherSlug={teacher}
       grades={grades.ok ? grades.data : []}
       streams={streams.ok ? streams.data : []}
+      isAuthenticated={isAuthenticated}
     />
   );
 }

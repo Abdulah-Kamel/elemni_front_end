@@ -192,11 +192,13 @@ export default function CourseDetail({
   teacherSlug,
   grades,
   streams,
+  isAuthenticated = true,
 }: {
   courseId: number;
   teacherSlug?: string;
   grades: GradeDto[];
   streams: StreamDto[];
+  isAuthenticated?: boolean;
 }) {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -208,13 +210,13 @@ export default function CourseDetail({
   const [activeVideo, setActiveVideo] = useState<{ item: PublicItemDto; lesson: PublicLessonDto } | null>(null);
 
   const courseQuery = useStudentCourse(courseId, teacherSlug);
-  const userQuery = useCurrentStudent();
+  const userQuery = useCurrentStudent(isAuthenticated);
   const detail = courseQuery.data;
   const user = userQuery.data ?? null;
   const unauthorized =
     isStudentUnauthorized(courseQuery.error) ||
     isStudentUnauthorized(userQuery.error);
-  const loading = courseQuery.isPending || userQuery.isPending;
+  const loading = courseQuery.isPending || (isAuthenticated && userQuery.isPending);
   const error = getStudentErrorMessage(
     courseQuery.error,
     "تعذر تحميل تفاصيل الكورس حالياً.",
