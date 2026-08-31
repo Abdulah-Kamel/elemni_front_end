@@ -60,7 +60,7 @@ export default function CourseDetail({
   const courseQuery = useStudentCourse(courseId, teacherSlug);
   const userQuery = useCurrentStudent(isAuthenticated);
   const detail = courseQuery.data;
-  const user = userQuery.data ?? null;
+  const user = isAuthenticated ? userQuery.data ?? null : null;
   const unauthorized =
     isStudentUnauthorized(courseQuery.error) ||
     (isAuthenticated && isStudentUnauthorized(userQuery.error));
