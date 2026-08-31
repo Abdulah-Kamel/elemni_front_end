@@ -37,20 +37,27 @@ export default function CheckoutConfirmation({
   const locale = useLocale();
   const closeRef = useRef<HTMLButtonElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
+  const loadingRef = useRef(loading);
+  const onOpenChangeRef = useRef(onOpenChange);
+
+  useEffect(() => {
+    loadingRef.current = loading;
+    onOpenChangeRef.current = onOpenChange;
+  }, [loading, onOpenChange]);
 
   useEffect(() => {
     if (!open) return;
     previousFocus.current = document.activeElement as HTMLElement | null;
     closeRef.current?.focus();
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && !loading) onOpenChange(false);
+      if (event.key === "Escape" && !loadingRef.current) onOpenChangeRef.current(false);
     };
     document.addEventListener("keydown", onKeyDown);
     return () => {
       document.removeEventListener("keydown", onKeyDown);
       previousFocus.current?.focus();
     };
-  }, [loading, onOpenChange, open]);
+  }, [open]);
 
   if (!open) return null;
 
