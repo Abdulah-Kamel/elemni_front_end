@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { StudentCourseDetailDto } from "@/src/lib/student-api/contract";
 import arMessages from "@/src/messages/ar.json";
+import enMessages from "@/src/messages/en.json";
 import CourseDetail from "./course-detail";
 
 vi.mock("@/src/features/portal/components/portal-shell", () => ({
@@ -279,5 +280,34 @@ describe("CourseDetail production experience", () => {
         }),
       );
     });
+  });
+
+  it("renders the purchase surface in English when the locale changes", async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => publicDetail,
+    });
+
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+
+    render(
+      <NextIntlClientProvider locale="en" messages={enMessages}>
+        <QueryClientProvider client={queryClient}>
+          <CourseDetail
+            courseId={12}
+            teacherSlug="ahmad-ali"
+            isAuthenticated={false}
+            grades={[]}
+            streams={[]}
+          />
+        </QueryClientProvider>
+      </NextIntlClientProvider>,
+    );
+
+    expect(await screen.findByRole("button", { name: "Enroll in this course" })).toBeInTheDocument();
+    expect(screen.getByText("EGP")).toBeInTheDocument();
   });
 });
