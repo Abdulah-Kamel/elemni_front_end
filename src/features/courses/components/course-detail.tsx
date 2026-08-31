@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { ArrowLeft, CircleAlert, RotateCcw } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { AnimatePresence, m, useReducedMotion } from "motion/react";
-import { GlobalLoading } from "@/src/components/ui/global-loading";
 import StudentAppShell from "@/src/features/portal/components/portal-shell";
 import { Link, useRouter } from "@/src/i18n/navigation";
 import type {
@@ -29,6 +28,7 @@ import CourseHero from "./course-hero";
 import CoursePurchasePanel from "./course-purchase-panel";
 import CurriculumAccordion from "./curriculum-accordion";
 import LearnerPlayer from "./learner-player";
+import CourseDetailSkeleton from "./course-detail-skeleton";
 
 export default function CourseDetail({
   courseId,
@@ -172,7 +172,7 @@ export default function CourseDetail({
   return (
     <StudentAppShell user={user} active={enrolled ? "courses" : "discover"}>
       {loading ? (
-        <GlobalLoading variant="content" message={t("loadingCourse")} />
+        <CourseDetailSkeleton label={t("loadingCourse")} />
       ) : error || !detail || !course ? (
         <div className="mx-auto flex min-h-[70vh] max-w-xl items-center px-4">
           <div role="alert" className="w-full rounded-2xl border border-[#F4C7C7] bg-[#FFF7F7] p-6 text-center text-sm font-bold text-[#B42318]">
