@@ -1,3 +1,12 @@
+.student-portal-shell {
+  --student-sidebar-width: 16rem;
+}
+
+.student-portal-sidebar {
+  width: var(--student-sidebar-width);
+  transition: width 180ms ease-out;
+}
+
 .student-portal-sidebar,
 .student-portal-drawer {
   right: 0;
@@ -14,10 +23,20 @@
 
 @media (min-width: 48rem) {
   .student-portal-header {
-    right: 16rem;
+    right: var(--student-sidebar-width);
   }
 
   .student-portal-main {
-    margin-right: 16rem;
+    margin-right: var(--student-sidebar-width);
+  }
+}
+
+.student-portal-shell[data-sidebar-collapsed="true"] {
+  --student-sidebar-width: 4.25rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .student-portal-sidebar {
+    transition: none;
   }
 }
