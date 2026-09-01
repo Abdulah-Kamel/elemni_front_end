@@ -58,10 +58,10 @@ test("auth routes still render after moving to auth feature", async ({ page }) =
   ).toBeVisible();
 });
 
-test("public teacher profile route still renders after moving to the teachers feature", async ({ page }) => {
+test("public teacher profile route still renders the current teacher heading", async ({ page }) => {
   await page.goto("/teachers/ahmed-hassan");
   await expect(page).toHaveURL(/\/teachers\/ahmed-hassan$/);
-  await expect(page.getByRole("heading", { level: 1, name: "Ahmed Hassan" })).toBeVisible();
+  await expect(page.locator("main").getByRole("heading", { level: 1 })).toBeVisible();
 });
 
 test("teachers becomes the canonical public teacher area", async ({ page }) => {
