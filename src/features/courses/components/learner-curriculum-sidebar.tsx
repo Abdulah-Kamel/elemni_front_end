@@ -34,6 +34,7 @@ export default function LearnerCurriculumSidebar({
   return (
     <aside
       data-testid="learner-curriculum-sidebar"
+      data-layout="flat"
       aria-label={t("curriculum")}
       className="order-2 min-w-0 overflow-y-auto overscroll-contain lg:order-1 lg:sticky lg:top-24 lg:max-h-[calc(100dvh-7rem)] lg:pe-1"
     >
@@ -64,11 +65,12 @@ export default function LearnerCurriculumSidebar({
           </p>
         </header>
 
-        <div className="p-3 sm:p-4">
+        <div className="p-0">
           {hasContent ? (
             <CurriculumAccordion
               chapters={chapters}
               enrolled
+              variant="sidebar"
               activeVideoId={activeVideoId}
               expandedChapterId={expandedChapterId}
               expandedLessonId={expandedLessonId}
@@ -77,7 +79,7 @@ export default function LearnerCurriculumSidebar({
               onPlay={onPlay}
             />
           ) : (
-            <div className="flex min-h-56 flex-col items-center justify-center rounded-xl border border-dashed border-[#B7CDDC] bg-[#FBFDFF] px-5 text-center">
+            <div className="m-4 flex min-h-56 flex-col items-center justify-center rounded-xl border border-dashed border-[#B7CDDC] bg-[#FBFDFF] px-5 text-center">
               <CircleAlert className="mb-4 size-9 text-[#9AB4C5]" aria-hidden="true" />
               <h3 className="text-base font-black text-[#1C3345]">{t("noContent")}</h3>
               <p className="mt-2 text-sm leading-6 text-[#6B7E8F]">

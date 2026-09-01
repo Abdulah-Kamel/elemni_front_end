@@ -52,6 +52,7 @@ function absoluteDocumentUrl(path: string | null) {
 function LessonRow({
   lesson,
   enrolled,
+  variant,
   expanded,
   activeVideoId,
   onToggle,
@@ -59,6 +60,7 @@ function LessonRow({
 }: {
   lesson: PublicLessonDto;
   enrolled: boolean;
+  variant: "default" | "sidebar";
   expanded: boolean;
   activeVideoId: number | null;
   onToggle: () => void;
@@ -76,7 +78,7 @@ function LessonRow({
         type="button"
         onClick={onToggle}
         aria-expanded={expanded}
-        className="flex min-h-16 w-full cursor-pointer items-center gap-3 px-4 py-3.5 text-start transition-colors hover:bg-[#F4FAFD] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0284C7] sm:px-5"
+        className={`flex w-full cursor-pointer items-center text-start transition-colors hover:bg-[#F4FAFD] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0284C7] ${variant === "sidebar" ? "min-h-14 gap-3 px-3 py-3" : "min-h-16 gap-3 px-4 py-3.5 sm:px-5"}`}
       >
         <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#E8F6FE] text-[#0284C7]">
           {hasVideo ? <PlayCircle className="size-5" /> : hasDocument ? <FileText className="size-5" /> : <BookOpen className="size-5" />}
@@ -101,7 +103,7 @@ function LessonRow({
       <AnimatePresence initial={false}>
         {expanded && (
           <m.div
-            className="overflow-hidden bg-[#FBFDFF] px-4 py-4 sm:ps-16"
+            className={variant === "sidebar" ? "overflow-hidden bg-[#FBFDFF] px-3 py-3" : "overflow-hidden bg-[#FBFDFF] px-4 py-4 sm:ps-16"}
             initial={reduced ? { opacity: 0 } : { height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={reduced ? { opacity: 0 } : { height: 0, opacity: 0 }}
@@ -111,13 +113,14 @@ function LessonRow({
               <p className="pb-3 text-sm leading-6 text-[#6B7E8F]">{lesson.description}</p>
             )}
             {lesson.items.length ? (
-              <div className="space-y-2">
+              <div className={variant === "sidebar" ? "space-y-0 border-t border-[#E4ECF2]" : "space-y-2"}>
                 {lesson.items.map((item) => (
                   <ItemRow
                     key={item.id}
                     item={item}
                     lesson={lesson}
                     enrolled={enrolled}
+                    variant={variant}
                     active={item.id === activeVideoId}
                     onPlay={onPlay}
                   />
@@ -137,12 +140,14 @@ function ItemRow({
   item,
   lesson,
   enrolled,
+  variant,
   active,
   onPlay,
 }: {
   item: PublicItemDto;
   lesson: PublicLessonDto;
   enrolled: boolean;
+  variant: "default" | "sidebar";
   active: boolean;
   onPlay: (item: PublicItemDto, lesson: PublicLessonDto) => void;
 }) {
@@ -161,7 +166,8 @@ function ItemRow({
       <button
         type="button"
         onClick={() => onPlay(item, lesson)}
-        className={`flex w-full cursor-pointer items-center gap-3 rounded-xl border px-3 py-3 text-start transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0284C7] ${active ? "border-[#0284C7] bg-[#E8F6FE]" : "border-[#D8E3EC] bg-white hover:border-[#7DD3FC]"}`}
+        data-testid={variant === "sidebar" ? `learner-curriculum-item-${item.id}` : undefined}
+        className={`flex w-full cursor-pointer items-center gap-3 px-3 py-3 text-start transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0284C7] ${variant === "sidebar" ? `rounded-none ${active ? "bg-[#E8F6FE] shadow-[inset_0_0_0_1px_#0284C7]" : "bg-white hover:bg-[#F4FAFD]"}` : `rounded-xl border ${active ? "border-[#0284C7] bg-[#E8F6FE]" : "border-[#D8E3EC] bg-white hover:border-[#7DD3FC]"}`}`}
       >
         <ItemIcon className="size-5 shrink-0 text-[#0284C7]" aria-hidden="true" />
         <span className="min-w-0 flex-1">
@@ -179,7 +185,8 @@ function ItemRow({
         href={documentUrl}
         target="_blank"
         rel="noreferrer"
-        className="flex items-center gap-3 rounded-xl border border-[#D8E3EC] bg-white px-3 py-3 text-start transition hover:border-[#7DD3FC] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0284C7]"
+        data-testid={variant === "sidebar" ? `learner-curriculum-item-${item.id}` : undefined}
+        className={`flex items-center gap-3 px-3 py-3 text-start transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0284C7] ${variant === "sidebar" ? "rounded-none bg-white hover:bg-[#F4FAFD]" : "rounded-xl border border-[#D8E3EC] bg-white hover:border-[#7DD3FC]"}`}
       >
         <ItemIcon className="size-5 shrink-0 text-[#087443]" aria-hidden="true" />
         <span className="min-w-0 flex-1">
@@ -192,7 +199,10 @@ function ItemRow({
   }
 
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-[#E4ECF2] bg-white px-3 py-3 text-start">
+    <div
+      data-testid={variant === "sidebar" ? `learner-curriculum-item-${item.id}` : undefined}
+      className={`flex items-center gap-3 px-3 py-3 text-start ${variant === "sidebar" ? "rounded-none bg-white" : "rounded-xl border border-[#E4ECF2] bg-white"}`}
+    >
       <ItemIcon className="size-5 shrink-0 text-[#8BA0B1]" aria-hidden="true" />
       <span className="min-w-0 flex-1">
         <strong className="block truncate text-sm text-[#536A7C]">{item.title}</strong>
@@ -209,6 +219,7 @@ function ItemRow({
 export default function CurriculumAccordion({
   chapters,
   enrolled,
+  variant = "default",
   activeVideoId,
   expandedChapterId,
   expandedLessonId,
@@ -218,6 +229,7 @@ export default function CurriculumAccordion({
 }: {
   chapters: PublicChapterDto[];
   enrolled: boolean;
+  variant?: "default" | "sidebar";
   activeVideoId: number | null;
   expandedChapterId: number | null;
   expandedLessonId: number | null;
@@ -233,13 +245,13 @@ export default function CurriculumAccordion({
   if (!chapters.length) return null;
 
   return (
-    <div className="space-y-3">
+    <div className={variant === "sidebar" ? "space-y-0" : "space-y-3"}>
       {visibleChapters.map((chapter, chapterIndex) => {
         const expanded = expandedChapterId === chapter.id;
         return (
           <section
             key={`${chapter.id}-${chapterIndex}`}
-            className="overflow-hidden rounded-2xl border border-[#D8E3EC] bg-white"
+            className={variant === "sidebar" ? "overflow-hidden border-b border-[#D8E3EC] bg-white last:border-b-0" : "overflow-hidden rounded-2xl border border-[#D8E3EC] bg-white"}
             aria-labelledby={`chapter-${chapter.id}-${chapterIndex}`}
           >
             <button
@@ -247,7 +259,7 @@ export default function CurriculumAccordion({
               onClick={() => onChapterToggle(chapter.id)}
               aria-expanded={expanded}
               aria-controls={`chapter-content-${chapter.id}-${chapterIndex}`}
-              className={`flex min-h-16 w-full cursor-pointer items-center gap-4 px-4 py-4 text-start transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0284C7] sm:px-5 ${expanded ? "bg-[#E8F6FE]" : "hover:bg-[#FBFDFF]"}`}
+              className={`flex w-full cursor-pointer items-center text-start transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0284C7] ${variant === "sidebar" ? "min-h-14 gap-3 px-3 py-3" : "min-h-16 gap-4 px-4 py-4 sm:px-5"} ${expanded ? "bg-[#E8F6FE]" : "hover:bg-[#FBFDFF]"}`}
             >
               <span className="flex min-w-0 flex-1 items-center gap-2">
                 <h3
@@ -282,6 +294,7 @@ export default function CurriculumAccordion({
                       key={lesson.id}
                       lesson={lesson}
                       enrolled={enrolled}
+                      variant={variant}
                       expanded={expandedLessonId === lesson.id}
                       activeVideoId={activeVideoId}
                       onToggle={() => onLessonToggle(lesson.id)}
