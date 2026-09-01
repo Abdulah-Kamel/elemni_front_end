@@ -127,10 +127,11 @@ test("a freshly registered student can open migrated authenticated surfaces and 
   await expect(page.locator('a[href^="/teachers/"]').first()).toBeVisible();
 });
 
-test("course discovery and detail routes remain guarded after moving to the courses feature", async ({ page }) => {
+test("course discovery stays guarded while public course detail remains accessible", async ({ page }) => {
   await page.goto("/explore");
   await expect(page).toHaveURL(/\/login$/);
 
   await page.goto("/courses/1");
-  await expect(page).toHaveURL(/\/login$/);
+  await expect(page).toHaveURL(/\/courses\/1$/);
+  await expect(page.getByRole("navigation", { name: "بوابة الطالب" })).toBeVisible();
 });
