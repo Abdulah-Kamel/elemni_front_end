@@ -159,6 +159,11 @@ describe("CourseDetail production experience", () => {
     expect(
       await screen.findByTitle("مقدمة في النهايات - فيديو الشرح"),
     ).toHaveAttribute("src", "https://iframe.mediadelivery.net/play/123");
+    const curriculumSidebar = screen.getByTestId("learner-curriculum-sidebar");
+    expect(curriculumSidebar).toHaveAttribute("aria-label", "منهج الكورس");
+    expect(curriculumSidebar).toHaveClass("overflow-y-auto");
+    expect(curriculumSidebar).toHaveClass("lg:max-h-[calc(100dvh-7rem)]");
+    expect(screen.queryByText("السعر المستحق")).not.toBeInTheDocument();
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
   });
 
