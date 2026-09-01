@@ -5,7 +5,10 @@ import type {
   PublicTeacherDto,
   StudentCourseDetailDto,
 } from "@/src/lib/student-api/contract";
-import { authenticatedBackendFetch } from "@/src/lib/student-api/session";
+import {
+  authenticatedBackendFetch,
+  getAccessToken,
+} from "@/src/lib/student-api/session";
 
 const discoveryCache = { next: { revalidate: 300 } } as const;
 
@@ -47,12 +50,16 @@ export async function GET(
     return Response.json({ detail: "معرّف الكورس غير صالح." }, { status: 400 });
   }
 
-  const courses = await authenticatedBackendFetch<MyCoursesDto>("/api/v1/my/courses", {
-    cache: "no-store",
-  });
-  if (!courses.ok) return backendErrorResponse(courses.error);
+  const accessToken = await getAccessToken();
+  let enrollment: MyCoursesDto["items"][number] | undefined;
+  if (accessToken) {
+    const courses = await authenticatedBackendFetch<MyCoursesDto>("/api/v1/my/courses", {
+      cache: "no-store",
+    });
+    if (!courses.ok) return backendErrorResponse(courses.error);
+    enrollment = courses.data.items.find((item) => item.course_id === courseId);
+  }
 
-  const enrollment = courses.data.items.find((item) => item.course_id === courseId);
   if (!enrollment) {
     const teacherSlug = new URL(request.url).searchParams.get("teacher")?.trim();
     if (!teacherSlug) {

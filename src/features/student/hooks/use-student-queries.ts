@@ -21,10 +21,11 @@ const privateQueryDefaults = {
     !isStudentUnauthorized(error) && failureCount < 1,
 };
 
-export function useCurrentStudent() {
+export function useCurrentStudent(enabled = true) {
   return useQuery({
     queryKey: studentQueryKeys.me(),
     queryFn: () => studentApiFetch<UserDto>("/api/student/auth/me"),
+    enabled,
     ...privateQueryDefaults,
   });
 }
@@ -37,7 +38,11 @@ export function useMyCourses() {
   });
 }
 
-export function useStudentCourse(courseId: number, teacherSlug?: string) {
+export function useStudentCourse(
+  courseId: number,
+  teacherSlug?: string,
+  options?: { enabled?: boolean },
+) {
   const teacherQuery = teacherSlug
     ? `?teacher=${encodeURIComponent(teacherSlug)}`
     : "";
@@ -48,6 +53,7 @@ export function useStudentCourse(courseId: number, teacherSlug?: string) {
       studentApiFetch<StudentCourseDetailDto>(
         `/api/student/my-courses/${courseId}${teacherQuery}`,
       ),
+    enabled: options?.enabled ?? true,
     ...privateQueryDefaults,
   });
 }
