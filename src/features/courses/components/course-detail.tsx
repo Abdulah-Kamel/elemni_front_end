@@ -28,6 +28,7 @@ import CourseHero from "./course-hero";
 import CoursePurchasePanel from "./course-purchase-panel";
 import CurriculumAccordion from "./curriculum-accordion";
 import LearnerPlayer from "./learner-player";
+import LearnerCurriculumSidebar from "./learner-curriculum-sidebar";
 import CourseDetailSkeleton from "./course-detail-skeleton";
 
 export default function CourseDetail({
@@ -106,6 +107,19 @@ export default function CourseDetail({
   const playVideo = (item: PublicItemDto, lesson: PublicLessonDto) => {
     setActiveVideo({ item, lesson });
     window.setTimeout(() => scrollIntoViewById("course-player", { block: "start" }), 0);
+  };
+
+  const handleChapterToggle = (chapterId: number) => {
+    const isOpening = expandedChapterId !== chapterId;
+    setExpandedChapterId(isOpening ? chapterId : null);
+    if (isOpening) {
+      const chapter = chapters.find((item) => item.id === chapterId);
+      setExpandedLessonId(chapter?.lessons[0]?.id ?? null);
+    }
+  };
+
+  const handleLessonToggle = (lessonId: number) => {
+    setExpandedLessonId((current) => (current === lessonId ? null : lessonId));
   };
 
   const startCourse = () => {
@@ -254,57 +268,65 @@ export default function CourseDetail({
                 ))}
               </m.nav>
 
-              <m.section id="course-content" className="scroll-mt-24" aria-labelledby="content-title" variants={portalItemVariants}>
-                <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
-                  <div>
-                    <h2 id="content-title" className="text-2xl font-black tracking-[-0.025em] text-[#0F2638] sm:text-3xl">
-                      {enrolled ? t("courseContent") : t("coursePlan")}
-                    </h2>
-                    <p className="mt-2 text-sm text-[#6B7E8F]">{t("curriculumDescription")}</p>
+              {!enrolled && (
+                <m.section id="course-content" className="scroll-mt-24" aria-labelledby="content-title" variants={portalItemVariants}>
+                  <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+                    <div>
+                      <h2 id="content-title" className="text-2xl font-black tracking-[-0.025em] text-[#0F2638] sm:text-3xl">
+                        {t("coursePlan")}
+                      </h2>
+                      <p className="mt-2 text-sm text-[#6B7E8F]">{t("curriculumDescription")}</p>
+                    </div>
+                    <p className="text-xs font-bold text-[#6B7E8F]">
+                      {lessons.length ? t("lessons", { count: lessons.length }) : t("contentWillAppear")}
+                    </p>
                   </div>
-                  <p className="text-xs font-bold text-[#6B7E8F]">
-                    {lessons.length ? t("lessons", { count: lessons.length }) : t("contentWillAppear")}
-                  </p>
-                </div>
 
-                {chapters.some((chapter) => chapter.lessons.length) ? (
-                  <CurriculumAccordion
-                    chapters={chapters}
-                    enrolled={enrolled}
-                    activeVideoId={activeVideo?.item.id ?? null}
-                    expandedChapterId={expandedChapterId}
-                    expandedLessonId={expandedLessonId}
-                    onChapterToggle={(chapterId) => {
-                      const isOpening = expandedChapterId !== chapterId;
-                      setExpandedChapterId(isOpening ? chapterId : null);
-                      if (isOpening) {
-                        const chapter = chapters.find((item) => item.id === chapterId);
-                        setExpandedLessonId(chapter?.lessons[0]?.id ?? null);
-                      }
-                    }}
-                    onLessonToggle={(lessonId) => setExpandedLessonId((current) => current === lessonId ? null : lessonId)}
-                    onPlay={playVideo}
-                  />
-                ) : (
-                  <div className="flex min-h-64 flex-col items-center justify-center rounded-2xl border border-dashed border-[#B7CDDC] bg-white px-5 text-center">
-                    <CircleAlert className="mb-4 size-10 text-[#9AB4C5]" aria-hidden="true" />
-                    <h3 className="text-lg font-black text-[#1C3345]">{t("noContent")}</h3>
-                    <p className="mt-2 text-sm leading-6 text-[#6B7E8F]">{t("noContentDescription")}</p>
-                  </div>
-                )}
-              </m.section>
+                  {chapters.some((chapter) => chapter.lessons.length) ? (
+                    <CurriculumAccordion
+                      chapters={chapters}
+                      enrolled={false}
+                      activeVideoId={activeVideo?.item.id ?? null}
+                      expandedChapterId={expandedChapterId}
+                      expandedLessonId={expandedLessonId}
+                      onChapterToggle={handleChapterToggle}
+                      onLessonToggle={handleLessonToggle}
+                      onPlay={playVideo}
+                    />
+                  ) : (
+                    <div className="flex min-h-64 flex-col items-center justify-center rounded-2xl border border-dashed border-[#B7CDDC] bg-white px-5 text-center">
+                      <CircleAlert className="mb-4 size-10 text-[#9AB4C5]" aria-hidden="true" />
+                      <h3 className="text-lg font-black text-[#1C3345]">{t("noContent")}</h3>
+                      <p className="mt-2 text-sm leading-6 text-[#6B7E8F]">{t("noContentDescription")}</p>
+                    </div>
+                  )}
+                </m.section>
+              )}
             </div>
 
-            <aside className="order-2 lg:order-1">
-              <CoursePurchasePanel
-                course={course}
-                enrollment={detail.enrollment}
-                isAuthenticated={isAuthenticated}
-                loading={checkoutLoading}
-                onPurchase={openCheckout}
-                onContinue={startCourse}
+            {enrolled ? (
+              <LearnerCurriculumSidebar
+                chapters={chapters}
+                lessonsCount={lessons.length}
+                activeVideoId={activeVideo?.item.id ?? null}
+                expandedChapterId={expandedChapterId}
+                expandedLessonId={expandedLessonId}
+                onChapterToggle={handleChapterToggle}
+                onLessonToggle={handleLessonToggle}
+                onPlay={playVideo}
               />
-            </aside>
+            ) : (
+              <aside className="order-2 min-w-0 lg:order-1">
+                <CoursePurchasePanel
+                  course={course}
+                  enrollment={detail.enrollment}
+                  isAuthenticated={isAuthenticated}
+                  loading={checkoutLoading}
+                  onPurchase={openCheckout}
+                  onContinue={startCourse}
+                />
+              </aside>
+            )}
           </div>
         </m.div>
       )}
