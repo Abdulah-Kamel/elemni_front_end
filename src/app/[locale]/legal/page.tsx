@@ -1,85 +1,45 @@
 import { getTranslations } from "next-intl/server";
+import LegalChrome from "@/src/features/legal/components/legal-chrome";
+import { TermsAccordion } from "@/src/features/legal/components/terms-accordion";
+import { RefundSection } from "@/src/features/legal/components/refund-section";
 
-export default async function LegalPage() {
+export default async function LegalPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
   const t = await getTranslations("legal");
 
   return (
-    <main className="min-h-screen bg-white">
-      <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-          {t("title")}
-        </h1>
+    <LegalChrome locale={locale}>
+      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+        {/* Hero */}
+        <div className="text-center mb-12">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
+            {t("title")}
+          </h1>
+          <p className="mt-4 text-lg text-slate-600 dark:text-slate-300">
+            {t("refund.intro")}
+          </p>
+        </div>
 
         {/* Terms & Conditions */}
-        <section className="mt-12">
-          <h2 className="text-2xl font-bold text-gray-900">
+        <section className="mb-16">
+          <h2 className="text-xl font-bold text-slate-900 mb-6 dark:text-white">
             {t("terms.title")}
           </h2>
-          <div className="mt-6 space-y-6">
-            {([1, 2, 3, 4, 5, 6, 7, 8] as const).map((i) => (
-              <div key={i}>
-                <h3 className="text-lg font-semibold text-gray-900">
-                  {t(`terms.sections.${i}.heading`)}
-                </h3>
-                <p className="mt-2 text-base text-gray-600 leading-relaxed">
-                  {t(`terms.sections.${i}.content`)}
-                </p>
-              </div>
-            ))}
-          </div>
+          <TermsAccordion />
         </section>
 
         {/* Refund Policy */}
-        <section className="mt-16 border-t border-gray-200 pt-12">
-          <h2 className="text-2xl font-bold text-gray-900">
+        <section>
+          <h2 className="text-xl font-bold text-slate-900 mb-6 dark:text-white">
             {t("refund.title")}
           </h2>
-          <p className="mt-4 text-base text-gray-600 leading-relaxed">
-            {t("refund.intro")}
-          </p>
-
-          {/* Eligibility */}
-          <div className="mt-8">
-            <h3 className="text-lg font-semibold text-gray-900">
-              {t("refund.eligibility.title")}
-            </h3>
-            <ul className="mt-3 list-disc list-inside space-y-2 text-base text-gray-600">
-              {([0, 1, 2] as const).map((i) => (
-                <li key={i}>{t(`refund.eligibility.items.${i}`)}</li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Non-Refundable */}
-          <div className="mt-8">
-            <h3 className="text-lg font-semibold text-gray-900">
-              {t("refund.nonRefundable.title")}
-            </h3>
-            <ul className="mt-3 list-disc list-inside space-y-2 text-base text-gray-600">
-              {([0, 1, 2, 3] as const).map((i) => (
-                <li key={i}>{t(`refund.nonRefundable.items.${i}`)}</li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Process */}
-          <div className="mt-8">
-            <h3 className="text-lg font-semibold text-gray-900">
-              {t("refund.process.title")}
-            </h3>
-            <ol className="mt-3 list-decimal list-inside space-y-2 text-base text-gray-600">
-              {([0, 1, 2, 3] as const).map((i) => (
-                <li key={i}>{t(`refund.process.steps.${i}`)}</li>
-              ))}
-            </ol>
-          </div>
-
-          {/* Contact */}
-          <p className="mt-8 text-base text-gray-600">
-            {t("refund.contact")}
-          </p>
+          <RefundSection />
         </section>
       </div>
-    </main>
+    </LegalChrome>
   );
 }
