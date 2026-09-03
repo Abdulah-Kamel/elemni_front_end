@@ -315,6 +315,7 @@
   "footer": {
     "privacy": "Privacy policy",
     "terms": "Terms & conditions",
+    "legal": "Terms & refund policy",
     "help": "Help center",
     "contact": "Contact us",
     "rights": "© 2024 Elemni. All rights reserved.",
@@ -345,7 +346,19 @@
       "teachers": "Teachers",
       "how": "How it works",
       "testimonials": "Testimonials",
-      "faq": "FAQ"
+      "faq": "FAQ",
+      "dashboard": "My dashboard",
+      "myCourses": "My courses",
+      "logout": "Log out",
+      "searchPlaceholder": "Search for a teacher...",
+      "closeSearch": "Close search",
+      "search": "Search",
+      "mainNavigation": "Main navigation",
+      "mobileNavigation": "Mobile navigation",
+      "appearance": "Appearance",
+      "lightMode": "Light mode",
+      "darkMode": "Dark mode",
+      "menu": "Toggle menu"
     },
     "footer": {
       "copyright": "© 2026 Elemni Egypt. All rights reserved."
@@ -548,6 +561,22 @@
       "cta": "Contact us"
     }
   },
+  "landingFooter": {
+    "description": "Elemni is a smart learning platform for interactive lessons, organised courses, and secure payments.",
+    "quickLinksTitle": "Quick links",
+    "home": "Home",
+    "teachers": "Teachers & courses",
+    "features": "Features",
+    "faq": "FAQ",
+    "legal": "Terms & refund policy",
+    "contact": "Contact us",
+    "curriculumTitle": "Curriculum & support",
+    "grade12": "Grade 12",
+    "grade11": "Grade 11",
+    "grade10": "Grade 10",
+    "contactTitle": "Contact us",
+    "copyright": "© 2026 Elemni. All rights reserved."
+  },
   "courseDetail": {
     "backToCourses": "Back to my courses",
     "backToExplore": "Back to explore",
@@ -617,36 +646,37 @@
   },
   "legal": {
     "title": "Terms & Conditions",
+    "description": "Please read these terms and the refund policy before purchasing a course on Elemni.",
     "refund": {
       "title": "Refund & Cancellation Policy",
-      "intro": "We want you to be satisfied with your purchase. If you're not, we're here to help.",
+      "intro": "You may request a cancellation or refund within 14 days of the purchase date. Requests are reviewed in line with the course access status and applicable law.",
       "eligibility": {
         "title": "Eligibility for Refund",
         "items": [
           "You may request a refund within 14 days of your purchase date.",
-          "The course must not have been more than 30% completed.",
-          "Refund requests must be submitted through our contact page or via email."
+          "Submit your request through the Contact page or by calling the support number shown there.",
+          "We may ask for the transaction reference and the account used for the purchase."
         ]
       },
       "nonRefundable": {
         "title": "Non-Refundable Items",
         "items": [
-          "Courses completed more than 30%",
-          "Courses purchased more than 14 days ago",
-          "Bundles or promotional packages",
-          "Courses purchased with discount codes (unless defective)"
+          "Requests submitted after 14 days, unless a longer right applies under law.",
+          "Digital content that has been substantially accessed may be excluded where permitted by law.",
+          "A refund cannot be issued for an amount that was never successfully charged.",
+          "Any mandatory consumer rights remain unaffected by this policy."
         ]
       },
       "process": {
         "title": "How to Request a Refund",
         "steps": [
-          "Contact us via the contact page or email support@elemni.com",
-          "Provide your order number and reason for the refund",
-          "We will review your request within 3 business days",
-          "If approved, the refund will be processed to your original payment method within 5-10 business days"
+          "Open the Contact page and call the support number shown there.",
+          "Provide your transaction reference, account details, and reason for the request.",
+          "We will review the request and communicate the decision through the available contact details.",
+          "If approved, the refund is sent to the original payment method according to the payment provider's processing time."
         ]
       },
-      "contact": "For any refund inquiries, please contact us at support@elemni.com"
+      "contact": "For refund questions, call us at {phone}."
     },
     "terms": {
       "title": "Terms & Conditions",
@@ -665,7 +695,7 @@
         },
         {
           "heading": "4. Payment & Pricing",
-          "content": "All prices are displayed in Egyptian Pounds (EGP). We reserve the right to change pricing at any time. Existing enrollments are not affected by price changes."
+          "content": "Prices are shown in Egyptian Pounds (EGP) at checkout. The amount confirmed by the payment provider is the amount charged for the transaction."
         },
         {
           "heading": "5. Intellectual Property",
@@ -681,32 +711,16 @@
         },
         {
           "heading": "8. Governing Law",
-          "content": "These Terms are governed by the laws of the Arab Republic of Egypt. Any disputes shall be resolved in the courts of Cairo, Egypt."
+          "content": "These Terms are interpreted under the applicable laws of the Arab Republic of Egypt. Mandatory consumer protections continue to apply."
         }
       ]
     }
   },
   "contact": {
     "title": "Contact Us",
-    "subtitle": "Have a question? We'd love to hear from you.",
-    "info": {
-      "phone": "Phone",
-      "email": "Email",
-      "address": "Address",
-      "hours": "Working Hours",
-      "hoursValue": "Sun - Thu, 9:00 AM - 5:00 PM"
-    },
-    "form": {
-      "name": "Your Name",
-      "namePlaceholder": "Enter your name",
-      "email": "Email Address",
-      "emailPlaceholder": "Enter your email",
-      "message": "Message",
-      "messagePlaceholder": "How can we help you?",
-      "submit": "Send Message",
-      "sending": "Sending...",
-      "success": "Message sent successfully! We'll get back to you soon.",
-      "error": "Something went wrong. Please try again later."
-    }
+    "description": "For questions about courses, payments, or refunds, call our support team.",
+    "phoneLabel": "Support phone",
+    "phoneDescription": "Call us about course access, payment confirmation, or a refund request.",
+    "callAction": "Call support"
   }
 }

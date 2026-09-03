@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { GraduationCap } from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
 
-const FOOTER_LINKS = ["privacy", "terms", "help", "contact"] as const;
+const FOOTER_LINKS = ["legal", "contact"] as const;
 
 export async function Footer() {
   const t = await getTranslations("footer");
@@ -19,7 +19,7 @@ export async function Footer() {
           {FOOTER_LINKS.map((key) => (
             <Link
               key={key}
-              href={key === "help" ? "#" : `/${key}`}
+              href={key === "legal" ? "/legal" : "/contact"}
               className="text-sm text-white/60 transition-colors hover:text-white"
             >
               {t(key)}

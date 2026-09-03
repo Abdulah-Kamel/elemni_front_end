@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { AnimatePresence, m, useReducedMotion } from "motion/react";
+import { m, useReducedMotion } from "motion/react";
 import { ChevronDown } from "lucide-react";
 
-const TERMS_SECTIONS = [1, 2, 3, 4, 5, 6, 7, 8] as const;
+const TERMS_SECTIONS = [0, 1, 2, 3, 4, 5, 6, 7] as const;
 
 export function TermsAccordion() {
   const t = useTranslations("legal.terms");
-  const [expandedId, setExpandedId] = useState<number | null>(1);
+  const [expandedId, setExpandedId] = useState<number | null>(0);
   const reduce = useReducedMotion() === true;
 
   function toggle(id: number) {
@@ -42,24 +42,20 @@ export function TermsAccordion() {
                 <ChevronDown className="h-5 w-5 text-slate-500" />
               </span>
             </button>
-            <AnimatePresence initial={false}>
-              {isOpen && (
-                <m.div
-                  id={`terms-section-${i}`}
-                  role="region"
-                  aria-labelledby={`terms-btn-${i}`}
-                  initial={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }}
-                  transition={{ duration: 0.22 }}
-                  className="overflow-hidden"
-                >
-                  <div className="px-5 pb-5 text-base leading-relaxed text-slate-600 dark:text-slate-300">
-                    {t(`sections.${i}.content`)}
-                  </div>
-                </m.div>
-              )}
-            </AnimatePresence>
+            <m.div
+              id={`terms-section-${i}`}
+              role="region"
+              aria-labelledby={`terms-btn-${i}`}
+              aria-hidden={!isOpen}
+              initial={false}
+              animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
+              transition={{ duration: reduce ? 0 : 0.22 }}
+              className="overflow-hidden"
+            >
+              <div className="px-5 pb-5 text-base leading-relaxed text-slate-600 dark:text-slate-300">
+                {t(`sections.${i}.content`)}
+              </div>
+            </m.div>
           </div>
         );
       })}

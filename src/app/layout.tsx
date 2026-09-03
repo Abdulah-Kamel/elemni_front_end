@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Cairo, Inter } from "next/font/google";
+import { headers } from "next/headers";
 import "./globals.css";
 
 const cairo = Cairo({
@@ -15,11 +16,13 @@ const inter = Inter({
   display: "swap",
 });
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const locale = (await headers()).get("X-NEXT-INTL-LOCALE") ?? "ar";
+
   return (
     <html
-      lang="ar"
-      dir="rtl"
+      lang={locale}
+      dir={locale === "ar" ? "rtl" : "ltr"}
       suppressHydrationWarning
       className={`${cairo.variable} ${inter.variable}`}
     >

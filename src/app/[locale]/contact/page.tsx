@@ -1,105 +1,71 @@
 import { getTranslations } from "next-intl/server";
-import { Phone, Mail, MapPin, Clock } from "lucide-react";
+import { ArrowUpRight, Phone } from "lucide-react";
+import Footer from "@/src/features/landing/components/server/footer";
+import { SUPPORT_PHONE, SUPPORT_PHONE_HREF } from "@/src/features/contact/contact-details";
 import LegalChrome from "@/src/features/legal/components/legal-chrome";
-import { ContactForm } from "@/src/features/contact/components/contact-form";
 
-export default async function ContactPage({
-  params,
-}: {
+type ContactPageProps = {
   params: Promise<{ locale: string }>;
-}) {
+};
+
+export async function generateMetadata({ params }: ContactPageProps) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "contact" });
+
+  return {
+    title: t("title"),
+    description: t("description"),
+  };
+}
+
+export default async function ContactPage({ params }: ContactPageProps) {
   const { locale } = await params;
   const t = await getTranslations("contact");
+  const homeHref = locale === "ar" ? "/" : `/${locale}`;
 
   return (
-    <LegalChrome locale={locale}>
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-        {/* Hero */}
-        <div className="text-center mb-12">
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
+    <LegalChrome locale={locale} footer={<Footer homeHref={homeHref} />}>
+      <article className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+        <header className="border-b border-slate-200 pb-10 dark:border-slate-800">
+          <p className="text-sm font-semibold text-primary">Elemni</p>
+          <h1 className="mt-3 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl dark:text-white">
             {t("title")}
           </h1>
-          <p className="mt-4 text-lg text-slate-600 dark:text-slate-300">
-            {t("subtitle")}
+          <p className="mt-4 text-base leading-8 text-slate-600 dark:text-slate-300">
+            {t("description")}
           </p>
-        </div>
+        </header>
 
-        <div className="grid gap-12 lg:grid-cols-5">
-          {/* Contact Info Cards */}
-          <div className="lg:col-span-2 space-y-4">
-            <div className="rounded-xl border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800">
-              <div className="flex items-start gap-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                  <Phone className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-semibold text-slate-900 dark:text-white">
-                    {t("info.phone")}
-                  </h3>
-                  <p className="mt-1 text-base text-slate-600 dark:text-slate-300" dir="ltr">
-                    01098324898
-                  </p>
-                </div>
+        <section className="mt-10 max-w-xl" aria-labelledby="contact-phone-heading">
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <div className="flex items-start gap-4">
+              <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <Phone className="size-6" aria-hidden="true" />
               </div>
-            </div>
-
-            <div className="rounded-xl border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800">
-              <div className="flex items-start gap-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                  <Mail className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-semibold text-slate-900 dark:text-white">
-                    {t("info.email")}
-                  </h3>
-                  <p className="mt-1 text-base text-slate-600 dark:text-slate-300" dir="ltr">
-                    support@elemni.com
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-xl border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800">
-              <div className="flex items-start gap-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                  <MapPin className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-semibold text-slate-900 dark:text-white">
-                    {t("info.address")}
-                  </h3>
-                  <p className="mt-1 text-base text-slate-600 dark:text-slate-300">
-                    Menoufia, Egypt
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-xl border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800">
-              <div className="flex items-start gap-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                  <Clock className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-semibold text-slate-900 dark:text-white">
-                    {t("info.hours")}
-                  </h3>
-                  <p className="mt-1 text-base text-slate-600 dark:text-slate-300">
-                    {t("info.hoursValue")}
-                  </p>
-                </div>
+              <div className="min-w-0">
+                <h2
+                  id="contact-phone-heading"
+                  className="text-lg font-bold text-slate-900 dark:text-white"
+                >
+                  {t("phoneLabel")}
+                </h2>
+                <p className="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-300">
+                  {t("phoneDescription")}
+                </p>
+                <a
+                  href={SUPPORT_PHONE_HREF}
+                  dir="ltr"
+                  className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl bg-primary px-5 py-3 text-base font-bold text-white transition-colors hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900"
+                >
+                  <span>{SUPPORT_PHONE}</span>
+                  <ArrowUpRight className="size-4" aria-hidden="true" />
+                  <span className="sr-only">{t("callAction")}</span>
+                </a>
               </div>
             </div>
           </div>
-
-          {/* Contact Form */}
-          <div className="lg:col-span-3">
-            <div className="rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-700 dark:bg-slate-800">
-              <ContactForm />
-            </div>
-          </div>
-        </div>
-      </div>
+        </section>
+      </article>
     </LegalChrome>
   );
 }

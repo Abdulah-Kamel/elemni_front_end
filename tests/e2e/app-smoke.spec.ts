@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 test("landing route still renders the student landing page after moving feature ownership", async ({ page }) => {
   await page.goto("/");
   await expect(page).toHaveURL(/\/$/);
-  await expect(page.getByRole("link", { name: /ابدأ/i })).toBeVisible();
+  await expect(page.locator("#hero").getByRole("button", { name: /ابدأ/i })).toBeVisible();
 });
 
 test("public and guarded student routes keep their current baseline behavior", async ({ page }) => {
@@ -99,7 +99,9 @@ test("a freshly registered student can open migrated authenticated surfaces and 
   await page.getByLabel("رقم الموبايل").fill("01123456789");
   await page.locator("#password").fill("password123");
   await page.locator("#password_confirmation").fill("password123");
-  await page.getByRole("button", { name: "إنشاء الحساب" }).click();
+  const registerButton = page.getByRole("button", { name: "إنشاء الحساب" });
+  await expect(registerButton).toBeEnabled();
+  await registerButton.click();
   await expect(page).toHaveURL(/\/onboarding$/);
 
   await page.goto("/dashboard");
@@ -134,4 +136,24 @@ test("course discovery stays guarded while public course detail remains accessib
   await page.goto("/courses/1");
   await expect(page).toHaveURL(/\/courses\/1$/);
   await expect(page.getByRole("navigation", { name: "بوابة الطالب" })).toBeVisible();
+});
+
+test("legal and contact pages expose localized, indexable support information", async ({ page }) => {
+  await page.goto("/en/legal");
+  await expect(page).toHaveTitle("Terms & Conditions");
+  await expect(page.locator("html")).toHaveAttribute("lang", "en");
+  await expect(page.locator("html")).toHaveAttribute("dir", "ltr");
+  await expect(page.getByRole("heading", { name: "Refund & Cancellation Policy" })).toBeVisible();
+
+  await page.goto("/en/contact");
+  await expect(page).toHaveTitle("Contact Us");
+  await expect(page.locator("main").getByRole("link", { name: /01098324898/ })).toHaveAttribute(
+    "href",
+    "tel:01098324898",
+  );
+
+  await page.goto("/legal");
+  await expect(page.locator("html")).toHaveAttribute("lang", "ar");
+  await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
+  await expect(page.getByRole("heading", { name: "سياسة الاسترداد والإلغاء" })).toBeVisible();
 });
