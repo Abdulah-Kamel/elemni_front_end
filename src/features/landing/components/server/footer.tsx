@@ -154,7 +154,7 @@ export default function Footer({ homeHref = "" }: { homeHref?: string }) {
             <div className="space-y-2 text-xs text-slate-400">
               <Link href="/contact" className="flex items-center gap-2 hover:text-white transition-colors">
                 <Phone className="w-3.5 h-3.5 text-primary" />
-                <span>+20 100 123 4567</span>
+                <span>01098324898</span>
               </Link>
               <Link href="/contact" className="flex items-center gap-2 hover:text-white transition-colors">
                 <Mail className="w-3.5 h-3.5 text-primary" />
@@ -162,7 +162,7 @@ export default function Footer({ homeHref = "" }: { homeHref?: string }) {
               </Link>
               <Link href="/contact" className="flex items-center gap-2 hover:text-white transition-colors">
                 <MapPin className="w-3.5 h-3.5 text-primary" />
-                <span>القاهرة، جمهورية مصر العربية</span>
+                <span>Menoufia, Egypt</span>
               </Link>
             </div>
           </div>
