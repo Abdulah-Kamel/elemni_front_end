@@ -102,6 +102,16 @@ export default function Footer({ homeHref = "" }: { homeHref?: string }) {
                   الأسئلة الشائعة
                 </a>
               </li>
+              <li>
+                <Link href="/legal" className="hover:text-white transition-colors">
+                  الشروط والأحكام
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="hover:text-white transition-colors">
+                  اتصل بنا
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -139,33 +149,10 @@ export default function Footer({ homeHref = "" }: { homeHref?: string }) {
                   الأسئلة الشائعة
                 </a>
               </li>
-              <li>
-                <Link href="/legal" className="hover:text-white transition-colors">
-                  سياسة الخصوصية والاستخدام
-                </Link>
-              </li>
             </ul>
           </div>
 
-          <div className="space-y-3">
-            <h4 className="border-s-2 border-primary ps-2 text-sm font-extrabold text-primary-light font-cairo">
-              تواصل معنا
-            </h4>
-            <div className="space-y-2 text-xs text-slate-400">
-              <Link href="/contact" className="flex items-center gap-2 hover:text-white transition-colors">
-                <Phone className="w-3.5 h-3.5 text-primary" />
-                <span>01098324898</span>
-              </Link>
-              <Link href="/contact" className="flex items-center gap-2 hover:text-white transition-colors">
-                <Mail className="w-3.5 h-3.5 text-primary" />
-                <span>support@elemni.com</span>
-              </Link>
-              <Link href="/contact" className="flex items-center gap-2 hover:text-white transition-colors">
-                <MapPin className="w-3.5 h-3.5 text-primary" />
-                <span>Menoufia, Egypt</span>
-              </Link>
-            </div>
-          </div>
+
         </div>
 
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 text-center sm:text-start">

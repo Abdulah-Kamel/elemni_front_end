@@ -26,6 +26,11 @@ const navItems = [
   { hash: "#faq", label: "الأسئلة الشائعة", icon: CircleHelp },
 ];
 
+const pageLinks = [
+  { href: "/legal", label: "الشروط والأحكام" },
+  { href: "/contact", label: "اتصل بنا" },
+];
+
 export default function Navbar({ onSearchChange, searchQuery, isDarkMode, onToggleDarkMode, onGoHome, showSearch = true, landingBaseHref = "" }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -108,6 +113,15 @@ export default function Navbar({ onSearchChange, searchQuery, isDarkMode, onTogg
               >
                 {item.label}
               </a>
+            ))}
+            {pageLinks.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="rounded-lg px-3 py-2 text-xs font-bold text-slate-600 transition-colors hover:bg-sky-50 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-sky-300"
+              >
+                {item.label}
+              </Link>
             ))}
           </nav>
 
@@ -249,6 +263,16 @@ export default function Navbar({ onSearchChange, searchQuery, isDarkMode, onTogg
                 <Icon className="size-4 text-primary" />
                 <span>{label}</span>
               </a>
+            ))}
+            {pageLinks.map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex min-h-11 items-center gap-2 rounded-xl bg-slate-50 px-3 py-2 text-xs font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-200"
+              >
+                <span>{label}</span>
+              </Link>
             ))}
           </nav>
 
