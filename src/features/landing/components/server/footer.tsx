@@ -1,4 +1,5 @@
 import { GraduationCap, Phone, Mail, MapPin, Send } from "lucide-react";
+import { Link } from "@/src/i18n/navigation";
 
 export default function Footer({ homeHref = "" }: { homeHref?: string }) {
   const landingHref = (hash: string) => `${homeHref}${hash}`;
@@ -139,9 +140,9 @@ export default function Footer({ homeHref = "" }: { homeHref?: string }) {
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <Link href="/legal" className="hover:text-white transition-colors">
                   سياسة الخصوصية والاستخدام
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -151,18 +152,18 @@ export default function Footer({ homeHref = "" }: { homeHref?: string }) {
               تواصل معنا
             </h4>
             <div className="space-y-2 text-xs text-slate-400">
-              <div className="flex items-center gap-2">
+              <Link href="/contact" className="flex items-center gap-2 hover:text-white transition-colors">
                 <Phone className="w-3.5 h-3.5 text-primary" />
                 <span>+20 100 123 4567</span>
-              </div>
-              <div className="flex items-center gap-2">
+              </Link>
+              <Link href="/contact" className="flex items-center gap-2 hover:text-white transition-colors">
                 <Mail className="w-3.5 h-3.5 text-primary" />
                 <span>support@elemni.com</span>
-              </div>
-              <div className="flex items-center gap-2">
+              </Link>
+              <Link href="/contact" className="flex items-center gap-2 hover:text-white transition-colors">
                 <MapPin className="w-3.5 h-3.5 text-primary" />
                 <span>القاهرة، جمهورية مصر العربية</span>
-              </div>
+              </Link>
             </div>
           </div>
         </div>
