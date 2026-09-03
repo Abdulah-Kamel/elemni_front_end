@@ -692,7 +692,9 @@
     "info": {
       "phone": "Phone",
       "email": "Email",
-      "address": "Address"
+      "address": "Address",
+      "hours": "Working Hours",
+      "hoursValue": "Sun - Thu, 9:00 AM - 5:00 PM"
     },
     "form": {
       "name": "Your Name",
