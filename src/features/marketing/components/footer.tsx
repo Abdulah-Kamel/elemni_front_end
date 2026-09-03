@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { GraduationCap } from "lucide-react";
+import { Link } from "@/src/i18n/navigation";
 
 const FOOTER_LINKS = ["privacy", "terms", "help", "contact"] as const;
 
@@ -16,13 +17,13 @@ export async function Footer() {
         </div>
         <nav className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
           {FOOTER_LINKS.map((key) => (
-            <a
+            <Link
               key={key}
-              href="#"
+              href={key === "help" ? "#" : `/${key}`}
               className="text-sm text-white/60 transition-colors hover:text-white"
             >
               {t(key)}
-            </a>
+            </Link>
           ))}
         </nav>
         <p className="mt-8 text-sm text-white/40">{t("rights")}</p>
