@@ -151,6 +151,9 @@ test("legal and contact pages expose localized, indexable support information", 
     "href",
     "tel:01098324898",
   );
+  await expect(page.getByLabel("Your Name")).toBeVisible();
+  await expect(page.getByLabel("Email Address")).toBeVisible();
+  await expect(page.getByLabel("Message")).toBeVisible();
 
   await page.goto("/legal");
   await expect(page.locator("html")).toHaveAttribute("lang", "ar");

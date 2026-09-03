@@ -719,8 +719,23 @@
   "contact": {
     "title": "Contact Us",
     "description": "For questions about courses, payments, or refunds, call our support team.",
+    "supportSection": "Support contact options",
     "phoneLabel": "Support phone",
     "phoneDescription": "Call us about course access, payment confirmation, or a refund request.",
-    "callAction": "Call support"
+    "callAction": "Call support",
+    "form": {
+      "title": "Send us a message",
+      "description": "This form is ready for support requests. We will connect it to the support API soon.",
+      "name": "Your Name",
+      "namePlaceholder": "Enter your name",
+      "email": "Email Address",
+      "emailPlaceholder": "Enter your email",
+      "message": "Message",
+      "messagePlaceholder": "How can we help you?",
+      "submit": "Send Message",
+      "sending": "Sending...",
+      "success": "Message saved locally for now. API delivery will be added soon.",
+      "error": "Something went wrong. Please try again later."
+    }
   }
 }
