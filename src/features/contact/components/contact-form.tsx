@@ -36,7 +36,7 @@ export function ContactForm() {
           name="name"
           required
           placeholder={t("namePlaceholder")}
-          className="ms-1 block w-full rounded-lg border border-gray-300 ps-4 pe-4 pt-3 pb-3 text-gray-900 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
+          className="mt-1 block w-full rounded-lg border border-gray-300 ps-4 pe-4 pt-3 pb-3 text-gray-900 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
         />
       </div>
 
@@ -53,7 +53,7 @@ export function ContactForm() {
           name="email"
           required
           placeholder={t("emailPlaceholder")}
-          className="ms-1 block w-full rounded-lg border border-gray-300 ps-4 pe-4 pt-3 pb-3 text-gray-900 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
+          className="mt-1 block w-full rounded-lg border border-gray-300 ps-4 pe-4 pt-3 pb-3 text-gray-900 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
         />
       </div>
 
@@ -70,7 +70,7 @@ export function ContactForm() {
           required
           rows={5}
           placeholder={t("messagePlaceholder")}
-          className="ms-1 block w-full rounded-lg border border-gray-300 ps-4 pe-4 pt-3 pb-3 text-gray-900 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none resize-none"
+          className="mt-1 block w-full rounded-lg border border-gray-300 ps-4 pe-4 pt-3 pb-3 text-gray-900 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none resize-none"
         />
       </div>
 
