@@ -32,6 +32,7 @@ export function RefundSection() {
           >
             <button
               type="button"
+              id={`refund-btn-${key}`}
               onClick={() => toggle(key)}
               aria-expanded={isOpen}
               aria-controls={`refund-section-${key}`}
@@ -51,7 +52,7 @@ export function RefundSection() {
                 <m.div
                   id={`refund-section-${key}`}
                   role="region"
-                  aria-labelledby={`refund-heading-${key}`}
+                  aria-labelledby={`refund-btn-${key}`}
                   initial={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   exit={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }}
