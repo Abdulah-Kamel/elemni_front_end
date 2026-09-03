@@ -614,5 +614,97 @@
       "description": "An all-in-one platform for teachers to upload, sell, and protect lessons"
     },
     "backToStudent": "Back to Student Page"
+  },
+  "legal": {
+    "title": "Terms & Conditions",
+    "refund": {
+      "title": "Refund & Cancellation Policy",
+      "intro": "We want you to be satisfied with your purchase. If you're not, we're here to help.",
+      "eligibility": {
+        "title": "Eligibility for Refund",
+        "items": [
+          "You may request a refund within 14 days of your purchase date.",
+          "The course must not have been more than 30% completed.",
+          "Refund requests must be submitted through our contact page or via email."
+        ]
+      },
+      "nonRefundable": {
+        "title": "Non-Refundable Items",
+        "items": [
+          "Courses completed more than 30%",
+          "Courses purchased more than 14 days ago",
+          "Bundles or promotional packages",
+          "Courses purchased with discount codes (unless defective)"
+        ]
+      },
+      "process": {
+        "title": "How to Request a Refund",
+        "steps": [
+          "Contact us via the contact page or email support@elemni.com",
+          "Provide your order number and reason for the refund",
+          "We will review your request within 3 business days",
+          "If approved, the refund will be processed to your original payment method within 5-10 business days"
+        ]
+      },
+      "contact": "For any refund inquiries, please contact us at support@elemni.com"
+    },
+    "terms": {
+      "title": "Terms & Conditions",
+      "sections": [
+        {
+          "heading": "1. Acceptance of Terms",
+          "content": "By accessing and using Elemni (the \"Platform\"), you agree to be bound by these Terms & Conditions. If you do not agree, please do not use the Platform."
+        },
+        {
+          "heading": "2. User Registration",
+          "content": "You must provide accurate and complete information when creating an account. You are responsible for maintaining the confidentiality of your account credentials."
+        },
+        {
+          "heading": "3. Course Enrollment & Access",
+          "content": "Upon successful payment, you receive a non-transferable license to access the enrolled course content. Access is personal and cannot be shared or transferred."
+        },
+        {
+          "heading": "4. Payment & Pricing",
+          "content": "All prices are displayed in Egyptian Pounds (EGP). We reserve the right to change pricing at any time. Existing enrollments are not affected by price changes."
+        },
+        {
+          "heading": "5. Intellectual Property",
+          "content": "All course content, videos, materials, and the Platform itself are the intellectual property of Elemni and its instructors. Unauthorized reproduction or distribution is prohibited."
+        },
+        {
+          "heading": "6. User Conduct",
+          "content": "You agree not to: share account credentials, record or download course content, use the Platform for illegal purposes, or attempt to bypass security measures."
+        },
+        {
+          "heading": "7. Limitation of Liability",
+          "content": "Elemni shall not be liable for any indirect, incidental, or consequential damages. Our total liability shall not exceed the amount you paid for the course."
+        },
+        {
+          "heading": "8. Governing Law",
+          "content": "These Terms are governed by the laws of the Arab Republic of Egypt. Any disputes shall be resolved in the courts of Cairo, Egypt."
+        }
+      ]
+    }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Have a question? We'd love to hear from you.",
+    "info": {
+      "phone": "Phone",
+      "email": "Email",
+      "address": "Address"
+    },
+    "form": {
+      "name": "Your Name",
+      "namePlaceholder": "Enter your name",
+      "email": "Email Address",
+      "emailPlaceholder": "Enter your email",
+      "message": "Message",
+      "messagePlaceholder": "How can we help you?",
+      "submit": "Send Message",
+      "sending": "Sending...",
+      "success": "Message sent successfully! We'll get back to you soon.",
+      "error": "Something went wrong. Please try again later."
+    }
   }
 }
