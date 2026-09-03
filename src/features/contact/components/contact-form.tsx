@@ -36,7 +36,7 @@ export function ContactForm() {
           name="name"
           required
           placeholder={t("namePlaceholder")}
-          className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
+          className="ms-1 block w-full rounded-lg border border-gray-300 ps-4 pe-4 pt-3 pb-3 text-gray-900 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
         />
       </div>
 
@@ -53,7 +53,7 @@ export function ContactForm() {
           name="email"
           required
           placeholder={t("emailPlaceholder")}
-          className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
+          className="ms-1 block w-full rounded-lg border border-gray-300 ps-4 pe-4 pt-3 pb-3 text-gray-900 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
         />
       </div>
 
@@ -70,14 +70,14 @@ export function ContactForm() {
           required
           rows={5}
           placeholder={t("messagePlaceholder")}
-          className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none resize-none"
+          className="ms-1 block w-full rounded-lg border border-gray-300 ps-4 pe-4 pt-3 pb-3 text-gray-900 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none resize-none"
         />
       </div>
 
       <button
         type="submit"
         disabled={isSubmitting}
-        className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-base font-semibold text-white shadow-sm transition-colors hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary ps-6 pe-6 pt-3 pb-3 text-base font-semibold text-white shadow-sm transition-colors hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <Send className="w-4 h-4" />
         {isSubmitting ? t("sending") : t("submit")}
