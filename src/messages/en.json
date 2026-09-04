@@ -726,6 +726,7 @@
     "form": {
       "title": "Send us a message",
       "description": "This form is ready for support requests. We will connect it to the support API soon.",
+      "jump": "Send a message",
       "name": "Your Name",
       "namePlaceholder": "Enter your name",
       "email": "Email Address",

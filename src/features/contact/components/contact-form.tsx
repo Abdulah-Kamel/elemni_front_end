@@ -23,11 +23,11 @@ export function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-6">
       <div>
         <label
           htmlFor="contact-name"
-          className="block text-sm font-semibold text-slate-800 dark:text-slate-100"
+          className="block text-sm font-bold text-slate-800 dark:text-slate-100"
         >
           {t("name")}
         </label>
@@ -37,14 +37,14 @@ export function ContactForm() {
           name="name"
           required
           placeholder={t("namePlaceholder")}
-          className="mt-2 block min-h-11 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+          className="mt-2 block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 hover:border-slate-300 focus:border-primary focus:ring-4 focus:ring-primary/15 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:placeholder:text-slate-500 dark:hover:border-slate-600"
         />
       </div>
 
       <div>
         <label
           htmlFor="contact-email"
-          className="block text-sm font-semibold text-slate-800 dark:text-slate-100"
+          className="block text-sm font-bold text-slate-800 dark:text-slate-100"
         >
           {t("email")}
         </label>
@@ -54,14 +54,14 @@ export function ContactForm() {
           name="email"
           required
           placeholder={t("emailPlaceholder")}
-          className="mt-2 block min-h-11 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+          className="mt-2 block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 hover:border-slate-300 focus:border-primary focus:ring-4 focus:ring-primary/15 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:placeholder:text-slate-500 dark:hover:border-slate-600"
         />
       </div>
 
       <div>
         <label
           htmlFor="contact-message"
-          className="block text-sm font-semibold text-slate-800 dark:text-slate-100"
+          className="block text-sm font-bold text-slate-800 dark:text-slate-100"
         >
           {t("message")}
         </label>
@@ -71,14 +71,14 @@ export function ContactForm() {
           required
           rows={5}
           placeholder={t("messagePlaceholder")}
-          className="mt-2 block w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+          className="mt-2 block w-full resize-y rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 hover:border-slate-300 focus:border-primary focus:ring-4 focus:ring-primary/15 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:placeholder:text-slate-500 dark:hover:border-slate-600"
         />
       </div>
 
       <button
         type="submit"
         disabled={isSubmitting}
-        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-base font-bold text-white shadow-sm transition hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 dark:focus-visible:ring-offset-slate-900"
+        className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-base font-extrabold text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto dark:focus-visible:ring-offset-slate-900"
       >
         <Send className="size-4" aria-hidden="true" />
         {isSubmitting ? t("sending") : t("submit")}

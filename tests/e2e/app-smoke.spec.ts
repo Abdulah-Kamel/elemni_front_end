@@ -147,6 +147,11 @@ test("legal and contact pages expose localized, indexable support information", 
 
   await page.goto("/en/contact");
   await expect(page).toHaveTitle("Contact Us");
+  await expect(page.getByTestId("contact-hero")).toBeVisible();
+  await expect(page.getByRole("link", { name: "Send a message" })).toHaveAttribute(
+    "href",
+    "#contact-form",
+  );
   await expect(page.locator("main").getByRole("link", { name: /01098324898/ })).toHaveAttribute(
     "href",
     "tel:01098324898",
