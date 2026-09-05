@@ -20,7 +20,7 @@ export default function FaqSection() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <Reveal>
           <div className="text-center space-y-3 mb-14">
-            <h2 className="text-3xl sm:text-4xl font-black text-[#0F172A] font-cairo">
+            <h2 className="text-3xl sm:text-4xl font-black text-[#0F172A] font-readex">
               <MarkerHighlight color="yellow" variant={1}>
                 الأسئلة الشائعة
               </MarkerHighlight>
@@ -46,7 +46,7 @@ export default function FaqSection() {
                     aria-controls={`${item.id}-answer`}
                     className="flex w-full cursor-pointer items-center justify-between gap-4 p-5 text-start text-base font-bold text-[#0F172A] focus:outline-none"
                   >
-                    <span className="flex-1 font-cairo">{item.question}</span>
+                    <span className="flex-1 font-readex">{item.question}</span>
                     <div className={cn(
                       "w-8 h-8 rounded-full bg-primary-light text-primary flex items-center justify-center shrink-0 transition-transform duration-300",
                       isOpen ? "rotate-180 bg-primary text-white" : ""

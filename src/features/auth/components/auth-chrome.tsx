@@ -29,7 +29,7 @@ export default function AuthChrome({
 
   return (
     <MotionProvider>
-      <div dir="rtl" className="min-h-screen bg-[#F9F8FC] font-cairo text-[#1B1B24] dark:bg-[#0B132B]">
+      <div dir="rtl" className="min-h-screen bg-[#F9F8FC] font-readex text-[#1B1B24] dark:bg-[#0B132B]">
         <Navbar
           onOpenAuth={() => undefined}
           onSearchChange={() => undefined}

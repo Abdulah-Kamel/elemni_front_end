@@ -37,7 +37,7 @@ export default function Features() {
               <Zap className="w-4 h-4 text-primary fill-primary/20" />
               <span>رحلة التفوق مع علمني</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight font-cairo">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight font-readex">
               كيف تبدأ رحلة نجاحك؟
             </h2>
             <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
@@ -61,7 +61,7 @@ export default function Features() {
                     <step.icon className="w-10 h-10 stroke-[2.2]" />
                   </div>
 
-                  <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-3 font-cairo group-hover:text-primary transition-colors">{step.title}</h3>
+                  <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-3 font-readex group-hover:text-primary transition-colors">{step.title}</h3>
                   <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed font-medium max-w-xs">{step.description}</p>
 
                   {index < steps.length - 1 && (

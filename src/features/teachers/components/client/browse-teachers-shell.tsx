@@ -51,7 +51,7 @@ export default function BrowseTeachersShell({
 
   return (
     <MotionProvider>
-      <div className="min-h-screen bg-page font-cairo text-ink">
+      <div className="min-h-screen bg-page font-readex text-ink">
         <Navbar
           onOpenAuth={openAuth}
           onSearchChange={() => undefined}

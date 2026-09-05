@@ -45,7 +45,7 @@ export default function TeacherModal({ teacher, onClose, onBook }: TeacherModalP
             <span className="bg-primary-light text-primary font-bold text-[11px] px-2 py-0.5 rounded-md inline-block mb-1">
               {teacher.gradeLabel}
             </span>
-            <h3 className="text-lg font-black text-[#0F172A] font-cairo leading-tight">{teacher.name}</h3>
+            <h3 className="text-lg font-black text-[#0F172A] font-readex leading-tight">{teacher.name}</h3>
             <p className="text-xs font-semibold text-primary truncate">{teacher.title}</p>
           </div>
         </div>
@@ -95,7 +95,7 @@ export default function TeacherModal({ teacher, onClose, onBook }: TeacherModalP
                   </div>
                 </div>
                 <div className="text-end shrink-0">
-                  <span className="text-lg font-black text-primary font-cairo">{course.price}</span>
+                  <span className="text-lg font-black text-primary font-readex">{course.price}</span>
                   <span className="text-[11px] text-slate-500"> ج.م</span>
                   <button onClick={() => handleEnrollClick(course)} className="block w-full mt-1 px-3 py-1 bg-primary hover:bg-primary-hover text-white font-bold text-[11px] rounded-lg transition-all cursor-pointer">
                     اشتراك

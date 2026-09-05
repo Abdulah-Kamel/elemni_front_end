@@ -149,7 +149,7 @@ export default function TeacherProfileView({ teacher, onRequireAuth }: TeacherPr
                 ))}
               </div>
 
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white font-cairo tracking-tight">{teacher.name}</h1>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white font-readex tracking-tight">{teacher.name}</h1>
               <p className="text-slate-300 text-sm sm:text-base font-semibold max-w-2xl">{teacher.title}</p>
 
               <div className="pt-2 flex flex-wrap items-center justify-center md:justify-start gap-3 text-xs sm:text-sm font-bold text-slate-200">
@@ -208,7 +208,7 @@ export default function TeacherProfileView({ teacher, onRequireAuth }: TeacherPr
                 <BookOpen className="w-3.5 h-3.5" />
                 <span>تصفح المحاضرات والاشتراكات</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-black text-ink font-cairo">الكورسات المتاحة</h2>
+              <h2 className="text-2xl sm:text-3xl font-black text-ink font-readex">الكورسات المتاحة</h2>
             </div>
           </div>
 
@@ -253,7 +253,7 @@ export default function TeacherProfileView({ teacher, onRequireAuth }: TeacherPr
                       </div>
                     </div>
                     <div className="p-5 space-y-3">
-                      <h3 className="text-lg font-black text-ink group-hover:text-primary transition-colors font-cairo leading-snug line-clamp-2 min-h-[52px]">{course.title}</h3>
+                      <h3 className="text-lg font-black text-ink group-hover:text-primary transition-colors font-readex leading-snug line-clamp-2 min-h-[52px]">{course.title}</h3>
                       <p className="text-xs text-muted leading-relaxed font-medium line-clamp-2">{course.description}</p>
                       <div className="flex items-center justify-between text-xs font-bold text-muted pt-2 border-t border-slate-100 dark:border-slate-700/80">
                         <div className="flex items-center gap-1.5">
@@ -270,7 +270,7 @@ export default function TeacherProfileView({ teacher, onRequireAuth }: TeacherPr
                   <div className="p-5 pt-0 mt-2">
                     <div className="flex items-center justify-between gap-3 pt-3 border-t border-slate-100 dark:border-slate-700/80">
                       <div>
-                        <span className="text-2xl font-black text-ink font-cairo">{course.price}</span>
+                        <span className="text-2xl font-black text-ink font-readex">{course.price}</span>
                         <span className="ms-1 text-xs font-bold text-muted">ج.م / الشهر</span>
                       </div>
                       <button onClick={() => handleCourseAction(course.id, isSubscribed)}

@@ -217,7 +217,7 @@ export default function InteractiveWhiteboard3D() {
     ctx.direction = "ltr";
     ctx.textAlign = "center";
     ctx.fillStyle = note.textColor;
-    ctx.font = "bold 38px Cairo, 'Segoe UI', Arial, sans-serif";
+    ctx.font = "bold 38px 'Readex Pro', 'Segoe UI', Arial, sans-serif";
     ctx.fillText(note.numberDisplay, 96, 61);
 
     // Context RTL setup for title & text
@@ -225,7 +225,7 @@ export default function InteractiveWhiteboard3D() {
     ctx.textAlign = "right";
 
     // --- Title rendering with imperfect highlighter stroke ---
-    ctx.font = "bold 68px Cairo, 'Segoe UI', Arial, sans-serif";
+    ctx.font = "bold 68px 'Readex Pro', 'Segoe UI', Arial, sans-serif";
     const titleWidth = ctx.measureText(note.title).width;
 
     drawImperfectHighlighter(
@@ -248,7 +248,7 @@ export default function InteractiveWhiteboard3D() {
     ctx.stroke();
 
     // --- Body Text & Word Highlighters ---
-    ctx.font = "bold 72px Cairo, 'Segoe UI', Arial, sans-serif";
+    ctx.font = "bold 72px 'Readex Pro', 'Segoe UI', Arial, sans-serif";
     const words = note.content.split(" ");
     const lines: string[] = [];
     let line = "";
@@ -947,7 +947,7 @@ export default function InteractiveWhiteboard3D() {
     <section className="relative w-full py-12 sm:py-16 bg-[#FAF8FF] dark:bg-[#0B132B] border-y border-violet-tint/60 dark:border-slate-800/80 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Title Header with Imperfect Hand-Drawn Highlighters */}
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white mb-4 font-cairo leading-tight">
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white mb-4 font-readex leading-tight">
           كيف تبدأ{" "}
           <MarkerHighlight color="yellow" variant={1}>
             وتتفوق

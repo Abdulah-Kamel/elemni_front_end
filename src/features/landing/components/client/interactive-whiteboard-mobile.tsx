@@ -166,7 +166,7 @@ export default function InteractiveWhiteboardMobile() {
     <div className="w-full space-y-4">
       {/* Mobile Toggle Mode (Interactive Board vs Readable List) */}
       <div className="flex justify-center mb-2">
-        <div className="inline-flex bg-slate-200/80 dark:bg-slate-800 p-1 rounded-2xl border border-slate-300/60 dark:border-slate-700 font-cairo text-xs font-extrabold">
+        <div className="inline-flex bg-slate-200/80 dark:bg-slate-800 p-1 rounded-2xl border border-slate-300/60 dark:border-slate-700 font-readex text-xs font-extrabold">
           <button
             onClick={() => {
               setActiveTab("board");
@@ -262,7 +262,7 @@ export default function InteractiveWhiteboardMobile() {
                 onDragEnd={updatePinCoordinates}
                 whileDrag={{ scale: 1.05, zIndex: 50, rotate: 0 }}
                 style={{ rotate: note.rotation }}
-                className={`relative p-3.5 rounded-2xl border-2 shadow-lg cursor-grab active:cursor-grabbing font-cairo transition-shadow ${note.color}`}
+                className={`relative p-3.5 rounded-2xl border-2 shadow-lg cursor-grab active:cursor-grabbing font-readex transition-shadow ${note.color}`}
               >
                 {/* Top Accent Header Bar */}
                 <div className={`absolute top-0 inset-x-0 h-2.5 rounded-t-2xl ${note.headerColor}`} />
@@ -319,7 +319,7 @@ export default function InteractiveWhiteboardMobile() {
         </div>
       ) : (
         /* Readable Mobile List View */
-        <div className="space-y-3 font-cairo">
+        <div className="space-y-3 font-readex">
           {MOBILE_NOTES.map((note) => (
             <div
               key={note.id}

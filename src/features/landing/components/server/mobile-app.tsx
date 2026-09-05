@@ -7,7 +7,7 @@ export default function MobileApp() {
   return (
     <section
       id="mobile"
-      className="py-20 lg:py-28 bg-linear-to-br from-[#F5F3FF] via-[#FAF8FF] to-[#EFF6FF] dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 overflow-hidden relative font-cairo border-y border-violet-tint/40"
+      className="py-20 lg:py-28 bg-linear-to-br from-[#F5F3FF] via-[#FAF8FF] to-[#EFF6FF] dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 overflow-hidden relative font-readex border-y border-violet-tint/40"
     >
       {/* Background Soft Atmospheric Glows (like screenshot) */}
       <div className="absolute top-0 inset-s-1/4 w-125 h-125 bg-purple-300/20 dark:bg-purple-900/20 rounded-full blur-[120px] pointer-events-none" />
@@ -178,7 +178,7 @@ export default function MobileApp() {
                 </div>
 
                 {/* Smartphone Display Screen Container */}
-                <div className="w-full rounded-[2.3rem] bg-slate-50 dark:bg-slate-900 overflow-hidden font-cairo border border-slate-200/50 dark:border-slate-800 pt-7 pb-3 px-3.5 space-y-3">
+                <div className="w-full rounded-[2.3rem] bg-slate-50 dark:bg-slate-900 overflow-hidden font-readex border border-slate-200/50 dark:border-slate-800 pt-7 pb-3 px-3.5 space-y-3">
 
                   {/* Student App Top Header */}
                   <div className="flex items-center justify-between pb-1 border-b border-slate-200/60 dark:border-slate-800">

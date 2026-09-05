@@ -17,7 +17,7 @@ vi.mock("@/src/features/landing/components/server/footer", () => ({
 describe("LegalChrome", () => {
   afterEach(() => cleanup());
 
-  it("uses left-to-right direction and the Latin font for English pages", () => {
+  it("uses left-to-right direction and the shared Readex Pro font for English pages", () => {
     const { container } = render(
       <LegalChrome locale="en">
         <p>Terms</p>
@@ -26,6 +26,6 @@ describe("LegalChrome", () => {
 
     const shell = container.firstElementChild;
     expect(shell).toHaveAttribute("dir", "ltr");
-    expect(shell).toHaveClass("font-[family-name:var(--font-inter)]");
+    expect(shell).toHaveClass("font-[family-name:var(--font-readex-pro)]");
   });
 });

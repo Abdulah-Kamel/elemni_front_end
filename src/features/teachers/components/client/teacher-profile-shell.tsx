@@ -52,7 +52,7 @@ export default function TeacherProfileShell({
 
   return (
     <MotionProvider>
-    <div className="min-h-screen bg-page text-ink font-cairo">
+    <div className="min-h-screen bg-page text-ink font-readex">
       <Navbar
         onOpenAuth={openAuth}
         onSearchChange={() => undefined}

@@ -30,7 +30,7 @@ export default function FeaturedLessons({ courses }: { courses: FeaturedCourse[]
   return (
     <Section id="featured-courses">
       <Reveal>
-        <h2 className="mb-3 text-center text-3xl font-black text-[#0F172A] md:text-4xl font-cairo">
+        <h2 className="mb-3 text-center text-3xl font-black text-[#0F172A] md:text-4xl font-readex">
           ابدأ بأحدث{" "}
           <MarkerHighlight color="pink" variant={1}>
             كورسات المنصة

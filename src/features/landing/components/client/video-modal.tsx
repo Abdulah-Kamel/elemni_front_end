@@ -22,7 +22,7 @@ export default function VideoModal({ isOpen, onClose }: VideoModalProps) {
 
         <div className="flex items-center gap-2 mb-4 pe-2">
           <GraduationCap className="w-5 h-5 text-primary" />
-          <h3 className="text-lg font-black text-[#0F172A] font-cairo">جولة توضيحية: كيف تعمل منصة علمني؟</h3>
+          <h3 className="text-lg font-black text-[#0F172A] font-readex">جولة توضيحية: كيف تعمل منصة علمني؟</h3>
         </div>
 
         <div className="relative aspect-video rounded-2xl overflow-hidden bg-slate-900 shadow-inner">

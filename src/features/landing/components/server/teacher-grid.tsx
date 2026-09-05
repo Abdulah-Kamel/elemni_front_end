@@ -94,7 +94,7 @@ export default function TeacherGrid({ teachers, grades, streams, searchQuery, lo
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Reveal>
           <div className="text-center flex flex-col items-center space-y-3 max-w-3xl mx-auto mb-10">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight font-cairo block">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight font-readex block">
               اختر{" "}
               <MarkerHighlight color="sky" variant={1}>
                 المدرسين
@@ -123,7 +123,7 @@ export default function TeacherGrid({ teachers, grades, streams, searchQuery, lo
                 onChange={setSelectedStream}
                 icon={Sparkles}
               />
-              <div className="relative text-start font-cairo">
+              <div className="relative text-start font-readex">
                 <label className="mb-1.5 block text-xs font-bold text-slate-500 dark:text-slate-400">
                   البحث باسم المعلم أو المادة
                 </label>
@@ -133,7 +133,7 @@ export default function TeacherGrid({ teachers, grades, streams, searchQuery, lo
                     value={internalSearch}
                     onChange={(e) => setInternalSearch(e.target.value)}
                     placeholder="ابحث هنا..."
-                    className="w-full rounded-2xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-900/80 py-3 pe-10 ps-10 text-sm font-bold text-[#0F172A] dark:text-white placeholder-slate-400 transition-all focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary font-cairo backdrop-blur-sm"
+                    className="w-full rounded-2xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-900/80 py-3 pe-10 ps-10 text-sm font-bold text-[#0F172A] dark:text-white placeholder-slate-400 transition-all focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary font-readex backdrop-blur-sm"
                   />
                   <Search className="absolute inset-s-3 top-1/2 size-4 -translate-y-1/2 text-slate-400 stroke-[2.2]" />
                   {internalSearch && (
@@ -148,7 +148,7 @@ export default function TeacherGrid({ teachers, grades, streams, searchQuery, lo
               </div>
             </div>
             {(selectedGrade !== "all" || selectedStream !== "all" || internalSearch) && (
-              <div className="pt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs font-cairo">
+              <div className="pt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs font-readex">
                 <span className="text-slate-500 dark:text-slate-400">نتائج البحث: <strong className="text-primary">{filteredTeachers.length}</strong> معلم</span>
                 <button onClick={() => { setSelectedGrade("all"); setSelectedStream("all"); setInternalSearch(""); }} className="text-primary hover:underline font-bold cursor-pointer">إعادة ضبط الفلاتر</button>
               </div>
@@ -239,7 +239,7 @@ export default function TeacherGrid({ teachers, grades, streams, searchQuery, lo
             <Reveal>
               <div className="mt-10 text-center">
                 <Link href="/teachers"
-                  className="px-8 py-3.5 bg-primary hover:bg-primary-hover active:scale-95 text-white font-extrabold text-sm rounded-2xl shadow-lg shadow-primary/25 transition-all inline-flex items-center gap-2 font-cairo">
+                  className="px-8 py-3.5 bg-primary hover:bg-primary-hover active:scale-95 text-white font-extrabold text-sm rounded-2xl shadow-lg shadow-primary/25 transition-all inline-flex items-center gap-2 font-readex">
                   <span>عرض جميع المدرسين</span>
                   <ArrowLeft className="w-4 h-4" />
                 </Link>

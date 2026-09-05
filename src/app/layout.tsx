@@ -1,19 +1,13 @@
 import type { ReactNode } from "react";
-import { Cairo, Inter } from "next/font/google";
+import { Readex_Pro } from "next/font/google";
 import { headers } from "next/headers";
 import "./globals.css";
 
-const cairo = Cairo({
-  subsets: ["arabic"],
-  variable: "--font-cairo",
+const readexPro = Readex_Pro({
+  subsets: ["arabic", "latin"],
+  variable: "--font-readex-pro",
   display: "swap",
-  weight: ["400", "600", "700", "900"],
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
+  weight: ["400", "500", "600", "700"],
 });
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
@@ -24,7 +18,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       lang={locale}
       dir={locale === "ar" ? "rtl" : "ltr"}
       suppressHydrationWarning
-      className={`${cairo.variable} ${inter.variable}`}
+      className={readexPro.variable}
     >
       <body suppressHydrationWarning>{children}</body>
     </html>

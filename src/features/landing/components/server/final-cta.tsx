@@ -8,7 +8,7 @@ import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 
 export default function FinalCta() {
   return (
-    <section className="bg-[#F8FAFC] dark:bg-slate-950 px-4 py-16 md:py-24 font-cairo">
+    <section className="bg-[#F8FAFC] dark:bg-slate-950 px-4 py-16 md:py-24 font-readex">
       <div className="mx-auto max-w-6xl">
         <div className="relative overflow-hidden rounded-3xl border border-sky-200/80 dark:border-slate-800 bg-linear-to-br from-sky-50/90 via-white to-purple-50/60 dark:from-slate-900 dark:via-slate-900/95 dark:to-slate-950 p-8 sm:p-12 md:p-14 shadow-xl">
 

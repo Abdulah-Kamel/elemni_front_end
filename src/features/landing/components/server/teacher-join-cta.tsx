@@ -29,7 +29,7 @@ export default function TeacherJoinCTA({ href }: TeacherJoinCTAProps) {
           </div>
 
           <div className="lg:w-[58%] p-8 sm:p-12 lg:p-14 flex flex-col justify-center space-y-6 text-end relative z-10">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white leading-tight font-cairo">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white leading-tight font-readex">
               انضم لنخبة المعلمين على{" "}
               <MarkerHighlight color="yellow" variant={1}>
                 منصة علمني

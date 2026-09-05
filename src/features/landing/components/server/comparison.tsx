@@ -33,7 +33,7 @@ export default function Comparison() {
   return (
     <Section id="comparison" className="bg-white">
       <Reveal>
-        <h2 className="mb-3 text-center text-3xl font-bold tracking-tight text-[#0F172A] md:text-4xl font-cairo">
+        <h2 className="mb-3 text-center text-3xl font-bold tracking-tight text-[#0F172A] md:text-4xl font-readex">
           ليه علمني{" "}
           <MarkerHighlight color="yellow" variant={3}>
             أحسن اختيار؟

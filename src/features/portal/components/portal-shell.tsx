@@ -176,7 +176,7 @@ export default function StudentPortalShell({ children, user, active = "dashboard
   };
 
   return (
-    <div dir="rtl" data-sidebar-collapsed={sidebarCollapsed} className="student-portal-shell min-h-screen bg-[#FCFCFE] font-cairo text-[#1B1B24]">
+    <div dir="rtl" data-sidebar-collapsed={sidebarCollapsed} className="student-portal-shell min-h-screen bg-[#FCFCFE] font-readex text-[#1B1B24]">
       <aside aria-label="القائمة الجانبية" data-sidebar-collapsed={sidebarCollapsed} className="student-portal-sidebar fixed inset-y-0 z-40 hidden flex-col overflow-hidden border-s border-[#E2E0EF] bg-white py-7 md:flex">
         <SidebarContent
           active={active}

@@ -53,7 +53,7 @@ export default function BentoGrid() {
   return (
     <Section id="why" className="bg-sky-50">
       <Reveal>
-        <h2 className="mb-3 text-center text-3xl font-black text-[#0F172A] md:text-4xl font-cairo">
+        <h2 className="mb-3 text-center text-3xl font-black text-[#0F172A] md:text-4xl font-readex">
           ليه{" "}
           <MarkerHighlight color="yellow" variant={1}>
             علمني؟
@@ -85,7 +85,7 @@ export default function BentoGrid() {
               {"desc" in content[key as keyof typeof content] &&
                 "items" in content[key as keyof typeof content] === false ? (
                 <>
-                  <h3 className="mb-1 text-lg font-bold text-[#0F172A] font-cairo">
+                  <h3 className="mb-1 text-lg font-bold text-[#0F172A] font-readex">
                     {
                       (
                         content[key as keyof typeof content] as {
@@ -108,7 +108,7 @@ export default function BentoGrid() {
                 </>
               ) : (
                 <>
-                  <h3 className="mb-3 text-lg font-bold text-[#0F172A] font-cairo">
+                  <h3 className="mb-3 text-lg font-bold text-[#0F172A] font-readex">
                     {
                       (
                         content[key as keyof typeof content] as {

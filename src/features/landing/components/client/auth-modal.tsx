@@ -68,7 +68,7 @@ export default function AuthModal({ isOpen, initialMode, onClose, onSuccess }: A
             <GraduationCap className="w-6 h-6" />
           </div>
           <div>
-            <h3 className="text-xl font-black text-[#0F172A] font-cairo">
+            <h3 className="text-xl font-black text-[#0F172A] font-readex">
               {mode === "signup" ? "إنشاء حساب طالب جديد" : "تسجيل الدخول لمنصة علمني"}
             </h3>
             <p className="text-xs text-[#334155]">
@@ -176,7 +176,7 @@ export default function AuthModal({ isOpen, initialMode, onClose, onSuccess }: A
           <button
             type="submit"
             disabled={submitted}
-            className="w-full py-3.5 bg-primary hover:bg-primary-hover text-white font-extrabold text-sm rounded-xl shadow-lg shadow-primary/25 transition-all cursor-pointer flex items-center justify-center gap-2 mt-2 font-cairo"
+            className="w-full py-3.5 bg-primary hover:bg-primary-hover text-white font-extrabold text-sm rounded-xl shadow-lg shadow-primary/25 transition-all cursor-pointer flex items-center justify-center gap-2 mt-2 font-readex"
           >
             {submitted ? (
               <span className="flex items-center gap-2">

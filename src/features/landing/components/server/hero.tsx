@@ -18,7 +18,7 @@ export default function Hero({
   return (
     <section
       id="hero"
-      className="relative min-h-[88svh] flex items-center overflow-hidden bg-linear-to-b from-[#F4F8FF] via-[#FAF8FF] to-[#F1F5F9] dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 pt-28 pb-16 text-slate-900 dark:text-white font-cairo"
+      className="relative min-h-[88svh] flex items-center overflow-hidden bg-linear-to-b from-[#F4F8FF] via-[#FAF8FF] to-[#F1F5F9] dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 pt-28 pb-16 text-slate-900 dark:text-white font-readex"
     >
       {/* Background Soft Glows */}
       <div className="absolute top-1/4 inset-s-1/3 w-96 h-96 bg-sky-200/30 dark:bg-sky-900/20 rounded-full blur-3xl pointer-events-none" />

@@ -59,7 +59,7 @@ export default function InteractiveQuiz({ onExploreTeachers }: InteractiveQuizPr
               <HelpCircle className="w-4 h-4" />
               <span>تجربة تفاعلية حية على المنصة</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-black text-[#0F172A] font-cairo">اختبر مستواك الآن</h2>
+            <h2 className="text-3xl sm:text-4xl font-black text-[#0F172A] font-readex">اختبر مستواك الآن</h2>
             <p className="text-sm sm:text-base text-[#334155]">
               جرب نموذجاً مصغراً لااختبارات منصة علمني واكتشف أسلوب التصحيح الذكي والتفسير الفوري للحلول.
             </p>
@@ -82,7 +82,7 @@ export default function InteractiveQuiz({ onExploreTeachers }: InteractiveQuizPr
                 <div className="bg-primary h-full transition-all duration-300" style={{ width: `${((currentQuestionIndex + 1) / QUIZ_QUESTIONS.length) * 100}%` }} />
               </div>
 
-              <h3 className="text-lg sm:text-xl font-black text-[#0F172A] leading-relaxed mb-6 text-end font-cairo">{currentQ.question}</h3>
+              <h3 className="text-lg sm:text-xl font-black text-[#0F172A] leading-relaxed mb-6 text-end font-readex">{currentQ.question}</h3>
 
               <div className="space-y-3 mb-6">
                 {currentQ.options.map((option, idx) => {

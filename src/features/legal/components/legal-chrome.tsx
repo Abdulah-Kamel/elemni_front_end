@@ -34,11 +34,7 @@ export default function LegalChrome({
     <MotionProvider>
       <div
         dir={locale === "ar" ? "rtl" : "ltr"}
-        className={`min-h-screen bg-[#F9F8FC] text-[#1B1B24] dark:bg-[#0B132B] ${
-          locale === "ar"
-            ? "font-[family-name:var(--font-cairo)]"
-            : "font-[family-name:var(--font-inter)]"
-        }`}
+        className="min-h-screen bg-[#F9F8FC] font-[family-name:var(--font-readex-pro)] text-[#1B1B24] dark:bg-[#0B132B]"
       >
         <Navbar
           onOpenAuth={() => undefined}

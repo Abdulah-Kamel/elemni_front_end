@@ -94,7 +94,7 @@ function BrowseTeachersView({
             <ArrowLeft className="w-4 h-4" />
             <span>العودة للرئيسية</span>
           </Link>
-          <h1 className="text-3xl sm:text-4xl font-black text-ink font-cairo">جميع المدرسين</h1>
+          <h1 className="text-3xl sm:text-4xl font-black text-ink font-readex">جميع المدرسين</h1>
           <p className="text-muted mt-1">تصفح جميع المدرسين المتخصصين على المنصة</p>
         </div>
 
@@ -115,8 +115,8 @@ function BrowseTeachersView({
               onChange={handleFilterChange(setSelectedStream)}
               icon={Sparkles}
             />
-            <div className="relative text-start font-cairo">
-              <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 font-cairo">
+            <div className="relative text-start font-readex">
+              <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 font-readex">
                 البحث باسم المعلم أو المادة
               </label>
               <div className="relative">
@@ -128,7 +128,7 @@ function BrowseTeachersView({
                     setPage(1);
                   }}
                   placeholder="ابحث عن معلم..."
-                  className="w-full rounded-2xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-900/80 py-3 pe-10 ps-10 text-sm font-bold text-ink placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-cairo backdrop-blur-sm"
+                  className="w-full rounded-2xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-900/80 py-3 pe-10 ps-10 text-sm font-bold text-ink placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-readex backdrop-blur-sm"
                 />
                 <Search className="w-4 h-4 text-slate-400 absolute inset-s-3 top-1/2 -translate-y-1/2 stroke-[2.2]" />
                 {searchQuery && (

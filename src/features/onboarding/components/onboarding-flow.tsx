@@ -115,7 +115,7 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
 
   return (
     <MotionProvider>
-      <div dir="rtl" className="min-h-screen bg-page px-4 py-7 font-cairo text-ink sm:px-6 sm:py-10">
+      <div dir="rtl" className="min-h-screen bg-page px-4 py-7 font-readex text-ink sm:px-6 sm:py-10">
         <div className="mx-auto flex min-h-[calc(100vh-3.5rem)] max-w-3xl flex-col">
           <header className="mb-7 flex items-center justify-between border-b border-slate-200 pb-5">
             <div className="flex items-center gap-2.5">

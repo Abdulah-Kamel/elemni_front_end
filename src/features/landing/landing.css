@@ -1,7 +1,3 @@
-.font-cairo {
-  font-family: 'Cairo', 'Almarai', system-ui, sans-serif;
-}
-
 .landing-shell {
   isolation: isolate;
 }

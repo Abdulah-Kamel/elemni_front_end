@@ -13,7 +13,7 @@ export default function Testimonials() {
               <Award className="w-4 h-4" />
               <span>قصص نجاح وتفوق حقيقية</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-black text-[#0F172A] font-cairo">ماذا يقول أوائل الطلاب عن علمني؟</h2>
+            <h2 className="text-3xl sm:text-4xl font-black text-[#0F172A] font-readex">ماذا يقول أوائل الطلاب عن علمني؟</h2>
             <p className="text-sm sm:text-base text-[#334155]">
               شاهد كيف ساهمت المنصة والمعلمون في مساعدة آلاف الطلاب على تحقيق درجات متقدمة والانضمام لكليات أحلامهم.
             </p>

@@ -13,7 +13,7 @@ export default function SubjectGrid({ subjects }: { subjects: SubjectDto[] }) {
   return (
     <Section id="subjects" className="bg-white dark:bg-[#0B132B]">
       <Reveal>
-        <h2 className="mb-3 text-center text-3xl font-black text-[#0F172A] md:text-4xl font-cairo">
+        <h2 className="mb-3 text-center text-3xl font-black text-[#0F172A] md:text-4xl font-readex">
           تصفح{" "}
           <MarkerHighlight color="purple" variant={2}>
             المواد المتاحة
@@ -39,7 +39,7 @@ export default function SubjectGrid({ subjects }: { subjects: SubjectDto[] }) {
                 <div className="mb-3 grid size-16 place-items-center rounded-lg bg-primary-light transition-transform duration-300 group-hover:scale-105">
                   <Icon className="size-8 text-primary" />
                 </div>
-                <p className="font-black text-[#0F172A] font-cairo">{subject.name}</p>
+                <p className="font-black text-[#0F172A] font-readex">{subject.name}</p>
                 <p className="mt-1 text-xs text-[#334155]">{subject.grades.length} صفوف دراسية</p>
               </Link>
             </Reveal>

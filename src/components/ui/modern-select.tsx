@@ -56,7 +56,7 @@ export function ModernSelect({
   }, []);
 
   return (
-    <div className={cn("relative text-start font-cairo", className)} ref={containerRef}>
+    <div className={cn("relative text-start font-readex", className)} ref={containerRef}>
       <label className="mb-1.5 block text-xs font-bold text-slate-500 dark:text-slate-400">
         {label}
       </label>
