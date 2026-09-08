@@ -1,12 +1,18 @@
-import TeacherMarketingPage from "@/src/features/marketing/page";
+import { notFound } from "next/navigation";
 
-export { generateMetadata } from "@/src/features/marketing/page";
 export const dynamic = "force-dynamic";
 
-export default async function ForTeachersPage({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  return <TeacherMarketingPage params={params} />;
+export async function generateMetadata() {
+  return {
+    title: "Page Not Found",
+    robots: {
+      index: false,
+      follow: false,
+      googleBot: { index: false, follow: false },
+    },
+  };
+}
+
+export default async function ForTeachersPage() {
+  notFound();
 }

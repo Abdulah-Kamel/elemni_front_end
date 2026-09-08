@@ -1,4 +1,3 @@
-import { getLocale } from "next-intl/server";
 import "./landing.css";
 
 import {
@@ -8,7 +7,6 @@ import {
   getSubjects,
 } from "@/src/lib/student-api/public";
 import LandingInteractiveShell from "./components/client/landing-interactive-shell";
-import TeacherJoinCTA from "./components/server/teacher-join-cta";
 import SubjectGrid from "./components/server/subject-grid";
 import BentoGrid from "./components/server/bento-grid";
 import Comparison from "./components/server/comparison";
@@ -19,9 +17,11 @@ import FinalCta from "./components/server/final-cta";
 import Footer from "./components/server/footer";
 import WhatsAppButton from "./components/client/whatsapp-button";
 
+// HIDDEN FOR NOW: Teacher marketing route /for-teachers is disabled for SEO.
+// To re-enable, restore TeacherJoinCTA import and usage and update for-teachers/page.tsx
+// import TeacherJoinCTA from "./components/server/teacher-join-cta";
+
 export default async function StudentLandingPage() {
-  const locale = await getLocale();
-  const teacherJoinHref = locale === "ar" ? "/for-teachers" : `/${locale}/for-teachers`;
   const [coursesResult, gradesResult, streamsResult, subjectsResult] = await Promise.all([
     getPublicCourses(),
     getGrades(),
@@ -38,7 +38,6 @@ export default async function StudentLandingPage() {
       subjects={subjectsResult.ok ? subjectsResult.data : []}
       afterCourses={
         <>
-          <TeacherJoinCTA href={teacherJoinHref} />
           <SubjectGrid subjects={subjectsResult.ok ? subjectsResult.data : []} />
           <BentoGrid />
           <InteractiveWhiteboard3D />

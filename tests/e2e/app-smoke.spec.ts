@@ -77,16 +77,17 @@ test("teachers becomes the canonical public teacher area", async ({ page }) => {
   expect(new URL(page.url()).pathname).toBe("/teachers/ahmed-hassan");
 });
 
-test("teacher marketing moves to /for-teachers", async ({ page }) => {
+test("teacher marketing route is hidden (returns 404)", async ({ page }) => {
   await page.goto("/for-teachers");
-  await expect(page).toHaveURL(/\/for-teachers$/);
-  await expect(page.getByRole("heading", { level: 1, name: "بطّل تبيع دروسك في جروبات الواتساب" })).toBeVisible();
+  // Hidden route should render the global not-found page
+  await expect(page.getByRole("heading", { name: "الصفحة غير موجودة" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "العودة للرئيسية" })).toBeVisible();
 });
 
 test("landing emits course discovery and teacher-marketing destinations", async ({ page }) => {
   await page.goto("/");
 
-  await expect(page.getByRole("link", { name: /انضم إلينا كمعلم/ })).toHaveAttribute("href", "/for-teachers");
+  await expect(page.getByRole("link", { name: /انضم إلينا كمعلم/ })).toHaveCount(0);
   await expect(page.locator("#teachers")).toHaveCount(0);
   await expect(page.locator("#courses")).toBeVisible();
   await expect(page.locator("#courses a[href^='/courses/']").first()).toBeVisible();
