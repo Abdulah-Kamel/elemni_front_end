@@ -132,6 +132,7 @@
     -webkit-font-smoothing: antialiased;
   }
   .dark {
+    color-scheme: dark;
     --color-page: #0b132b;
     --color-ink: #f8fafc;
     --color-muted: #94a3b8;
@@ -144,6 +145,23 @@
   }
 }
 
+/* Dark mode fallbacks for hardcoded light-mode colors (e.g., auth pages) */
+.dark .text-\[\#1B1B24\] {
+  color: #f8fafc !important;
+}
+.dark .text-\[\#464555\] {
+  color: #cbd5e1 !important;
+}
+.dark .text-\[\#777587\] {
+  color: #94a3b8 !important;
+}
+.dark .border-\[\#E2E0EF\] {
+  border-color: #334155 !important;
+}
+.dark .placeholder\:text-\[\#A6A3B5\]::placeholder {
+  color: #64748b !important;
+}
+
 .global-loading {
   position: relative;
   display: grid;
@@ -152,8 +170,8 @@
   justify-items: center;
   gap: 1.5rem;
   overflow: hidden;
-  background-color: #f8fafc;
-  color: #0f172a;
+  background-color: var(--color-page);
+  color: var(--color-ink);
   isolation: isolate;
 }
 
@@ -166,6 +184,15 @@
   background: radial-gradient(circle, rgb(224 242 254 / 72%) 0%, rgb(248 250 252 / 0%) 68%);
   content: "";
   animation: global-loading-breathe 2.4s ease-in-out infinite;
+}
+
+.dark .global-loading {
+  background-color: #0b132b;
+  color: #f8fafc;
+}
+
+.dark .global-loading::before {
+  background: radial-gradient(circle, rgb(14 165 233 / 14%) 0%, rgb(11 19 43 / 0%) 68%);
 }
 
 .global-loading--content {
@@ -257,6 +284,34 @@
   color: #64748b;
   font-size: 0.875rem;
   font-weight: 600;
+}
+
+.dark .global-loading--content {
+  background-color: transparent;
+}
+
+.dark .global-loading__orbit {
+  border-color: rgb(56 189 248 / 22%);
+}
+
+.dark .global-loading__dot {
+  border-color: #0b132b;
+  box-shadow: 0 4px 12px rgb(2 132 199 / 35%);
+}
+
+.dark .global-loading__icon {
+  background-color: #0f172a;
+  border-color: rgb(30 58 95 / 80%);
+  color: #38bdf8;
+  box-shadow: 0 20px 45px -20px rgb(2 132 199 / 30%);
+}
+
+.dark .global-loading__copy strong {
+  color: #7dd3fc;
+}
+
+.dark .global-loading__copy span {
+  color: #94a3b8;
 }
 
 @keyframes global-loading-spin {

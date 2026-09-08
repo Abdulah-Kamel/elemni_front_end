@@ -20,6 +20,14 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       suppressHydrationWarning
       className={readexPro.variable}
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{var v=localStorage.getItem('elemni-dark-mode');if(v==='true'){document.documentElement.classList.add('dark')}else if(v==='false'){document.documentElement.classList.remove('dark')}}catch(e){}})();",
+          }}
+        />
+      </head>
       <body suppressHydrationWarning>{children}</body>
     </html>
   );

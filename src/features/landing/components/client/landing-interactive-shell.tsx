@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import type {
   GradeDto,
   PublicCourseDto,
@@ -9,6 +9,7 @@ import type {
   SubjectDto,
 } from "@/src/lib/student-api/contract";
 import { MotionProvider } from "@/src/components/ui/motion-provider";
+import { useDarkMode } from "@/src/lib/use-dark-mode";
 import Navbar from "./navbar";
 import Hero from "../server/hero";
 import CourseDiscovery from "./course-discovery";
@@ -44,27 +45,7 @@ export default function LandingInteractiveShell({
   const router = useRouter();
   const [videoModalOpen, setVideoModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
-  useEffect(() => {
-    const stored = localStorage.getItem("elemni-dark-mode");
-    if (stored === "true") {
-      // Hydrate the persisted browser preference after the server render.
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setIsDarkMode(true);
-      document.documentElement.classList.add("dark");
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("elemni-dark-mode", "true");
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("elemni-dark-mode", "false");
-    }
-  }, [isDarkMode]);
+  const [isDarkMode, setIsDarkMode] = useDarkMode();
 
   const handleOpenAuth = (mode: "signin" | "signup") => {
     router.push(mode === "signup" ? "/register" : "/login");

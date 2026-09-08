@@ -1,12 +1,12 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useEffect, useState } from "react";
 import { useLocale } from "next-intl";
 import { useRouter } from "@/src/i18n/navigation";
 import { MotionProvider } from "@/src/components/ui/motion-provider";
 import Navbar from "@/src/features/landing/components/client/navbar";
 import Footer from "@/src/features/landing/components/server/footer";
+import { useDarkMode } from "@/src/lib/use-dark-mode";
 
 export default function PublicCourseDetailShell({
   children,
@@ -15,23 +15,8 @@ export default function PublicCourseDetailShell({
 }) {
   const locale = useLocale();
   const router = useRouter();
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useDarkMode();
   const homeHref = locale === "ar" ? "/" : `/${locale}`;
-
-  useEffect(() => {
-    const stored = localStorage.getItem("elemni-dark-mode");
-    if (stored === "true") {
-      // Hydrate the persisted browser preference after the server render.
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setIsDarkMode(true);
-      document.documentElement.classList.add("dark");
-    }
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", isDarkMode);
-    localStorage.setItem("elemni-dark-mode", String(isDarkMode));
-  }, [isDarkMode]);
 
   return (
     <MotionProvider>

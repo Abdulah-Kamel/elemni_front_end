@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { MotionProvider } from "@/src/components/ui/motion-provider";
 import Navbar from "@/src/features/landing/components/client/navbar";
 import Footer from "@/src/features/landing/components/server/footer";
+import { useDarkMode } from "@/src/lib/use-dark-mode";
 
 export default function AuthChrome({
   children,
@@ -12,24 +13,12 @@ export default function AuthChrome({
   children: ReactNode;
   locale: string;
 }) {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useDarkMode();
   const homeHref = locale === "ar" ? "/" : `/${locale}`;
-
-  useEffect(() => {
-    if (localStorage.getItem("elemni-dark-mode") === "true") {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setIsDarkMode(true);
-    }
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", isDarkMode);
-    localStorage.setItem("elemni-dark-mode", String(isDarkMode));
-  }, [isDarkMode]);
 
   return (
     <MotionProvider>
-      <div dir="rtl" className="min-h-screen bg-[#F9F8FC] font-readex text-[#1B1B24] dark:bg-[#0B132B]">
+      <div dir="rtl" className="min-h-screen bg-[#F9F8FC] font-readex text-[#1B1B24] dark:bg-[#0B132B] dark:text-slate-100">
         <Navbar
           onOpenAuth={() => undefined}
           onSearchChange={() => undefined}

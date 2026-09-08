@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { MotionProvider } from "@/src/components/ui/motion-provider";
 import Navbar from "@/src/features/landing/components/client/navbar";
+import { useDarkMode } from "@/src/lib/use-dark-mode";
 
 export default function LegalChrome({
   children,
@@ -13,22 +14,8 @@ export default function LegalChrome({
   locale: string;
   footer?: ReactNode;
 }) {
-  const [isDarkMode, setIsDarkMode] = useState<boolean | null>(null);
+  const [isDarkMode, setIsDarkMode] = useDarkMode();
   const homeHref = locale === "ar" ? "/" : `/${locale}`;
-
-  useEffect(() => {
-    if (localStorage.getItem("elemni-dark-mode") === "true") {
-      // Hydrate the persisted browser preference after the server render.
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setIsDarkMode(true);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isDarkMode === null) return;
-    document.documentElement.classList.toggle("dark", isDarkMode);
-    localStorage.setItem("elemni-dark-mode", String(isDarkMode));
-  }, [isDarkMode]);
 
   return (
     <MotionProvider>
@@ -42,7 +29,7 @@ export default function LegalChrome({
           searchQuery=""
           showSearch={false}
           landingBaseHref={homeHref}
-          isDarkMode={isDarkMode ?? false}
+          isDarkMode={isDarkMode}
           onToggleDarkMode={() => setIsDarkMode((current) => !current)}
         />
         <main className="pt-24 pb-16">

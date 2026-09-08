@@ -41,22 +41,22 @@ function Field({
 }) {
   return (
     <div>
-      <label htmlFor={id} className="mb-1.5 block text-xs font-bold text-[#464555]">
+      <label htmlFor={id} className="mb-1.5 block text-xs font-bold text-[#464555] dark:text-slate-300">
         {label}
       </label>
       <div className="group relative">
-        <Icon className="pointer-events-none absolute end-3.5 top-1/2 size-4.5 -translate-y-1/2 text-[#777587] transition-colors group-focus-within:text-primary" />
+        <Icon className="pointer-events-none absolute end-3.5 top-1/2 size-4.5 -translate-y-1/2 text-[#777587] transition-colors group-focus-within:text-primary dark:text-slate-400" />
         {children}
       </div>
-      {hint && <p className="mt-1.5 text-[11px] text-[#777587]">{hint}</p>}
+      {hint && <p className="mt-1.5 text-[11px] text-[#777587] dark:text-slate-400">{hint}</p>}
     </div>
   );
 }
 
 const inputClass =
-  "h-12 w-full rounded-lg border border-[#E2E0EF] bg-white pe-11 ps-4 text-sm text-[#1B1B24] outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10 placeholder:text-[#A6A3B5]";
+  "h-12 w-full rounded-lg border border-[#E2E0EF] bg-white pe-11 ps-4 text-sm text-[#1B1B24] outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10 placeholder:text-[#A6A3B5] dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-500";
 const ltrInputClass =
-  "h-12 w-full rounded-lg border border-[#E2E0EF] bg-white py-0 pl-11 pr-4 text-left text-sm text-[#1B1B24] outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10 placeholder:text-[#A6A3B5]";
+  "h-12 w-full rounded-lg border border-[#E2E0EF] bg-white py-0 pl-11 pr-4 text-left text-sm text-[#1B1B24] outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10 placeholder:text-[#A6A3B5] dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-500";
 
 export default function StudentAuthForm({ mode }: { mode: AuthMode }) {
   const router = useRouter();
@@ -121,10 +121,10 @@ export default function StudentAuthForm({ mode }: { mode: AuthMode }) {
     <div className="w-full max-w-[500px] animate-fade-up">
       <AuthCard>
         <div className="mb-7 text-center">
-          <h1 className="text-2xl font-black leading-9 text-[#1B1B24]">
+          <h1 className="text-2xl font-black leading-9 text-[#1B1B24] dark:text-white">
             {isRegister ? "إنشاء حساب جديد" : "أهلاً بيك من تاني"}
           </h1>
-          <p className="mt-1.5 text-sm leading-6 text-[#777587]">
+          <p className="mt-1.5 text-sm leading-6 text-[#777587] dark:text-slate-400">
             {isRegister
               ? "ابدأ رحلتك التعليمية في أقل من دقيقة"
               : "سجّل دخولك وكمّل مذاكرتك من حيث توقفت"}
@@ -197,7 +197,7 @@ export default function StudentAuthForm({ mode }: { mode: AuthMode }) {
               type="button"
               onClick={() => setShowPassword((current) => !current)}
               aria-label={showPassword ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"}
-              className="absolute start-2.5 top-1/2 flex size-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-[#777587] hover:bg-primary-light hover:text-primary"
+              className="absolute start-2.5 top-1/2 flex size-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-[#777587] hover:bg-primary-light hover:text-primary dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-sky-300"
             >
               {showPassword ? <EyeOff className="size-4.5" /> : <Eye className="size-4.5" />}
             </button>
@@ -218,7 +218,7 @@ export default function StudentAuthForm({ mode }: { mode: AuthMode }) {
                 type="button"
                 onClick={() => setShowConfirmation((current) => !current)}
                 aria-label={showConfirmation ? "إخفاء تأكيد كلمة المرور" : "إظهار تأكيد كلمة المرور"}
-                className="absolute start-2.5 top-1/2 flex size-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-[#777587] hover:bg-primary-light hover:text-primary"
+                className="absolute start-2.5 top-1/2 flex size-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-[#777587] hover:bg-primary-light hover:text-primary dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-sky-300"
               >
                 {showConfirmation ? <EyeOff className="size-4.5" /> : <Eye className="size-4.5" />}
               </button>
@@ -234,7 +234,7 @@ export default function StudentAuthForm({ mode }: { mode: AuthMode }) {
           )}
 
           {error && (
-            <div role="alert" className="flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm font-bold text-red-700">
+            <div role="alert" className="flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm font-bold text-red-700 dark:border-red-900/60 dark:bg-red-950/30 dark:text-red-300">
               <CircleAlert className="mt-0.5 size-4.5 shrink-0" />
               <span>{error}</span>
             </div>
@@ -254,13 +254,13 @@ export default function StudentAuthForm({ mode }: { mode: AuthMode }) {
         </form>
 
         {isRegister && (
-          <p className="mt-5 text-center text-xs leading-5 text-[#777587]">
+          <p className="mt-5 text-center text-xs leading-5 text-[#777587] dark:text-slate-400">
             بإنشاء حساب، أنت توافق على الشروط وسياسة الخصوصية.
           </p>
         )}
       </AuthCard>
 
-      <p className="mt-6 text-center text-sm text-[#464555]">
+      <p className="mt-6 text-center text-sm text-[#464555] dark:text-slate-400">
         {isRegister ? "عندك حساب بالفعل؟ " : "مش عندك حساب؟ "}
         <Link
           href={isRegister ? "/login" : "/register"}

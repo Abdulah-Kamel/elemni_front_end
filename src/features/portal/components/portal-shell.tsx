@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useSyncExternalStore, type ReactNode } from "react";
 import {
   Bell,
@@ -20,6 +21,7 @@ import { MotionProvider } from "@/src/components/ui/motion-provider";
 import { cn } from "@/src/lib/cn";
 import { notifyStudentSessionChanged } from "@/src/lib/student-api/session-events";
 import type { UserDto } from "@/src/lib/student-api/contract";
+import logo from "@/src/assets/logo-icon.png";
 import "../styles/portal-shell.css";
 
 const STUDENT_SIDEBAR_STORAGE_KEY = "student-sidebar-collapsed";
@@ -123,7 +125,14 @@ function SidebarContent({
           title={collapsed ? "علمني" : undefined}
           className={cn("flex items-center gap-3", collapsed ? "justify-center" : "mx-5")}
         >
-        <span className="flex size-11 items-center justify-center rounded-xl bg-[#0284C7] text-white"><GraduationCap className="size-6" /></span>
+          <Image
+            src={logo}
+            alt="علمني"
+            width={44}
+            height={44}
+            className="size-11 rounded-xl bg-white object-contain p-1 shadow-sm ring-1 ring-[#E2E0EF]"
+            priority
+          />
           <span className={collapsed ? "sr-only" : undefined}><strong className="block text-2xl font-black text-[#0369A1]">علمني</strong><span className="text-xs text-[#777587]">منصة التعليم الذكي</span></span>
         </Link>
 
@@ -189,7 +198,7 @@ export default function StudentPortalShell({ children, user, active = "dashboard
       <header className="student-portal-header fixed top-0 z-30 flex h-16 items-center justify-between border-b border-[#E2E0EF] bg-white/95 px-4 backdrop-blur-md md:px-8">
         <div className="flex items-center gap-2">
           <button onClick={() => setMobileOpen(true)} aria-label="فتح قائمة بوابة الطالب" className="flex size-10 cursor-pointer items-center justify-center rounded-lg text-[#464555] hover:bg-[#E0F2FE] md:hidden"><Menu className="size-6" /></button>
-          <Link href="/dashboard" className="flex items-center gap-2 font-black text-[#0369A1] md:hidden"><GraduationCap className="size-5" />علمني</Link>
+          <Link href="/dashboard" className="flex items-center gap-2 font-black text-[#0369A1] md:hidden"><Image src={logo} alt="علمني" width={28} height={28} className="size-7 rounded-lg object-contain bg-white" />علمني</Link>
         </div>
         <div className="flex items-center gap-3">
           <button disabled title="التنبيهات قريباً" aria-label="التنبيهات غير متاحة حالياً" className="flex size-9 cursor-not-allowed items-center justify-center rounded-full text-[#A6A3B5]"><Bell className="size-5" /></button>

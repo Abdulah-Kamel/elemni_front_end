@@ -1,13 +1,14 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "@/src/i18n/navigation";
 import type { Teacher } from "../../types";
 import Navbar from "@/src/features/landing/components/client/navbar";
 import TeacherProfileView from "./teacher-profile-view";
 import Footer from "@/src/features/landing/components/server/footer";
 import { MotionProvider } from "@/src/components/ui/motion-provider";
+import { useDarkMode } from "@/src/lib/use-dark-mode";
 
 const AuthModal = dynamic(
   () => import("@/src/features/landing/components/client/auth-modal"),
@@ -26,22 +27,9 @@ export default function TeacherProfileShell({
 }) {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<"signin" | "signup">("signup");
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useDarkMode();
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const router = useRouter();
-
-  useEffect(() => {
-    if (localStorage.getItem("elemni-dark-mode") === "true") {
-      // Hydrate the persisted browser preference after the server render.
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setIsDarkMode(true);
-    }
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", isDarkMode);
-    localStorage.setItem("elemni-dark-mode", String(isDarkMode));
-  }, [isDarkMode]);
 
   const openAuth = (mode: "signin" | "signup") => {
     setAuthMode(mode);
