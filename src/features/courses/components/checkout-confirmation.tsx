@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { CheckCircle2, CircleAlert, LoaderCircle, ShieldCheck, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
+import { resolveAssetUrl } from "@/src/lib/asset-url";
 import type {
   PublicCourseDto,
   StudentCourseTeacherDto,
@@ -35,6 +36,7 @@ export default function CheckoutConfirmation({
 }) {
   const t = useTranslations("courseDetail");
   const locale = useLocale();
+  const courseImageUrl = course.img ? resolveAssetUrl(course.img, "") : null;
   const closeRef = useRef<HTMLButtonElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
   const loadingRef = useRef(loading);
@@ -100,8 +102,8 @@ export default function CheckoutConfirmation({
 
         <div className="mt-6 flex gap-4 rounded-xl border border-[#E4ECF2] bg-[#F8FBFD] p-3">
           <div className="relative size-20 shrink-0 overflow-hidden rounded-lg bg-[#DDF2FC]">
-            {course.img ? (
-              <Image src={course.img} alt="" fill sizes="80px" className="object-cover" />
+            {courseImageUrl ? (
+              <Image src={courseImageUrl} alt="" fill sizes="80px" className="object-cover" />
             ) : (
               <ShieldCheck className="absolute inset-0 m-auto size-8 text-[#0284C7]" aria-hidden="true" />
             )}

@@ -41,7 +41,10 @@ export function useMyCourses() {
 export function useStudentCourse(
   courseId: number,
   teacherSlug?: string,
-  options?: { enabled?: boolean },
+  options?: {
+    enabled?: boolean;
+    initialData?: StudentCourseDetailDto;
+  },
 ) {
   const teacherQuery = teacherSlug
     ? `?teacher=${encodeURIComponent(teacherSlug)}`
@@ -54,6 +57,7 @@ export function useStudentCourse(
         `/api/student/my-courses/${courseId}${teacherQuery}`,
       ),
     enabled: options?.enabled ?? true,
+    initialData: options?.initialData,
     ...privateQueryDefaults,
   });
 }

@@ -83,12 +83,15 @@ test("teacher marketing moves to /for-teachers", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1, name: "بطّل تبيع دروسك في جروبات الواتساب" })).toBeVisible();
 });
 
-test("landing emits canonical teacher and teacher-marketing destinations", async ({ page }) => {
+test("landing emits course discovery and teacher-marketing destinations", async ({ page }) => {
   await page.goto("/");
 
   await expect(page.getByRole("link", { name: /انضم إلينا كمعلم/ })).toHaveAttribute("href", "/for-teachers");
-  await expect(page.getByRole("link", { name: "عرض جميع المدرسين" })).toHaveAttribute("href", "/teachers");
-  await expect(page.locator("#subjects a").first()).toHaveAttribute("href", "/teachers");
+  await expect(page.locator("#teachers")).toHaveCount(0);
+  await expect(page.locator("#courses")).toBeVisible();
+  await expect(page.locator("#courses a[href^='/courses/']").first()).toBeVisible();
+  await expect(page.locator("#courses").getByText("عرض التفاصيل")).toHaveCount(0);
+  await expect(page.locator("#subjects a").first()).toHaveAttribute("href", "#courses");
 });
 
 test("a freshly registered student can open migrated authenticated surfaces and see canonical teacher links", async ({ page }) => {
@@ -124,18 +127,22 @@ test("a freshly registered student can open migrated authenticated surfaces and 
 
   await page.locator('a[href^="/courses/"]').first().click();
   await expect(page).not.toHaveURL(/\/login$/);
-  await expect(page.getByRole("navigation", { name: "بوابة الطالب" })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "التنقل الرئيسي" })).toBeVisible();
   await expect(page.locator('a[href^="/explore/teachers/"]')).toHaveCount(0);
   await expect(page.locator('a[href^="/teachers/"]').first()).toBeVisible();
 });
 
-test("course discovery stays guarded while public course detail remains accessible", async ({ page }) => {
+test("public course detail is separate from the authenticated learner detail", async ({ page }) => {
   await page.goto("/explore");
   await expect(page).toHaveURL(/\/login$/);
 
   await page.goto("/courses/1");
   await expect(page).toHaveURL(/\/courses\/1$/);
-  await expect(page.getByRole("navigation", { name: "بوابة الطالب" })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "التنقل الرئيسي" })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "بوابة الطالب" })).toHaveCount(0);
+
+  await page.goto("/my-courses/1");
+  await expect(page).toHaveURL(/\/login$/);
 });
 
 test("legal and contact pages expose localized, indexable support information", async ({ page }) => {

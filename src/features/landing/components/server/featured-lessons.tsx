@@ -4,6 +4,7 @@ import { Link } from "@/src/i18n/navigation";
 import { Section } from "@/src/components/ui/section";
 import { Reveal } from "@/src/components/ui/reveal";
 import type { PublicCourseDto } from "@/src/lib/student-api/contract";
+import { resolveAssetUrl } from "@/src/lib/asset-url";
 import lessonFallback from "@/src/assets/images/student-redesign/lesson-calculus.webp";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 
@@ -11,12 +12,6 @@ export interface FeaturedCourse {
   course: PublicCourseDto;
   teacherName: string;
   teacherSlug: string;
-}
-
-function courseImage(src: string | null) {
-  return src && (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("/"))
-    ? src
-    : lessonFallback;
 }
 
 function durationLabel(minutes: number | null) {
@@ -46,7 +41,7 @@ export default function FeaturedLessons({ courses }: { courses: FeaturedCourse[]
             <Link href={`/teachers/${teacherSlug}`} className="group flex h-full flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition-transform hover:-translate-y-1 dark:border-slate-700 dark:bg-slate-800">
               <div className="relative aspect-video w-full overflow-hidden bg-slate-900">
                 <Image
-                  src={courseImage(course.img)}
+                  src={resolveAssetUrl(course.img, lessonFallback.src)}
                   alt={course.title}
                   fill
                   loading="lazy"

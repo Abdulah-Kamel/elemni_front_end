@@ -2,35 +2,41 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useState, type ReactNode } from "react";
-import type { TeacherSummary } from "../../types";
-import type { GradeDto, StreamDto } from "@/src/lib/student-api/contract";
+import type {
+  GradeDto,
+  PublicCourseDto,
+  StreamDto,
+  SubjectDto,
+} from "@/src/lib/student-api/contract";
 import { MotionProvider } from "@/src/components/ui/motion-provider";
 import Navbar from "./navbar";
 import Hero from "../server/hero";
-import TeacherGrid from "../server/teacher-grid";
-import InteractiveQuiz from "./interactive-quiz";
+import CourseDiscovery from "./course-discovery";
+// import InteractiveQuiz from "./interactive-quiz";
 import LandingRevealController from "./landing-reveal-controller";
 import { useRouter } from "@/src/i18n/navigation";
 
 const VideoModal = dynamic(() => import("./video-modal"), { ssr: false });
 
 interface LandingInteractiveShellProps {
-  teachers: TeacherSummary[];
-  teachersLoadError: boolean;
+  courses: PublicCourseDto[];
+  coursesLoadError: boolean;
   grades: GradeDto[];
   streams: StreamDto[];
-  afterTeachers: ReactNode;
+  subjects: SubjectDto[];
+  afterCourses: ReactNode;
   afterQuiz: ReactNode;
   footer: ReactNode;
   floatingActions: ReactNode;
 }
 
 export default function LandingInteractiveShell({
-  teachers,
-  teachersLoadError,
+  courses,
+  coursesLoadError,
   grades,
   streams,
-  afterTeachers,
+  subjects,
+  afterCourses,
   afterQuiz,
   footer,
   floatingActions,
@@ -64,44 +70,47 @@ export default function LandingInteractiveShell({
     router.push(mode === "signup" ? "/register" : "/login");
   };
 
-  const scrollToTeachers = () => {
-    document.getElementById("teachers")?.scrollIntoView({ behavior: "smooth" });
-  };
-
   return (
     <MotionProvider>
-    <div dir="rtl" className="landing-shell min-h-screen bg-[#F8FAFC] text-[#0F172A] antialiased selection:bg-[#0284C7] selection:text-white dark:bg-[#0B132B] dark:text-[#F8FAFC]">
-      <LandingRevealController />
+      <div
+        dir="rtl"
+        className="landing-shell min-h-screen bg-[#F8FAFC] text-[#0F172A] antialiased selection:bg-[#0284C7] selection:text-white dark:bg-[#0B132B] dark:text-[#F8FAFC]"
+      >
+        <LandingRevealController />
 
-      <Navbar
-        onOpenAuth={handleOpenAuth}
-        onSearchChange={setSearchQuery}
-        searchQuery={searchQuery}
-        isDarkMode={isDarkMode}
-        onToggleDarkMode={() => setIsDarkMode((prev) => !prev)}
-      />
-
-      <main className="landing-content">
-        <Hero
+        <Navbar
           onOpenAuth={handleOpenAuth}
-          onOpenVideoTour={() => setVideoModalOpen(true)}
+          onSearchChange={setSearchQuery}
+          searchQuery={searchQuery}
+          isDarkMode={isDarkMode}
+          onToggleDarkMode={() => setIsDarkMode((prev) => !prev)}
         />
-        <TeacherGrid teachers={teachers} grades={grades} streams={streams} searchQuery={searchQuery} loadError={teachersLoadError} />
-        {afterTeachers}
-        <InteractiveQuiz onExploreTeachers={scrollToTeachers} />
-        {afterQuiz}
-      </main>
 
-      {footer}
-      {floatingActions}
+        <main className="landing-content">
+          <Hero
+            onOpenAuth={handleOpenAuth}
+            onOpenVideoTour={() => setVideoModalOpen(true)}
+          />
+          <CourseDiscovery
+            courses={courses}
+            grades={grades}
+            streams={streams}
+            subjects={subjects}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            loadError={coursesLoadError}
+          />
+          {afterCourses}
+          {afterQuiz}
+        </main>
 
-      {videoModalOpen && (
-        <VideoModal
-          isOpen
-          onClose={() => setVideoModalOpen(false)}
-        />
-      )}
-    </div>
+        {footer}
+        {floatingActions}
+
+        {videoModalOpen && (
+          <VideoModal isOpen onClose={() => setVideoModalOpen(false)} />
+        )}
+      </div>
     </MotionProvider>
   );
 }

@@ -20,9 +20,9 @@ export default function SubjectGrid({ subjects }: { subjects: SubjectDto[] }) {
           </MarkerHighlight>
         </h2>
         <p className="mx-auto mb-10 max-w-2xl text-center text-sm text-[#334155]">
-          اختر المادة التي تريدها وابدأ رحلة التعلم مع{" "}
+          اختر المادة التي تريدها وابدأ رحلة التعلم من خلال{" "}
           <MarkerHighlight color="sky" variant={1}>
-            أمهر المدرسين
+            أفضل الكورسات
           </MarkerHighlight>
           .
         </p>
@@ -33,7 +33,7 @@ export default function SubjectGrid({ subjects }: { subjects: SubjectDto[] }) {
           return (
             <Reveal key={subject.id} delay={index * 60} className="h-full">
               <Link
-                href="/teachers"
+                href="#courses"
                 className="group flex h-full w-full flex-col items-center rounded-lg border border-sky-100 bg-white p-6 text-center transition-transform duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg"
               >
                 <div className="mb-3 grid size-16 place-items-center rounded-lg bg-primary-light transition-transform duration-300 group-hover:scale-105">

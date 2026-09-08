@@ -11,6 +11,12 @@ vi.mock("@/src/features/portal/components/portal-shell", () => ({
   default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
+vi.mock("./public-course-detail-shell", () => ({
+  default: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="public-course-detail-shell">{children}</div>
+  ),
+}));
+
 vi.mock("@/src/components/ui/global-loading", () => ({
   GlobalLoading: () => <div>loading</div>,
 }));
@@ -200,6 +206,7 @@ describe("CourseDetail production experience", () => {
             courseId={12}
             teacherSlug="ahmad-ali"
             isAuthenticated={false}
+            publicMode
             grades={[{ id: 3, name: "الصف الثالث الثانوي", level: "secondary" }]}
             streams={[{ id: 1, name: "علمي علوم", slug: "science" }]}
           />
@@ -208,7 +215,12 @@ describe("CourseDetail production experience", () => {
     );
 
     expect(await screen.findByRole("heading", { name: "كورس التفاضل" })).toBeInTheDocument();
+    expect(screen.getByTestId("public-course-detail-shell")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "اشترك في الكورس" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "الوحدة الأولى" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /مقدمة في النهايات/ })).toBeInTheDocument();
+    expect(screen.getByRole("navigation", { name: "محتوى الكورس" })).not.toHaveStyle({ opacity: "0" });
+    expect(screen.queryByText(/PayTabs/i)).not.toBeInTheDocument();
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 

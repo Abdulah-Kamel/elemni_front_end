@@ -4,6 +4,7 @@ import Image from "next/image";
 import { BookOpen, CalendarDays, Clock3, PlayCircle } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/src/i18n/navigation";
+import { resolveAssetUrl } from "@/src/lib/asset-url";
 import type {
   PublicCourseDto,
   StudentCourseTeacherDto,
@@ -66,6 +67,7 @@ export default function CourseHero({
   const date = new Intl.DateTimeFormat(locale === "ar" ? "ar-EG" : "en-US", {
     dateStyle: "medium",
   }).format(new Date(course.created_at));
+  const courseImageUrl = course.img ? resolveAssetUrl(course.img, "") : null;
 
   return (
     <section
@@ -140,9 +142,9 @@ export default function CourseHero({
         </div>
 
         <div className="relative order-1 aspect-[16/10] min-h-56 overflow-hidden bg-[#142B40] lg:order-2 lg:aspect-auto lg:min-h-[25rem]">
-          {course.img ? (
+          {courseImageUrl ? (
             <Image
-              src={course.img}
+              src={courseImageUrl}
               alt={course.title}
               fill
               priority

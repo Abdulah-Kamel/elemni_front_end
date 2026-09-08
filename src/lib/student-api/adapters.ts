@@ -1,16 +1,11 @@
 import teacherFallback from "@/src/assets/images/student-redesign/teacher-ahmad.webp";
+import { resolveAssetUrl } from "@/src/lib/asset-url";
 import type { Course, Teacher, TeacherSummary } from "@/src/features/teachers/types";
 import type {
   PublicCourseDto,
   PublicTeacherDetailDto,
   PublicTeacherDto,
 } from "./contract";
-
-function usableImage(src: string | null) {
-  return src && (src.startsWith("https://") || src.startsWith("http://") || src.startsWith("/"))
-    ? src
-    : teacherFallback;
-}
 
 function subjectCategory(teacher: PublicTeacherDto | PublicTeacherDetailDto) {
   return teacher.subjects[0]?.slug ?? "general";
@@ -31,7 +26,7 @@ export function toTeacherSummary(teacher: PublicTeacherDto): TeacherSummary {
     gradesList: grades,
     gradeIds: teacher.grades.map((grade) => String(grade.id)),
     streamIds: [...new Set(teacher.subjects.flatMap((subject) => subject.streams.map((stream) => String(stream.id))))],
-    avatar: usableImage(teacher.img),
+    avatar: resolveAssetUrl(teacher.img, teacherFallback.src),
     bio: teacher.description ?? "",
   };
 }
@@ -52,7 +47,7 @@ export function toCourse(course: PublicCourseDto): Course {
     price: Number(course.price),
     duration: formatDuration(course.total_duration_minutes),
     sessionsCount: course.lesson_count,
-    image: usableImage(course.img),
+    image: resolveAssetUrl(course.img, teacherFallback.src),
     isSubscribed: course.is_subscribed,
     chapters: course.chapters.map((chapter) => ({
       id: chapter.id,
@@ -98,7 +93,7 @@ export function toTeacher(
     gradesList: grades,
     gradeIds: teacher.grades.map((grade) => String(grade.id)),
     streamIds: [...new Set(teacher.subjects.flatMap((subject) => subject.streams.map((stream) => String(stream.id))))],
-    avatar: usableImage(teacher.img),
+    avatar: resolveAssetUrl(teacher.img, teacherFallback.src),
     studentCount: 0,
     experienceYears: "experience" in teacher ? teacher.experience ?? 0 : 0,
     pricePerSession: normalizedCourses.length

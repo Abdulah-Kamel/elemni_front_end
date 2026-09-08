@@ -11,6 +11,7 @@ import type {
   GradeDto,
   PublicItemDto,
   PublicLessonDto,
+  StudentCourseDetailDto,
   StreamDto,
 } from "@/src/lib/student-api/contract";
 import {
@@ -30,6 +31,7 @@ import CurriculumAccordion from "./curriculum-accordion";
 import LearnerPlayer from "./learner-player";
 import LearnerCurriculumSidebar from "./learner-curriculum-sidebar";
 import CourseDetailSkeleton from "./course-detail-skeleton";
+import PublicCourseDetailShell from "./public-course-detail-shell";
 
 export default function CourseDetail({
   courseId,
@@ -37,12 +39,16 @@ export default function CourseDetail({
   grades,
   streams,
   isAuthenticated = true,
+  publicMode = false,
+  initialDetail,
 }: {
   courseId: number;
   teacherSlug?: string;
   grades: GradeDto[];
   streams: StreamDto[];
   isAuthenticated?: boolean;
+  publicMode?: boolean;
+  initialDetail?: StudentCourseDetailDto;
 }) {
   const t = useTranslations("courseDetail");
   const router = useRouter();
@@ -51,14 +57,22 @@ export default function CourseDetail({
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
   const [checkoutLoading, setCheckoutLoading] = useState(false);
-  const [expandedChapterId, setExpandedChapterId] = useState<number | null>(null);
-  const [expandedLessonId, setExpandedLessonId] = useState<number | null>(null);
+  const [expandedChapterId, setExpandedChapterId] = useState<number | null | undefined>(
+    () => initialDetail
+      ? initialDetail.course.chapters.find((chapter) => chapter.lessons.length)?.id ?? null
+      : undefined,
+  );
+  const [expandedLessonId, setExpandedLessonId] = useState<number | null | undefined>(
+    () => initialDetail
+      ? initialDetail.course.chapters.find((chapter) => chapter.lessons.length)?.lessons[0]?.id ?? null
+      : undefined,
+  );
   const [activeVideo, setActiveVideo] = useState<{
     item: PublicItemDto;
     lesson: PublicLessonDto;
   } | null>(null);
 
-  const courseQuery = useStudentCourse(courseId, teacherSlug);
+  const courseQuery = useStudentCourse(courseId, teacherSlug, { initialData: initialDetail });
   const userQuery = useCurrentStudent(isAuthenticated);
   const detail = courseQuery.data;
   const user = isAuthenticated ? userQuery.data ?? null : null;
@@ -72,25 +86,6 @@ export default function CourseDetail({
     if (unauthorized) router.replace("/login");
   }, [router, unauthorized]);
 
-  useEffect(() => {
-    if (!detail) return;
-    const timer = window.setTimeout(() => {
-      const firstChapter = detail.course.chapters.find((chapter) => chapter.lessons.length);
-      setExpandedChapterId(firstChapter?.id ?? null);
-      setExpandedLessonId(firstChapter?.lessons[0]?.id ?? null);
-      if (!detail.enrollment) {
-        setActiveVideo(null);
-        return;
-      }
-      const firstPlayableVideo = detail.course.chapters
-        .flatMap((chapter) => chapter.lessons)
-        .flatMap((lesson) => lesson.items.map((item) => ({ item, lesson })))
-        .find(({ item }) => Boolean(item.bunny_stream_embed_url));
-      setActiveVideo(firstPlayableVideo ?? null);
-    }, 0);
-    return () => window.clearTimeout(timer);
-  }, [detail]);
-
   const loadCourse = () => {
     void courseQuery.refetch();
     if (isAuthenticated) void userQuery.refetch();
@@ -100,9 +95,29 @@ export default function CourseDetail({
   const enrolled = Boolean(detail?.enrollment);
   const chapters = course?.chapters ?? [];
   const lessons = chapters.flatMap((chapter) => chapter.lessons);
+  const firstContentChapter = chapters.find((chapter) => chapter.lessons.length);
+  const visibleExpandedChapterId = expandedChapterId === undefined
+    ? firstContentChapter?.id ?? null
+    : expandedChapterId;
+  const visibleExpandedLessonId = expandedLessonId === undefined
+    ? chapters.find((chapter) => chapter.id === visibleExpandedChapterId)?.lessons[0]?.id ?? null
+    : expandedLessonId;
+  const firstPlayableVideo = enrolled
+    ? chapters
+        .flatMap((chapter) => chapter.lessons)
+        .flatMap((lesson) => lesson.items.map((item) => ({ item, lesson })))
+        .find(({ item }) => Boolean(item.bunny_stream_embed_url)) ?? null
+    : null;
+  const visibleActiveVideo = activeVideo ?? firstPlayableVideo;
   const examCount = lessons.flatMap((lesson) => lesson.items).filter((item) => item.has_exam).length;
   const gradeName = grades.find((grade) => grade.id === course?.grade_id)?.name;
   const streamName = streams.find((stream) => stream.id === course?.stream_id)?.name;
+  const backHref = publicMode ? "/" : enrolled ? "/my-courses" : "/explore";
+  const backLabel = publicMode
+    ? t("backToCatalog")
+    : enrolled
+      ? t("backToCourses")
+      : t("backToExplore");
 
   const playVideo = (item: PublicItemDto, lesson: PublicLessonDto) => {
     setActiveVideo({ item, lesson });
@@ -110,7 +125,7 @@ export default function CourseDetail({
   };
 
   const handleChapterToggle = (chapterId: number) => {
-    const isOpening = expandedChapterId !== chapterId;
+    const isOpening = visibleExpandedChapterId !== chapterId;
     setExpandedChapterId(isOpening ? chapterId : null);
     if (isOpening) {
       const chapter = chapters.find((item) => item.id === chapterId);
@@ -119,7 +134,7 @@ export default function CourseDetail({
   };
 
   const handleLessonToggle = (lessonId: number) => {
-    setExpandedLessonId((current) => (current === lessonId ? null : lessonId));
+    setExpandedLessonId(visibleExpandedLessonId === lessonId ? null : lessonId);
   };
 
   const startCourse = () => {
@@ -183,8 +198,8 @@ export default function CourseDetail({
     window.location.assign(body.redirect_url);
   };
 
-  return (
-    <StudentAppShell user={user} active={enrolled ? "courses" : "discover"}>
+  const pageContent = (
+    <>
       {loading ? (
         <CourseDetailSkeleton label={t("loadingCourse")} />
       ) : error || !detail || !course ? (
@@ -197,8 +212,8 @@ export default function CourseDetail({
                 <RotateCcw className="size-4" aria-hidden="true" />
                 {t("retry")}
               </button>
-              <Link href={teacherSlug ? "/explore" : "/my-courses"} className="inline-flex items-center gap-2 text-[#536A7C] hover:underline">
-                {t("backToExplore")}
+              <Link href={backHref} className="inline-flex items-center gap-2 text-[#536A7C] hover:underline">
+                {backLabel}
               </Link>
             </div>
           </div>
@@ -211,16 +226,20 @@ export default function CourseDetail({
           variants={portalContainerVariants}
         >
           <Link
-            href={enrolled ? "/my-courses" : "/explore"}
+            href={backHref}
             className="mb-6 inline-flex items-center gap-2 text-sm font-bold text-[#6B7E8F] transition-colors hover:text-[#075985] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0284C7] focus-visible:ring-offset-2"
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
-            {enrolled ? t("backToCourses") : t("backToExplore")}
+            {backLabel}
           </Link>
 
           <div className="grid items-start gap-8 lg:grid-cols-[minmax(19rem,24rem)_minmax(0,1fr)]">
             <div className="order-1 min-w-0 space-y-8 lg:order-2">
-              <m.div variants={portalItemVariants}>
+              <m.div
+                initial={publicMode || reduced ? false : "hidden"}
+                animate="show"
+                variants={portalItemVariants}
+              >
                 <CourseHero
                   course={course}
                   teacher={detail.teacher}
@@ -231,7 +250,7 @@ export default function CourseDetail({
               </m.div>
 
               <AnimatePresence initial={false}>
-                {enrolled && activeVideo?.item.bunny_stream_embed_url && (
+                  {enrolled && visibleActiveVideo?.item.bunny_stream_embed_url && (
                   <m.div
                     key="course-player"
                     initial={reduced ? { opacity: 0 } : { opacity: 0, y: 16 }}
@@ -239,7 +258,7 @@ export default function CourseDetail({
                     exit={reduced ? { opacity: 0 } : { opacity: 0, y: -8 }}
                     transition={{ duration: 0.25 }}
                   >
-                    <LearnerPlayer activeVideo={activeVideo} />
+                    <LearnerPlayer activeVideo={visibleActiveVideo} />
                   </m.div>
                 )}
               </AnimatePresence>
@@ -247,6 +266,8 @@ export default function CourseDetail({
               <m.nav
                 className="flex gap-1 overflow-x-auto border-b border-[#D8E3EC]"
                 aria-label={t("courseContent")}
+                initial={publicMode || reduced ? false : "hidden"}
+                animate="show"
                 variants={portalItemVariants}
               >
                 {([
@@ -269,7 +290,14 @@ export default function CourseDetail({
               </m.nav>
 
               {!enrolled && (
-                <m.section id="course-content" className="scroll-mt-24" aria-labelledby="content-title" variants={portalItemVariants}>
+                <m.section
+                  id="course-content"
+                  className="scroll-mt-24"
+                  aria-labelledby="content-title"
+                  initial={publicMode || reduced ? false : "hidden"}
+                  animate="show"
+                  variants={portalItemVariants}
+                >
                   <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
                     <div>
                       <h2 id="content-title" className="text-2xl font-black tracking-[-0.025em] text-[#0F2638] sm:text-3xl">
@@ -286,9 +314,9 @@ export default function CourseDetail({
                     <CurriculumAccordion
                       chapters={chapters}
                       enrolled={false}
-                      activeVideoId={activeVideo?.item.id ?? null}
-                      expandedChapterId={expandedChapterId}
-                      expandedLessonId={expandedLessonId}
+                      activeVideoId={visibleActiveVideo?.item.id ?? null}
+                      expandedChapterId={visibleExpandedChapterId}
+                      expandedLessonId={visibleExpandedLessonId}
                       onChapterToggle={handleChapterToggle}
                       onLessonToggle={handleLessonToggle}
                       onPlay={playVideo}
@@ -308,9 +336,9 @@ export default function CourseDetail({
               <LearnerCurriculumSidebar
                 chapters={chapters}
                 lessonsCount={lessons.length}
-                activeVideoId={activeVideo?.item.id ?? null}
-                expandedChapterId={expandedChapterId}
-                expandedLessonId={expandedLessonId}
+                activeVideoId={visibleActiveVideo?.item.id ?? null}
+                expandedChapterId={visibleExpandedChapterId}
+                expandedLessonId={visibleExpandedLessonId}
                 onChapterToggle={handleChapterToggle}
                 onLessonToggle={handleLessonToggle}
                 onPlay={playVideo}
@@ -344,6 +372,14 @@ export default function CourseDetail({
           onConfirm={() => void startCheckout()}
         />
       )}
+    </>
+  );
+
+  return publicMode ? (
+    <PublicCourseDetailShell>{pageContent}</PublicCourseDetailShell>
+  ) : (
+    <StudentAppShell user={user} active={enrolled ? "courses" : "discover"}>
+      {pageContent}
     </StudentAppShell>
   );
 }

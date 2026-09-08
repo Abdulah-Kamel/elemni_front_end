@@ -18,6 +18,7 @@ import { Link, useRouter } from "@/src/i18n/navigation";
 import { AnimatePresence, m } from "motion/react";
 import { portalCardLiftClass, portalContainerVariants, portalImageZoomClass, portalItemVariants } from "./dashboard-motion";
 import type { EnrollmentDto } from "@/src/lib/student-api/contract";
+import { resolveAssetUrl } from "@/src/lib/asset-url";
 import {
   getStudentErrorMessage,
   isStudentUnauthorized,
@@ -47,10 +48,10 @@ function CourseRow({ enrollment }: { enrollment: EnrollmentDto }) {
   const { course } = enrollment;
 
   return (
-    <Link href={`/courses/${course.id}`} aria-label={`فتح كورس ${course.title}`} className={`group flex flex-col overflow-hidden rounded-2xl border border-[#E2E0EF] bg-white ${portalCardLiftClass} hover:border-[#BAE6FD] hover:shadow-[0_4px_12px_rgba(2,132,199,0.04)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0284C7] focus-visible:ring-offset-2 md:min-h-56 md:flex-row-reverse`}>
+    <Link href={`/my-courses/${course.id}`} aria-label={`فتح كورس ${course.title}`} className={`group flex flex-col overflow-hidden rounded-2xl border border-[#E2E0EF] bg-white ${portalCardLiftClass} hover:border-[#BAE6FD] hover:shadow-[0_4px_12px_rgba(2,132,199,0.04)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0284C7] focus-visible:ring-offset-2 md:min-h-56 md:flex-row-reverse`}>
       <div className="relative aspect-video shrink-0 overflow-hidden bg-[#F0F9FF] md:aspect-auto md:w-60">
         <Image
-          src={course.img || lessonFallback}
+          src={resolveAssetUrl(course.img, lessonFallback.src)}
           alt={course.title}
           fill
           sizes="(max-width: 767px) 100vw, 240px"

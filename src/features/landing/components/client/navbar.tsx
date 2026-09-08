@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, User, GraduationCap, Sun, Moon, UserPlus, X, Menu, Users, Sparkles, Route, CircleHelp, BookMarked, LayoutDashboard, LogOut } from "lucide-react";
+import { Search, User, GraduationCap, Sun, Moon, UserPlus, X, Menu, BookOpen, Sparkles, Route, CircleHelp, BookMarked, LayoutDashboard, LogOut } from "lucide-react";
 import { cn } from "@/src/lib/cn";
 import { AnimatePresence, m } from "motion/react";
 import { Link } from "@/src/i18n/navigation";
@@ -21,7 +21,7 @@ interface NavbarProps {
 }
 
 const navItems = [
-  { hash: "#teachers", key: "teachers", icon: Users },
+  { hash: "#courses", key: "courses", icon: BookOpen },
   { hash: "#features", key: "features", icon: Sparkles },
   { hash: "#how", key: "how", icon: Route },
   { hash: "#faq", key: "faq", icon: CircleHelp },

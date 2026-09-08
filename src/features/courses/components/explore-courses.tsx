@@ -26,6 +26,7 @@ import type {
   StreamDto,
   SubjectDto,
 } from "@/src/lib/student-api/contract";
+import { resolveAssetUrl } from "@/src/lib/asset-url";
 import { isStudentUnauthorized } from "@/src/lib/student-api/client";
 import {
   useCurrentStudent,
@@ -72,13 +73,15 @@ function formatPrice(value: string | number) {
 
 function CourseCard({ entry, enrolled }: { entry: ExploreCourseEntry; enrolled: boolean }) {
   const { course, teacher } = entry;
-  const href = `/courses/${course.id}?teacher=${encodeURIComponent(teacher.slug)}`;
+  const href = enrolled
+    ? `/my-courses/${course.id}`
+    : `/courses/${course.id}?teacher=${encodeURIComponent(teacher.slug)}`;
 
   return (
     <article className={`group relative flex h-full flex-col overflow-hidden rounded-2xl border border-[#E2E0EF] bg-white p-4 ${portalCardLiftClass} hover:border-[#BAE6FD] hover:shadow-[0_4px_12px_rgba(2,132,199,0.04)]`}>
       <Link href={href} aria-label={`عرض كورس ${course.title}`} className="absolute inset-0 z-20 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0284C7] focus-visible:ring-inset" />
       <div className="relative h-40 overflow-hidden rounded-xl bg-[#F0F9FF]">
-        <Image src={course.img || lessonFallback} alt={course.title} fill sizes="(max-width: 767px) 100vw, 33vw" className={`object-cover ${portalImageZoomClass}`} />
+        <Image src={resolveAssetUrl(course.img, lessonFallback.src)} alt={course.title} fill sizes="(max-width: 767px) 100vw, 33vw" className={`object-cover ${portalImageZoomClass}`} />
         {enrolled && <span className="absolute end-2 top-2 rounded-full border border-emerald-200 bg-white/95 px-2.5 py-1 text-[11px] font-black text-emerald-700 backdrop-blur">ضمن دوراتك</span>}
       </div>
 
@@ -106,7 +109,7 @@ function TeacherCard({ teacher, courseCount }: { teacher: PublicTeacherDto; cour
   return (
     <article className={`flex min-h-44 items-center gap-5 rounded-2xl border border-[#E2E0EF] bg-white p-5 ${portalCardLiftClass} hover:border-[#BAE6FD] hover:shadow-[0_4px_12px_rgba(2,132,199,0.04)]`}>
       <div className="relative size-20 shrink-0 overflow-hidden rounded-full border border-[#E2E0EF] bg-[#F0F9FF] sm:size-24">
-        <Image src={teacher.img || teacherFallback} alt={teacher.name} fill sizes="96px" className="object-cover object-center" />
+        <Image src={resolveAssetUrl(teacher.img, teacherFallback.src)} alt={teacher.name} fill sizes="96px" className="object-cover object-center" />
       </div>
       <div className="min-w-0 flex-1">
         <h3 className="truncate text-lg font-black sm:text-xl">{teacher.name}</h3>

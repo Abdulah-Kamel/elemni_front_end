@@ -36,6 +36,13 @@ export function getPublicTeacher(slug: string) {
   );
 }
 
+export function getPublicTeacherCourse(slug: string, courseId: number) {
+  return backendFetch<PublicCourseDto>(
+    `/api/v1/teachers/${encodeURIComponent(slug)}/courses/${courseId}`,
+    publicCache,
+  );
+}
+
 export function getPublicCourses(limit = 100) {
   return backendFetch<PublicCourseDto[]>(
     `/api/v1/catalog/courses?limit=${limit}`,

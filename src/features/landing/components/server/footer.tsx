@@ -39,7 +39,7 @@ export default function Footer({ homeHref = "" }: { homeHref?: string }) {
             </h2>
             <ul className="space-y-2 text-xs text-slate-400">
               <li><a href={landingHref("#hero")} className="transition-colors hover:text-white">{t("home")}</a></li>
-              <li><a href={landingHref("#teachers")} className="transition-colors hover:text-white">{t("teachers")}</a></li>
+              <li><a href={landingHref("#courses")} className="transition-colors hover:text-white">{t("courses")}</a></li>
               <li><a href={landingHref("#features")} className="transition-colors hover:text-white">{t("features")}</a></li>
               <li><a href={landingHref("#faq")} className="transition-colors hover:text-white">{t("faq")}</a></li>
               <li><Link href="/legal" className="transition-colors hover:text-white">{t("legal")}</Link></li>
@@ -52,9 +52,9 @@ export default function Footer({ homeHref = "" }: { homeHref?: string }) {
               {t("curriculumTitle")}
             </h2>
             <ul className="space-y-2 text-xs text-slate-400">
-              <li><a href={landingHref("#teachers")} className="transition-colors hover:text-white">{t("grade12")}</a></li>
-              <li><a href={landingHref("#teachers")} className="transition-colors hover:text-white">{t("grade11")}</a></li>
-              <li><a href={landingHref("#teachers")} className="transition-colors hover:text-white">{t("grade10")}</a></li>
+              <li><a href={landingHref("#courses")} className="transition-colors hover:text-white">{t("grade12")}</a></li>
+              <li><a href={landingHref("#courses")} className="transition-colors hover:text-white">{t("grade11")}</a></li>
+              <li><a href={landingHref("#courses")} className="transition-colors hover:text-white">{t("grade10")}</a></li>
               <li><a href={landingHref("#faq")} className="transition-colors hover:text-white">{t("faq")}</a></li>
             </ul>
           </div>
