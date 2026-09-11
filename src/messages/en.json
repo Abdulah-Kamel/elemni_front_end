@@ -769,5 +769,39 @@
       "success": "Message saved locally for now. API delivery will be added soon.",
       "error": "Something went wrong. Please try again later."
     }
+  },
+  "paymentResult": {
+    "eyebrow": "Payment result",
+    "metaTitle": "Payment result | Student portal | Elemni",
+    "title": {
+      "completed": "Payment successful",
+      "failed": "Payment could not be completed",
+      "pending": "Payment is under review",
+      "cancelled": "Payment was cancelled",
+      "refunded": "Amount was refunded",
+      "unknown": "Payment result is unclear"
+    },
+    "description": {
+      "completed": "Your enrollment is confirmed. You can open the course and continue learning now.",
+      "failed": "No amount was charged. You can try again or choose another payment method.",
+      "pending": "We received your request and the payment is under review. We will update your enrollment once confirmed.",
+      "cancelled": "The payment was cancelled before completion. You can go back and pick the course again.",
+      "refunded": "The amount was returned to the original payment method. Arrival may take a few days.",
+      "unknown": "We received incomplete data from the payment gateway. Check your enrollments or contact support."
+    },
+    "detailsTitle": "Transaction details",
+    "orderLabel": "Order",
+    "transactionLabel": "Transaction",
+    "amountLabel": "Amount",
+    "cardLabel": "Card",
+    "referenceLabel": "Reference",
+    "testModeBadge": "Test mode",
+    "testModeNote": "This is a test transaction with no real charge.",
+    "actions": {
+      "openCourse": "Open course",
+      "myCourses": "View my courses",
+      "dashboard": "Back to dashboard",
+      "explore": "Explore courses"
+    }
   }
 }

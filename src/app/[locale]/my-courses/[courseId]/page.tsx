@@ -18,7 +18,7 @@ export default async function MyCourseDetailPage({
   setRequestLocale(locale);
 
   if (!(await getAccessToken())) {
-    redirect(locale === "ar" ? "/login" : `/${locale}/login`);
+    redirect(locale === "ar" ? `/login?next=/my-courses/${courseId}` : `/${locale}/login?next=/${locale}/my-courses/${courseId}`);
   }
 
   const parsedCourseId = Number(courseId);

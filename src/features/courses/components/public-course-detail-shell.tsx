@@ -25,7 +25,10 @@ export default function PublicCourseDetailShell({
         className="min-h-screen bg-[#F8FAFC] text-[#0F172A] antialiased dark:bg-[#0B132B] dark:text-[#F8FAFC]"
       >
         <Navbar
-          onOpenAuth={(mode) => router.push(mode === "signup" ? "/register" : "/login")}
+          onOpenAuth={(mode) => {
+            const returnTo = `${window.location.pathname}${window.location.search}`;
+            router.push(`${mode === "signup" ? "/register" : "/login"}?next=${encodeURIComponent(returnTo)}`);
+          }}
           onSearchChange={() => undefined}
           searchQuery=""
           showSearch={false}

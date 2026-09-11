@@ -23,7 +23,7 @@ export default async function ExploreCoursesPage({
   const { locale } = await params;
   setRequestLocale(locale);
   if (!(await getAccessToken()))
-    redirect(locale === "ar" ? "/login" : `/${locale}/login`);
+    redirect(locale === "ar" ? "/login?next=/explore" : `/${locale}/login?next=/${locale}/explore`);
 
   const [courses, teachers, grades, streams, subjects] = await Promise.all([
     getPublicCourses(),

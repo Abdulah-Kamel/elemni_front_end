@@ -57,6 +57,8 @@ function LessonRow({
   activeVideoId,
   onToggle,
   onPlay,
+  onOpen,
+  completedItemIds,
 }: {
   lesson: PublicLessonDto;
   enrolled: boolean;
@@ -65,6 +67,8 @@ function LessonRow({
   activeVideoId: number | null;
   onToggle: () => void;
   onPlay: (item: PublicItemDto, lesson: PublicLessonDto) => void;
+  onOpen: (item: PublicItemDto, lesson: PublicLessonDto) => void;
+  completedItemIds: number[];
 }) {
   const t = useTranslations("courseDetail");
   const reduced = useReducedMotion() === true;
@@ -122,7 +126,9 @@ function LessonRow({
                     enrolled={enrolled}
                     variant={variant}
                     active={item.id === activeVideoId}
+                    completed={completedItemIds.includes(item.id)}
                     onPlay={onPlay}
+                    onOpen={onOpen}
                   />
                 ))}
               </div>
@@ -142,14 +148,18 @@ function ItemRow({
   enrolled,
   variant,
   active,
+  completed,
   onPlay,
+  onOpen,
 }: {
   item: PublicItemDto;
   lesson: PublicLessonDto;
   enrolled: boolean;
   variant: "default" | "sidebar";
   active: boolean;
+  completed: boolean;
   onPlay: (item: PublicItemDto, lesson: PublicLessonDto) => void;
+  onOpen: (item: PublicItemDto, lesson: PublicLessonDto) => void;
 }) {
   const t = useTranslations("courseDetail");
   const documentUrl = absoluteDocumentUrl(item.document_path);
@@ -174,7 +184,11 @@ function ItemRow({
           <strong className="block truncate text-sm text-[#1C3345]">{item.title}</strong>
           <span className="text-xs text-[#6B7E8F]">{itemMeta}</span>
         </span>
-        <Play className="size-4 shrink-0 fill-current text-[#0284C7]" aria-hidden="true" />
+        {completed ? (
+          <span className="shrink-0 rounded-full bg-emerald-50 px-2 py-1 text-[11px] font-bold text-emerald-700">تم</span>
+        ) : (
+          <Play className="size-4 shrink-0 fill-current text-[#0284C7]" aria-hidden="true" />
+        )}
       </button>
     );
   }
@@ -185,6 +199,7 @@ function ItemRow({
         href={documentUrl}
         target="_blank"
         rel="noreferrer"
+        onClick={() => onOpen(item, lesson)}
         data-testid={variant === "sidebar" ? `learner-curriculum-item-${item.id}` : undefined}
         className={`flex items-center gap-3 px-3 py-3 text-start transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0284C7] ${variant === "sidebar" ? "rounded-none bg-white hover:bg-[#F4FAFD]" : "rounded-xl border border-[#D8E3EC] bg-white hover:border-[#7DD3FC]"}`}
       >
@@ -226,6 +241,8 @@ export default function CurriculumAccordion({
   onChapterToggle,
   onLessonToggle,
   onPlay,
+  onOpen,
+  completedItemIds = [],
 }: {
   chapters: PublicChapterDto[];
   enrolled: boolean;
@@ -236,6 +253,8 @@ export default function CurriculumAccordion({
   onChapterToggle: (chapterId: number) => void;
   onLessonToggle: (lessonId: number) => void;
   onPlay: (item: PublicItemDto, lesson: PublicLessonDto) => void;
+  onOpen: (item: PublicItemDto, lesson: PublicLessonDto) => void;
+  completedItemIds?: number[];
 }) {
   const t = useTranslations("courseDetail");
   const reduced = useReducedMotion() === true;
@@ -299,6 +318,8 @@ export default function CurriculumAccordion({
                       activeVideoId={activeVideoId}
                       onToggle={() => onLessonToggle(lesson.id)}
                       onPlay={onPlay}
+                      onOpen={onOpen}
+                      completedItemIds={completedItemIds}
                     />
                   )) : (
                     <p className="px-5 py-5 text-sm text-[#6B7E8F]">{t("noContentDescription")}</p>

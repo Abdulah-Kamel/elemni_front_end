@@ -88,6 +88,15 @@ describe("GET /api/student/my-courses/[courseId]", () => {
       total_paid: "250.00",
       currency: "EGP",
       payment_status: "paid",
+      progress: {
+        completion_percent: 0,
+        completed_item_ids: [],
+        last_item_id: null,
+        last_lesson_id: null,
+        next_item_id: 101,
+        next_lesson_id: null,
+        last_opened_at: null,
+      },
       course: publicCourse,
     };
     mocks.authenticatedBackendFetch

@@ -95,6 +95,16 @@ export interface UserDto {
   created_at: string;
 }
 
+export interface EnrollmentProgressDto {
+  completion_percent: number;
+  completed_item_ids: number[];
+  last_item_id: number | null;
+  last_lesson_id: number | null;
+  next_item_id: number | null;
+  next_lesson_id: number | null;
+  last_opened_at: string | null;
+}
+
 export interface EnrollmentDto {
   id: number;
   course_id: number;
@@ -105,10 +115,15 @@ export interface EnrollmentDto {
   currency: string;
   payment_status: string;
   course: PublicCourseDto;
+  progress: EnrollmentProgressDto;
 }
 
 export interface MyCoursesDto {
   items: EnrollmentDto[];
+}
+
+export interface CheckoutRedirectDto {
+  redirect_url: string;
 }
 
 export interface StudentCourseTeacherDto {

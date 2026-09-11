@@ -68,6 +68,16 @@ function CourseRow({ enrollment }: { enrollment: EnrollmentDto }) {
         <h2 className="mt-3 text-xl font-black leading-8 text-[#1B1B24] transition-colors group-hover:text-[#0369A1] sm:text-2xl">{course.title}</h2>
         <p className="mt-2 line-clamp-2 max-w-3xl text-sm leading-6 text-[#777587]">{course.description || `${course.lesson_count} درس متاح ضمن اشتراكك الحالي.`}</p>
 
+        <div className="mt-5 max-w-2xl">
+          <div className="mb-2 flex items-center justify-between text-xs font-bold text-[#777587]">
+            <span>التقدم في الكورس</span>
+            <span>{enrollment.progress.completion_percent}%</span>
+          </div>
+          <div className="h-2 overflow-hidden rounded-full bg-[#E0F2FE]">
+            <div className="h-full rounded-full bg-[#0284C7]" style={{ width: `${enrollment.progress.completion_percent}%` }} />
+          </div>
+        </div>
+
         <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 border-t border-[#E2E0EF] pt-4 text-xs font-bold text-[#777587]">
           <span className="inline-flex items-center gap-1.5"><BookOpen className="size-4 text-[#0284C7]" />{course.lesson_count} درس</span>
           <span className="inline-flex items-center gap-1.5"><Clock3 className="size-4 text-[#0284C7]" />{formatDuration(course.total_duration_minutes)}</span>

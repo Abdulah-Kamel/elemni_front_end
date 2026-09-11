@@ -58,7 +58,7 @@ const inputClass =
 const ltrInputClass =
   "h-12 w-full rounded-lg border border-[#E2E0EF] bg-white py-0 pl-11 pr-4 text-left text-sm text-[#1B1B24] outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10 placeholder:text-[#A6A3B5] dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-500";
 
-export default function StudentAuthForm({ mode }: { mode: AuthMode }) {
+export default function StudentAuthForm({ mode, returnTo }: { mode: AuthMode; returnTo?: string }) {
   const router = useRouter();
   const isRegister = mode === "register";
   const [isHydrated, setIsHydrated] = useState(false);
@@ -114,7 +114,7 @@ export default function StudentAuthForm({ mode }: { mode: AuthMode }) {
     }
 
     notifyStudentSessionChanged("login");
-    router.replace("/onboarding");
+    router.replace(!isRegister && returnTo ? returnTo : "/onboarding");
   };
 
   return (

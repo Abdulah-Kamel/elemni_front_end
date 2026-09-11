@@ -9,7 +9,7 @@ Elemni is a multi-teacher education marketplace:
 1. An admin creates teacher accounts and assigns the subjects and grades they may teach.
 2. A teacher creates and publishes courses.
 3. Visitors browse teachers and published courses.
-4. A signed-in student purchases a course through PayTabs.
+4. A signed-in student purchases a course through Kashier-hosted checkout (free courses enroll immediately).
 5. A successful payment creates 30 days of course access.
 6. Enrolled students receive protected video URLs and document/exam references.
 
@@ -183,15 +183,15 @@ Payment prefix: `/api/v1/payments`
    ```
 
 2. The backend verifies that the course is published and that the user does not already have an active enrollment.
-3. It creates a pending enrollment and requests a PayTabs payment page.
-4. It returns `{ "redirect_url": "..." }`.
+3. It creates a pending enrollment and requests a Kashier hosted payment page.
+4. It returns `{ "redirect_url": "..." }` (a Kashier URL for paid courses, `"/my-courses"` for free courses).
 5. The frontend navigates the browser to that URL.
 
 An active enrollment causes `409 Already enrolled`.
 
 ### Payment completion
 
-PayTabs sends a server-to-server callback. The backend verifies the callback signature and queries PayTabs directly before trusting the result. It also verifies that the paid amount matches the expected total.
+Kashier sends a server-to-server webhook. The backend verifies the webhook signature before trusting the result. It also verifies that the paid amount matches the expected total. Payment verification is backend-owned; the browser frontend must not verify payment signatures.
 
 Possible payment states include:
 
@@ -308,7 +308,7 @@ Guest
 
 Signed-in student, not enrolled
   → checkout
-  → PayTabs redirect
+  → Kashier redirect
   → return/status screen
   → refetch course + /my/courses
 

@@ -8,18 +8,15 @@ import {
   CalendarClock,
   CheckCircle2,
   CircleAlert,
-  ClipboardCheck,
   Clock3,
-  Compass,
   GraduationCap,
-  Lightbulb,
   Rocket,
 } from "lucide-react";
 import { GlobalLoading } from "@/src/components/ui/global-loading";
 import { m } from "motion/react";
 import { Link, useRouter } from "@/src/i18n/navigation";
 import { portalContainerVariants, portalItemVariants } from "./dashboard-motion";
-import type { GradeDto, PublicCourseDto, StreamDto } from "@/src/lib/student-api/contract";
+import type { GradeDto, StreamDto } from "@/src/lib/student-api/contract";
 import { resolveAssetUrl } from "@/src/lib/asset-url";
 import {
   getStudentErrorMessage,
@@ -31,12 +28,6 @@ import {
 } from "@/src/features/student/hooks/use-student-queries";
 import lessonFallback from "@/src/assets/images/student-redesign/lesson-study-skills.webp";
 import StudentAppShell from "@/src/features/portal/components/portal-shell";
-
-export interface CourseRecommendation {
-  course: PublicCourseDto;
-  teacherName: string;
-  teacherSlug: string;
-}
 
 interface OnboardingDraft {
   grade_id: number;
@@ -57,7 +48,7 @@ function DashboardLoading() {
   return <GlobalLoading variant="content" message="جاري تجهيز صفحتك..." />;
 }
 
-export default function StudentDashboard({ recommendations, grades, streams }: { recommendations: CourseRecommendation[]; grades: GradeDto[]; streams: StreamDto[] }) {
+export default function StudentDashboard({ grades, streams }: { grades: GradeDto[]; streams: StreamDto[] }) {
   const router = useRouter();
   const [profileLabel, setProfileLabel] = useState("");
   const userQuery = useCurrentStudent();
@@ -109,7 +100,11 @@ export default function StudentDashboard({ recommendations, grades, streams }: {
 
   const firstName = user?.name.split(" ").filter(Boolean)[0] ?? "طالبنا";
   const enrollments = courses?.items ?? [];
-  const primary = enrollments[0];
+  const primary = [...enrollments].sort(
+    (first, second) =>
+      new Date(second.progress.last_opened_at ?? second.purchased_at).getTime() -
+      new Date(first.progress.last_opened_at ?? first.purchased_at).getTime(),
+  )[0];
 
   return (
     <StudentAppShell user={user} active="dashboard">
@@ -130,16 +125,24 @@ export default function StudentDashboard({ recommendations, grades, streams }: {
                 <h2 className="text-2xl font-black leading-9 sm:text-4xl">كمّل مذاكرتك</h2>
                 <p className="mt-2 text-lg font-bold text-[#0284C7]">{primary.course.title}</p>
                 <p className="mt-2 line-clamp-2 max-w-2xl text-sm leading-6 text-[#777587]">{primary.course.description || `${primary.course.lesson_count} درس متاح ضمن اشتراكك الحالي.`}</p>
-                <Link href={`/my-courses/${primary.course.id}`} className="mt-6 inline-flex h-11 w-fit items-center gap-2 rounded-xl bg-[#0284C7] px-6 text-sm font-bold text-white hover:bg-[#0369A1]">عرض الكورس<ArrowLeft className="size-4" /></Link>
+                <div className="mt-6 max-w-xl">
+                  <div className="mb-2 flex items-center justify-between text-xs font-bold text-[#777587]">
+                    <span>{primary.progress.completion_percent ? "نسبة إنجازك" : "لم تبدأ الكورس بعد"}</span>
+                    <span>{primary.progress.completion_percent}%</span>
+                  </div>
+                  <div className="h-2 overflow-hidden rounded-full bg-[#E0F2FE]" aria-label={`نسبة إنجاز ${primary.progress.completion_percent}%`}>
+                    <div className="h-full rounded-full bg-[#0284C7] transition-[width]" style={{ width: `${primary.progress.completion_percent}%` }} />
+                  </div>
+                </div>
+                <Link href={`/my-courses/${primary.course.id}`} className="mt-6 inline-flex h-11 w-fit items-center gap-2 rounded-xl bg-[#0284C7] px-6 text-sm font-bold text-white hover:bg-[#0369A1]">{primary.progress.completion_percent ? "كمّل من حيث توقفت" : "ابدأ الكورس"}<ArrowLeft className="size-4" /></Link>
               </div>
               <m.div className="relative min-h-52 bg-[#F0F9FF] md:min-h-full" initial={{ opacity: 0, scale: 1.05 }} animate={{ opacity: 1, scale: 1 }}><Image src={resolveAssetUrl(primary.course.img, lessonFallback.src)} alt={primary.course.title} fill loading="eager" sizes="(max-width: 767px) 100vw, 260px" className="object-cover" /></m.div>
             </m.section>
           ) : (
             <m.section variants={portalItemVariants} className="border-y border-[#E2E0EF] py-12 text-center sm:py-16">
               <Rocket className="mx-auto size-12 text-[#0284C7]" />
-              <h2 className="mt-5 text-2xl font-black sm:text-3xl">ابدأ أول كورس ليك</h2>
-              <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-[#777587]">اكتشف أفضل المدرسين وابدأ رحلتك التعليمية بالكورس المناسب لسنتك وشعبتك.</p>
-              <Link href="/explore" className="mt-6 inline-flex h-12 items-center gap-2 rounded-xl bg-[#0284C7] px-7 font-bold text-white hover:bg-[#0369A1]">تصفح الكورسات<Compass className="size-5" /></Link>
+              <h2 className="mt-5 text-2xl font-black sm:text-3xl">لا توجد بيانات دراسة بعد</h2>
+              <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-[#777587]">ستظهر مؤشرات التقدم والملخصات هنا بعد الاشتراك في أحد الكورسات.</p>
             </m.section>
           )}
 
@@ -158,21 +161,17 @@ export default function StudentDashboard({ recommendations, grades, streams }: {
               {enrollments.length ? <div className="grid gap-4 sm:grid-cols-2">
                 {enrollments.slice(0, 4).map((enrollment) => <Link key={enrollment.id} href={`/my-courses/${enrollment.course.id}`} aria-label={`فتح كورس ${enrollment.course.title}`} className="group overflow-hidden rounded-xl border border-[#E2E0EF] bg-white transition duration-300 hover:-translate-y-1 hover:border-[#BAE6FD] hover:shadow-[0_8px_20px_rgba(2,132,199,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0284C7] focus-visible:ring-offset-2 motion-reduce:hover:translate-y-0 motion-reduce:transition-none">
                   <div className="relative aspect-video bg-[#F0F9FF]"><Image src={resolveAssetUrl(enrollment.course.img, lessonFallback.src)} alt={enrollment.course.title} fill sizes="(max-width: 639px) 100vw, 50vw" className="object-cover" /></div>
-                  <div className="p-4"><p className="text-xs font-bold text-[#0284C7]">{enrollment.course.subject_name || "كورس تعليمي"}</p><h3 className="mt-1 line-clamp-2 min-h-12 text-lg font-black leading-6 transition-colors group-hover:text-[#0369A1]">{enrollment.course.title}</h3><div className="mt-4 flex flex-wrap gap-3 border-t border-[#E2E0EF] pt-3 text-xs text-[#777587]"><span className="flex items-center gap-1"><BookOpen className="size-4" />{enrollment.course.lesson_count} درس</span><span className="flex items-center gap-1"><CalendarClock className="size-4" />حتى {formatExpiry(enrollment.expires_at)}</span></div></div>
+                  <div className="p-4"><p className="text-xs font-bold text-[#0284C7]">{enrollment.course.subject_name || "كورس تعليمي"}</p><h3 className="mt-1 line-clamp-2 min-h-12 text-lg font-black leading-6 transition-colors group-hover:text-[#0369A1]">{enrollment.course.title}</h3><div className="mt-4"><div className="mb-2 flex items-center justify-between text-[11px] font-bold text-[#777587]"><span>التقدم</span><span>{enrollment.progress.completion_percent}%</span></div><div className="h-1.5 overflow-hidden rounded-full bg-[#E0F2FE]"><div className="h-full rounded-full bg-[#0284C7]" style={{ width: `${enrollment.progress.completion_percent}%` }} /></div></div><div className="mt-4 flex flex-wrap gap-3 border-t border-[#E2E0EF] pt-3 text-xs text-[#777587]"><span className="flex items-center gap-1"><BookOpen className="size-4" />{enrollment.course.lesson_count} درس</span><span className="flex items-center gap-1"><CalendarClock className="size-4" />حتى {formatExpiry(enrollment.expires_at)}</span></div></div>
                 </Link>)}
-              </div> : <div className="flex min-h-48 flex-col items-center justify-center rounded-xl border border-[#E2E0EF] bg-white text-center"><BookOpen className="mb-3 size-8 text-[#C7C4D8]" /><p className="font-black">لا توجد كورسات حالياً</p><Link href="/explore" className="mt-3 text-sm font-bold text-[#0369A1] hover:underline">استكشف الكورسات</Link></div>}
+              </div> : <div className="flex min-h-48 flex-col items-center justify-center rounded-xl border border-[#E2E0EF] bg-white text-center"><BookOpen className="mb-3 size-8 text-[#C7C4D8]" /><p className="font-black">لا توجد كورسات حالياً</p><p className="mt-2 text-xs text-[#777587]">ستظهر الكورسات المشتركة هنا مع مؤشرات تقدمها.</p></div>}
             </section>
 
             <aside className="rounded-xl border border-[#E2E0EF] bg-white p-5">
-              <h2 className="text-lg font-black">المهام القادمة</h2>
-              <div className="mt-5 flex min-h-36 flex-col items-center justify-center border-y border-[#E2E0EF] text-center"><ClipboardCheck className="mb-3 size-8 text-[#C7C4D8]" /><p className="text-sm font-bold">لا توجد مهام متاحة حالياً</p><p className="mt-1 text-xs leading-5 text-[#777587]">ستظهر مهام كورساتك هنا عند إضافتها.</p></div>
+              <h2 className="text-lg font-black">خطوتك التالية</h2>
+              {primary ? <div className="mt-5 border-y border-[#E2E0EF] py-5"><p className="text-sm font-bold text-[#1B1B24]">استكمل التعلم في</p><p className="mt-2 line-clamp-2 text-sm font-black text-[#0369A1]">{primary.course.title}</p><p className="mt-3 text-xs leading-5 text-[#777587]">{primary.progress.completion_percent === 100 ? "أتممت كل محتوى الكورس." : "ارجع إلى الكورس وتابع من آخر محتوى فتحته."}</p><Link href={`/my-courses/${primary.course.id}`} className="mt-4 inline-flex items-center gap-2 text-sm font-black text-[#0369A1] hover:underline">فتح الكورس<ArrowLeft className="size-4" /></Link></div> : <div className="mt-5 flex min-h-36 flex-col items-center justify-center border-y border-[#E2E0EF] text-center"><p className="text-sm font-bold">لا توجد كورسات نشطة حالياً</p><p className="mt-1 text-xs leading-5 text-[#777587]">ابدأ بكورس جديد لتظهر خطواتك هنا.</p></div>}
             </aside>
           </m.div>
 
-          {!!recommendations.length && <m.section variants={portalItemVariants} className="rounded-2xl border border-[#E2E0EF] bg-white p-5 sm:p-6" aria-labelledby="recommendations-heading">
-            <div className="mb-5 flex items-center gap-2"><Lightbulb className="size-5 text-[#0284C7]" /><h2 id="recommendations-heading" className="text-xl font-black">مقترحات إضافية ليك</h2></div>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{recommendations.map(({ course, teacherName, teacherSlug }) => <Link key={`${teacherSlug}-${course.id}`} href={`/courses/${course.id}?teacher=${encodeURIComponent(teacherSlug)}`} aria-label={`عرض كورس ${course.title}`} className="group overflow-hidden rounded-xl border border-[#E2E0EF] transition duration-300 hover:-translate-y-1 hover:border-[#0284C7] hover:shadow-[0_8px_20px_rgba(2,132,199,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0284C7] focus-visible:ring-offset-2 motion-reduce:hover:translate-y-0 motion-reduce:transition-none"><div className="relative aspect-video bg-[#F0F9FF]"><Image src={resolveAssetUrl(course.img, lessonFallback.src)} alt={course.title} fill sizes="(max-width: 639px) 100vw, 33vw" className="object-cover transition-transform duration-300 group-hover:scale-[1.02] motion-reduce:group-hover:scale-100 motion-reduce:transition-none" /></div><div className="p-4"><p className="text-xs font-bold text-[#0284C7]">{course.subject_name || teacherName}</p><h3 className="mt-1 line-clamp-2 text-base font-black leading-6">{course.title}</h3><p className="mt-2 text-xs text-[#777587]">{teacherName}</p></div></Link>)}</div>
-          </m.section>}
         </m.div>
         )}
     </StudentAppShell>

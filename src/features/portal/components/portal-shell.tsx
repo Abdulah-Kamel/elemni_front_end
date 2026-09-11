@@ -3,9 +3,6 @@
 import Image from "next/image";
 import { useState, useSyncExternalStore, type ReactNode } from "react";
 import {
-  Bell,
-  BookOpen,
-  CalendarDays,
   Compass,
   GraduationCap,
   Home,
@@ -13,7 +10,6 @@ import {
   Menu,
   PanelLeftClose,
   PanelLeftOpen,
-  Settings,
   X,
 } from "lucide-react";
 import { Link, useRouter } from "@/src/i18n/navigation";
@@ -75,12 +71,6 @@ const enabledNav = [
   { label: "الرئيسية", href: "/dashboard", icon: Home, id: "dashboard" },
   { label: "دوراتي", href: "/my-courses", icon: GraduationCap, id: "courses" },
   { label: "استكشف", href: "/explore", icon: Compass, id: "discover" },
-];
-
-const futureNav = [
-  { label: "الاختبارات", icon: BookOpen },
-  { label: "الجدول", icon: CalendarDays },
-  { label: "الإعدادات", icon: Settings },
 ];
 
 function StudentIdentity({ user }: { user: UserDto | null }) {
@@ -155,14 +145,9 @@ function SidebarContent({
 
       <nav aria-label="بوابة الطالب" className={cn("space-y-1", collapsed ? "px-2" : undefined)}>
         {enabledNav.map(({ label, href, icon: Icon, id }) => (
-          <Link key={id} href={href} onClick={close} title={collapsed ? label : undefined} className={cn("flex h-12 items-center gap-3 border-s-4 text-sm font-bold transition", collapsed ? "justify-center px-0" : "px-6", active === id ? "border-[#0284C7] bg-[#0284C7]/5 text-[#0369A1]" : "border-transparent text-[#464555] hover:bg-[#E0F2FE]")}>
+          <Link key={id} href={href} onClick={close} title={collapsed ? label : undefined} className={cn("flex h-12 items-center gap-3 border-s-2 text-sm font-bold transition", collapsed ? "justify-center px-0" : "px-6", active === id ? "border-[#0284C7] bg-[#0284C7]/5 text-[#0369A1]" : "border-transparent text-[#464555] hover:bg-[#E0F2FE]")}>
             <Icon className="size-5 shrink-0" /><span className={collapsed ? "sr-only" : undefined}>{label}</span>
           </Link>
-        ))}
-        {futureNav.map(({ label, icon: Icon }) => (
-          <span key={label} aria-disabled="true" title={collapsed ? label : `${label} - قريباً`} className={cn("flex h-12 cursor-not-allowed items-center gap-3 border-s-4 border-transparent text-sm font-bold text-[#A6A3B5]", collapsed ? "justify-center px-0" : "px-6")}>
-            <Icon className="size-5 shrink-0" /><span className={collapsed ? "sr-only" : undefined}>{label}</span>
-          </span>
         ))}
       </nav>
 
@@ -201,7 +186,6 @@ export default function StudentPortalShell({ children, user, active = "dashboard
           <Link href="/dashboard" className="flex items-center gap-2 font-black text-[#0369A1] md:hidden"><Image src={logo} alt="علمني" width={28} height={28} className="size-7 rounded-lg object-contain bg-white" />علمني</Link>
         </div>
         <div className="flex items-center gap-3">
-          <button disabled title="التنبيهات قريباً" aria-label="التنبيهات غير متاحة حالياً" className="flex size-9 cursor-not-allowed items-center justify-center rounded-full text-[#A6A3B5]"><Bell className="size-5" /></button>
           <StudentIdentity user={user} />
         </div>
       </header>

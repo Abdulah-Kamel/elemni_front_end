@@ -13,12 +13,11 @@ import {
   Compass,
   Search,
   SlidersHorizontal,
-  Target,
   UserRound,
 } from "lucide-react";
 import { Link, useRouter } from "@/src/i18n/navigation";
 import { AnimatePresence, m } from "motion/react";
-import { portalCardLiftClass, portalContainerVariants, portalImageZoomClass, portalItemVariants, scrollIntoViewById } from "./course-motion";
+import { portalCardLiftClass, portalContainerVariants, portalImageZoomClass, portalItemVariants } from "./course-motion";
 import type {
   GradeDto,
   PublicCourseDto,
@@ -75,7 +74,7 @@ function CourseCard({ entry, enrolled }: { entry: ExploreCourseEntry; enrolled: 
   const { course, teacher } = entry;
   const href = enrolled
     ? `/my-courses/${course.id}`
-    : `/courses/${course.id}?teacher=${encodeURIComponent(teacher.slug)}`;
+    : `/my-courses/${course.id}?teacher=${encodeURIComponent(teacher.slug)}`;
 
   return (
     <article className={`group relative flex h-full flex-col overflow-hidden rounded-2xl border border-[#E2E0EF] bg-white p-4 ${portalCardLiftClass} hover:border-[#BAE6FD] hover:shadow-[0_4px_12px_rgba(2,132,199,0.04)]`}>
@@ -147,17 +146,51 @@ export default function ExploreCourses({
   const unauthorized =
     isStudentUnauthorized(userQuery.error) ||
     isStudentUnauthorized(coursesQuery.error);
-  const [search, setSearch] = useState("");
-  const [courseGrade, setCourseGrade] = useState("all");
-  const [courseStream, setCourseStream] = useState("all");
-  const [courseSubject, setCourseSubject] = useState("all");
-  const [selectedCourseTeacher, setSelectedCourseTeacher] = useState("all");
-  const [courseSort, setCourseSort] = useState<CatalogSort>("newest");
-  const [coursePage, setCoursePage] = useState(1);
-  const [teacherGrade, setTeacherGrade] = useState("all");
-  const [teacherSubject, setTeacherSubject] = useState("all");
-  const [teacherSort, setTeacherSort] = useState<TeacherSort>("courses");
-  const [teacherPage, setTeacherPage] = useState(1);
+  const [search, setSearch] = useState(() => searchParams.get("q") ?? "");
+  const [courseGrade, setCourseGrade] = useState(() => searchParams.get("grade") ?? "all");
+  const [courseStream, setCourseStream] = useState(() => searchParams.get("stream") ?? "all");
+  const [courseSubject, setCourseSubject] = useState(() => searchParams.get("subject") ?? "all");
+  const [selectedCourseTeacher, setSelectedCourseTeacher] = useState(() => searchParams.get("teacher") ?? "all");
+  const [courseSort, setCourseSort] = useState<CatalogSort>(() => {
+    const value = searchParams.get("sort");
+    return value === "price-low" || value === "price-high" ? value : "newest";
+  });
+  const [coursePage, setCoursePage] = useState(() => Math.max(1, Number(searchParams.get("page")) || 1));
+  const [teacherGrade, setTeacherGrade] = useState(() => searchParams.get("tgrade") ?? "all");
+  const [teacherSubject, setTeacherSubject] = useState(() => searchParams.get("tsubject") ?? "all");
+  const [teacherSort, setTeacherSort] = useState<TeacherSort>(() => searchParams.get("tsort") === "name" ? "name" : "courses");
+  const [teacherPage, setTeacherPage] = useState(() => Math.max(1, Number(searchParams.get("tpage")) || 1));
+
+  const queryString = searchParams.toString();
+
+  useEffect(() => {
+    const params = new URLSearchParams(queryString);
+    const values: Record<string, string | number> = {
+      q: search,
+      grade: courseGrade,
+      stream: courseStream,
+      subject: courseSubject,
+      teacher: selectedCourseTeacher,
+      sort: courseSort,
+      page: coursePage,
+      tgrade: teacherGrade,
+      tsubject: teacherSubject,
+      tsort: teacherSort,
+      tpage: teacherPage,
+    };
+    for (const [key, value] of Object.entries(values)) {
+      const normalized = String(value);
+      const isDefault = ["grade", "stream", "subject", "teacher"].includes(key) && normalized === "all";
+      const isDefaultSort = (key === "sort" && normalized === "newest") || (key === "tsort" && normalized === "courses");
+      const isDefaultPage = (key === "page" || key === "tpage") && normalized === "1";
+      if (!normalized || isDefault || isDefaultSort || isDefaultPage) params.delete(key);
+      else params.set(key, normalized);
+    }
+    const nextQueryString = params.toString();
+    if (nextQueryString !== queryString) {
+      router.replace(`/explore${nextQueryString ? `?${nextQueryString}` : ""}`, { scroll: false });
+    }
+  }, [courseGrade, coursePage, courseSort, courseStream, courseSubject, queryString, router, search, selectedCourseTeacher, teacherGrade, teacherPage, teacherSort, teacherSubject]);
 
   useEffect(() => {
     if (unauthorized) router.replace("/login");
@@ -224,11 +257,6 @@ export default function ExploreCourses({
 
   const profileGrade = grades.find((item) => item.id === profile?.grade_id);
   const profileStream = streams.find((item) => item.id === profile?.stream_id);
-  const personalized = catalog.filter(({ course }) => (
-    (!profile?.grade_id || course.grade_id === profile.grade_id) &&
-    (!profile?.stream_id || course.stream_id === profile.stream_id)
-  ));
-  const recommended = (personalized.length ? personalized : catalog).slice(0, 3);
   const courseCountByTeacher = new Map<string, number>();
   for (const { teacher: courseOwner } of catalog) {
     courseCountByTeacher.set(courseOwner.slug, (courseCountByTeacher.get(courseOwner.slug) ?? 0) + 1);
@@ -331,8 +359,6 @@ export default function ExploreCourses({
                 </div>
                 {!!subjects.length && <div className="mt-5 flex gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" aria-label="مواد الكورسات"><button type="button" onClick={() => changeCourseFilter(setCourseSubject, "all")} className={`h-10 shrink-0 rounded-full px-5 text-xs font-black ${courseSubject === "all" ? "bg-[#0284C7] text-white" : "border border-[#C7C4D8] bg-white text-[#464555]"}`}>كل المواد</button>{subjects.map((item) => <button key={item.id} type="button" onClick={() => changeCourseFilter(setCourseSubject, item.name)} className={`h-10 shrink-0 rounded-full px-5 text-xs font-black ${courseSubject === item.name ? "bg-[#0284C7] text-white" : "border border-[#C7C4D8] bg-white text-[#464555] hover:bg-[#E0F2FE]"}`}>{item.name}</button>)}</div>}
               </section>
-
-              {!hasCourseFilters && !!recommended.length && <section className="mt-10" aria-labelledby="recommended-heading"><div className="mb-5 flex flex-wrap items-end justify-between gap-3"><div><h2 id="recommended-heading" className="flex items-center gap-2 text-2xl font-black"><Target className="size-6 text-[#0284C7]" />مناسب لك</h2><p className="mt-1 text-xs text-[#777587]">{profile ? "بناءً على المرحلة والشعبة المحفوظتين في ملفك." : "اختيارات من أحدث الكورسات المنشورة على المنصة."}</p></div><button type="button" onClick={() => scrollIntoViewById("all-courses")} className="inline-flex cursor-pointer items-center gap-1 text-xs font-black text-[#0369A1] hover:underline">عرض الكل<ArrowLeft className="size-3.5" /></button></div><div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">{recommended.map((entry) => <CourseCard key={`recommended-${entry.course.id}`} entry={entry} enrolled={enrolledCourseIds.includes(entry.course.id)} />)}</div></section>}
 
               <section id="all-courses" className="scroll-mt-24 pt-10" aria-labelledby="all-courses-heading">
                 <div className="mb-5 flex items-center justify-between gap-4"><h2 id="all-courses-heading" className="text-2xl font-black">كل الكورسات</h2><span className="text-xs font-bold text-[#777587]">{filteredCourses.length} كورس</span></div>

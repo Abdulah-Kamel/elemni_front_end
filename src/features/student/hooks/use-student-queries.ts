@@ -1,7 +1,8 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type {
+  EnrollmentProgressDto,
   MyCoursesDto,
   StudentCourseDetailDto,
   UserDto,
@@ -59,5 +60,29 @@ export function useStudentCourse(
     enabled: options?.enabled ?? true,
     initialData: options?.initialData,
     ...privateQueryDefaults,
+  });
+}
+
+export function useUpdateCourseProgress(courseId: number) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (input: { itemId: number; completed?: boolean }) =>
+      studentApiFetch<EnrollmentProgressDto>(
+        `/api/student/my-courses/${courseId}/progress`,
+        {
+          method: "PUT",
+          body: JSON.stringify({
+            item_id: input.itemId,
+            completed: input.completed ?? true,
+          }),
+        },
+      ),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: studentQueryKeys.myCourses() });
+      void queryClient.invalidateQueries({
+        queryKey: [...studentQueryKeys.all, "course", courseId],
+      });
+    },
   });
 }

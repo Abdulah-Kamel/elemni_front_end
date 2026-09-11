@@ -12,6 +12,6 @@ export default async function MyCoursesPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  if (!(await getAccessToken())) redirect(locale === "ar" ? "/login" : `/${locale}/login`);
+  if (!(await getAccessToken())) redirect(locale === "ar" ? "/login?next=/my-courses" : `/${locale}/login?next=/${locale}/my-courses`);
   return <MyCourses />;
 }

@@ -3,7 +3,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { ArrowLeft, CircleAlert, RotateCcw } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { AnimatePresence, m, useReducedMotion } from "motion/react";
 import StudentAppShell from "@/src/features/portal/components/portal-shell";
 import { Link, useRouter } from "@/src/i18n/navigation";
@@ -12,8 +12,10 @@ import type {
   PublicItemDto,
   PublicLessonDto,
   StudentCourseDetailDto,
+  CheckoutRedirectDto,
   StreamDto,
 } from "@/src/lib/student-api/contract";
+import { isCheckoutRedirectDto, resolveCheckoutRedirect } from "@/src/lib/student-api/checkout";
 import {
   getStudentErrorMessage,
   isStudentUnauthorized,
@@ -21,6 +23,7 @@ import {
 import {
   useCurrentStudent,
   useStudentCourse,
+  useUpdateCourseProgress,
 } from "@/src/features/student/hooks/use-student-queries";
 import { studentQueryKeys } from "@/src/features/student/query-keys";
 import { portalContainerVariants, portalItemVariants, scrollIntoViewById } from "./course-motion";
@@ -51,6 +54,7 @@ export default function CourseDetail({
   initialDetail?: StudentCourseDetailDto;
 }) {
   const t = useTranslations("courseDetail");
+  const locale = useLocale();
   const router = useRouter();
   const queryClient = useQueryClient();
   const reduced = useReducedMotion() === true;
@@ -74,6 +78,7 @@ export default function CourseDetail({
 
   const courseQuery = useStudentCourse(courseId, teacherSlug, { initialData: initialDetail });
   const userQuery = useCurrentStudent(isAuthenticated);
+  const progressMutation = useUpdateCourseProgress(courseId);
   const detail = courseQuery.data;
   const user = isAuthenticated ? userQuery.data ?? null : null;
   const unauthorized =
@@ -96,17 +101,30 @@ export default function CourseDetail({
   const chapters = course?.chapters ?? [];
   const lessons = chapters.flatMap((chapter) => chapter.lessons);
   const firstContentChapter = chapters.find((chapter) => chapter.lessons.length);
+  const resumeItemId = enrolled
+    ? detail?.enrollment?.progress.next_item_id ?? detail?.enrollment?.progress.last_item_id
+    : null;
+  const resumeLocation = resumeItemId
+    ? chapters
+        .flatMap((chapter) => chapter.lessons.map((lesson) => ({ chapter, lesson })))
+        .find(({ lesson }) => lesson.items.some((item) => item.id === resumeItemId))
+    : null;
   const visibleExpandedChapterId = expandedChapterId === undefined
-    ? firstContentChapter?.id ?? null
+    ? resumeLocation?.chapter.id ?? firstContentChapter?.id ?? null
     : expandedChapterId;
   const visibleExpandedLessonId = expandedLessonId === undefined
-    ? chapters.find((chapter) => chapter.id === visibleExpandedChapterId)?.lessons[0]?.id ?? null
+    ? resumeLocation?.lesson.id ?? chapters.find((chapter) => chapter.id === visibleExpandedChapterId)?.lessons[0]?.id ?? null
     : expandedLessonId;
   const firstPlayableVideo = enrolled
     ? chapters
         .flatMap((chapter) => chapter.lessons)
         .flatMap((lesson) => lesson.items.map((item) => ({ item, lesson })))
-        .find(({ item }) => Boolean(item.bunny_stream_embed_url)) ?? null
+        .find(({ item }) => item.id === resumeItemId && Boolean(item.bunny_stream_embed_url))
+      ?? chapters
+        .flatMap((chapter) => chapter.lessons)
+        .flatMap((lesson) => lesson.items.map((item) => ({ item, lesson })))
+        .find(({ item }) => Boolean(item.bunny_stream_embed_url))
+      ?? null
     : null;
   const visibleActiveVideo = activeVideo ?? firstPlayableVideo;
   const examCount = lessons.flatMap((lesson) => lesson.items).filter((item) => item.has_exam).length;
@@ -121,7 +139,12 @@ export default function CourseDetail({
 
   const playVideo = (item: PublicItemDto, lesson: PublicLessonDto) => {
     setActiveVideo({ item, lesson });
+    if (enrolled) progressMutation.mutate({ itemId: item.id });
     window.setTimeout(() => scrollIntoViewById("course-player", { block: "start" }), 0);
+  };
+
+  const openDocument = (item: PublicItemDto, _lesson: PublicLessonDto) => {
+    if (enrolled) progressMutation.mutate({ itemId: item.id });
   };
 
   const handleChapterToggle = (chapterId: number) => {
@@ -138,13 +161,11 @@ export default function CourseDetail({
   };
 
   const startCourse = () => {
+    const firstVideo = firstPlayableVideo?.item;
+    const firstVideoLesson = firstPlayableVideo?.lesson;
     const firstVideoChapter = chapters.find((chapter) =>
-      chapter.lessons.some((lesson) => lesson.items.some((item) => item.bunny_stream_embed_url)),
+      chapter.lessons.some((lesson) => lesson.id === firstVideoLesson?.id),
     );
-    const firstVideoLesson = firstVideoChapter?.lessons.find((lesson) =>
-      lesson.items.some((item) => item.bunny_stream_embed_url),
-    );
-    const firstVideo = firstVideoLesson?.items.find((item) => item.bunny_stream_embed_url);
     if (firstVideo && firstVideoLesson) {
       setExpandedChapterId(firstVideoChapter?.id ?? null);
       setExpandedLessonId(firstVideoLesson.id);
@@ -156,7 +177,8 @@ export default function CourseDetail({
 
   const openCheckout = () => {
     if (!isAuthenticated) {
-      router.replace("/login");
+      const returnTo = `${window.location.pathname}${window.location.search}`;
+      router.replace(`/login?next=${encodeURIComponent(returnTo)}`);
       return;
     }
     setCheckoutError("");
@@ -175,7 +197,8 @@ export default function CourseDetail({
     if (response?.status === 401) {
       setCheckoutLoading(false);
       setCheckoutOpen(false);
-      router.replace("/login");
+      const returnTo = `${window.location.pathname}${window.location.search}`;
+      router.replace(`/login?next=${encodeURIComponent(returnTo)}`);
       return;
     }
     if (response?.status === 409) {
@@ -194,8 +217,15 @@ export default function CourseDetail({
       return;
     }
 
-    const body = await response.json() as { redirect_url: string };
-    window.location.assign(body.redirect_url);
+    const body = (await response.json().catch(() => null)) as CheckoutRedirectDto | null;
+    // The backend owns payment state: paid courses return a Kashier hosted
+    // checkout URL, free courses return the relative "/my-courses".
+    if (!isCheckoutRedirectDto(body)) {
+      setCheckoutError(t("checkoutError"));
+      setCheckoutLoading(false);
+      return;
+    }
+    window.location.assign(resolveCheckoutRedirect(body.redirect_url, locale));
   };
 
   const pageContent = (
@@ -320,6 +350,7 @@ export default function CourseDetail({
                       onChapterToggle={handleChapterToggle}
                       onLessonToggle={handleLessonToggle}
                       onPlay={playVideo}
+                      onOpen={openDocument}
                     />
                   ) : (
                     <div className="flex min-h-64 flex-col items-center justify-center rounded-2xl border border-dashed border-[#B7CDDC] bg-white px-5 text-center">
@@ -342,6 +373,8 @@ export default function CourseDetail({
                 onChapterToggle={handleChapterToggle}
                 onLessonToggle={handleLessonToggle}
                 onPlay={playVideo}
+                onOpen={openDocument}
+                completedItemIds={detail.enrollment?.progress.completed_item_ids ?? []}
               />
             ) : (
               <aside className="order-2 min-w-0 lg:order-1">

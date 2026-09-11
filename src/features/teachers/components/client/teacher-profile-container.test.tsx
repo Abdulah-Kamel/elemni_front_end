@@ -1,7 +1,10 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { describe, expect, it, vi } from "vitest";
+import { NextIntlClientProvider } from "next-intl";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Teacher } from "../../types";
+import arMessages from "@/src/messages/ar.json";
+import enMessages from "@/src/messages/en.json";
 import TeacherProfileView from "./teacher-profile-view";
 
 vi.mock("@/src/i18n/navigation", () => ({
@@ -69,19 +72,54 @@ const teacher: Teacher = {
 };
 
 describe("TeacherProfileView production experience", () => {
-  it("expands a subscribed course without navigating away", () => {
+  const originalLocation = Object.getOwnPropertyDescriptor(window, "location");
+  const assignMock = vi.fn();
+  const fetchMock = vi.fn();
+
+  function renderProfile(teacherOverride: Teacher, locale: "ar" | "en" = "ar") {
     const queryClient = new QueryClient({
       defaultOptions: { queries: { retry: false } },
     });
 
     render(
-      <QueryClientProvider client={queryClient}>
-        <TeacherProfileView
-          teacher={teacher}
-          onRequireAuth={() => undefined}
-        />
-      </QueryClientProvider>,
+      <NextIntlClientProvider
+        locale={locale}
+        messages={locale === "ar" ? arMessages : enMessages}
+      >
+        <QueryClientProvider client={queryClient}>
+          <TeacherProfileView
+            teacher={teacherOverride}
+            onRequireAuth={() => undefined}
+          />
+        </QueryClientProvider>
+      </NextIntlClientProvider>,
     );
+  }
+
+  beforeEach(() => {
+    fetchMock.mockReset();
+    assignMock.mockClear();
+    vi.stubGlobal("fetch", fetchMock);
+    Object.defineProperty(window, "location", {
+      configurable: true,
+      value: {
+        assign: assignMock,
+        pathname: "/teachers/ahmad-ali",
+        search: "",
+        href: "http://localhost/teachers/ahmad-ali",
+        origin: "http://localhost",
+      },
+    });
+  });
+
+  afterEach(() => {
+    cleanup();
+    vi.unstubAllGlobals();
+    if (originalLocation) Object.defineProperty(window, "location", originalLocation);
+  });
+
+  it("expands a subscribed course without navigating away", () => {
+    renderProfile(teacher);
 
     expect(screen.queryByText("مقدمة في النهايات")).not.toBeInTheDocument();
     fireEvent.click(
@@ -90,5 +128,47 @@ describe("TeacherProfileView production experience", () => {
 
     expect(screen.getByText("مقدمة في النهايات")).toBeInTheDocument();
     expect(screen.getByText("فيديو الشرح")).toBeInTheDocument();
+  });
+
+  it("sends paid checkout to the Kashier URL unchanged", async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({ redirect_url: "https://checkout.kashier.io/session/test123" }),
+    });
+    renderProfile({ ...teacher, courses: [{ ...teacher.courses[0], isSubscribed: false }] });
+
+    fireEvent.click(screen.getByRole("button", { name: "اشترك الآن" }));
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledWith(
+        "/api/student/payments/checkout",
+        expect.objectContaining({
+          method: "POST",
+          body: JSON.stringify({ course_id: 12 }),
+        }),
+      );
+    });
+    await waitFor(() => expect(assignMock).toHaveBeenCalledTimes(1));
+    expect(assignMock).toHaveBeenCalledWith(
+      "https://checkout.kashier.io/session/test123",
+    );
+  });
+
+  it("keeps the free-course redirect on the localized in-app route", async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({ redirect_url: "/my-courses" }),
+    });
+    renderProfile(
+      { ...teacher, courses: [{ ...teacher.courses[0], isSubscribed: false }] },
+      "en",
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "اشترك الآن" }));
+
+    await waitFor(() => expect(assignMock).toHaveBeenCalledTimes(1));
+    expect(assignMock).toHaveBeenCalledWith("/en/my-courses");
   });
 });

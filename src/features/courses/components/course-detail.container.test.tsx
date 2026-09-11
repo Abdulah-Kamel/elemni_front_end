@@ -95,6 +95,15 @@ const detail: StudentCourseDetailDto = {
     total_paid: "250.00",
     currency: "EGP",
     payment_status: "paid",
+    progress: {
+      completion_percent: 0,
+      completed_item_ids: [],
+      last_item_id: null,
+      last_lesson_id: null,
+      next_item_id: 101,
+      next_lesson_id: 11,
+      last_opened_at: null,
+    },
     course,
   },
 };
@@ -220,7 +229,7 @@ describe("CourseDetail production experience", () => {
     expect(screen.getByRole("heading", { name: "الوحدة الأولى" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /مقدمة في النهايات/ })).toBeInTheDocument();
     expect(screen.getByRole("navigation", { name: "محتوى الكورس" })).not.toHaveStyle({ opacity: "0" });
-    expect(screen.queryByText(/PayTabs/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Kashier/i)).not.toBeInTheDocument();
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
@@ -248,7 +257,7 @@ describe("CourseDetail production experience", () => {
         return Promise.resolve({
           ok: true,
           status: 200,
-          json: async () => ({ redirect_url: "https://paytabs.test/checkout" }),
+          json: async () => ({ redirect_url: "https://checkout.kashier.io/session/test123" }),
         });
       }
 
@@ -329,5 +338,130 @@ describe("CourseDetail production experience", () => {
 
     expect(await screen.findByRole("button", { name: "Enroll in this course" })).toBeInTheDocument();
     expect(screen.getByText("EGP")).toBeInTheDocument();
+  });
+
+  describe("checkout redirect handling", () => {
+    const originalLocation = Object.getOwnPropertyDescriptor(window, "location");
+    const assignMock = vi.fn();
+
+    beforeEach(() => {
+      assignMock.mockClear();
+      Object.defineProperty(window, "location", {
+        configurable: true,
+        value: {
+          assign: assignMock,
+          pathname: "/courses/12",
+          search: "",
+          href: "http://localhost/courses/12",
+          origin: "http://localhost",
+        },
+      });
+    });
+
+    afterEach(() => {
+      if (originalLocation) Object.defineProperty(window, "location", originalLocation);
+    });
+
+    async function confirmCheckout(options: {
+      locale: "ar" | "en";
+      redirectUrl: string;
+      subscribeLabel: string;
+      confirmLabel: string;
+    }) {
+      fetchMock.mockImplementation((input: string | URL, init?: RequestInit) => {
+        const url = String(input);
+
+        if (url.startsWith("/api/student/my-courses/12")) {
+          return Promise.resolve({
+            ok: true,
+            status: 200,
+            json: async () => publicDetail,
+          });
+        }
+
+        if (url === "/api/student/auth/me") {
+          return Promise.resolve({
+            ok: true,
+            status: 200,
+            json: async () => ({ id: 1, name: "الطالب" }),
+          });
+        }
+
+        if (url === "/api/student/payments/checkout" && init?.method === "POST") {
+          return Promise.resolve({
+            ok: true,
+            status: 200,
+            json: async () => ({ redirect_url: options.redirectUrl }),
+          });
+        }
+
+        return Promise.resolve({
+          ok: false,
+          status: 404,
+          json: async () => ({ detail: "not found" }),
+        });
+      });
+
+      const queryClient = new QueryClient({
+        defaultOptions: { queries: { retry: false } },
+      });
+
+      render(
+        <NextIntlClientProvider
+          locale={options.locale}
+          messages={options.locale === "ar" ? arMessages : enMessages}
+        >
+          <QueryClientProvider client={queryClient}>
+            <CourseDetail
+              courseId={12}
+              teacherSlug="ahmad-ali"
+              grades={[]}
+              streams={[]}
+            />
+          </QueryClientProvider>
+        </NextIntlClientProvider>,
+      );
+
+      await screen.findByRole("button", { name: options.subscribeLabel });
+      fireEvent.click(screen.getAllByRole("button", { name: options.subscribeLabel })[0]);
+      await screen.findByRole("dialog");
+      fireEvent.click(screen.getByRole("button", { name: options.confirmLabel }));
+      await waitFor(() => expect(assignMock).toHaveBeenCalledTimes(1));
+    }
+
+    it("sends paid checkout to the Kashier URL unchanged", async () => {
+      await confirmCheckout({
+        locale: "ar",
+        redirectUrl: "https://checkout.kashier.io/session/test123",
+        subscribeLabel: "اشترك في الكورس",
+        confirmLabel: "المتابعة إلى الدفع",
+      });
+
+      expect(assignMock).toHaveBeenCalledWith(
+        "https://checkout.kashier.io/session/test123",
+      );
+    });
+
+    it("keeps the free-course redirect on the Arabic in-app route", async () => {
+      await confirmCheckout({
+        locale: "ar",
+        redirectUrl: "/my-courses",
+        subscribeLabel: "اشترك في الكورس",
+        confirmLabel: "المتابعة إلى الدفع",
+      });
+
+      expect(assignMock).toHaveBeenCalledWith("/my-courses");
+    });
+
+    it("localizes the free-course redirect to the English in-app route", async () => {
+      await confirmCheckout({
+        locale: "en",
+        redirectUrl: "/my-courses",
+        subscribeLabel: "Enroll in this course",
+        confirmLabel: "Continue to payment",
+      });
+
+      expect(assignMock).toHaveBeenCalledWith("/en/my-courses");
+    });
   });
 });

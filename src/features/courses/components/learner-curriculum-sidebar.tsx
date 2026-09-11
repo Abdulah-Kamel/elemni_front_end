@@ -18,6 +18,8 @@ export default function LearnerCurriculumSidebar({
   onChapterToggle,
   onLessonToggle,
   onPlay,
+  onOpen,
+  completedItemIds,
 }: {
   chapters: PublicChapterDto[];
   lessonsCount: number;
@@ -27,6 +29,8 @@ export default function LearnerCurriculumSidebar({
   onChapterToggle: (chapterId: number) => void;
   onLessonToggle: (lessonId: number) => void;
   onPlay: (item: PublicItemDto, lesson: PublicLessonDto) => void;
+  onOpen: (item: PublicItemDto, lesson: PublicLessonDto) => void;
+  completedItemIds: number[];
 }) {
   const t = useTranslations("courseDetail");
   const hasContent = chapters.some((chapter) => chapter.lessons.length);
@@ -77,6 +81,8 @@ export default function LearnerCurriculumSidebar({
               onChapterToggle={onChapterToggle}
               onLessonToggle={onLessonToggle}
               onPlay={onPlay}
+              onOpen={onOpen}
+              completedItemIds={completedItemIds}
             />
           ) : (
             <div className="m-4 flex min-h-56 flex-col items-center justify-center rounded-xl border border-dashed border-[#B7CDDC] bg-[#FBFDFF] px-5 text-center">

@@ -4,7 +4,6 @@
 
 .student-portal-sidebar {
   width: var(--student-sidebar-width);
-  transition: width 180ms ease-out;
 }
 
 .student-portal-sidebar,

@@ -2,9 +2,12 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { useLocale } from "next-intl";
 import type { Teacher } from "../../types";
 import { BookOpen, Clock, CheckCircle2, ArrowRight, Award, Sparkles, Share2, Check, MapPin, LoaderCircle, CircleAlert, PlayCircle, FileText, ClipboardList, ChevronDown } from "lucide-react";
 import { cn } from "@/src/lib/cn";
+import { isCheckoutRedirectDto, resolveCheckoutRedirect } from "@/src/lib/student-api/checkout";
+import type { CheckoutRedirectDto } from "@/src/lib/student-api/contract";
 import { studentQueryKeys } from "@/src/features/student/query-keys";
 import { Link } from "@/src/i18n/navigation";
 import { Reveal } from "@/src/components/ui/reveal";
@@ -30,6 +33,7 @@ interface TeacherProfileViewProps {
 
 export default function TeacherProfileView({ teacher, onRequireAuth }: TeacherProfileViewProps) {
   const queryClient = useQueryClient();
+  const locale = useLocale();
   const [copiedLink, setCopiedLink] = useState(false);
   const [subscribedCourses, setSubscribedCourses] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(teacher.courses.map((course) => [course.id, course.isSubscribed === true])),
@@ -80,8 +84,15 @@ export default function TeacherProfileView({ teacher, onRequireAuth }: TeacherPr
       return;
     }
 
-    const body = await response.json();
-    window.location.assign(body.redirect_url);
+    const body = (await response.json().catch(() => null)) as CheckoutRedirectDto | null;
+    // The backend owns payment state: paid courses return a Kashier hosted
+    // checkout URL, free courses return the relative "/my-courses".
+    if (!isCheckoutRedirectDto(body)) {
+      setCheckoutError("تعذر بدء عملية الدفع حالياً.");
+      setProcessingCourse(null);
+      return;
+    }
+    window.location.assign(resolveCheckoutRedirect(body.redirect_url, locale));
   };
 
   return (
