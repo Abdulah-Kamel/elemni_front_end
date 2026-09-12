@@ -1,6 +1,10 @@
-# Student Surface Redesign (Bold and Youthful) — Design Spec
+# Student Surface Redesign (Bold and Youthful, Motion-Forward) — Design Spec
 
 Date: 2026-09-11 | Branch: `redesign/taste-skill` | Scope B | Vehicle: impeccable (Operate mode)
+
+Note: direction B was built and rejected on feel as too static; direction A was built
+and also rejected. User chose to return to B with motion turned up. This spec now
+describes B+ : the sticker-notebook world with rich orchestrated motion.
 
 ## 1. Goal
 
@@ -14,43 +18,48 @@ In scope: dashboard, my-courses, my-courses/[courseId], explore, payment/redirec
 onboarding, and the shared student portal shell (desktop sidebar + mobile drawer).
 Out of scope: auth pages, public landing, teacher surfaces, admin, backend, copy changes.
 
-## 3. Visual foundations (approved)
+## 3. Visual foundations (approved: direction B+, motion-forward)
 
 - Color: Elemni blue `#0284C7` is the single accent, deep `#0369A1` for emphasis.
-  Semantic colors (emerald, amber, red, sky) unchanged. Rebuilt neutrals: warm paper
-  `#FAF9F6` with near-ink `#14202B` text in light mode; deep navy `#0A1826` surfaces
-  with luminous blue accents in dark mode. No gradients, no purple.
+  Semantic colors (emerald, amber, red, sky) unchanged. Warm paper `#FAF9F6` ground,
+  near-ink `#14202B` text in light mode; deep navy `#0A1826` with luminous blue in
+  dark mode. No gradients, no purple. Theme tokens reused where visually equivalent.
 - Type: Readex Pro stays (loaded, Arabic-optimized, no new dependency). Headlines at
-  Black 900 display scale with tight leading; body stays regular. One family, two extremes.
-- Shape language: chunky sticker-like. Cards at 20-24px radii with 2px ink borders and
-  hard offset shadows, pill buttons, slightly rotated badges. Controlled neo-brutalist
-  edge that stays readable.
-- Motion language: springy (staggered entrances, bouncy hovers/taps, animated counters).
-  Only `transform` and `opacity` animate. Full collapse to static under reduced-motion
-  via the existing `MotionProvider`.
+  Black 900 display scale with tight leading; body stays regular.
+- Shape language: chunky sticker-like. 20-24px card radii with 2px ink borders and
+  hard offset shadows, pill buttons, slightly rotated sticker badges.
+- Motion language (turned up): springy and orchestrated. Staggered entrances,
+  sliding active-nav indicator, animated counters and progress, magnetic-feeling
+  hovers with press physics, scroll-triggered section reveals. Only `transform` and
+  `opacity` animate. Full collapse to static under reduced-motion via the existing
+  `MotionProvider` and per-component reduced-motion guards.
 
-## 4. Per-page concepts (approved)
+## 4. Per-page concepts (approved: direction A)
 
-- Dashboard: oversized greeting hero with sticker profile chip; bento study grid with a
-  continue-learning feature tile, giant progress numeral, animated-counter stat tiles,
-  bold image cards for current courses.
-- My-courses: display-scale library header with oversized count numeral; chunky pill
-  filter bar; thick-bordered course cards with big progress numerals.
-- Course detail: poster-style hero with huge title and sticker metadata; bold bordered
-  purchase panel with giant price numeral; chunky curriculum accordion rows.
-- Explore: editorial discovery wall; oversized headline; asymmetric card sizes;
-  subject filters as horizontal sticker pills.
-- Payment result: bold stamped receipt card; giant status badge; oversized title;
-  chunky labeled detail rows; primary CTA as the largest element on screen.
-- Onboarding: full-screen stepped moment with giant step numerals, chunky option cards,
-  bold segment progress.
-- Shell: sidebar with thicker active states, sticker logo tile, chunky logout; mobile
-  drawer included.
+- Dashboard: display-scale greeting hero with sticker profile chip; bento grid with a
+  continue-learning feature tile (animated progress, spring entrance), blue next-step
+  tile; stat strip with rolling counters; bold course cards with hover lift and press
+  physics; below-fold sections reveal on scroll.
+- My-courses: display-scale library header with rolling count; sticker pill filters;
+  thick-bordered course cards with animated progress.
+- Course detail: poster-style hero with spring entrance; bold purchase panel with
+  rolling price numeral; chunky curriculum accordion with animated expands.
+- Explore: editorial discovery wall with staggered card entrances; asymmetric sizes;
+  sticker filter pills with sliding active indicator.
+- Payment result: stamped receipt card with springy status badge entrance; bold
+  title; chunky detail rows; oversized primary CTA with press physics.
+- Onboarding: stepped flow with animated step transitions, chunky option cards,
+  animated segment progress.
+- Shell: sticker logo tile, nav with sliding active indicator, chunky logout, all
+  entrances staggered. Auth pages out of scope (scope B).
 
-## 5. Motion, themes, verification (approved)
+## 5. Motion, themes, verification (approved: motion-forward)
 
-- Shared spring presets; no scroll-hijacking; counters render final values under
-  reduced-motion.
+- Motion turned up: spring entrances with stagger, sliding active indicators
+  (layoutId), rolling counters, animated progress, hover lift with press physics,
+  scroll-triggered reveals below the fold. No scroll-hijacking, no infinite loops;
+  counters render final values under reduced-motion; everything collapses to static
+  under reduced-motion.
 - Every token ships as a light/dark pair; verified in both modes before handoff.
   Logical Tailwind properties throughout for RTL mirroring. No new em-dashes.
 - Accessibility floor: WCAG AA text/CTA contrast, visible blue focus rings, preserved

@@ -246,15 +246,15 @@ export default function CourseDetail({
         <CourseDetailSkeleton label={t("loadingCourse")} />
       ) : error || !detail || !course ? (
         <div className="mx-auto flex min-h-[70vh] max-w-xl items-center px-4">
-          <div role="alert" className="w-full rounded-2xl border border-[#F4C7C7] bg-[#FFF7F7] p-6 text-center text-sm font-bold text-[#B42318]">
+          <div role="alert" className="sticker-tile w-full border-red-600 bg-red-50 p-6 text-center text-sm font-black text-red-700 dark:border-red-400 dark:bg-red-500/10 dark:text-red-300">
             <CircleAlert className="mx-auto mb-3 size-8" aria-hidden="true" />
             <p>{error || t("notFound")}</p>
             <div className="mt-5 flex justify-center gap-4">
-              <button type="button" onClick={loadCourse} className="inline-flex cursor-pointer items-center gap-2 text-[#075985] hover:underline">
+              <button type="button" onClick={loadCourse} className="inline-flex cursor-pointer items-center gap-2 font-black text-brand-700 hover:underline dark:text-brand-300">
                 <RotateCcw className="size-4" aria-hidden="true" />
                 {t("retry")}
               </button>
-              <Link href={backHref} className="inline-flex items-center gap-2 text-[#536A7C] hover:underline">
+              <Link href={backHref} className="inline-flex items-center gap-2 font-bold text-muted hover:underline dark:text-slate-400">
                 {backLabel}
               </Link>
             </div>
@@ -267,13 +267,15 @@ export default function CourseDetail({
           animate="show"
           variants={portalContainerVariants}
         >
-          <Link
-            href={backHref}
-            className="mb-6 inline-flex items-center gap-2 text-sm font-bold text-[#6B7E8F] transition-colors hover:text-[#075985] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0284C7] focus-visible:ring-offset-2"
-          >
-            <ArrowLeft className="size-4" aria-hidden="true" />
-            {backLabel}
-          </Link>
+          <m.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="mb-6 w-fit">
+            <Link
+              href={backHref}
+              className="sticker-btn-outline inline-flex items-center gap-2 px-4 py-2 text-sm font-black text-ink dark:text-slate-200"
+            >
+              <ArrowLeft className="size-4" aria-hidden="true" />
+              {backLabel}
+            </Link>
+          </m.div>
 
           <div className="grid items-start gap-8 lg:grid-cols-[minmax(19rem,24rem)_minmax(0,1fr)]">
             <div className="order-1 min-w-0 space-y-8 lg:order-2">
@@ -306,7 +308,7 @@ export default function CourseDetail({
               </AnimatePresence>
 
               <m.nav
-                className="flex gap-1 overflow-x-auto border-b border-[#D8E3EC]"
+                className="sticker-tile flex gap-1 overflow-x-auto p-1.5"
                 aria-label={t("courseContent")}
                 initial={publicMode || reduced ? false : "hidden"}
                 animate="show"
@@ -324,9 +326,16 @@ export default function CourseDetail({
                     type="button"
                     disabled={!enabled}
                     title={!enabled ? `${t(`tabs.${key}`)} · ${t("tabs.comingSoon")}` : undefined}
-                    className={`shrink-0 border-b-2 px-4 py-3 text-sm font-black transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0284C7] ${enabled ? "border-[#0284C7] text-[#075985]" : "cursor-not-allowed border-transparent text-[#9AAEBD]"}`}
+                    className={`relative shrink-0 rounded-xl px-4 py-3 text-sm font-black transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-600 ${enabled ? "text-white" : "cursor-not-allowed text-muted dark:text-slate-500"}`}
                   >
-                    {t(`tabs.${key}`)}
+                    {enabled && (
+                      <m.span
+                        layoutId="course-detail-tab"
+                        className="absolute inset-0 rounded-xl border-2 border-ink bg-ink dark:border-brand-300 dark:bg-brand-600"
+                        transition={{ type: "spring", stiffness: 320, damping: 28 }}
+                      />
+                    )}
+                    <span className="relative">{t(`tabs.${key}`)}</span>
                   </button>
                 ))}
               </m.nav>
@@ -342,12 +351,12 @@ export default function CourseDetail({
                 >
                   <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
                     <div>
-                      <h2 id="content-title" className="text-2xl font-black tracking-[-0.025em] text-[#0F2638] sm:text-3xl">
+                      <h2 id="content-title" className="text-3xl font-black tracking-tight text-ink sm:text-4xl dark:text-slate-50">
                         {t("coursePlan")}
                       </h2>
-                      <p className="mt-2 text-sm text-[#6B7E8F]">{t("curriculumDescription")}</p>
+                      <p className="mt-2 max-w-[65ch] text-sm font-medium text-muted dark:text-slate-400">{t("curriculumDescription")}</p>
                     </div>
-                    <p className="text-xs font-bold text-[#6B7E8F]">
+                    <p className="sticker-badge bg-surface px-3 py-1 text-xs font-black text-muted dark:text-slate-300">
                       {lessons.length ? t("lessons", { count: lessons.length }) : t("contentWillAppear")}
                     </p>
                   </div>
@@ -365,10 +374,10 @@ export default function CourseDetail({
                       onOpen={openDocument}
                     />
                   ) : (
-                    <div className="flex min-h-64 flex-col items-center justify-center rounded-2xl border border-dashed border-[#B7CDDC] bg-white px-5 text-center">
-                      <CircleAlert className="mb-4 size-10 text-[#9AB4C5]" aria-hidden="true" />
-                      <h3 className="text-lg font-black text-[#1C3345]">{t("noContent")}</h3>
-                      <p className="mt-2 text-sm leading-6 text-[#6B7E8F]">{t("noContentDescription")}</p>
+                    <div className="sticker-tile flex min-h-64 flex-col items-center justify-center px-5 text-center">
+                      <CircleAlert className="mb-4 size-10 text-muted" aria-hidden="true" />
+                      <h3 className="text-lg font-black text-ink dark:text-slate-50">{t("noContent")}</h3>
+                      <p className="mt-2 max-w-[65ch] text-sm leading-6 font-medium text-muted dark:text-slate-400">{t("noContentDescription")}</p>
                     </div>
                   )}
                 </m.section>

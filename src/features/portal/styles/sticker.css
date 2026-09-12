@@ -1,0 +1,132 @@
+/* Sticker-notebook world: shared frame for the student surface.
+   Colors come from the Tailwind theme (brand/ink/page/surface); this file owns
+   only the world's material language: ink borders, hard offset shadows, ruled
+   paper, sticker rotation, and browser-surface theming. */
+
+.student-portal-shell {
+  background-color: var(--color-page);
+  /* Ruled notebook lines: the subject's own world, kept barely visible. */
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 1.6875rem,
+    color-mix(in srgb, var(--color-ink) 5%, transparent) 1.6875rem,
+    color-mix(in srgb, var(--color-ink) 5%, transparent) 1.75rem
+  );
+}
+
+.dark .student-portal-shell {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 1.6875rem,
+    color-mix(in srgb, #7dd3fc 6%, transparent) 1.6875rem,
+    color-mix(in srgb, #7dd3fc 6%, transparent) 1.75rem
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .student-portal-shell *,
+  .student-portal-shell *::before,
+  .student-portal-shell *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Chunky bordered tile with a hard offset shadow (light) / solid ink shadow (dark). */
+.sticker-tile {
+  border: 2px solid var(--color-ink);
+  border-radius: 1.25rem;
+  background-color: var(--color-surface);
+  box-shadow: 5px 5px 0 0 var(--color-ink);
+}
+
+.dark .sticker-tile {
+  border-color: #38bdf8;
+  box-shadow: 5px 5px 0 0 #020617;
+}
+
+/* Primary sticker button: blue fill, ink border, hard shadow, press physics. */
+.sticker-btn {
+  border: 2px solid var(--color-ink);
+  border-radius: 999px;
+  background-color: var(--color-brand-600);
+  color: #fff;
+  box-shadow: 3px 3px 0 0 var(--color-ink);
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, background-color 0.15s ease-out;
+}
+
+.sticker-btn:hover {
+  background-color: var(--color-brand-700);
+}
+
+.sticker-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 0 var(--color-ink);
+}
+
+.dark .sticker-btn {
+  border-color: #e0f2fe;
+  box-shadow: 3px 3px 0 0 #020617;
+}
+
+.dark .sticker-btn:active {
+  box-shadow: 1px 1px 0 0 #020617;
+}
+
+/* Outline sticker button for secondary actions. */
+.sticker-btn-outline {
+  border: 2px solid var(--color-ink);
+  border-radius: 999px;
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  box-shadow: 3px 3px 0 0 var(--color-ink);
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+}
+
+.sticker-btn-outline:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 0 var(--color-ink);
+}
+
+.dark .sticker-btn-outline {
+  border-color: #38bdf8;
+  background-color: transparent;
+  color: #e0f2fe;
+  box-shadow: 3px 3px 0 0 #020617;
+}
+
+/* Rotated sticker badge. Rotation is static composition, not motion. */
+.sticker-badge {
+  border: 2px solid var(--color-ink);
+  border-radius: 999px;
+  box-shadow: 2px 2px 0 0 var(--color-ink);
+}
+
+.dark .sticker-badge {
+  border-color: #38bdf8;
+  box-shadow: 2px 2px 0 0 #020617;
+}
+
+/* Giant display numerals: tabular figures for measurement, never costume. */
+.sticker-numeral {
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+/* Browser surfaces carry the world too: selection, focus, scrollbars. */
+.student-portal-shell ::selection {
+  background-color: var(--color-brand-600);
+  color: #fff;
+}
+
+.student-portal-shell :focus-visible {
+  outline: 3px solid var(--color-brand-600);
+  outline-offset: 2px;
+}
+
+.student-portal-shell {
+  scrollbar-color: var(--color-brand-600) transparent;
+}

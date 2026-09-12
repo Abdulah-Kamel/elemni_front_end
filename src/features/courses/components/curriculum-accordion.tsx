@@ -82,16 +82,16 @@ function LessonRow({
         type="button"
         onClick={onToggle}
         aria-expanded={expanded}
-        className={`flex w-full cursor-pointer items-center text-start transition-colors hover:bg-[#F4FAFD] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0284C7] ${variant === "sidebar" ? "min-h-14 gap-3 px-3 py-3" : "min-h-16 gap-3 px-4 py-3.5 sm:px-5"}`}
+        className={`flex w-full cursor-pointer items-center text-start transition-colors hover:bg-brand-50/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-600 dark:hover:bg-slate-800/70 ${variant === "sidebar" ? "min-h-14 gap-3 px-3 py-3" : "min-h-16 gap-3 px-4 py-3.5 sm:px-5"}`}
       >
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#E8F6FE] text-[#0284C7]">
+        <span className="sticker-badge flex size-9 shrink-0 items-center justify-center bg-brand-100 text-brand-700 dark:bg-slate-800 dark:text-brand-300">
           {hasVideo ? <PlayCircle className="size-5" /> : hasDocument ? <FileText className="size-5" /> : <BookOpen className="size-5" />}
         </span>
         <span className="min-w-0 flex-1">
-          <strong className="block truncate text-sm font-bold leading-6 text-[#1C3345] sm:text-base">
+          <strong className="block truncate text-sm font-black leading-6 text-ink sm:text-base dark:text-slate-50">
             {lesson.title}
           </strong>
-          <span className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium text-[#6B7E8F]">
+          <span className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium text-muted dark:text-slate-400">
             <span>{formatDuration(lessonDuration(lesson), t)}</span>
             {hasVideo && <span>{t("video")}</span>}
             {hasDocument && <span>{t("document")}</span>}
@@ -270,7 +270,7 @@ export default function CurriculumAccordion({
         return (
           <section
             key={`${chapter.id}-${chapterIndex}`}
-            className={variant === "sidebar" ? "overflow-hidden border-b border-[#D8E3EC] bg-white last:border-b-0" : "overflow-hidden rounded-2xl border border-[#D8E3EC] bg-white"}
+            className={variant === "sidebar" ? "overflow-hidden border-b border-[#D8E3EC] bg-white last:border-b-0" : "sticker-tile overflow-hidden"}
             aria-labelledby={`chapter-${chapter.id}-${chapterIndex}`}
           >
             <button
@@ -278,21 +278,28 @@ export default function CurriculumAccordion({
               onClick={() => onChapterToggle(chapter.id)}
               aria-expanded={expanded}
               aria-controls={`chapter-content-${chapter.id}-${chapterIndex}`}
-              className={`flex w-full cursor-pointer items-center text-start transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0284C7] ${variant === "sidebar" ? "min-h-14 gap-3 px-3 py-3" : "min-h-16 gap-4 px-4 py-4 sm:px-5"} ${expanded ? "bg-[#E8F6FE]" : "hover:bg-[#FBFDFF]"}`}
+              className={`flex w-full cursor-pointer items-center text-start transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-600 ${variant === "sidebar" ? "min-h-14 gap-3 px-3 py-3" : "min-h-16 gap-4 px-4 py-4 sm:px-5"} ${expanded && variant !== "sidebar" ? "border-b-2 border-ink bg-brand-50 dark:border-brand-300 dark:bg-slate-800" : ""} ${expanded && variant === "sidebar" ? "bg-[#E8F6FE]" : ""} ${!expanded && variant !== "sidebar" ? "hover:bg-brand-50/60 dark:hover:bg-slate-800/60" : ""} ${!expanded && variant === "sidebar" ? "hover:bg-[#FBFDFF]" : ""}`}
             >
               <span className="flex min-w-0 flex-1 items-center gap-2">
                 <h3
                   id={`chapter-${chapter.id}-${chapterIndex}`}
-                  className={`truncate text-base font-black sm:text-lg ${expanded ? "text-[#075985]" : "text-[#1C3345]"}`}
+                  className={`truncate text-base font-black sm:text-lg ${expanded ? "text-brand-700 dark:text-brand-300" : "text-ink dark:text-slate-50"}`}
                 >
                   {chapter.title || t("coursePlan")}
                 </h3>
-                <ChevronDown
-                  className={`size-4 shrink-0 text-[#6B7E8F] transition-transform motion-reduce:transition-none ${expanded ? "rotate-180" : ""}`}
-                  aria-hidden="true"
-                />
+                <m.span
+                  className={`flex size-8 shrink-0 items-center justify-center rounded-full border-2 ${expanded ? "border-ink bg-ink text-white dark:border-brand-300 dark:bg-brand-600" : "border-ink/20 text-muted dark:border-slate-600 dark:text-slate-400"}`}
+                  initial={false}
+                  animate={{ rotate: expanded ? 180 : 0 }}
+                  transition={{ type: "spring", stiffness: 320, damping: 22 }}
+                >
+                  <ChevronDown
+                    className="size-4"
+                    aria-hidden="true"
+                  />
+                </m.span>
               </span>
-              <span className="shrink-0 text-xs font-medium text-[#6B7E8F]">
+              <span className="sticker-numeral shrink-0 text-xs font-black text-muted dark:text-slate-400">
                 {t("chapterLessons", { count: chapter.lessons.length })} · {formatDuration(chapterDuration(chapter.lessons), t)}
               </span>
             </button>

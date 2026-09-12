@@ -17,39 +17,35 @@ import type {
   PaymentResultStatus,
 } from "../parse-payment-result";
 
+const popSpring = { type: "spring", stiffness: 260, damping: 20 } as const;
+
 const STATUS_STYLE: Record<
   PaymentResultStatus,
-  { icon: typeof CheckCircle2; ring: string; chip: string }
+  { icon: typeof CheckCircle2; ring: string }
 > = {
   completed: {
     icon: CheckCircle2,
-    ring: "bg-emerald-50 text-emerald-700 ring-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-300 dark:ring-emerald-500/30",
-    chip: "bg-emerald-50 text-emerald-700 ring-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-300 dark:ring-emerald-500/30",
+    ring: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300",
   },
   failed: {
     icon: XCircle,
-    ring: "bg-red-50 text-red-700 ring-red-200 dark:bg-red-500/10 dark:text-red-300 dark:ring-red-500/30",
-    chip: "bg-red-50 text-red-700 ring-red-200 dark:bg-red-500/10 dark:text-red-300 dark:ring-red-500/30",
+    ring: "bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-300",
   },
   pending: {
     icon: Clock3,
-    ring: "bg-amber-50 text-amber-700 ring-amber-200 dark:bg-amber-500/10 dark:text-amber-300 dark:ring-amber-500/30",
-    chip: "bg-amber-50 text-amber-700 ring-amber-200 dark:bg-amber-500/10 dark:text-amber-300 dark:ring-amber-500/30",
+    ring: "bg-amber-200 text-amber-800 dark:bg-amber-500/10 dark:text-amber-300",
   },
   cancelled: {
     icon: Ban,
-    ring: "bg-slate-100 text-slate-700 ring-slate-300 dark:bg-slate-500/10 dark:text-slate-300 dark:ring-slate-500/30",
-    chip: "bg-slate-100 text-slate-700 ring-slate-300 dark:bg-slate-500/10 dark:text-slate-300 dark:ring-slate-500/30",
+    ring: "bg-slate-200 text-slate-700 dark:bg-slate-500/10 dark:text-slate-300",
   },
   refunded: {
     icon: RotateCcw,
-    ring: "bg-sky-50 text-sky-700 ring-sky-200 dark:bg-sky-500/10 dark:text-sky-300 dark:ring-sky-500/30",
-    chip: "bg-sky-50 text-sky-700 ring-sky-200 dark:bg-sky-500/10 dark:text-sky-300 dark:ring-sky-500/30",
+    ring: "bg-brand-100 text-brand-700 dark:bg-brand-500/10 dark:text-brand-300",
   },
   unknown: {
     icon: CircleAlert,
-    ring: "bg-slate-100 text-slate-700 ring-slate-300 dark:bg-slate-500/10 dark:text-slate-300 dark:ring-slate-500/30",
-    chip: "bg-slate-100 text-slate-700 ring-slate-300 dark:bg-slate-500/10 dark:text-slate-300 dark:ring-slate-500/30",
+    ring: "bg-slate-200 text-slate-700 dark:bg-slate-500/10 dark:text-slate-300",
   },
 };
 
@@ -83,100 +79,121 @@ export default function PaymentResultView({
   const showCourseLink = result.status === "completed" && result.courseHref !== null;
 
   return (
-    <m.div
-      className="mx-auto w-full max-w-xl px-4 py-10 sm:px-6"
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35 }}
-    >
-      <section
+    <div className="mx-auto w-full max-w-xl px-4 py-10 sm:px-6">
+      <m.section
         aria-labelledby="payment-result-title"
-        className="rounded-2xl border border-[#E2E0EF] bg-white p-6 text-center shadow-[0_8px_24px_rgba(2,132,199,0.06)] sm:p-8 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none"
+        className="sticker-tile p-6 text-center sm:p-8"
+        initial={{ opacity: 0, y: 32, rotate: -0.5 }}
+        animate={{ opacity: 1, y: 0, rotate: 0 }}
+        transition={popSpring}
       >
-        <span
+        <m.span
           className={cn(
-            "mx-auto flex size-14 items-center justify-center rounded-full ring-1",
+            "sticker-badge mx-auto flex size-16 items-center justify-center",
             style.ring,
           )}
+          initial={{ scale: 0, rotate: -24 }}
+          animate={{ scale: 1, rotate: -4 }}
+          transition={{ ...popSpring, delay: 0.15 }}
         >
-          <Icon className="size-7" aria-hidden="true" />
-        </span>
+          <Icon className="size-8" aria-hidden="true" />
+        </m.span>
 
-        <p className="mt-5 text-xs font-bold tracking-wide text-[#777587] dark:text-slate-400">
-          {t("eyebrow")}
-        </p>
-        <h1
+        <m.h1
           id="payment-result-title"
-          className="mt-2 text-2xl font-black text-[#1B1B24] sm:text-3xl dark:text-slate-100"
+          className="mt-5 text-3xl font-black tracking-tight text-ink sm:text-4xl dark:text-slate-50"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ...popSpring, delay: 0.2 }}
         >
           {t(`title.${result.status}`)}
-        </h1>
-        <p className="mx-auto mt-3 max-w-md text-sm leading-7 text-[#464555] dark:text-slate-300">
+        </m.h1>
+        <m.p
+          className="mx-auto mt-3 max-w-md text-sm leading-7 font-medium text-muted dark:text-slate-400"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ...popSpring, delay: 0.25 }}
+        >
           {t(`description.${result.status}`)}
-        </p>
+        </m.p>
 
         {result.isTestMode && (
-          <p className="mx-auto mt-4 w-fit rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700 ring-1 ring-amber-200 dark:bg-amber-500/10 dark:text-amber-300 dark:ring-amber-500/30">
+          <p className="sticker-badge mx-auto mt-4 w-fit rotate-1 bg-amber-300 px-3 py-1 text-xs font-black text-ink">
             {t("testModeBadge")}
-            <span className="sr-only">. </span>
-            <span className="font-medium">{t("testModeNote")}</span>
+            <span aria-hidden="true"> · </span>
+            <span className="font-bold">{t("testModeNote")}</span>
           </p>
         )}
 
         {details.length > 0 && (
-          <div className="mt-6 border-t border-[#E2E0EF] pt-6 text-start dark:border-slate-800">
-            <h2 className="text-sm font-black text-[#1B1B24] dark:text-slate-100">
+          <m.div
+            className="mt-6 border-t-2 border-ink/10 pt-6 text-start dark:border-white/10"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            <h2 className="text-sm font-black text-ink dark:text-slate-100">
               {t("detailsTitle")}
             </h2>
             <dl className="mt-3 space-y-2.5">
-              {details.map(({ id, label, value }) => (
-                <div
+              {details.map(({ id, label, value }, index) => (
+                <m.div
                   key={id}
-                  className="flex items-center justify-between gap-4 rounded-lg bg-[#F8FBFD] px-3 py-2.5 text-sm dark:bg-slate-800/60"
+                  className="flex items-center justify-between gap-4 rounded-xl border-2 border-ink/10 bg-brand-50/60 px-3 py-2.5 text-sm dark:border-white/10 dark:bg-slate-800/60"
+                  initial={{ opacity: 0, x: 16 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ ...popSpring, delay: 0.3 + 0.05 * index }}
                 >
-                  <dt className="shrink-0 text-xs font-bold text-[#777587] dark:text-slate-400">
+                  <dt className="shrink-0 text-xs font-black text-muted dark:text-slate-400">
                     {label}
                   </dt>
-                  <dd className="min-w-0 truncate font-bold text-[#1B1B24] tabular-nums ltr:font-mono dark:text-slate-100">
+                  <dd className="sticker-numeral min-w-0 truncate font-black text-ink ltr:font-mono dark:text-slate-100">
                     {value}
                   </dd>
-                </div>
+                </m.div>
               ))}
             </dl>
-          </div>
+          </m.div>
         )}
 
-        <div className="mt-7 flex flex-col gap-2.5">
+        <m.div
+          className="mt-7 flex flex-col gap-3"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ...popSpring, delay: 0.35 }}
+        >
           {showCourseLink && result.courseHref && (
-            <Link
-              href={result.courseHref}
-              className="inline-flex h-11 items-center justify-center rounded-xl bg-[#0284C7] px-6 text-sm font-black text-white transition hover:bg-[#0369A1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0284C7] focus-visible:ring-offset-2"
-            >
-              {t("actions.openCourse")}
-            </Link>
+            <m.div whileHover={{ scale: 1.03, rotate: -0.5 }} whileTap={{ scale: 0.97 }} transition={popSpring}>
+              <Link
+                href={result.courseHref}
+                className="sticker-btn inline-flex h-13 w-full items-center justify-center px-6 py-3.5 text-base font-black"
+              >
+                {t("actions.openCourse")}
+              </Link>
+            </m.div>
           )}
           <div className="grid gap-2.5 sm:grid-cols-2">
             <Link
               href="/my-courses"
-              className="inline-flex h-11 items-center justify-center rounded-xl border border-[#BAE6FD] bg-white px-5 text-sm font-black text-[#0369A1] transition hover:bg-[#E0F2FE] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0284C7] dark:border-slate-700 dark:bg-slate-900 dark:text-sky-300 dark:hover:bg-slate-800"
+              className="sticker-btn-outline inline-flex h-12 items-center justify-center px-5 text-sm font-black text-brand-700 dark:text-brand-300"
             >
               {t("actions.myCourses")}
             </Link>
             <Link
               href="/dashboard"
-              className="inline-flex h-11 items-center justify-center rounded-xl border border-[#E2E0EF] bg-white px-5 text-sm font-bold text-[#464555] transition hover:bg-[#F8FBFD] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0284C7] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+              className="sticker-btn-outline inline-flex h-12 items-center justify-center px-5 text-sm font-black text-ink dark:text-slate-200"
             >
               {t("actions.dashboard")}
             </Link>
           </div>
           <Link
             href="/explore"
-            className="mt-1 text-sm font-bold text-[#0369A1] hover:underline dark:text-sky-300"
+            className="mt-1 text-sm font-black text-brand-700 hover:underline dark:text-brand-300"
           >
             {t("actions.explore")}
           </Link>
-        </div>
-      </section>
-    </m.div>
+        </m.div>
+      </m.section>
+    </div>
   );
 }

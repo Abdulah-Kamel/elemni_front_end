@@ -9,6 +9,44 @@ vi.mock("next/navigation", async (importOriginal) => ({
   usePathname: () => "/dashboard",
 }));
 
+const arabicMessages = {
+  brand: { name: "علمني", tagline: "منصة التعليم الذكي" },
+  studentLanding: {
+    nav: {
+      dashboard: "لوحتي",
+      myCourses: "كورساتي",
+      courses: "الدروس",
+      logout: "تسجيل الخروج",
+    },
+  },
+  studentPortal: {
+    sidebarLabel: "بوابة الطالب",
+    collapseSidebar: "تصغير القائمة الجانبية",
+    expandSidebar: "توسيع القائمة الجانبية",
+    openMenu: "فتح قائمة بوابة الطالب",
+    closeMenu: "إغلاق القائمة",
+  },
+};
+
+const englishMessages = {
+  brand: { name: "Elemni", tagline: "Smart learning platform" },
+  studentLanding: {
+    nav: {
+      dashboard: "My dashboard",
+      myCourses: "My courses",
+      courses: "Courses",
+      logout: "Log out",
+    },
+  },
+  studentPortal: {
+    sidebarLabel: "Student portal",
+    collapseSidebar: "Collapse sidebar",
+    expandSidebar: "Expand sidebar",
+    openMenu: "Open student portal menu",
+    closeMenu: "Close menu",
+  },
+};
+
 describe("StudentPortalShell", () => {
   afterEach(() => {
     cleanup();
@@ -19,7 +57,7 @@ describe("StudentPortalShell", () => {
     window.localStorage.clear();
 
     render(
-      <NextIntlClientProvider locale="ar" messages={{}}>
+      <NextIntlClientProvider locale="ar" messages={arabicMessages}>
         <StudentPortalShell user={null}>
           <p>محتوى الدورة</p>
         </StudentPortalShell>
@@ -49,7 +87,7 @@ describe("StudentPortalShell", () => {
 
   it("renders authenticated student content inside the shared portal navigation", () => {
     render(
-      <NextIntlClientProvider locale="ar" messages={{}}>
+      <NextIntlClientProvider locale="ar" messages={arabicMessages}>
         <StudentPortalShell user={{ id: 1, name: "أحمد علي" } as never} active="courses">
           <p>محتوى الدورة</p>
         </StudentPortalShell>
@@ -58,5 +96,24 @@ describe("StudentPortalShell", () => {
 
     expect(screen.getByRole("navigation", { name: "بوابة الطالب" })).toBeInTheDocument();
     expect(screen.getByText("محتوى الدورة")).toBeInTheDocument();
+  });
+
+  it("uses left-to-right direction and localized labels for English pages", () => {
+    const { container } = render(
+      <NextIntlClientProvider locale="en" messages={englishMessages}>
+        <StudentPortalShell user={null} active="courses">
+          <p>Course content</p>
+        </StudentPortalShell>
+      </NextIntlClientProvider>,
+    );
+
+    const shell = container.querySelector(".student-portal-shell");
+
+    expect(shell).toHaveAttribute("dir", "ltr");
+    expect(screen.getByRole("navigation", { name: "Student portal" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "My courses" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Collapse sidebar" })).toBeInTheDocument();
+    expect(screen.getByText("E")).toBeInTheDocument();
+    expect(screen.getByText("Course content")).toBeInTheDocument();
   });
 });

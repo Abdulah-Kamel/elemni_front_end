@@ -72,14 +72,14 @@ export default function CourseHero({
   return (
     <section
       aria-labelledby="course-title"
-      className="overflow-hidden rounded-[1.75rem] bg-[#0B1726] text-white shadow-[0_24px_70px_-34px_rgba(2,132,199,0.85)]"
+      className="overflow-hidden rounded-[1.75rem] border-2 border-ink bg-[#0B1726] text-white shadow-[5px_5px_0_0_var(--color-ink)] dark:border-brand-300 dark:shadow-[5px_5px_0_0_#020617]"
     >
       <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(18rem,36%)]">
         <div className="order-2 flex flex-col justify-between p-6 sm:p-9 lg:order-1 lg:p-10">
           <div>
-            <div className="mb-5 flex flex-wrap gap-2 text-xs font-bold">
+            <div className="mb-5 flex flex-wrap gap-2 text-xs font-black">
               {course.subject_name && (
-                <span className="rounded-full bg-[#38BDF8]/15 px-3 py-1.5 text-[#BFE8FF]">
+                <span className="sticker-badge -rotate-1 bg-amber-300 px-3 py-1.5 text-ink">
                   {course.subject_name}
                 </span>
               )}

@@ -96,4 +96,16 @@ describe("PaymentResultView", () => {
 
     expect(document.body.textContent).not.toContain("undefined");
   });
+
+  it("separates the test-mode label from its explanatory note", () => {
+    renderView({ status: "completed", mode: "test" });
+
+    const badge = screen.getByText(arMessages.paymentResult.testModeNote, {
+      exact: true,
+    }).parentElement;
+
+    expect(badge).toHaveTextContent(
+      `${arMessages.paymentResult.testModeBadge} · ${arMessages.paymentResult.testModeNote}`,
+    );
+  });
 });

@@ -34,6 +34,29 @@
   --student-sidebar-width: 4.25rem;
 }
 
+[dir="ltr"].student-portal-shell .student-portal-sidebar,
+[dir="ltr"].student-portal-shell .student-portal-drawer {
+  right: auto;
+  left: 0;
+}
+
+[dir="ltr"].student-portal-shell .student-portal-drawer-close {
+  right: 1rem;
+  left: auto;
+}
+
+@media (min-width: 48rem) {
+  [dir="ltr"].student-portal-shell .student-portal-header {
+    right: 0;
+    left: var(--student-sidebar-width);
+  }
+
+  [dir="ltr"].student-portal-shell .student-portal-main {
+    margin-right: 0;
+    margin-left: var(--student-sidebar-width);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .student-portal-sidebar {
     transition: none;

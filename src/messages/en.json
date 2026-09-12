@@ -1,6 +1,14 @@
 {
   "brand": {
-    "name": "Elemni"
+    "name": "Elemni",
+    "tagline": "Smart learning platform"
+  },
+  "studentPortal": {
+    "sidebarLabel": "Student portal",
+    "collapseSidebar": "Collapse sidebar",
+    "expandSidebar": "Expand sidebar",
+    "openMenu": "Open student portal menu",
+    "closeMenu": "Close menu"
   },
   "nav": {
     "home": "Home",

@@ -80,7 +80,7 @@ export default function CheckoutConfirmation({
         role="dialog"
         aria-modal="true"
         aria-labelledby="checkout-dialog-title"
-        className="relative max-h-[min(92vh,42rem)] w-full overflow-y-auto rounded-t-[1.5rem] border border-[#D8E3EC] bg-white p-5 shadow-[0_30px_90px_-32px_rgba(2,35,58,0.8)] sm:max-w-lg sm:rounded-2xl sm:p-7"
+        className="sticker-tile relative max-h-[min(92vh,42rem)] w-full overflow-y-auto p-5 sm:max-w-lg sm:p-7"
       >
         <button
           ref={closeRef}
@@ -151,7 +151,7 @@ export default function CheckoutConfirmation({
             type="button"
             onClick={() => onOpenChange(false)}
             disabled={loading}
-            className="order-2 h-11 cursor-pointer rounded-xl border border-[#C9D8E3] px-4 text-sm font-black text-[#365469] transition hover:bg-[#F6FAFC] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0284C7] sm:order-1"
+            className="sticker-btn-outline order-2 h-12 cursor-pointer px-4 text-sm font-black text-ink transition disabled:cursor-wait disabled:opacity-50 disabled:shadow-none sm:order-1 dark:text-slate-200"
           >
             {t("cancel")}
           </button>
@@ -159,7 +159,7 @@ export default function CheckoutConfirmation({
             type="button"
             onClick={onConfirm}
             disabled={loading}
-            className="order-1 inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#0284C7] px-4 text-sm font-black text-white transition hover:bg-[#0369A1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7DD3FC] focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-60 sm:order-2"
+            className="sticker-btn order-1 inline-flex h-12 cursor-pointer items-center justify-center gap-2 px-4 text-sm font-black disabled:cursor-wait disabled:opacity-60 disabled:shadow-none sm:order-2"
           >
             {loading && <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />}
             {loading ? t("redirecting") : coupon?.ok ? t("continueToPaymentWithTotal", { total: formatPrice(coupon.finalPrice, locale) }) : t("continueToPayment")}

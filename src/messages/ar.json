@@ -1,6 +1,14 @@
 {
   "brand": {
-    "name": "علمنى"
+    "name": "علمنى",
+    "tagline": "منصة التعليم الذكي"
+  },
+  "studentPortal": {
+    "sidebarLabel": "بوابة الطالب",
+    "collapseSidebar": "تصغير القائمة الجانبية",
+    "expandSidebar": "توسيع القائمة الجانبية",
+    "openMenu": "فتح قائمة بوابة الطالب",
+    "closeMenu": "إغلاق القائمة"
   },
   "nav": {
     "home": "الرئيسية",

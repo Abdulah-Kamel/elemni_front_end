@@ -29,6 +29,9 @@ vi.mock("motion/react", () => {
       div: Motion,
       header: Motion,
       section: Motion,
+      span: Motion,
+      aside: Motion,
+      button: Motion,
     },
   };
 });

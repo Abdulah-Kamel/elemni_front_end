@@ -16,7 +16,6 @@ import {
 import { GlobalLoading } from "@/src/components/ui/global-loading";
 import { Link, useRouter } from "@/src/i18n/navigation";
 import { AnimatePresence, m } from "motion/react";
-import { portalCardLiftClass, portalContainerVariants, portalImageZoomClass, portalItemVariants } from "./dashboard-motion";
 import type { EnrollmentDto } from "@/src/lib/student-api/contract";
 import { resolveAssetUrl } from "@/src/lib/asset-url";
 import {
@@ -29,8 +28,11 @@ import {
 } from "@/src/features/student/hooks/use-student-queries";
 import lessonFallback from "@/src/assets/images/student-redesign/lesson-study-skills.webp";
 import StudentAppShell from "@/src/features/portal/components/portal-shell";
+import StudyCounter from "./study-counter";
 
 type CourseSort = "recent" | "expiring" | "title";
+
+const popSpring = { type: "spring", stiffness: 260, damping: 22 } as const;
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("ar-EG", { day: "numeric", month: "long", year: "numeric" }).format(new Date(value));
@@ -44,48 +46,62 @@ function formatDuration(minutes: number | null) {
   return remainder ? `${hours} س ${remainder} د` : `${hours} ساعات`;
 }
 
-function CourseRow({ enrollment }: { enrollment: EnrollmentDto }) {
+function CourseRow({ enrollment, index }: { enrollment: EnrollmentDto; index: number }) {
   const { course } = enrollment;
 
   return (
-    <Link href={`/my-courses/${course.id}`} aria-label={`فتح كورس ${course.title}`} className={`group flex flex-col overflow-hidden rounded-2xl border border-[#E2E0EF] bg-white ${portalCardLiftClass} hover:border-[#BAE6FD] hover:shadow-[0_4px_12px_rgba(2,132,199,0.04)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0284C7] focus-visible:ring-offset-2 md:min-h-56 md:flex-row-reverse`}>
-      <div className="relative aspect-video shrink-0 overflow-hidden bg-[#F0F9FF] md:aspect-auto md:w-60">
-        <Image
-          src={resolveAssetUrl(course.img, lessonFallback.src)}
-          alt={course.title}
-          fill
-          sizes="(max-width: 767px) 100vw, 240px"
-          className={`object-cover ${portalImageZoomClass}`}
-        />
-      </div>
-
-      <div className="flex min-w-0 flex-1 flex-col p-5 sm:p-6">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-full bg-[#0284C7]/5 px-3 py-1 text-xs font-bold text-[#0369A1]">{course.subject_name || "كورس تعليمي"}</span>
-          <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">اشتراك نشط</span>
+    <m.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 8 }}
+      transition={{ ...popSpring, delay: 0.05 * (index % 6) }}
+      whileHover={{ y: -4 }}
+      whileTap={{ scale: 0.99 }}
+    >
+      <Link href={`/my-courses/${course.id}`} aria-label={`فتح كورس ${course.title}`} className="sticker-tile group flex flex-col overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 md:min-h-56 md:flex-row-reverse">
+        <div className="relative aspect-video shrink-0 overflow-hidden border-b-2 border-ink bg-brand-100 md:aspect-auto md:w-60 md:border-b-0 md:border-e-2 md:border-ink dark:border-brand-300 dark:bg-slate-800">
+          <Image
+            src={resolveAssetUrl(course.img, lessonFallback.src)}
+            alt={course.title}
+            fill
+            sizes="(max-width: 767px) 100vw, 240px"
+            className="object-cover"
+          />
         </div>
 
-        <h2 className="mt-3 text-xl font-black leading-8 text-[#1B1B24] transition-colors group-hover:text-[#0369A1] sm:text-2xl">{course.title}</h2>
-        <p className="mt-2 line-clamp-2 max-w-3xl text-sm leading-6 text-[#777587]">{course.description || `${course.lesson_count} درس متاح ضمن اشتراكك الحالي.`}</p>
-
-        <div className="mt-5 max-w-2xl">
-          <div className="mb-2 flex items-center justify-between text-xs font-bold text-[#777587]">
-            <span>التقدم في الكورس</span>
-            <span>{enrollment.progress.completion_percent}%</span>
+        <div className="flex min-w-0 flex-1 flex-col p-5 sm:p-6">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="sticker-badge -rotate-1 bg-amber-300 px-3 py-1 text-xs font-black text-ink">{course.subject_name || "كورس تعليمي"}</span>
+            <span className="sticker-badge bg-emerald-100 px-3 py-1 text-xs font-black text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300">اشتراك نشط</span>
           </div>
-          <div className="h-2 overflow-hidden rounded-full bg-[#E0F2FE]">
-            <div className="h-full rounded-full bg-[#0284C7]" style={{ width: `${enrollment.progress.completion_percent}%` }} />
+
+          <h2 className="mt-3 text-xl font-black leading-8 text-ink transition-colors group-hover:text-brand-700 sm:text-2xl dark:text-slate-50 dark:group-hover:text-brand-300">{course.title}</h2>
+          <p className="mt-2 line-clamp-2 max-w-3xl text-sm leading-6 font-medium text-muted dark:text-slate-400">{course.description || `${course.lesson_count} درس متاح ضمن اشتراكك الحالي.`}</p>
+
+          <div className="mt-5 max-w-2xl">
+            <div className="mb-2 flex items-center justify-between text-xs font-black text-muted dark:text-slate-400">
+              <span>التقدم في الكورس</span>
+              <StudyCounter value={enrollment.progress.completion_percent} format={(n) => `${n}%`} className="sticker-numeral" />
+            </div>
+            <div className="h-3 overflow-hidden rounded-full border-2 border-ink bg-brand-100 dark:border-brand-300 dark:bg-slate-800">
+              <m.div
+                className="h-full rounded-full bg-brand-600"
+                initial={{ width: 0 }}
+                animate={{ width: `${enrollment.progress.completion_percent}%` }}
+                transition={{ ...popSpring, delay: 0.2 }}
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 border-t border-[#E2E0EF] pt-4 text-xs font-bold text-[#777587]">
-          <span className="inline-flex items-center gap-1.5"><BookOpen className="size-4 text-[#0284C7]" />{course.lesson_count} درس</span>
-          <span className="inline-flex items-center gap-1.5"><Clock3 className="size-4 text-[#0284C7]" />{formatDuration(course.total_duration_minutes)}</span>
-          <span className="inline-flex items-center gap-1.5"><CalendarClock className="size-4 text-[#0284C7]" />متاح حتى {formatDate(enrollment.expires_at)}</span>
-        </div>
+          <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 border-t-2 border-ink/10 pt-4 text-xs font-black text-muted dark:border-white/10 dark:text-slate-400">
+            <span className="inline-flex items-center gap-1.5"><BookOpen className="size-4 text-brand-600 dark:text-brand-300" />{course.lesson_count} درس</span>
+            <span className="inline-flex items-center gap-1.5"><Clock3 className="size-4 text-brand-600 dark:text-brand-300" />{formatDuration(course.total_duration_minutes)}</span>
+            <span className="inline-flex items-center gap-1.5"><CalendarClock className="size-4 text-brand-600 dark:text-brand-300" />متاح حتى {formatDate(enrollment.expires_at)}</span>
+          </div>
 
-      </div>
-    </Link>
+        </div>
+      </Link>
+    </m.div>
   );
 }
 
@@ -142,51 +158,72 @@ export default function MyCourses() {
         <GlobalLoading variant="content" message="جاري تحميل كورساتك..." />
       ) : error ? (
         <div className="mx-auto flex min-h-[70vh] max-w-xl items-center px-4">
-          <div role="alert" className="w-full rounded-2xl border border-red-200 bg-red-50 p-6 text-center text-sm font-bold text-red-700">
+          <div role="alert" className="sticker-tile w-full border-red-600 bg-red-50 p-6 text-center text-sm font-black text-red-700 dark:border-red-400 dark:bg-red-500/10 dark:text-red-300">
             <CircleAlert className="mx-auto mb-3 size-8" />
             <p>{error}</p>
-            <button type="button" onClick={() => void loadCourses()} className="mt-4 cursor-pointer text-[#0369A1] hover:underline">إعادة المحاولة</button>
+            <button type="button" onClick={() => void loadCourses()} className="mt-4 cursor-pointer font-black text-brand-700 hover:underline dark:text-brand-300">إعادة المحاولة</button>
           </div>
         </div>
       ) : (
-        <m.div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8" initial="hidden" animate="show" variants={portalContainerVariants}>
-          <m.header className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between" variants={portalItemVariants}>
+        <div className="mx-auto max-w-[1400px] px-4 py-8 sm:px-6 lg:px-8">
+          <m.header
+            className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between"
+            initial={{ opacity: 0, y: -16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={popSpring}
+          >
             <div>
-              <span className="mb-3 inline-flex items-center gap-2 rounded-lg bg-[#F0F9FF] px-3 py-1.5 text-xs font-black text-[#0369A1]"><GraduationCap className="size-4" />مكتبة الطالب</span>
-              <h1 className="text-3xl font-black leading-tight sm:text-4xl">دوراتي</h1>
-              <p className="mt-2 text-sm leading-6 text-[#777587]">كل اشتراكاتك النشطة ومحتواك التعليمي في مكان واحد.</p>
+              <h1 className="text-5xl font-black tracking-tight text-ink sm:text-6xl dark:text-slate-50">دوراتي</h1>
+              <p className="mt-3 max-w-[65ch] text-sm leading-7 font-medium text-muted dark:text-slate-400">كل اشتراكاتك النشطة ومحتواك التعليمي في مكان واحد.</p>
             </div>
-            <Link href="/explore" className="inline-flex h-11 w-fit items-center gap-2 rounded-xl border border-[#BAE6FD] bg-white px-5 text-sm font-black text-[#0369A1] transition hover:bg-[#E0F2FE]"><Compass className="size-4" />استكشف كورسات جديدة</Link>
+            <m.div whileHover={{ scale: 1.04, rotate: 1 }} whileTap={{ scale: 0.95 }} transition={popSpring} className="w-fit">
+              <Link href="/explore" className="sticker-btn-outline inline-flex h-12 items-center gap-2 px-6 text-sm font-black text-brand-700 dark:text-brand-300"><Compass className="size-4" />استكشف كورسات جديدة</Link>
+            </m.div>
           </m.header>
 
           {!!enrollments.length && (
-            <m.section className="mt-8 grid grid-cols-3 gap-2 sm:gap-3" aria-label="ملخص الكورسات" variants={portalItemVariants}>
+            <m.section
+              className="sticker-tile mt-8 flex flex-col divide-y-2 divide-ink/10 px-6 py-2 sm:flex-row sm:items-center sm:divide-x-2 sm:divide-x-reverse sm:divide-y-0 dark:divide-white/10"
+              aria-label="ملخص الكورسات"
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ ...popSpring, delay: 0.1 }}
+            >
               {[
-                { label: "كورسات نشطة", value: enrollments.length, icon: GraduationCap },
-                { label: "إجمالي الدروس", value: totalLessons, icon: BookOpen },
-                { label: "مدة المحتوى", value: formatDuration(totalMinutes || null), icon: Clock3 },
-              ].map(({ label, value, icon: Icon }) => (
-                <article key={label} className="flex min-h-24 flex-col justify-center gap-2 rounded-2xl border border-[#E2E0EF] bg-white p-3 sm:flex-row sm:items-center sm:gap-4 sm:p-5">
-                  <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#F0F9FF] text-[#0284C7] sm:size-11"><Icon className="size-4 sm:size-5" /></span>
-                  <span><strong className="block text-lg font-black sm:text-2xl">{value}</strong><span className="block text-[10px] font-medium leading-4 text-[#777587] sm:text-xs">{label}</span></span>
-                </article>
+                { label: "كورسات نشطة", value: enrollments.length, icon: GraduationCap, format: undefined as ((n: number) => string) | undefined },
+                { label: "إجمالي الدروس", value: totalLessons, icon: BookOpen, format: undefined as ((n: number) => string) | undefined },
+                { label: "مدة المحتوى", value: totalMinutes, icon: Clock3, format: (n: number) => formatDuration(n || null) },
+              ].map(({ label, value, icon: Icon, format }) => (
+                <div key={label} className="flex flex-1 items-center gap-4 py-4 sm:justify-center sm:py-5">
+                  <span className="sticker-badge flex size-11 shrink-0 items-center justify-center bg-brand-100 text-brand-700 dark:bg-slate-800 dark:text-brand-300"><Icon className="size-5" /></span>
+                  <span>
+                    <StudyCounter value={value} format={format} className="sticker-numeral block text-3xl font-black text-ink dark:text-slate-50" />
+                    <span className="text-xs font-black text-muted dark:text-slate-400">{label}</span>
+                  </span>
+                </div>
               ))}
             </m.section>
           )}
 
           {!!enrollments.length && (
-            <m.section className="mt-8 border-y border-[#E2E0EF] py-4" aria-label="فلترة الكورسات" variants={portalItemVariants}>
+            <m.section
+              className="sticker-tile mt-6 p-4"
+              aria-label="فلترة الكورسات"
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ ...popSpring, delay: 0.15 }}
+            >
               <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_220px_180px]">
                 <label className="relative block">
                   <span className="sr-only">ابحث في كورساتك</span>
-                  <Search className="pointer-events-none absolute end-3 top-1/2 size-5 -translate-y-1/2 text-[#777587]" />
-                  <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="ابحث باسم الكورس أو المادة..." className="h-11 w-full rounded-lg border border-[#E2E0EF] bg-white pe-11 ps-4 text-sm outline-none transition focus:border-[#0284C7] focus:ring-2 focus:ring-[#0284C7]/10" />
+                  <Search className="pointer-events-none absolute end-3 top-1/2 size-5 -translate-y-1/2 text-muted" />
+                  <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="ابحث باسم الكورس أو المادة..." className="h-12 w-full rounded-full border-2 border-ink bg-surface pe-11 ps-4 text-sm font-medium text-ink outline-none transition placeholder:text-muted focus:border-brand-600 dark:border-brand-300 dark:bg-transparent dark:text-slate-100" />
                 </label>
 
                 <label className="relative block">
                   <span className="sr-only">فلترة حسب المادة</span>
-                  <SlidersHorizontal className="pointer-events-none absolute end-3 top-1/2 size-4 -translate-y-1/2 text-[#777587]" />
-                  <select value={subject} onChange={(event) => setSubject(event.target.value)} className="h-11 w-full cursor-pointer appearance-none rounded-lg border border-[#E2E0EF] bg-white pe-10 ps-4 text-sm font-bold outline-none transition focus:border-[#0284C7] focus:ring-2 focus:ring-[#0284C7]/10">
+                  <SlidersHorizontal className="pointer-events-none absolute end-3 top-1/2 size-4 -translate-y-1/2 text-muted" />
+                  <select value={subject} onChange={(event) => setSubject(event.target.value)} className="h-12 w-full cursor-pointer appearance-none rounded-full border-2 border-ink bg-surface pe-10 ps-4 text-sm font-black text-ink outline-none transition focus:border-brand-600 dark:border-brand-300 dark:bg-transparent dark:text-slate-100">
                     <option value="all">كل المواد</option>
                     {subjects.map((item) => <option key={item} value={item}>{item}</option>)}
                   </select>
@@ -194,7 +231,7 @@ export default function MyCourses() {
 
                 <label>
                   <span className="sr-only">ترتيب الكورسات</span>
-                  <select value={sort} onChange={(event) => setSort(event.target.value as CourseSort)} className="h-11 w-full cursor-pointer rounded-lg border border-[#E2E0EF] bg-white px-3 text-sm font-bold outline-none transition focus:border-[#0284C7] focus:ring-2 focus:ring-[#0284C7]/10">
+                  <select value={sort} onChange={(event) => setSort(event.target.value as CourseSort)} className="h-12 w-full cursor-pointer rounded-full border-2 border-ink bg-surface px-4 text-sm font-black text-ink outline-none transition focus:border-brand-600 dark:border-brand-300 dark:bg-transparent dark:text-slate-100">
                     <option value="recent">الأحدث اشتراكاً</option>
                     <option value="expiring">الأقرب انتهاءً</option>
                     <option value="title">حسب الاسم</option>
@@ -204,41 +241,39 @@ export default function MyCourses() {
             </m.section>
           )}
 
-          <m.section className="mt-8" aria-labelledby="courses-heading" variants={portalItemVariants}>
+          <m.section className="mt-8" aria-labelledby="courses-heading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
             {!!enrollments.length && (
               <div className="mb-4 flex items-center justify-between gap-4">
-                <h2 id="courses-heading" className="text-xl font-black">كورساتك الحالية</h2>
-                <span className="text-xs font-bold text-[#777587]">{visibleCourses.length} من {enrollments.length}</span>
+                <h2 id="courses-heading" className="text-2xl font-black tracking-tight text-ink dark:text-slate-50">كورساتك الحالية</h2>
+                <span className="sticker-badge bg-surface px-3 py-1 text-xs font-black text-muted dark:text-slate-300">{visibleCourses.length} من {enrollments.length}</span>
               </div>
             )}
 
             <AnimatePresence mode="wait" initial={false}>
               {visibleCourses.length ? (
                 <m.div key={`results-${visibleEnrollmentIdsKey}`} className="space-y-5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
-                  {visibleCourses.map((enrollment) => (
-                    <m.div key={enrollment.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: 0.2 }}>
-                      <CourseRow enrollment={enrollment} />
-                    </m.div>
+                  {visibleCourses.map((enrollment, index) => (
+                    <CourseRow key={enrollment.id} enrollment={enrollment} index={index} />
                   ))}
                 </m.div>
               ) : enrollments.length ? (
-                <m.div key="no-match" className="flex min-h-64 flex-col items-center justify-center rounded-2xl border border-[#E2E0EF] bg-white px-4 text-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
-                  <Search className="mb-4 size-9 text-[#C7C4D8]" />
-                  <h2 className="text-lg font-black">لا توجد نتائج مطابقة</h2>
-                  <p className="mt-2 text-sm text-[#777587]">جرّب كلمة بحث مختلفة أو اعرض كل المواد.</p>
-                  {hasFilters && <button type="button" onClick={() => { setSearch(""); setSubject("all"); }} className="mt-4 cursor-pointer text-sm font-black text-[#0369A1] hover:underline">مسح الفلاتر</button>}
+                <m.div key="no-match" className="sticker-tile flex min-h-64 flex-col items-center justify-center px-4 text-center" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={popSpring}>
+                  <Search className="mb-4 size-9 text-muted" />
+                  <h2 className="text-lg font-black text-ink dark:text-slate-50">لا توجد نتائج مطابقة</h2>
+                  <p className="mt-2 text-sm font-medium text-muted dark:text-slate-400">جرّب كلمة بحث مختلفة أو اعرض كل المواد.</p>
+                  {hasFilters && <button type="button" onClick={() => { setSearch(""); setSubject("all"); }} className="mt-4 cursor-pointer text-sm font-black text-brand-700 hover:underline dark:text-brand-300">مسح الفلاتر</button>}
                 </m.div>
               ) : (
-                <m.div key="empty" className="flex min-h-80 flex-col items-center justify-center rounded-2xl border border-[#E2E0EF] bg-white px-4 text-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
-                  <span className="flex size-14 items-center justify-center rounded-2xl bg-[#F0F9FF] text-[#0284C7]"><BookOpen className="size-7" /></span>
-                  <h2 className="mt-5 text-xl font-black">لا توجد اشتراكات نشطة</h2>
-                  <p className="mt-2 max-w-md text-sm leading-6 text-[#777587]">استكشف المدرسين واختر الكورس المناسب لسنتك وشعبتك.</p>
-                  <Link href="/explore" className="mt-6 inline-flex h-11 items-center gap-2 rounded-xl bg-[#0284C7] px-6 text-sm font-black text-white hover:bg-[#0369A1]">استكشف الكورسات<ArrowLeft className="size-4" /></Link>
+                <m.div key="empty" className="sticker-tile flex min-h-80 flex-col items-center justify-center px-4 text-center" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={popSpring}>
+                  <span className="sticker-badge flex size-14 items-center justify-center bg-brand-100 text-brand-600 dark:bg-slate-800 dark:text-brand-300"><BookOpen className="size-7" /></span>
+                  <h2 className="mt-5 text-xl font-black text-ink dark:text-slate-50">لا توجد اشتراكات نشطة</h2>
+                  <p className="mt-2 max-w-md text-sm leading-6 font-medium text-muted dark:text-slate-400">استكشف المدرسين واختر الكورس المناسب لسنتك وشعبتك.</p>
+                  <Link href="/explore" className="sticker-btn mt-6 inline-flex h-12 items-center gap-2 px-7 text-sm font-black">استكشف الكورسات<ArrowLeft className="size-4" /></Link>
                 </m.div>
               )}
             </AnimatePresence>
           </m.section>
-        </m.div>
+        </div>
       )}
     </StudentAppShell>
   );

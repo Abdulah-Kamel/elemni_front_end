@@ -22,7 +22,7 @@ vi.mock("../client", () => ({
 }));
 
 describe("OnboardingFlow", () => {
-  it("uses shared design-system color utilities on the welcome step", () => {
+  it("uses the sticker world tokens on the welcome step", () => {
     render(<OnboardingFlow grades={[]} streams={[]} subjects={[]} />);
 
     const shell = screen.getByText("أهلاً بيك في علمني").closest("[dir='rtl']");
@@ -30,9 +30,9 @@ describe("OnboardingFlow", () => {
     const skipButton = screen.getByRole("button", { name: /تخطي الآن/i });
     const title = screen.getByRole("heading", { name: "أهلاً بيك في علمني" });
 
-    expect(shell).toHaveClass("bg-page", "text-ink");
-    expect(title).toHaveClass("text-primary");
-    expect(primaryCta).toHaveClass("bg-primary", "hover:bg-primary-hover");
-    expect(skipButton).toHaveClass("text-primary", "hover:bg-primary-light");
+    expect(shell).toHaveClass("student-portal-shell", "text-ink");
+    expect(title).toHaveClass("text-brand-700");
+    expect(primaryCta).toHaveClass("sticker-btn");
+    expect(skipButton).toHaveClass("text-brand-700");
   });
 });
