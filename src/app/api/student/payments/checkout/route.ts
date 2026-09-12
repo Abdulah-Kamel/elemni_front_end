@@ -10,9 +10,11 @@ export async function POST(request: Request) {
     return Response.json({ detail: "معرّف الكورس غير صالح." }, { status: 400 });
   }
 
+  const rawCode = typeof body?.coupon_code === "string" ? body.coupon_code.trim().toUpperCase().slice(0, 20) : "";
+
   const result = await authenticatedBackendFetch<CheckoutRedirectDto>(
     "/api/v1/payments/checkout",
-    { method: "POST", body: JSON.stringify({ course_id: courseId }) },
+    { method: "POST", body: JSON.stringify(rawCode ? { course_id: courseId, coupon_code: rawCode } : { course_id: courseId }) },
   );
   if (!result.ok) return backendErrorResponse(result.error);
   // The backend owns the payment contract: paid courses return a Kashier

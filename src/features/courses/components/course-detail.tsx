@@ -26,6 +26,7 @@ import {
   useUpdateCourseProgress,
 } from "@/src/features/student/hooks/use-student-queries";
 import { studentQueryKeys } from "@/src/features/student/query-keys";
+import { getEffectiveCoupons, validateCoupon, type CouponValidation } from "@/src/lib/coupons/coupons";
 import { portalContainerVariants, portalItemVariants, scrollIntoViewById } from "./course-motion";
 import CheckoutConfirmation from "./checkout-confirmation";
 import CourseHero from "./course-hero";
@@ -61,6 +62,9 @@ export default function CourseDetail({
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [couponCode, setCouponCode] = useState("");
+  const [couponApplied, setCouponApplied] = useState<CouponValidation | null>(null);
+  const [couponError, setCouponError] = useState("");
   const [expandedChapterId, setExpandedChapterId] = useState<number | null | undefined>(
     () => initialDetail
       ? initialDetail.course.chapters.find((chapter) => chapter.lessons.length)?.id ?? null
@@ -185,13 +189,21 @@ export default function CourseDetail({
     setCheckoutOpen(true);
   };
 
+  const basePrice = Number(detail?.enrollment?.course_price ?? course?.price ?? 0);
+  const applyCoupon = (raw: string) => {
+    const r = validateCoupon(raw, basePrice, new Date(), getEffectiveCoupons());
+    if (r.ok) { setCouponApplied(r); setCouponCode(r.coupon!.code); setCouponError(""); }
+    else { setCouponApplied(null); setCouponError(t(`couponError_${r.error}` as never) || t("couponInvalid")); }
+  };
+  const removeCoupon = () => { setCouponApplied(null); setCouponCode(""); setCouponError(""); };
+
   const startCheckout = async () => {
     setCheckoutLoading(true);
     setCheckoutError("");
     const response = await fetch("/api/student/payments/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ course_id: courseId }),
+      body: JSON.stringify(couponApplied?.ok ? { course_id: courseId, coupon_code: couponApplied.coupon!.code } : { course_id: courseId }),
     }).catch(() => null);
 
     if (response?.status === 401) {
@@ -385,6 +397,10 @@ export default function CourseDetail({
                   loading={checkoutLoading}
                   onPurchase={openCheckout}
                   onContinue={startCourse}
+                  couponApplied={couponApplied}
+                  couponError={couponError}
+                  onCouponApply={applyCoupon}
+                  onCouponRemove={removeCoupon}
                 />
               </aside>
             )}
@@ -399,6 +415,7 @@ export default function CourseDetail({
           teacher={detail?.teacher ?? null}
           loading={checkoutLoading}
           error={checkoutError}
+          coupon={couponApplied}
           onOpenChange={(open) => {
             if (!checkoutLoading) setCheckoutOpen(open);
           }}

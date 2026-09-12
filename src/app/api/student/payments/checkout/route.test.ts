@@ -121,4 +121,27 @@ describe("POST /api/student/payments/checkout", () => {
     });
     expect(response.status).toBe(409);
   });
+
+  it("rejects empty coupon_code with 400 only when course_id invalid", async () => {
+    const response = await postCheckout({ course_id: 0, coupon_code: "SAVE20" });
+
+    expect(response.status).toBe(400);
+    expect(mocks.authenticatedBackendFetch).not.toHaveBeenCalled();
+  });
+
+  it("forwards a normalized coupon_code to the backend", async () => {
+    mocks.authenticatedBackendFetch.mockResolvedValue({
+      ok: true,
+      status: 200,
+      data: { redirect_url: "/my-courses" },
+    });
+
+    const response = await postCheckout({ course_id: 12, coupon_code: " save20 " });
+
+    expect(mocks.authenticatedBackendFetch).toHaveBeenCalledWith(
+      "/api/v1/payments/checkout",
+      { method: "POST", body: JSON.stringify({ course_id: 12, coupon_code: "SAVE20" }) },
+    );
+    expect(response.status).toBe(200);
+  });
 });

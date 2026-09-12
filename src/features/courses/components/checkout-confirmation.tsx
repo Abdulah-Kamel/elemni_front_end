@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import { CheckCircle2, CircleAlert, LoaderCircle, ShieldCheck, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { resolveAssetUrl } from "@/src/lib/asset-url";
+import type { CouponValidation } from "@/src/lib/coupons/coupons";
 import type {
   PublicCourseDto,
   StudentCourseTeacherDto,
@@ -23,6 +24,7 @@ export default function CheckoutConfirmation({
   teacher,
   loading,
   error,
+  coupon,
   onOpenChange,
   onConfirm,
 }: {
@@ -31,6 +33,7 @@ export default function CheckoutConfirmation({
   teacher: StudentCourseTeacherDto | null;
   loading: boolean;
   error: string;
+  coupon: CouponValidation | null;
   onOpenChange: (open: boolean) => void;
   onConfirm: () => void;
 }) {
@@ -111,9 +114,17 @@ export default function CheckoutConfirmation({
           <div className="min-w-0">
             <h3 className="truncate text-sm font-black text-[#0F2638]">{course.title}</h3>
             {teacher && <p className="mt-1 truncate text-xs text-[#6B7E8F]">{teacher.name}</p>}
-            <p className="mt-2 text-lg font-black text-[#075985]">
-              {formatPrice(course.price, locale)} <span className="text-xs">{t("currency")}</span>
-            </p>
+            {coupon?.ok ? (
+              <div className="mt-2 space-y-0.5 text-sm font-bold text-[#075985]">
+                <p className="flex justify-between"><span>{t("couponOriginal")}</span><span className="line-through opacity-70">{formatPrice(coupon.originalPrice, locale)}</span></p>
+                <p className="flex justify-between text-emerald-600"><span>{t("couponDiscount", { code: coupon.coupon!.code })}</span><span>-{formatPrice(coupon.discount, locale)}</span></p>
+                <p className="flex justify-between text-lg font-black"><span>{t("couponTotal")}</span><span>{formatPrice(coupon.finalPrice, locale)} <span className="text-xs">{t("currency")}</span></span></p>
+              </div>
+            ) : (
+              <p className="mt-2 text-lg font-black text-[#075985]">
+                {formatPrice(course.price, locale)} <span className="text-xs">{t("currency")}</span>
+              </p>
+            )}
           </div>
         </div>
 
@@ -151,7 +162,7 @@ export default function CheckoutConfirmation({
             className="order-1 inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#0284C7] px-4 text-sm font-black text-white transition hover:bg-[#0369A1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7DD3FC] focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-60 sm:order-2"
           >
             {loading && <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />}
-            {loading ? t("redirecting") : t("continueToPayment")}
+            {loading ? t("redirecting") : coupon?.ok ? t("continueToPaymentWithTotal", { total: formatPrice(coupon.finalPrice, locale) }) : t("continueToPayment")}
           </button>
         </div>
       </section>
