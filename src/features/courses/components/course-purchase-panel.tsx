@@ -2,6 +2,8 @@
 
 import { CheckCircle2, LockKeyhole, ShieldCheck } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
+import CouponInput from "./coupon-input";
+import type { CouponValidation } from "@/src/lib/coupons/coupons";
 import type {
   EnrollmentDto,
   PublicCourseDto,
@@ -27,6 +29,10 @@ export default function CoursePurchasePanel({
   loading,
   onPurchase,
   onContinue,
+  couponApplied,
+  couponError,
+  onCouponApply,
+  onCouponRemove,
 }: {
   course: PublicCourseDto;
   enrollment: EnrollmentDto | null;
@@ -34,6 +40,10 @@ export default function CoursePurchasePanel({
   loading: boolean;
   onPurchase: () => void;
   onContinue: () => void;
+  couponApplied: CouponValidation | null;
+  couponError: string;
+  onCouponApply: (code: string) => void;
+  onCouponRemove: () => void;
 }) {
   const t = useTranslations("courseDetail");
   const locale = useLocale();
@@ -61,6 +71,19 @@ export default function CoursePurchasePanel({
           </span>
         )}
       </div>
+
+      {!enrolled && (
+        <div className="border-b-2 border-ink/10 py-4 dark:border-white/10">
+          <CouponInput price={Number(enrollment?.course_price ?? course.price)} applied={couponApplied} error={couponError} onApply={onCouponApply} onRemove={onCouponRemove} disabled={loading} />
+          {couponApplied?.ok && (
+            <div className="mt-3 space-y-1 text-sm font-bold">
+              <p className="flex justify-between text-muted"><span>{t("couponOriginal")}</span><span className="line-through">{formatPrice(couponApplied.originalPrice, locale)}</span></p>
+              <p className="flex justify-between text-emerald-600"><span>{t("couponDiscount", { code: couponApplied.coupon!.code })}</span><span>-{formatPrice(couponApplied.discount, locale)}</span></p>
+              <p className="flex justify-between text-base font-black text-ink dark:text-slate-50"><span>{t("couponTotal")}</span><span>{formatPrice(couponApplied.finalPrice, locale)}</span></p>
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="space-y-3 py-5 text-sm text-[#536A7C]">
         <p className="flex items-start gap-2">
