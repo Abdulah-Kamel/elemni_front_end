@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef } from "react";
-import { CheckCircle2, CircleAlert, LoaderCircle, ShieldCheck, X } from "lucide-react";
+import { CheckCircle2, CircleAlert, LoaderCircle, ShieldCheck, TicketPercent, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { resolveAssetUrl } from "@/src/lib/asset-url";
 import type { CouponValidation } from "@/src/lib/coupons/coupons";
@@ -115,13 +115,13 @@ export default function CheckoutConfirmation({
             <h3 className="truncate text-sm font-black text-[#0F2638]">{course.title}</h3>
             {teacher && <p className="mt-1 truncate text-xs text-[#6B7E8F]">{teacher.name}</p>}
             {coupon?.ok ? (
-              <div className="mt-2 space-y-0.5 text-sm font-bold text-[#075985]">
-                <p className="flex justify-between"><span>{t("couponOriginal")}</span><span className="line-through opacity-70">{formatPrice(coupon.originalPrice, locale)}</span></p>
-                <p className="flex justify-between text-emerald-600"><span>{t("couponDiscount", { code: coupon.coupon!.code })}</span><span>-{formatPrice(coupon.discount, locale)}</span></p>
-                <p className="flex justify-between text-lg font-black"><span>{t("couponTotal")}</span><span>{formatPrice(coupon.finalPrice, locale)} <span className="text-xs">{t("currency")}</span></span></p>
+              <div className="mt-2 rounded-xl border-2 border-dashed border-ink/20 bg-white px-3 py-2.5 text-sm font-bold text-ink tabular-nums dark:border-white/20 dark:bg-slate-900 dark:text-slate-50">
+                <p className="flex justify-between text-muted dark:text-slate-400"><span>{t("couponOriginal")}</span><span className="line-through">{formatPrice(coupon.originalPrice, locale)}</span></p>
+                <p className="mt-1 flex justify-between text-emerald-700 dark:text-emerald-300"><span className="inline-flex items-center gap-1.5"><TicketPercent className="size-4" aria-hidden="true" />{t("couponDiscount", { code: coupon.coupon!.code })}</span><span>-{formatPrice(coupon.discount, locale)}</span></p>
+                <p className="mt-1.5 flex items-baseline justify-between border-t-2 border-ink/10 pt-1.5 dark:border-white/10"><span className="font-black">{t("couponTotal")}</span><span className="sticker-numeral text-xl font-black tracking-tight">{formatPrice(coupon.finalPrice, locale)} <span className="text-xs">{t("currency")}</span></span></p>
               </div>
             ) : (
-              <p className="mt-2 text-lg font-black text-[#075985]">
+              <p className="sticker-numeral mt-2 text-xl font-black tracking-tight text-ink dark:text-slate-50">
                 {formatPrice(course.price, locale)} <span className="text-xs">{t("currency")}</span>
               </p>
             )}

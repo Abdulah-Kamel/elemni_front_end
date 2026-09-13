@@ -307,39 +307,6 @@ export default function CourseDetail({
                 )}
               </AnimatePresence>
 
-              <m.nav
-                className="sticker-tile flex gap-1 overflow-x-auto p-1.5"
-                aria-label={t("courseContent")}
-                initial={publicMode || reduced ? false : "hidden"}
-                animate="show"
-                variants={portalItemVariants}
-              >
-                {([
-                  ["content", true],
-                  ["exams", false],
-                  ["files", false],
-                  ["discussions", false],
-                  ["progress", false],
-                ] as const).map(([key, enabled]) => (
-                  <button
-                    key={key}
-                    type="button"
-                    disabled={!enabled}
-                    title={!enabled ? `${t(`tabs.${key}`)} · ${t("tabs.comingSoon")}` : undefined}
-                    className={`relative shrink-0 rounded-xl px-4 py-3 text-sm font-black transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-600 ${enabled ? "text-white" : "cursor-not-allowed text-muted dark:text-slate-500"}`}
-                  >
-                    {enabled && (
-                      <m.span
-                        layoutId="course-detail-tab"
-                        className="absolute inset-0 rounded-xl border-2 border-ink bg-ink dark:border-brand-300 dark:bg-brand-600"
-                        transition={{ type: "spring", stiffness: 320, damping: 28 }}
-                      />
-                    )}
-                    <span className="relative">{t(`tabs.${key}`)}</span>
-                  </button>
-                ))}
-              </m.nav>
-
               {!enrolled && (
                 <m.section
                   id="course-content"

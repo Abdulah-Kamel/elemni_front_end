@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, LockKeyhole, ShieldCheck } from "lucide-react";
+import { CheckCircle2, LockKeyhole, ShieldCheck, TicketPercent } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import CouponInput from "./coupon-input";
 import type { CouponValidation } from "@/src/lib/coupons/coupons";
@@ -74,12 +74,12 @@ export default function CoursePurchasePanel({
 
       {!enrolled && (
         <div className="border-b-2 border-ink/10 py-4 dark:border-white/10">
-          <CouponInput price={Number(enrollment?.course_price ?? course.price)} applied={couponApplied} error={couponError} onApply={onCouponApply} onRemove={onCouponRemove} disabled={loading} />
+          <CouponInput applied={couponApplied} error={couponError} onApply={onCouponApply} onRemove={onCouponRemove} disabled={loading} />
           {couponApplied?.ok && (
-            <div className="mt-3 space-y-1 text-sm font-bold">
+            <div className="mt-3 space-y-1 text-sm font-bold tabular-nums">
               <p className="flex justify-between text-muted"><span>{t("couponOriginal")}</span><span className="line-through">{formatPrice(couponApplied.originalPrice, locale)}</span></p>
-              <p className="flex justify-between text-emerald-600"><span>{t("couponDiscount", { code: couponApplied.coupon!.code })}</span><span>-{formatPrice(couponApplied.discount, locale)}</span></p>
-              <p className="flex justify-between text-base font-black text-ink dark:text-slate-50"><span>{t("couponTotal")}</span><span>{formatPrice(couponApplied.finalPrice, locale)}</span></p>
+              <p className="flex justify-between text-emerald-700 dark:text-emerald-300"><span className="inline-flex items-center gap-1.5"><TicketPercent className="size-4" aria-hidden="true" />{t("couponDiscount", { code: couponApplied.coupon!.code })}</span><span>-{formatPrice(couponApplied.discount, locale)}</span></p>
+              <p className="flex items-baseline justify-between text-ink dark:text-slate-50"><span className="text-sm font-black">{t("couponTotal")}</span><span className="sticker-numeral text-2xl font-black tracking-tight">{formatPrice(couponApplied.finalPrice, locale)}</span></p>
             </div>
           )}
         </div>

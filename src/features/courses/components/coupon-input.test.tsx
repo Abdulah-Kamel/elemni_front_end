@@ -11,14 +11,14 @@ vi.mock("next-intl", () => ({
 describe("CouponInput", () => {
   it("calls onApply with typed code", () => {
     const onApply = vi.fn();
-    render(<CouponInput price={500} applied={null} onApply={onApply} onRemove={() => {}} />);
+    render(<CouponInput applied={null} onApply={onApply} onRemove={() => {}} />);
     fireEvent.change(screen.getByPlaceholderText("couponPlaceholder"), { target: { value: "save20" } });
     fireEvent.click(screen.getByRole("button", { name: "couponApply" }));
     expect(onApply).toHaveBeenCalledWith("save20");
   });
   it("shows remove button when applied", () => {
     const applied = { ok: true, coupon: { code: "SAVE20" }, originalPrice: 500, discount: 100, finalPrice: 400, error: null } as never;
-    render(<CouponInput price={500} applied={applied} onApply={() => {}} onRemove={() => {}} />);
+    render(<CouponInput applied={applied} onApply={() => {}} onRemove={() => {}} />);
     expect(screen.getByRole("button", { name: "couponRemove" })).toBeDefined();
   });
 });

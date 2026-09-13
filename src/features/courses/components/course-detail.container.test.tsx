@@ -228,7 +228,7 @@ describe("CourseDetail production experience", () => {
     expect(screen.getByRole("button", { name: "اشترك في الكورس" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "الوحدة الأولى" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /مقدمة في النهايات/ })).toBeInTheDocument();
-    expect(screen.getByRole("navigation", { name: "محتوى الكورس" })).not.toHaveStyle({ opacity: "0" });
+    expect(screen.queryByRole("navigation", { name: "محتوى الكورس" })).not.toBeInTheDocument();
     expect(screen.queryByText(/Kashier/i)).not.toBeInTheDocument();
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
