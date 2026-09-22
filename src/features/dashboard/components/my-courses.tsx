@@ -173,7 +173,7 @@ export default function MyCourses() {
             transition={popSpring}
           >
             <div>
-              <h1 className="text-5xl font-black tracking-tight text-ink sm:text-6xl dark:text-slate-50">دوراتي</h1>
+              <h1 className="text-5xl font-black tracking-tight text-ink sm:text-6xl dark:text-slate-50">كورساتى</h1>
               <p className="mt-3 max-w-[65ch] text-sm leading-7 font-medium text-muted dark:text-slate-400">كل اشتراكاتك النشطة ومحتواك التعليمي في مكان واحد.</p>
             </div>
             <m.div whileHover={{ scale: 1.04, rotate: 1 }} whileTap={{ scale: 0.95 }} transition={popSpring} className="w-fit">

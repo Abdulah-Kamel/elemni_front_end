@@ -629,7 +629,7 @@
   },
   "courseDetail": {
     "backToCatalog": "العودة إلى الكورسات",
-    "backToCourses": "العودة إلى دوراتي",
+    "backToCourses": "العودة إلى كورساتى",
     "backToExplore": "العودة إلى الاستكشاف",
     "loadingCourse": "جاري تجهيز محتوى الكورس...",
     "loadError": "تعذر تحميل تفاصيل الكورس حالياً.",
@@ -842,7 +842,7 @@
     "testModeNote": "هذه عملية تجريبية ولا تمثل خصما حقيقيا.",
     "actions": {
       "openCourse": "فتح الكورس",
-      "myCourses": "عرض دوراتي",
+      "myCourses": "عرض كورساتى",
       "dashboard": "العودة للرئيسية",
       "explore": "استكشف الكورسات"
     }

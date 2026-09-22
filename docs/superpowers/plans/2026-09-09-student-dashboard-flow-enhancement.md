@@ -53,7 +53,7 @@
 - Test: `elemni_front_end/src/features/portal/components/portal-shell.test.tsx`, course-detail tests, and auth redirect tests.
 
 **Interfaces:**
-- Sidebar contains only working destinations: الرئيسية, دوراتي, استكشف, and تسجيل الخروج.
+- Sidebar contains only working destinations: الرئيسية, كورسات, استكشف, and تسجيل الخروج.
 - Login accepts a validated `next` path and returns the student to the original course or dashboard action.
 
 - [ ] Write failing tests proving unavailable sidebar items and disabled course tabs are absent, and login preserves a safe same-origin return path.

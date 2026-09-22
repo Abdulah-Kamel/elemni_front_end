@@ -329,7 +329,7 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
                 id="courses-heading"
                 className="text-3xl font-black tracking-tight text-ink dark:text-slate-50"
               >
-                دوراتي الحالية
+                كورساتى الحالية
               </h2>
               <m.div
                 whileHover={{ scale: 1.05, rotate: 1 }}
@@ -340,7 +340,7 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
                   href="/my-courses"
                   className="rounded-full border-2 border-ink bg-surface px-4 py-1.5 text-sm font-black text-brand-700 shadow-[2px_2px_0_0_var(--color-ink)] dark:border-brand-300 dark:text-brand-300 dark:shadow-[2px_2px_0_0_#020617]"
                 >
-                  عرض دوراتي
+                  عرض كورساتى
                 </Link>
               </m.div>
             </Reveal>
