@@ -35,14 +35,14 @@
 }
 
 /* Chunky bordered tile with a hard offset shadow (light) / solid ink shadow (dark). */
-.sticker-tile {
+:where(.sticker-tile) {
   border: 2px solid var(--color-ink);
   border-radius: 1.25rem;
   background-color: var(--color-surface);
   box-shadow: 5px 5px 0 0 var(--color-ink);
 }
 
-.dark .sticker-tile {
+:where(.dark .sticker-tile) {
   border-color: #38bdf8;
   box-shadow: 5px 5px 0 0 #020617;
 }

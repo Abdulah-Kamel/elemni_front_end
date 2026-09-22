@@ -12,7 +12,7 @@ import CurriculumAccordion from "./curriculum-accordion";
 export default function LearnerCurriculumSidebar({
   chapters,
   lessonsCount,
-  activeVideoId,
+  activeContentId,
   expandedChapterId,
   expandedLessonId,
   onChapterToggle,
@@ -23,7 +23,7 @@ export default function LearnerCurriculumSidebar({
 }: {
   chapters: PublicChapterDto[];
   lessonsCount: number;
-  activeVideoId: number | null;
+  activeContentId: number | null;
   expandedChapterId: number | null;
   expandedLessonId: number | null;
   onChapterToggle: (chapterId: number) => void;
@@ -75,7 +75,7 @@ export default function LearnerCurriculumSidebar({
               chapters={chapters}
               enrolled
               variant="sidebar"
-              activeVideoId={activeVideoId}
+              activeContentId={activeContentId}
               expandedChapterId={expandedChapterId}
               expandedLessonId={expandedLessonId}
               onChapterToggle={onChapterToggle}

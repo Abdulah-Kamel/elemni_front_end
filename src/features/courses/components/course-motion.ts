@@ -22,11 +22,12 @@ export function scrollIntoViewById(
 ) {
   const reduceMotion =
     typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  document
-    .getElementById(id)
-    ?.scrollIntoView({
-      ...options,
-      behavior: reduceMotion ? "auto" : (options?.behavior ?? "smooth"),
-    });
+  const element = document.getElementById(id);
+  if (!element || typeof element.scrollIntoView !== "function") return;
+  element.scrollIntoView({
+    ...options,
+    behavior: reduceMotion ? "auto" : (options?.behavior ?? "smooth"),
+  });
 }

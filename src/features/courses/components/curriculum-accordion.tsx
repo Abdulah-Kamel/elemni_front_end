@@ -15,6 +15,7 @@ import {
   Video,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { resolveAssetUrl } from "@/src/lib/asset-url";
 import type {
   PublicChapterDto,
   PublicItemDto,
@@ -46,7 +47,8 @@ function chapterDuration(lessons: PublicLessonDto[]) {
 }
 
 function absoluteDocumentUrl(path: string | null) {
-  return path && /^https?:\/\//i.test(path) ? path : null;
+  if (!path) return null;
+  return resolveAssetUrl(path, "") || null;
 }
 
 function LessonRow({
@@ -54,7 +56,7 @@ function LessonRow({
   enrolled,
   variant,
   expanded,
-  activeVideoId,
+  activeContentId,
   onToggle,
   onPlay,
   onOpen,
@@ -64,7 +66,7 @@ function LessonRow({
   enrolled: boolean;
   variant: "default" | "sidebar";
   expanded: boolean;
-  activeVideoId: number | null;
+  activeContentId: number | null;
   onToggle: () => void;
   onPlay: (item: PublicItemDto, lesson: PublicLessonDto) => void;
   onOpen: (item: PublicItemDto, lesson: PublicLessonDto) => void;
@@ -125,7 +127,7 @@ function LessonRow({
                     lesson={lesson}
                     enrolled={enrolled}
                     variant={variant}
-                    active={item.id === activeVideoId}
+                    active={item.id === activeContentId}
                     completed={completedItemIds.includes(item.id)}
                     onPlay={onPlay}
                     onOpen={onOpen}
@@ -162,6 +164,7 @@ function ItemRow({
   onOpen: (item: PublicItemDto, lesson: PublicLessonDto) => void;
 }) {
   const t = useTranslations("courseDetail");
+  const [resourcesExpanded, setResourcesExpanded] = useState(true);
   const documentUrl = absoluteDocumentUrl(item.document_path);
   const ItemIcon = item.has_video ? Video : item.has_document ? FileText : ClipboardList;
   const itemMeta = [
@@ -170,6 +173,58 @@ function ItemRow({
     item.has_exam ? t("exam") : null,
     item.duration_minutes ? formatDuration(item.duration_minutes, t) : null,
   ].filter(Boolean).join(" · ");
+
+  if (enrolled && item.bunny_stream_embed_url && documentUrl) {
+    return (
+      <div
+        data-testid={variant === "sidebar" ? `learner-curriculum-item-${item.id}` : undefined}
+        className={`flex w-full flex-col text-start transition ${variant === "sidebar" ? `rounded-none ${active ? "bg-[#E8F6FE] shadow-[inset_0_0_0_1px_#0284C7]" : "bg-white hover:bg-[#F4FAFD]"}` : `rounded-xl border ${active ? "border-[#0284C7] bg-[#E8F6FE]" : "border-[#D8E3EC] bg-white hover:border-[#7DD3FC]"}`}`}
+      >
+        <button
+          type="button"
+          aria-expanded={resourcesExpanded}
+          aria-controls={`item-resources-${item.id}`}
+          aria-label={resourcesExpanded ? t("collapseResources") : t("expandResources")}
+          onClick={() => setResourcesExpanded((expanded) => !expanded)}
+          className="flex w-full cursor-pointer items-center gap-3 px-3 py-3 text-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0284C7]"
+        >
+          <Video className="size-5 shrink-0 text-[#0284C7]" aria-hidden="true" />
+          <span className="min-w-0 flex-1">
+            <strong className="block truncate text-sm text-[#1C3345]">{item.title}</strong>
+            <span className="text-xs text-[#6B7E8F]">{itemMeta}</span>
+          </span>
+          {completed ? (
+            <span className="shrink-0 rounded-full bg-emerald-50 px-2 py-1 text-[11px] font-bold text-emerald-700">تم</span>
+          ) : (
+            <span className="shrink-0 rounded-full bg-[#E8F6FE] px-2 py-1 text-[11px] font-bold text-[#087443]">{t("available")}</span>
+          )}
+          <ChevronDown className={`size-4 shrink-0 text-[#6B7E8F] transition-transform ${resourcesExpanded ? "rotate-180" : ""}`} aria-hidden="true" />
+        </button>
+        {resourcesExpanded && <div id={`item-resources-${item.id}`} role="list" aria-label={t("resourceList")} className="grid gap-1 border-t border-[#D8E3EC] px-3 py-2">
+          <button
+            type="button"
+            onClick={() => onPlay(item, lesson)}
+            aria-label={t("playVideo")}
+            className="flex w-full cursor-pointer items-center gap-3 rounded-lg px-2 py-2 text-start text-sm transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0284C7]"
+          >
+            <Video className="size-4 shrink-0 text-[#0284C7]" aria-hidden="true" />
+            <span className="min-w-0 flex-1 font-bold text-[#1C3345]">{t("video")}</span>
+            <Play className="size-4 shrink-0 fill-current text-[#0284C7]" aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            onClick={() => onOpen(item, lesson)}
+            aria-label={t("viewDocument")}
+            className="flex w-full cursor-pointer items-center gap-3 rounded-lg px-2 py-2 text-start text-sm transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0284C7]"
+          >
+            <FileText className="size-4 shrink-0 text-[#087443]" aria-hidden="true" />
+            <span className="min-w-0 flex-1 font-bold text-[#1C3345]">{t("document")}</span>
+            <ArrowLeft className="size-4 shrink-0 text-[#6B7E8F]" aria-hidden="true" />
+          </button>
+        </div>}
+      </div>
+    );
+  }
 
   if (enrolled && item.bunny_stream_embed_url) {
     return (
@@ -195,21 +250,19 @@ function ItemRow({
 
   if (enrolled && documentUrl) {
     return (
-      <a
-        href={documentUrl}
-        target="_blank"
-        rel="noreferrer"
+      <button
+        type="button"
         onClick={() => onOpen(item, lesson)}
         data-testid={variant === "sidebar" ? `learner-curriculum-item-${item.id}` : undefined}
-        className={`flex items-center gap-3 px-3 py-3 text-start transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0284C7] ${variant === "sidebar" ? "rounded-none bg-white hover:bg-[#F4FAFD]" : "rounded-xl border border-[#D8E3EC] bg-white hover:border-[#7DD3FC]"}`}
+        className={`flex w-full items-center gap-3 px-3 py-3 text-start transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0284C7] ${variant === "sidebar" ? `rounded-none ${active ? "bg-[#E8F6FE] shadow-[inset_0_0_0_1px_#0284C7]" : "bg-white hover:bg-[#F4FAFD]"}` : `rounded-xl border ${active ? "border-[#0284C7] bg-[#E8F6FE]" : "border-[#D8E3EC] bg-white hover:border-[#7DD3FC]"}`}`}
       >
         <ItemIcon className="size-5 shrink-0 text-[#087443]" aria-hidden="true" />
         <span className="min-w-0 flex-1">
           <strong className="block truncate text-sm text-[#1C3345]">{item.title}</strong>
           <span className="text-xs text-[#6B7E8F]">{itemMeta}</span>
         </span>
-        <ArrowLeft className="size-4 shrink-0 text-[#6B7E8F]" aria-hidden="true" />
-      </a>
+        {completed ? <span className="shrink-0 rounded-full bg-emerald-50 px-2 py-1 text-[11px] font-bold text-emerald-700">تم</span> : <ArrowLeft className="size-4 shrink-0 text-[#6B7E8F]" aria-hidden="true" />}
+      </button>
     );
   }
 
@@ -235,7 +288,7 @@ export default function CurriculumAccordion({
   chapters,
   enrolled,
   variant = "default",
-  activeVideoId,
+  activeContentId,
   expandedChapterId,
   expandedLessonId,
   onChapterToggle,
@@ -247,7 +300,7 @@ export default function CurriculumAccordion({
   chapters: PublicChapterDto[];
   enrolled: boolean;
   variant?: "default" | "sidebar";
-  activeVideoId: number | null;
+  activeContentId: number | null;
   expandedChapterId: number | null;
   expandedLessonId: number | null;
   onChapterToggle: (chapterId: number) => void;
@@ -322,7 +375,7 @@ export default function CurriculumAccordion({
                       enrolled={enrolled}
                       variant={variant}
                       expanded={expandedLessonId === lesson.id}
-                      activeVideoId={activeVideoId}
+                      activeContentId={activeContentId}
                       onToggle={() => onLessonToggle(lesson.id)}
                       onPlay={onPlay}
                       onOpen={onOpen}

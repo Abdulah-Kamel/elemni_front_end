@@ -184,7 +184,7 @@ function SidebarContent({
               animate={{ opacity: 1, x: 0 }}
               transition={{ ...shellSpring, delay: 0.05 * index }}
             >
-              <Link href={href} onClick={close} title={collapsed ? label : undefined} className={cn("relative flex h-12 items-center gap-3 rounded-2xl text-sm font-black transition", collapsed ? "justify-center px-0" : "px-4", isActive ? "text-white" : "text-ink hover:bg-brand-100 dark:text-slate-200 dark:hover:bg-slate-800")}>
+              <Link href={href} onClick={close} title={collapsed ? label : undefined} className={cn("relative flex h-12 items-center gap-3 rounded-2xl text-sm font-black transition", collapsed ? "mx-auto size-12 justify-center px-0" : "px-4", isActive ? "text-white" : "text-ink hover:bg-brand-100 dark:text-slate-200 dark:hover:bg-slate-800")}>
                 {isActive && (
                   <m.span
                     layoutId="portal-nav-active"
@@ -192,7 +192,7 @@ function SidebarContent({
                     transition={shellSpring}
                   />
                 )}
-                <Icon className="relative size-5 shrink-0" /><span className={cn("relative", collapsed ? "sr-only" : undefined)}>{label}</span>
+                <Icon className="relative size-5 shrink-0" /><span className={collapsed ? "sr-only" : "relative"}>{label}</span>
               </Link>
             </m.div>
           );

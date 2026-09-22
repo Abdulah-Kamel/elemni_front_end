@@ -83,6 +83,11 @@ describe("StudentPortalShell", () => {
       "true",
     );
     expect(window.localStorage.getItem("student-sidebar-collapsed")).toBe("true");
+    expect(screen.getByRole("link", { name: "لوحتي" })).toHaveClass(
+      "mx-auto",
+      "size-12",
+      "justify-center",
+    );
   });
 
   it("renders authenticated student content inside the shared portal navigation", () => {
@@ -96,6 +101,22 @@ describe("StudentPortalShell", () => {
 
     expect(screen.getByRole("navigation", { name: "بوابة الطالب" })).toBeInTheDocument();
     expect(screen.getByText("محتوى الدورة")).toBeInTheDocument();
+  });
+
+  it("removes collapsed navigation labels from the icon layout", () => {
+    render(
+      <NextIntlClientProvider locale="ar" messages={arabicMessages}>
+        <StudentPortalShell user={null}>
+          <p>محتوى الدورة</p>
+        </StudentPortalShell>
+      </NextIntlClientProvider>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "تصغير القائمة الجانبية" }));
+
+    const dashboardLabel = screen.getByText("لوحتي");
+    expect(dashboardLabel).toHaveClass("sr-only");
+    expect(dashboardLabel).not.toHaveClass("relative");
   });
 
   it("uses left-to-right direction and localized labels for English pages", () => {

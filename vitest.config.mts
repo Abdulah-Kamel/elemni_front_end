@@ -39,6 +39,10 @@ export default defineConfig({
         replacement: path.resolve(__dirname, "node_modules/react-dom/index.js"),
       },
       {
+        find: /^server-only$/,
+        replacement: path.resolve(__dirname, "src/test/server-only.ts"),
+      },
+      {
         find: "next/navigation",
         replacement: "next/navigation.js",
       },

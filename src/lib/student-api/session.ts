@@ -14,6 +14,8 @@ const baseCookie = {
   path: "/",
 };
 
+const inFlightRefresh = new Map<string, Promise<TokenDto | null>>();
+
 export async function setSession(accessToken: string, refreshToken: string) {
   const store = await cookies();
   store.set(ACCESS_COOKIE, accessToken, { ...baseCookie, maxAge: 30 * 60 });
@@ -58,16 +60,30 @@ export async function authenticatedBackendFetch<T>(
     return result;
   }
 
-  const refreshed = await backendFetch<TokenDto>("/api/v1/auth/refresh", {
-    method: "POST",
-    body: JSON.stringify({ refresh_token: refreshToken }),
-  });
-  if (!refreshed.ok) {
+  const existingRefresh = inFlightRefresh.get(refreshToken);
+  const refreshPromise = existingRefresh ?? (async () => {
+    const response = await backendFetch<TokenDto>("/api/v1/auth/refresh", {
+      method: "POST",
+      body: JSON.stringify({ refresh_token: refreshToken }),
+    });
+    if (!response.ok) return null;
+    await setSession(response.data.access_token, response.data.refresh_token);
+    return response.data;
+  })();
+
+  if (!existingRefresh) {
+    inFlightRefresh.set(
+      refreshToken,
+      refreshPromise.finally(() => inFlightRefresh.delete(refreshToken)),
+    );
+  }
+
+  const refreshed = await refreshPromise;
+  if (!refreshed) {
     await clearSession();
     return { ok: false, error: { status: 401, message: "انتهت الجلسة. سجل الدخول مرة أخرى." } };
   }
 
-  await setSession(refreshed.data.access_token, refreshed.data.refresh_token);
-  result = await request(refreshed.data.access_token);
+  result = await request(refreshed.access_token);
   return result;
 }

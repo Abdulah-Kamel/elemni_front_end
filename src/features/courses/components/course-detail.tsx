@@ -16,6 +16,7 @@ import type {
   StreamDto,
 } from "@/src/lib/student-api/contract";
 import { isCheckoutRedirectDto, resolveCheckoutRedirect } from "@/src/lib/student-api/checkout";
+import { resolveAssetUrl } from "@/src/lib/asset-url";
 import {
   getStudentErrorMessage,
   isStudentUnauthorized,
@@ -36,6 +37,11 @@ import LearnerPlayer from "./learner-player";
 import LearnerCurriculumSidebar from "./learner-curriculum-sidebar";
 import CourseDetailSkeleton from "./course-detail-skeleton";
 import PublicCourseDetailShell from "./public-course-detail-shell";
+
+function absoluteDocumentUrl(path: string | null) {
+  if (!path) return null;
+  return resolveAssetUrl(path, "") || null;
+}
 
 export default function CourseDetail({
   courseId,
@@ -75,9 +81,10 @@ export default function CourseDetail({
       ? initialDetail.course.chapters.find((chapter) => chapter.lessons.length)?.lessons[0]?.id ?? null
       : undefined,
   );
-  const [activeVideo, setActiveVideo] = useState<{
+  const [activeContent, setActiveContent] = useState<{
     item: PublicItemDto;
     lesson: PublicLessonDto;
+    type: "video" | "document";
   } | null>(null);
 
   const courseQuery = useStudentCourse(courseId, teacherSlug, { initialData: initialDetail });
@@ -119,18 +126,21 @@ export default function CourseDetail({
   const visibleExpandedLessonId = expandedLessonId === undefined
     ? resumeLocation?.lesson.id ?? chapters.find((chapter) => chapter.id === visibleExpandedChapterId)?.lessons[0]?.id ?? null
     : expandedLessonId;
-  const firstPlayableVideo = enrolled
+  const firstPlayableContent = enrolled
     ? chapters
         .flatMap((chapter) => chapter.lessons)
         .flatMap((lesson) => lesson.items.map((item) => ({ item, lesson })))
-        .find(({ item }) => item.id === resumeItemId && Boolean(item.bunny_stream_embed_url))
+        .find(({ item }) => item.id === resumeItemId && (Boolean(item.bunny_stream_embed_url) || Boolean(absoluteDocumentUrl(item.document_path))))
       ?? chapters
         .flatMap((chapter) => chapter.lessons)
         .flatMap((lesson) => lesson.items.map((item) => ({ item, lesson })))
-        .find(({ item }) => Boolean(item.bunny_stream_embed_url))
+        .find(({ item }) => Boolean(item.bunny_stream_embed_url) || Boolean(absoluteDocumentUrl(item.document_path)))
       ?? null
     : null;
-  const visibleActiveVideo = activeVideo ?? firstPlayableVideo;
+  const visibleActiveContent = activeContent ?? (firstPlayableContent ? {
+    ...firstPlayableContent,
+    type: firstPlayableContent.item.bunny_stream_embed_url ? "video" as const : "document" as const,
+  } : null);
   const examCount = lessons.flatMap((lesson) => lesson.items).filter((item) => item.has_exam).length;
   const gradeName = grades.find((grade) => grade.id === course?.grade_id)?.name;
   const streamName = streams.find((stream) => stream.id === course?.stream_id)?.name;
@@ -142,13 +152,15 @@ export default function CourseDetail({
       : t("backToExplore");
 
   const playVideo = (item: PublicItemDto, lesson: PublicLessonDto) => {
-    setActiveVideo({ item, lesson });
+    setActiveContent({ item, lesson, type: "video" });
     if (enrolled) progressMutation.mutate({ itemId: item.id });
     window.setTimeout(() => scrollIntoViewById("course-player", { block: "start" }), 0);
   };
 
-  const openDocument = (item: PublicItemDto, _lesson: PublicLessonDto) => {
+  const openDocument = (item: PublicItemDto, lesson: PublicLessonDto) => {
     if (enrolled) progressMutation.mutate({ itemId: item.id });
+    setActiveContent({ item, lesson, type: "document" });
+    window.setTimeout(() => scrollIntoViewById("course-player", { block: "start" }), 0);
   };
 
   const handleChapterToggle = (chapterId: number) => {
@@ -165,15 +177,16 @@ export default function CourseDetail({
   };
 
   const startCourse = () => {
-    const firstVideo = firstPlayableVideo?.item;
-    const firstVideoLesson = firstPlayableVideo?.lesson;
-    const firstVideoChapter = chapters.find((chapter) =>
-      chapter.lessons.some((lesson) => lesson.id === firstVideoLesson?.id),
+    const firstContent = firstPlayableContent?.item;
+    const firstContentLesson = firstPlayableContent?.lesson;
+    const firstContentChapter = chapters.find((chapter) =>
+      chapter.lessons.some((lesson) => lesson.id === firstContentLesson?.id),
     );
-    if (firstVideo && firstVideoLesson) {
-      setExpandedChapterId(firstVideoChapter?.id ?? null);
-      setExpandedLessonId(firstVideoLesson.id);
-      playVideo(firstVideo, firstVideoLesson);
+    if (firstContent && firstContentLesson) {
+      setExpandedChapterId(firstContentChapter?.id ?? null);
+      setExpandedLessonId(firstContentLesson.id);
+      if (firstContent.bunny_stream_embed_url) playVideo(firstContent, firstContentLesson);
+      else openDocument(firstContent, firstContentLesson);
       return;
     }
     scrollIntoViewById("course-content", { block: "start" });
@@ -294,7 +307,7 @@ export default function CourseDetail({
               </m.div>
 
               <AnimatePresence initial={false}>
-                  {enrolled && visibleActiveVideo?.item.bunny_stream_embed_url && (
+                  {enrolled && visibleActiveContent && (
                   <m.div
                     key="course-player"
                     initial={reduced ? { opacity: 0 } : { opacity: 0, y: 16 }}
@@ -302,7 +315,7 @@ export default function CourseDetail({
                     exit={reduced ? { opacity: 0 } : { opacity: 0, y: -8 }}
                     transition={{ duration: 0.25 }}
                   >
-                    <LearnerPlayer activeVideo={visibleActiveVideo} />
+                    <LearnerPlayer activeContent={visibleActiveContent} />
                   </m.div>
                 )}
               </AnimatePresence>
@@ -332,7 +345,7 @@ export default function CourseDetail({
                     <CurriculumAccordion
                       chapters={chapters}
                       enrolled={false}
-                      activeVideoId={visibleActiveVideo?.item.id ?? null}
+                      activeContentId={visibleActiveContent?.item.id ?? null}
                       expandedChapterId={visibleExpandedChapterId}
                       expandedLessonId={visibleExpandedLessonId}
                       onChapterToggle={handleChapterToggle}
@@ -355,7 +368,7 @@ export default function CourseDetail({
               <LearnerCurriculumSidebar
                 chapters={chapters}
                 lessonsCount={lessons.length}
-                activeVideoId={visibleActiveVideo?.item.id ?? null}
+                activeContentId={visibleActiveContent?.item.id ?? null}
                 expandedChapterId={visibleExpandedChapterId}
                 expandedLessonId={visibleExpandedLessonId}
                 onChapterToggle={handleChapterToggle}

@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NextIntlClientProvider } from "next-intl";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -65,11 +65,23 @@ const course: StudentCourseDetailDto["course"] = {
               order: 1,
               duration_minutes: 20,
               has_video: true,
-              has_document: false,
+              has_document: true,
               has_exam: false,
               bunny_stream_embed_url:
                 "https://iframe.mediadelivery.net/play/123",
-              document_path: null,
+              document_path: "https://cdn.elemni.test/lesson.pdf",
+              exam_id: null,
+            },
+            {
+              id: 102,
+              title: "ملخص الدرس",
+              order: 2,
+              duration_minutes: null,
+              has_video: false,
+              has_document: true,
+              has_exam: false,
+              bunny_stream_embed_url: null,
+              document_path: "courses/12/lessons/11/items/102.pdf",
               exam_id: null,
             },
           ],
@@ -125,6 +137,7 @@ describe("CourseDetail production experience", () => {
 
   afterEach(() => {
     cleanup();
+    vi.unstubAllEnvs();
   });
 
   it("embeds the first playable lesson for an enrolled student", async () => {
@@ -183,6 +196,104 @@ describe("CourseDetail production experience", () => {
     expect(curriculumItem).toHaveClass("w-full", "rounded-none");
     expect(screen.queryByText("السعر المستحق")).not.toBeInTheDocument();
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+  });
+
+  it("previews an enrolled PDF in the learning viewer with a download action", async () => {
+    vi.stubEnv("ASSETS_URL", "https://cdn.elemni.test");
+    fetchMock.mockImplementation((input: string | URL) => {
+      const url = String(input);
+
+      if (url.startsWith("/api/student/my-courses/12")) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          json: async () => detail,
+        });
+      }
+
+      if (url === "/api/student/auth/me") {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          json: async () => ({ id: 1, name: "الطالب" }),
+        });
+      }
+
+      return Promise.resolve({
+        ok: false,
+        status: 404,
+        json: async () => ({ detail: "not found" }),
+      });
+    });
+
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+    });
+
+    render(
+      <NextIntlClientProvider locale="ar" messages={arMessages}>
+        <QueryClientProvider client={queryClient}>
+          <CourseDetail
+            courseId={12}
+            teacherSlug="ahmad-ali"
+            grades={[{ id: 3, name: "الصف الثالث الثانوي", level: "secondary" }]}
+            streams={[{ id: 1, name: "علمي علوم", slug: "science" }]}
+          />
+        </QueryClientProvider>
+      </NextIntlClientProvider>,
+    );
+
+    await screen.findByTitle("مقدمة في النهايات - فيديو الشرح");
+    fireEvent.click(await screen.findByTestId("learner-curriculum-item-102"));
+
+    const preview = await screen.findByTitle("مقدمة في النهايات - ملخص الدرس");
+    expect(preview).toHaveAttribute("src", "https://cdn.elemni.test/courses/12/lessons/11/items/102.pdf");
+    expect(screen.getByRole("link", { name: "تحميل الملف" })).toHaveAttribute(
+      "href",
+      "https://cdn.elemni.test/courses/12/lessons/11/items/102.pdf",
+    );
+  });
+
+  it("keeps video and document actions available for a mixed-content item", async () => {
+    fetchMock.mockImplementation((input: string | URL) => {
+      const url = String(input);
+
+      if (url.startsWith("/api/student/my-courses/12")) {
+        return Promise.resolve({ ok: true, status: 200, json: async () => detail });
+      }
+
+      if (url === "/api/student/auth/me") {
+        return Promise.resolve({ ok: true, status: 200, json: async () => ({ id: 1, name: "الطالب" }) });
+      }
+
+      return Promise.resolve({ ok: false, status: 404, json: async () => ({ detail: "not found" }) });
+    });
+
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
+    render(
+      <NextIntlClientProvider locale="ar" messages={arMessages}>
+        <QueryClientProvider client={queryClient}>
+          <CourseDetail courseId={12} teacherSlug="ahmad-ali" grades={[]} streams={[]} />
+        </QueryClientProvider>
+      </NextIntlClientProvider>,
+    );
+
+    await screen.findByTitle("مقدمة في النهايات - فيديو الشرح");
+    const item = screen.getByTestId("learner-curriculum-item-101");
+    const resources = within(item).getByRole("list", { name: "موارد العنصر" });
+    expect(resources).toBeInTheDocument();
+    expect(within(item).getByRole("button", { name: "عرض الملف" })).toBeInTheDocument();
+    expect(within(item).getByRole("button", { name: "تشغيل الفيديو" })).toBeInTheDocument();
+    const collapseButton = within(item).getByRole("button", { name: "طي موارد العنصر" });
+    fireEvent.click(collapseButton);
+    expect(within(item).queryByRole("list", { name: "موارد العنصر" })).not.toBeInTheDocument();
+    fireEvent.click(within(item).getByRole("button", { name: "فتح موارد العنصر" }));
+    expect(within(item).getByRole("list", { name: "موارد العنصر" })).toBeInTheDocument();
+    fireEvent.click(within(item).getByRole("button", { name: "عرض الملف" }));
+    expect(await screen.findByTitle("مقدمة في النهايات - فيديو الشرح")).toHaveAttribute(
+      "src",
+      "https://cdn.elemni.test/lesson.pdf",
+    );
   });
 
   it("renders public course discovery without requesting a student profile", async () => {
