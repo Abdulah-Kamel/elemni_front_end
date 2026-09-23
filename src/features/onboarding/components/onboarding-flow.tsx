@@ -22,6 +22,7 @@ import {
   UserRoundCheck,
 } from "lucide-react";
 import { AnimatePresence, m } from "motion/react";
+import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 import { MotionProvider } from "@/src/components/ui/motion-provider";
 import type { GradeDto, StreamDto, SubjectDto } from "@/src/lib/student-api/contract";
 import { useRouter } from "@/src/i18n/navigation";
@@ -170,7 +171,7 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
                       <Image src={studyImage} alt="طالب يخطط لمذاكرته" fill loading="eager" sizes="(max-width: 640px) calc(100vw - 3rem), 448px" className="object-cover" />
                     </div>
                     <div className="mx-auto max-w-lg text-center">
-                      <h1 className="text-3xl font-black tracking-tight text-brand-700 sm:text-4xl dark:text-brand-300">أهلاً بيك في علمني</h1>
+                      <h1 className="text-3xl font-black tracking-tight text-brand-700 sm:text-4xl dark:text-brand-300"><MarkerHighlight color="yellow" variant={1}>أهلاً بيك في علمني</MarkerHighlight></h1>
                       <h2 className="mt-2 text-lg font-black text-ink dark:text-slate-50">خلينا نجهز تجربتك التعليمية</h2>
                       <p className="mt-2 text-sm leading-6 font-medium text-muted dark:text-slate-400">جاوب على كام سؤال بسيط عشان نعرضلك المدرسين والكورسات المناسبة ليك.</p>
                     </div>
@@ -189,7 +190,7 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
                 {step === "grade" && (
                   <div className="p-5 sm:p-8">
                     <div className="mb-7 text-center">
-                      <h1 className="text-3xl font-black tracking-tight sm:text-4xl">أنت في سنة كام؟</h1>
+                      <h1 className="text-3xl font-black tracking-tight sm:text-4xl"><MarkerHighlight color="yellow" variant={1}>أنت في سنة كام؟</MarkerHighlight></h1>
                       <p className="mt-2 text-sm leading-6 font-medium text-muted dark:text-slate-400">اختار سنتك الدراسية عشان نعرضلك الكورسات والمدرسين المناسبين.</p>
                     </div>
                     <div className="space-y-3">
@@ -214,7 +215,7 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
                 {step === "stream" && (
                   <div>
                     <div className="border-b-2 border-ink/10 p-5 text-center sm:p-7 dark:border-white/10">
-                      <h1 className="text-3xl font-black tracking-tight">اختار شعبتك</h1>
+                      <h1 className="text-3xl font-black tracking-tight"><MarkerHighlight color="yellow" variant={1}>اختار شعبتك</MarkerHighlight></h1>
                       <p className="mt-2 text-sm font-medium text-muted dark:text-slate-400">عشان نعرضلك المواد والكورسات المناسبة ليك</p>
                     </div>
                     <div className="p-5 sm:p-8">
@@ -241,7 +242,7 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
                 {step === "subjects" && (
                   <div className="p-5 sm:p-8">
                     <div className="mb-7 text-center">
-                      <h1 className="text-3xl font-black tracking-tight sm:text-4xl">جهزنا موادك الدراسية</h1>
+                      <h1 className="text-3xl font-black tracking-tight sm:text-4xl"><MarkerHighlight color="yellow" variant={1}>جهزنا موادك الدراسية</MarkerHighlight></h1>
                       <p className="mt-2 text-sm font-medium text-muted dark:text-slate-400">بناءً على اختيارك، اخترنا لك المواد المناسبة. تقدر تعدلها الآن.</p>
                     </div>
                     <div className="grid grid-cols-2 gap-3">

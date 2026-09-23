@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { GlobalLoading } from "@/src/components/ui/global-loading";
 import ImageWithFallback from "@/src/components/ui/image-with-fallback";
+import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 import { m } from "motion/react";
 import { Link, useRouter } from "@/src/i18n/navigation";
 import type { GradeDto, StreamDto } from "@/src/lib/student-api/contract";
@@ -148,10 +149,15 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
             transition={popSpring}
           >
             <h1 className="text-5xl font-black tracking-tight text-ink sm:text-6xl dark:text-slate-50">
-              أهلاً {firstName}
+              <MarkerHighlight color="yellow" variant={1}>
+                أهلاً {firstName}
+              </MarkerHighlight>
             </h1>
             <p className="mt-3 text-base font-bold text-muted dark:text-slate-400">
-              جاهز تكمل مذاكرتك؟
+              جاهز{" "}
+              <MarkerHighlight color="sky" variant={2}>
+                تكمل مذاكرتك؟
+              </MarkerHighlight>
             </p>
             {profileLabel && (
               <m.span
@@ -240,7 +246,11 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
                 >
                   <GraduationCap className="size-9" />
                 </m.span>
-                <h2 className="mt-4 text-2xl font-black">خطوتك التالية</h2>
+                <h2 className="mt-4 text-2xl font-black">
+                  <MarkerHighlight color="yellow" variant={1}>
+                    خطوتك التالية
+                  </MarkerHighlight>
+                </h2>
                 <p className="mt-2 line-clamp-2 text-sm font-black">
                   {primary.course.title}
                 </p>
@@ -269,7 +279,9 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
             <Reveal className="sticker-tile py-12 text-center sm:py-16">
               <Rocket className="mx-auto size-12 text-brand-600 dark:text-brand-300" />
               <h2 className="mt-5 text-3xl font-black tracking-tight text-ink dark:text-slate-50">
-                لا توجد بيانات دراسة بعد
+                <MarkerHighlight color="pink" variant={3}>
+                  لا توجد بيانات دراسة بعد
+                </MarkerHighlight>
               </h2>
               <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 font-medium text-muted dark:text-slate-400">
                 ستظهر مؤشرات التقدم والملخصات هنا بعد الاشتراك في أحد الكورسات.
@@ -328,7 +340,9 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
                 id="courses-heading"
                 className="text-3xl font-black tracking-tight text-ink dark:text-slate-50"
               >
-                كورساتى الحالية
+                <MarkerHighlight color="sky" variant={1}>
+                  كورساتى الحالية
+                </MarkerHighlight>
               </h2>
               <m.div
                 whileHover={{ scale: 1.05, rotate: 1 }}
@@ -407,7 +421,9 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
               <Reveal className="sticker-tile flex min-h-48 flex-col items-center justify-center text-center">
                 <BookOpen className="mb-3 size-8 text-muted" />
                 <p className="text-lg font-black text-ink dark:text-slate-50">
-                  لا توجد كورسات حالياً
+                  <MarkerHighlight color="emerald" variant={3}>
+                    لا توجد كورسات حالياً
+                  </MarkerHighlight>
                 </p>
                 <p className="mt-2 text-xs font-medium text-muted dark:text-slate-400">
                   ستظهر الكورسات المشتركة هنا مع مؤشرات تقدمها.

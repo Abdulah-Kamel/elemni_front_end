@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { GlobalLoading } from "@/src/components/ui/global-loading";
 import ImageWithFallback from "@/src/components/ui/image-with-fallback";
+import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 import { Link, useRouter } from "@/src/i18n/navigation";
 import { AnimatePresence, m } from "motion/react";
 import type { EnrollmentDto } from "@/src/lib/student-api/contract";
@@ -45,11 +46,12 @@ function formatDuration(minutes: number | null) {
   return remainder ? `${hours} س ${remainder} د` : `${hours} ساعات`;
 }
 
-function CourseRow({ enrollment, index }: { enrollment: EnrollmentDto; index: number }) {
+function CourseCard({ enrollment, index }: { enrollment: EnrollmentDto; index: number }) {
   const { course } = enrollment;
 
   return (
     <m.div
+      className="h-full"
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 8 }}
@@ -57,14 +59,14 @@ function CourseRow({ enrollment, index }: { enrollment: EnrollmentDto; index: nu
       whileHover={{ y: -4 }}
       whileTap={{ scale: 0.99 }}
     >
-      <Link href={`/my-courses/${course.id}`} aria-label={`فتح كورس ${course.title}`} className="sticker-tile group flex flex-col overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 md:min-h-56 md:flex-row-reverse">
-        <div className="relative aspect-video shrink-0 overflow-hidden border-b-2 border-ink bg-brand-100 md:aspect-auto md:w-60 md:border-b-0 md:border-e-2 md:border-ink dark:border-brand-300 dark:bg-slate-800">
+      <Link href={`/my-courses/${course.id}`} aria-label={`فتح كورس ${course.title}`} className="sticker-tile group flex h-full flex-col overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2">
+        <div className="relative aspect-video shrink-0 overflow-hidden border-b-2 border-ink bg-brand-100 dark:border-brand-300 dark:bg-slate-800">
           <ImageWithFallback
             src={course.img}
             fallbackSrc={lessonFallback}
             alt={course.title}
             fill
-            sizes="(max-width: 767px) 100vw, 240px"
+            sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 33vw"
             className="object-cover"
           />
         </div>
@@ -76,9 +78,9 @@ function CourseRow({ enrollment, index }: { enrollment: EnrollmentDto; index: nu
           </div>
 
           <h2 className="mt-3 text-xl font-black leading-8 text-ink transition-colors group-hover:text-brand-700 sm:text-2xl dark:text-slate-50 dark:group-hover:text-brand-300">{course.title}</h2>
-          <p className="mt-2 line-clamp-2 max-w-3xl text-sm leading-6 font-medium text-muted dark:text-slate-400">{course.description || `${course.lesson_count} درس متاح ضمن اشتراكك الحالي.`}</p>
+          <p className="mt-2 line-clamp-2 text-sm leading-6 font-medium text-muted dark:text-slate-400">{course.description || `${course.lesson_count} درس متاح ضمن اشتراكك الحالي.`}</p>
 
-          <div className="mt-5 max-w-2xl">
+          <div className="mt-5 mb-5">
             <div className="mb-2 flex items-center justify-between text-xs font-black text-muted dark:text-slate-400">
               <span>التقدم في الكورس</span>
               <StudyCounter value={enrollment.progress.completion_percent} format={(n) => `${n}%`} className="sticker-numeral" />
@@ -93,7 +95,7 @@ function CourseRow({ enrollment, index }: { enrollment: EnrollmentDto; index: nu
             </div>
           </div>
 
-          <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 border-t-2 border-ink/10 pt-4 text-xs font-black text-muted dark:border-white/10 dark:text-slate-400">
+          <div className="mt-auto flex flex-wrap gap-x-5 gap-y-2 border-t-2 border-ink/10 pt-4 text-xs font-black text-muted dark:border-white/10 dark:text-slate-400">
             <span className="inline-flex items-center gap-1.5"><BookOpen className="size-4 text-brand-600 dark:text-brand-300" />{course.lesson_count} درس</span>
             <span className="inline-flex items-center gap-1.5"><Clock3 className="size-4 text-brand-600 dark:text-brand-300" />{formatDuration(course.total_duration_minutes)}</span>
             <span className="inline-flex items-center gap-1.5"><CalendarClock className="size-4 text-brand-600 dark:text-brand-300" />متاح حتى {formatDate(enrollment.expires_at)}</span>
@@ -173,7 +175,11 @@ export default function MyCourses() {
             transition={popSpring}
           >
             <div>
-              <h1 className="text-5xl font-black tracking-tight text-ink sm:text-6xl dark:text-slate-50">كورساتى</h1>
+              <h1 className="text-5xl font-black tracking-tight text-ink sm:text-6xl dark:text-slate-50">
+                <MarkerHighlight color="yellow" variant={1}>
+                  كورساتى
+                </MarkerHighlight>
+              </h1>
               <p className="mt-3 max-w-[65ch] text-sm leading-7 font-medium text-muted dark:text-slate-400">كل اشتراكاتك النشطة ومحتواك التعليمي في مكان واحد.</p>
             </div>
             <m.div whileHover={{ scale: 1.04, rotate: 1 }} whileTap={{ scale: 0.95 }} transition={popSpring} className="w-fit">
@@ -244,29 +250,41 @@ export default function MyCourses() {
           <m.section className="mt-8" aria-labelledby="courses-heading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
             {!!enrollments.length && (
               <div className="mb-4 flex items-center justify-between gap-4">
-                <h2 id="courses-heading" className="text-2xl font-black tracking-tight text-ink dark:text-slate-50">كورساتك الحالية</h2>
+                <h2 id="courses-heading" className="text-2xl font-black tracking-tight text-ink dark:text-slate-50">
+                  <MarkerHighlight color="sky" variant={1}>
+                    كورساتك الحالية
+                  </MarkerHighlight>
+                </h2>
                 <span className="sticker-badge bg-surface px-3 py-1 text-xs font-black text-muted dark:text-slate-300">{visibleCourses.length} من {enrollments.length}</span>
               </div>
             )}
 
             <AnimatePresence mode="wait" initial={false}>
               {visibleCourses.length ? (
-                <m.div key={`results-${visibleEnrollmentIdsKey}`} className="space-y-5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
+                <m.div key={`results-${visibleEnrollmentIdsKey}`} className="grid grid-cols-1 items-stretch gap-5 md:grid-cols-2 xl:grid-cols-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
                   {visibleCourses.map((enrollment, index) => (
-                    <CourseRow key={enrollment.id} enrollment={enrollment} index={index} />
+                    <CourseCard key={enrollment.id} enrollment={enrollment} index={index} />
                   ))}
                 </m.div>
               ) : enrollments.length ? (
                 <m.div key="no-match" className="sticker-tile flex min-h-64 flex-col items-center justify-center px-4 text-center" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={popSpring}>
                   <Search className="mb-4 size-9 text-muted" />
-                  <h2 className="text-lg font-black text-ink dark:text-slate-50">لا توجد نتائج مطابقة</h2>
+                  <h2 className="text-lg font-black text-ink dark:text-slate-50">
+                    <MarkerHighlight color="pink" variant={3}>
+                      لا توجد نتائج مطابقة
+                    </MarkerHighlight>
+                  </h2>
                   <p className="mt-2 text-sm font-medium text-muted dark:text-slate-400">جرّب كلمة بحث مختلفة أو اعرض كل المواد.</p>
                   {hasFilters && <button type="button" onClick={() => { setSearch(""); setSubject("all"); }} className="mt-4 cursor-pointer text-sm font-black text-brand-700 hover:underline dark:text-brand-300">مسح الفلاتر</button>}
                 </m.div>
               ) : (
                 <m.div key="empty" className="sticker-tile flex min-h-80 flex-col items-center justify-center px-4 text-center" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={popSpring}>
                   <span className="sticker-badge flex size-14 items-center justify-center bg-brand-100 text-brand-600 dark:bg-slate-800 dark:text-brand-300"><BookOpen className="size-7" /></span>
-                  <h2 className="mt-5 text-xl font-black text-ink dark:text-slate-50">لا توجد اشتراكات نشطة</h2>
+                  <h2 className="mt-5 text-xl font-black text-ink dark:text-slate-50">
+                    <MarkerHighlight color="purple" variant={4}>
+                      لا توجد اشتراكات نشطة
+                    </MarkerHighlight>
+                  </h2>
                   <p className="mt-2 max-w-md text-sm leading-6 font-medium text-muted dark:text-slate-400">استكشف المدرسين واختر الكورس المناسب لسنتك وشعبتك.</p>
                   <Link href="/explore" className="sticker-btn mt-6 inline-flex h-12 items-center gap-2 px-7 text-sm font-black">استكشف الكورسات<ArrowLeft className="size-4" /></Link>
                 </m.div>

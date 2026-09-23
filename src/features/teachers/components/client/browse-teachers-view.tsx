@@ -8,6 +8,7 @@ import type { GradeDto, StreamDto } from "@/src/lib/student-api/contract";
 import { Search, BookOpen, Sparkles, ChevronRight, ArrowLeft, ChevronLeft, CircleAlert } from "lucide-react";
 import { cn } from "@/src/lib/cn";
 import { ModernSelect } from "@/src/components/ui/modern-select";
+import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 
 const ITEMS_PER_PAGE = 8;
 
@@ -94,7 +95,7 @@ function BrowseTeachersView({
             <ArrowLeft className="w-4 h-4" />
             <span>العودة للرئيسية</span>
           </Link>
-          <h1 className="text-3xl sm:text-4xl font-black text-ink font-readex">جميع المدرسين</h1>
+          <h1 className="text-3xl sm:text-4xl font-black text-ink font-readex"><MarkerHighlight color="yellow" variant={1}>جميع المدرسين</MarkerHighlight></h1>
           <p className="text-muted mt-1">تصفح جميع المدرسين المتخصصين على المنصة</p>
         </div>
 
@@ -220,7 +221,7 @@ function BrowseTeachersView({
         ) : (
           <div className="text-center py-16">
             <Search className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-            <h3 className="text-lg font-bold text-ink">لم نجد معلمين يطابقون بحثك</h3>
+            <h3 className="text-lg font-bold text-ink"><MarkerHighlight color="pink" variant={4}>لم نجد معلمين يطابقون بحثك</MarkerHighlight></h3>
             <p className="text-sm text-muted mt-1">جرب البحث بكلمات أخرى أو اختر صف دراسي مختلف.</p>
             <button onClick={() => { setSelectedGrade("all"); setSelectedStream("all"); setSearchQuery(""); setPage(1); }}
               className="mt-4 px-6 py-2.5 bg-primary text-white font-bold text-sm rounded-xl">إعادة ضبط جميع الفلاتر</button>

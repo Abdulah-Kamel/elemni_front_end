@@ -5,6 +5,7 @@ import { BookOpen, CalendarDays, Clock3, PlayCircle } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/src/i18n/navigation";
 import ImageWithFallback from "@/src/components/ui/image-with-fallback";
+import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 import lessonFallback from "@/src/assets/images/student-redesign/lesson-study-skills.webp";
 import type {
   PublicCourseDto,
@@ -93,7 +94,9 @@ export default function CourseHero({
               id="course-title"
               className="max-w-3xl text-balance text-3xl font-black leading-[1.12] tracking-[-0.025em] sm:text-4xl lg:text-[2.9rem]"
             >
-              {course.title}
+              <MarkerHighlight color="yellow" variant={1}>
+                {course.title}
+              </MarkerHighlight>
             </h1>
 
             <p className="mt-5 text-sm leading-7 text-[#C5D4E2] sm:text-base">

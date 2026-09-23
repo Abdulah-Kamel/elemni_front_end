@@ -11,6 +11,7 @@ import type { CheckoutRedirectDto } from "@/src/lib/student-api/contract";
 import { studentQueryKeys } from "@/src/features/student/query-keys";
 import { Link } from "@/src/i18n/navigation";
 import { Reveal } from "@/src/components/ui/reveal";
+import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 import { AnimatePresence, m } from "motion/react";
 import Image from "next/image";
 import profileBackground from "@/src/assets/images/student-redesign/profile-background.webp";
@@ -183,7 +184,7 @@ export default function TeacherProfileView({ teacher, onRequireAuth }: TeacherPr
           <Reveal>
             <div>
               <p className="mb-2 text-xs font-extrabold text-primary">عن المدرس</p>
-              <h2 className="text-2xl font-black text-ink">خبرة تساعدك تفهم، مش تحفظ</h2>
+              <h2 className="text-2xl font-black text-ink"><MarkerHighlight color="sky" variant={1}>خبرة تساعدك تفهم، مش تحفظ</MarkerHighlight></h2>
               <p className="mt-3 max-w-3xl text-sm font-medium leading-7 text-muted">{teacher.bio}</p>
               <div className="mt-5 flex flex-wrap gap-2">
                 {teacher.specialties.map((specialty) => (
@@ -219,7 +220,7 @@ export default function TeacherProfileView({ teacher, onRequireAuth }: TeacherPr
                 <BookOpen className="w-3.5 h-3.5" />
                 <span>تصفح المحاضرات والاشتراكات</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-black text-ink font-readex">الكورسات المتاحة</h2>
+              <h2 className="text-2xl sm:text-3xl font-black text-ink font-readex"><MarkerHighlight color="yellow" variant={1}>الكورسات المتاحة</MarkerHighlight></h2>
             </div>
           </div>
 

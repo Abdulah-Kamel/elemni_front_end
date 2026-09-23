@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Button, Badge } from "@/src/components/ui/button";
 import { Section } from "@/src/components/ui/section";
+import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 
 function highlightWord(text: string, word: string) {
   const parts = text.split(word);
@@ -19,9 +20,11 @@ function highlightWord(text: string, word: string) {
     <Fragment key={i}>
       {part}
       {i < parts.length - 1 && (
-        <span className="underline decoration-accent-400 decoration-4 underline-offset-8">
-          {word}
-        </span>
+        <MarkerHighlight color="yellow" variant={1}>
+          <span className="underline decoration-accent-400 decoration-4 underline-offset-8">
+            {word}
+          </span>
+        </MarkerHighlight>
       )}
     </Fragment>
   ));

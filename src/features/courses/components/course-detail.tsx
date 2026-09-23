@@ -7,6 +7,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { AnimatePresence, m, useReducedMotion } from "motion/react";
 import StudentAppShell from "@/src/features/portal/components/portal-shell";
 import { Link, useRouter } from "@/src/i18n/navigation";
+import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 import type {
   GradeDto,
   PublicItemDto,
@@ -397,7 +398,9 @@ export default function CourseDetail({
                   <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
                     <div>
                       <h2 id="content-title" className="text-3xl font-black tracking-tight text-ink sm:text-4xl dark:text-slate-50">
-                        {t("coursePlan")}
+                        <MarkerHighlight color="sky" variant={1}>
+                          {t("coursePlan")}
+                        </MarkerHighlight>
                       </h2>
                       <p className="mt-2 max-w-[65ch] text-sm font-medium text-muted dark:text-slate-400">{t("curriculumDescription")}</p>
                     </div>
@@ -421,7 +424,11 @@ export default function CourseDetail({
                   ) : (
                     <div className="sticker-tile flex min-h-64 flex-col items-center justify-center px-5 text-center">
                       <CircleAlert className="mb-4 size-10 text-muted" aria-hidden="true" />
-                      <h3 className="text-lg font-black text-ink dark:text-slate-50">{t("noContent")}</h3>
+                      <h3 className="text-lg font-black text-ink dark:text-slate-50">
+                        <MarkerHighlight color="pink" variant={3}>
+                          {t("noContent")}
+                        </MarkerHighlight>
+                      </h3>
                       <p className="mt-2 max-w-[65ch] text-sm leading-6 font-medium text-muted dark:text-slate-400">{t("noContentDescription")}</p>
                     </div>
                   )}
