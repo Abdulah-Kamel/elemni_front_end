@@ -103,6 +103,26 @@ describe("StudentPortalShell", () => {
     expect(screen.getByText("محتوى الدورة")).toBeInTheDocument();
   });
 
+  it("shows the current course title in the portal topbar", () => {
+    render(
+      <NextIntlClientProvider locale="ar" messages={arabicMessages}>
+        <StudentPortalShell
+          user={{ id: 1, name: "أحمد علي" } as never}
+          active="courses"
+          title="كورس التفاضل"
+        >
+          <p>محتوى الدورة</p>
+        </StudentPortalShell>
+      </NextIntlClientProvider>,
+    );
+
+    const topbar = screen.getByRole("banner");
+    expect(screen.getByText("كورس التفاضل", { selector: "p" })).toHaveClass(
+      "truncate",
+    );
+    expect(topbar).toHaveTextContent("كورس التفاضل");
+  });
+
   it("removes collapsed navigation labels from the icon layout", () => {
     render(
       <NextIntlClientProvider locale="ar" messages={arabicMessages}>

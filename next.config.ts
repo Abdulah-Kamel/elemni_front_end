@@ -10,6 +10,18 @@ const imageOrigins = [
   process.env.API_URL ?? "http://localhost:8001",
 ].filter((origin): origin is string => Boolean(origin));
 
+const remotePatterns = imageOrigins.map((origin) => {
+  const url = new URL(origin);
+  const basePath = url.pathname.replace(/\/$/, "");
+
+  return {
+    protocol: url.protocol === "http:" ? "http" as const : "https" as const,
+    hostname: url.hostname,
+    port: url.port,
+    pathname: `${basePath}/**`,
+  };
+});
+
 const nextConfig: NextConfig = {
   transpilePackages: ["next-intl", "@swc/helpers"],
   env: {
@@ -20,7 +32,7 @@ const nextConfig: NextConfig = {
     globalNotFound: true,
   },
   images: {
-    remotePatterns: imageOrigins.map((origin) => new URL("/**", origin)),
+    remotePatterns,
   },
 };
 

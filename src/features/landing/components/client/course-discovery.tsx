@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { AnimatePresence, m } from "motion/react";
 import { BookOpen, CircleAlert, Clock3, Search, Sparkles } from "lucide-react";
@@ -10,13 +9,13 @@ import { Section } from "@/src/components/ui/section";
 import { Reveal } from "@/src/components/ui/reveal";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 import { ModernSelect } from "@/src/components/ui/modern-select";
+import ImageWithFallback from "@/src/components/ui/image-with-fallback";
 import type {
   GradeDto,
   PublicCourseDto,
   StreamDto,
   SubjectDto,
 } from "@/src/lib/student-api/contract";
-import { resolveAssetUrl } from "@/src/lib/asset-url";
 import lessonFallback from "@/src/assets/images/student-redesign/lesson-calculus.webp";
 import { filterLandingCourses, type LandingCourseFilters } from "./course-filter";
 
@@ -196,8 +195,9 @@ export default function CourseDiscovery({
                       data-testid="course-card-image"
                       className="relative h-36 w-full overflow-hidden bg-slate-100 dark:bg-slate-700"
                     >
-                      <Image
-                        src={resolveAssetUrl(course.img, lessonFallback.src)}
+                      <ImageWithFallback
+                        src={course.img}
+                        fallbackSrc={lessonFallback}
                         alt={course.title}
                         fill
                         loading="lazy"

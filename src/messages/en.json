@@ -656,6 +656,8 @@
     "expandResources": "Expand item resources",
     "documentPreviewFallback": "If the file does not render correctly, you can",
     "openDocument": "open it in a new window",
+    "enterTheaterMode": "Enable theater mode",
+    "exitTheaterMode": "Disable theater mode",
     "requiresEnrollment": "Enrollment required",
     "unavailable": "Currently unavailable",
     "enrollmentUntil": "Access available until {date}",

@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
@@ -12,10 +11,10 @@ import {
   Rocket,
 } from "lucide-react";
 import { GlobalLoading } from "@/src/components/ui/global-loading";
+import ImageWithFallback from "@/src/components/ui/image-with-fallback";
 import { m } from "motion/react";
 import { Link, useRouter } from "@/src/i18n/navigation";
 import type { GradeDto, StreamDto } from "@/src/lib/student-api/contract";
-import { resolveAssetUrl } from "@/src/lib/asset-url";
 import {
   getStudentErrorMessage,
   isStudentUnauthorized,
@@ -359,11 +358,9 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
                         className="sticker-tile group block overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
                       >
                         <div className="relative aspect-video border-b-2 border-ink bg-brand-100 dark:border-brand-300">
-                          <Image
-                            src={resolveAssetUrl(
-                              enrollment.course.img,
-                              lessonFallback.src,
-                            )}
+                          <ImageWithFallback
+                            src={enrollment.course.img}
+                            fallbackSrc={lessonFallback}
                             alt={enrollment.course.title}
                             fill
                             sizes="(max-width: 639px) 100vw, 50vw"

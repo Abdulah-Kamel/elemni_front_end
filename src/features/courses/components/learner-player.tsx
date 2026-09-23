@@ -1,18 +1,22 @@
 "use client";
 
-import { Download, FileText, PlayCircle } from "lucide-react";
+import { Download, FileText, Maximize2, Minimize2, PlayCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { PublicItemDto, PublicLessonDto } from "@/src/lib/student-api/contract";
 import { resolveAssetUrl } from "@/src/lib/asset-url";
 
 export default function LearnerPlayer({
   activeContent,
+  theaterMode,
+  onTheaterModeChange,
 }: {
   activeContent: {
     item: PublicItemDto;
     lesson: PublicLessonDto;
     type: "video" | "document";
   } | null;
+  theaterMode: boolean;
+  onTheaterModeChange: (enabled: boolean) => void;
 }) {
   const t = useTranslations("courseDetail");
   if (!activeContent) return null;
@@ -53,6 +57,21 @@ export default function LearnerPlayer({
               {activeContent.lesson.title}
             </p>
           </div>
+          {!isDocument && (
+            <button
+              type="button"
+              aria-pressed={theaterMode}
+              onClick={() => onTheaterModeChange(!theaterMode)}
+              className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs font-black text-white transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7DD3FC]"
+            >
+              {theaterMode ? (
+                <Minimize2 className="size-4" aria-hidden="true" />
+              ) : (
+                <Maximize2 className="size-4" aria-hidden="true" />
+              )}
+              {theaterMode ? t("exitTheaterMode") : t("enterTheaterMode")}
+            </button>
+          )}
           {isDocument && assetUrl && (
             <a
               href={assetUrl}

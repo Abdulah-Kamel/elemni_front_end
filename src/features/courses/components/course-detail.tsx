@@ -28,6 +28,7 @@ import {
 } from "@/src/features/student/hooks/use-student-queries";
 import { studentQueryKeys } from "@/src/features/student/query-keys";
 import { getEffectiveCoupons, validateCoupon, type CouponValidation } from "@/src/lib/coupons/coupons";
+import { cn } from "@/src/lib/cn";
 import { portalContainerVariants, portalItemVariants, scrollIntoViewById } from "./course-motion";
 import CheckoutConfirmation from "./checkout-confirmation";
 import CourseHero from "./course-hero";
@@ -86,6 +87,7 @@ export default function CourseDetail({
     lesson: PublicLessonDto;
     type: "video" | "document";
   } | null>(null);
+  const [theaterMode, setTheaterMode] = useState(false);
 
   const courseQuery = useStudentCourse(courseId, teacherSlug, { initialData: initialDetail });
   const userQuery = useCurrentStudent(isAuthenticated);
@@ -290,37 +292,100 @@ export default function CourseDetail({
             </Link>
           </m.div>
 
-          <div className="grid items-start gap-8 lg:grid-cols-[minmax(19rem,24rem)_minmax(0,1fr)]">
-            <div className="order-1 min-w-0 space-y-8 lg:order-2">
-              <m.div
-                initial={publicMode || reduced ? false : "hidden"}
-                animate="show"
-                variants={portalItemVariants}
-              >
-                <CourseHero
-                  course={course}
-                  teacher={detail.teacher}
-                  gradeName={gradeName}
-                  streamName={streamName}
-                  examCount={examCount}
-                />
-              </m.div>
+          {enrolled ? (
+            <div
+              data-enrolled-layout
+              className={cn(
+                "grid items-start gap-8",
+                theaterMode
+                  ? "lg:grid-cols-1"
+                  : "lg:grid-cols-[minmax(0,1fr)_minmax(19rem,24rem)]",
+              )}
+            >
+              <div className="min-w-0 space-y-8">
+                <AnimatePresence initial={false}>
+                  {visibleActiveContent && (
+                    <m.div
+                      key="course-player"
+                      initial={reduced ? { opacity: 0 } : { opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={reduced ? { opacity: 0 } : { opacity: 0, y: -8 }}
+                      transition={{ duration: 0.25 }}
+                    >
+                      <LearnerPlayer
+                        activeContent={visibleActiveContent}
+                        theaterMode={theaterMode}
+                        onTheaterModeChange={setTheaterMode}
+                      />
+                    </m.div>
+                  )}
+                </AnimatePresence>
 
-              <AnimatePresence initial={false}>
-                  {enrolled && visibleActiveContent && (
+                {!theaterMode && (
                   <m.div
-                    key="course-player"
-                    initial={reduced ? { opacity: 0 } : { opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={reduced ? { opacity: 0 } : { opacity: 0, y: -8 }}
-                    transition={{ duration: 0.25 }}
+                    initial={publicMode || reduced ? false : "hidden"}
+                    animate="show"
+                    variants={portalItemVariants}
                   >
-                    <LearnerPlayer activeContent={visibleActiveContent} />
+                    <CourseHero
+                      course={course}
+                      teacher={detail.teacher}
+                      gradeName={gradeName}
+                      streamName={streamName}
+                      examCount={examCount}
+                    />
                   </m.div>
                 )}
-              </AnimatePresence>
+              </div>
 
-              {!enrolled && (
+              <LearnerCurriculumSidebar
+                chapters={chapters}
+                lessonsCount={lessons.length}
+                activeContentId={visibleActiveContent?.item.id ?? null}
+                expandedChapterId={visibleExpandedChapterId}
+                expandedLessonId={visibleExpandedLessonId}
+                onChapterToggle={handleChapterToggle}
+                onLessonToggle={handleLessonToggle}
+                onPlay={playVideo}
+                onOpen={openDocument}
+                completedItemIds={detail.enrollment?.progress.completed_item_ids ?? []}
+                theaterMode={theaterMode}
+              />
+
+              {theaterMode && (
+                <m.div
+                  className="order-3 lg:order-2"
+                  initial={publicMode || reduced ? false : "hidden"}
+                  animate="show"
+                  variants={portalItemVariants}
+                >
+                  <CourseHero
+                    course={course}
+                    teacher={detail.teacher}
+                    gradeName={gradeName}
+                    streamName={streamName}
+                    examCount={examCount}
+                  />
+                </m.div>
+              )}
+            </div>
+          ) : (
+            <div className="grid items-start gap-8 lg:grid-cols-[minmax(19rem,24rem)_minmax(0,1fr)]">
+              <div className="order-1 min-w-0 space-y-8 lg:order-2">
+                <m.div
+                  initial={publicMode || reduced ? false : "hidden"}
+                  animate="show"
+                  variants={portalItemVariants}
+                >
+                  <CourseHero
+                    course={course}
+                    teacher={detail.teacher}
+                    gradeName={gradeName}
+                    streamName={streamName}
+                    examCount={examCount}
+                  />
+                </m.div>
+
                 <m.section
                   id="course-content"
                   className="scroll-mt-24"
@@ -361,23 +426,8 @@ export default function CourseDetail({
                     </div>
                   )}
                 </m.section>
-              )}
-            </div>
+              </div>
 
-            {enrolled ? (
-              <LearnerCurriculumSidebar
-                chapters={chapters}
-                lessonsCount={lessons.length}
-                activeContentId={visibleActiveContent?.item.id ?? null}
-                expandedChapterId={visibleExpandedChapterId}
-                expandedLessonId={visibleExpandedLessonId}
-                onChapterToggle={handleChapterToggle}
-                onLessonToggle={handleLessonToggle}
-                onPlay={playVideo}
-                onOpen={openDocument}
-                completedItemIds={detail.enrollment?.progress.completed_item_ids ?? []}
-              />
-            ) : (
               <aside className="order-2 min-w-0 lg:order-1">
                 <CoursePurchasePanel
                   course={course}
@@ -392,8 +442,8 @@ export default function CourseDetail({
                   onCouponRemove={removeCoupon}
                 />
               </aside>
-            )}
-          </div>
+            </div>
+          )}
         </m.div>
       )}
 
@@ -417,7 +467,11 @@ export default function CourseDetail({
   return publicMode ? (
     <PublicCourseDetailShell>{pageContent}</PublicCourseDetailShell>
   ) : (
-    <StudentAppShell user={user} active={enrolled ? "courses" : "discover"}>
+    <StudentAppShell
+      user={user}
+      active={enrolled ? "courses" : "discover"}
+      title={course?.title}
+    >
       {pageContent}
     </StudentAppShell>
   );

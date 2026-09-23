@@ -7,6 +7,7 @@ import type {
   PublicItemDto,
   PublicLessonDto,
 } from "@/src/lib/student-api/contract";
+import { cn } from "@/src/lib/cn";
 import CurriculumAccordion from "./curriculum-accordion";
 
 export default function LearnerCurriculumSidebar({
@@ -20,6 +21,7 @@ export default function LearnerCurriculumSidebar({
   onPlay,
   onOpen,
   completedItemIds,
+  theaterMode = false,
 }: {
   chapters: PublicChapterDto[];
   lessonsCount: number;
@@ -31,6 +33,7 @@ export default function LearnerCurriculumSidebar({
   onPlay: (item: PublicItemDto, lesson: PublicLessonDto) => void;
   onOpen: (item: PublicItemDto, lesson: PublicLessonDto) => void;
   completedItemIds: number[];
+  theaterMode?: boolean;
 }) {
   const t = useTranslations("courseDetail");
   const hasContent = chapters.some((chapter) => chapter.lessons.length);
@@ -38,9 +41,13 @@ export default function LearnerCurriculumSidebar({
   return (
     <aside
       data-testid="learner-curriculum-sidebar"
-      data-layout="flat"
+      data-layout={theaterMode ? "stacked" : "flat"}
       aria-label={t("curriculum")}
-      className="order-2 min-w-0 overflow-y-auto overscroll-contain lg:order-1 lg:sticky lg:top-24 lg:max-h-[calc(100dvh-7rem)] lg:pe-1"
+      className={cn(
+        "order-2 min-w-0 lg:order-1 lg:pe-1",
+        !theaterMode &&
+          "overflow-y-auto overscroll-contain lg:sticky lg:top-24 lg:max-h-[calc(100dvh-7rem)]",
+      )}
     >
       <section
         id="course-content"

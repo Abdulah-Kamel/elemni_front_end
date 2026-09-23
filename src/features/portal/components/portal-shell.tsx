@@ -214,7 +214,7 @@ function SidebarContent({
   );
 }
 
-export default function StudentPortalShell({ children, user, active = "dashboard" }: { children: ReactNode; user: UserDto | null; active?: string }) {
+export default function StudentPortalShell({ children, user, active = "dashboard", title }: { children: ReactNode; user: UserDto | null; active?: string; title?: string }) {
   const locale = useLocale();
   const tBrand = useTranslations("brand");
   const tPortal = useTranslations("studentPortal");
@@ -240,12 +240,17 @@ export default function StudentPortalShell({ children, user, active = "dashboard
           />
         </aside>
 
-        <header className="student-portal-header fixed top-0 z-30 flex h-16 items-center justify-between border-b-2 border-ink bg-surface/95 px-4 backdrop-blur-md md:px-8 dark:border-brand-300 dark:bg-[#0A1826]/95">
-          <div className="flex items-center gap-2">
+        <header className="student-portal-header fixed top-0 z-30 flex h-16 items-center justify-between gap-3 border-b-2 border-ink bg-surface/95 px-4 backdrop-blur-md md:px-8 dark:border-brand-300 dark:bg-[#0A1826]/95">
+          <div className="flex min-w-0 flex-1 items-center gap-2">
             <button onClick={() => setMobileOpen(true)} aria-label={tPortal("openMenu")} className="flex size-10 cursor-pointer items-center justify-center rounded-xl border-2 border-ink text-ink hover:bg-brand-100 md:hidden dark:border-brand-300 dark:text-slate-200"><Menu className="size-6" /></button>
-            <Link href="/dashboard" className="flex items-center gap-2 font-black text-brand-700 md:hidden dark:text-brand-300"><span className="sticker-badge block -rotate-3 bg-white p-0.5"><Image src={logo} alt={tBrand("name")} width={28} height={28} className="size-7 rounded-lg object-contain" /></span>{tBrand("name")}</Link>
+            <Link href="/dashboard" className={cn("items-center gap-2 font-black text-brand-700 md:hidden dark:text-brand-300", title ? "hidden sm:flex" : "flex")}><span className="sticker-badge block -rotate-3 bg-white p-0.5"><Image src={logo} alt={tBrand("name")} width={28} height={28} className="size-7 rounded-lg object-contain" /></span>{tBrand("name")}</Link>
+            {title && (
+              <p title={title} className="min-w-0 truncate text-sm font-black tracking-[-0.01em] text-ink sm:text-base md:text-lg dark:text-slate-100">
+                {title}
+              </p>
+            )}
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex shrink-0 items-center gap-3">
             <StudentIdentity user={user} />
           </div>
         </header>

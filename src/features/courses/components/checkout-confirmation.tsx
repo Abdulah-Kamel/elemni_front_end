@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { CheckCircle2, CircleAlert, LoaderCircle, ShieldCheck, TicketPercent, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { resolveAssetUrl } from "@/src/lib/asset-url";
+import ImageWithFallback from "@/src/components/ui/image-with-fallback";
+import lessonFallback from "@/src/assets/images/student-redesign/lesson-study-skills.webp";
 import type { CouponValidation } from "@/src/lib/coupons/coupons";
 import type {
   PublicCourseDto,
@@ -39,7 +39,6 @@ export default function CheckoutConfirmation({
 }) {
   const t = useTranslations("courseDetail");
   const locale = useLocale();
-  const courseImageUrl = course.img ? resolveAssetUrl(course.img, "") : null;
   const closeRef = useRef<HTMLButtonElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
   const loadingRef = useRef(loading);
@@ -105,11 +104,14 @@ export default function CheckoutConfirmation({
 
         <div className="mt-6 flex gap-4 rounded-xl border border-[#E4ECF2] bg-[#F8FBFD] p-3">
           <div className="relative size-20 shrink-0 overflow-hidden rounded-lg bg-[#DDF2FC]">
-            {courseImageUrl ? (
-              <Image src={courseImageUrl} alt="" fill sizes="80px" className="object-cover" />
-            ) : (
-              <ShieldCheck className="absolute inset-0 m-auto size-8 text-[#0284C7]" aria-hidden="true" />
-            )}
+            <ImageWithFallback
+              src={course.img}
+              fallbackSrc={lessonFallback}
+              alt=""
+              fill
+              sizes="80px"
+              className="object-cover"
+            />
           </div>
           <div className="min-w-0">
             <h3 className="truncate text-sm font-black text-[#0F2638]">{course.title}</h3>

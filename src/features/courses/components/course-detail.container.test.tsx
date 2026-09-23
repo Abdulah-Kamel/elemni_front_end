@@ -8,7 +8,18 @@ import enMessages from "@/src/messages/en.json";
 import CourseDetail from "./course-detail";
 
 vi.mock("@/src/features/portal/components/portal-shell", () => ({
-  default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  default: ({
+    children,
+    title,
+  }: {
+    children: React.ReactNode;
+    title?: string;
+  }) => (
+    <div>
+      <header aria-label="Portal topbar">{title}</header>
+      {children}
+    </div>
+  ),
 }));
 
 vi.mock("./public-course-detail-shell", () => ({
@@ -187,6 +198,9 @@ describe("CourseDetail production experience", () => {
     expect(
       await screen.findByTitle("مقدمة في النهايات - فيديو الشرح"),
     ).toHaveAttribute("src", "https://iframe.mediadelivery.net/play/123");
+    expect(screen.getByLabelText("Portal topbar")).toHaveTextContent(
+      "كورس التفاضل",
+    );
     const curriculumSidebar = screen.getByTestId("learner-curriculum-sidebar");
     expect(curriculumSidebar).toHaveAttribute("aria-label", "منهج الكورس");
     expect(curriculumSidebar).toHaveAttribute("data-layout", "flat");
@@ -195,7 +209,155 @@ describe("CourseDetail production experience", () => {
     const curriculumItem = screen.getByTestId("learner-curriculum-item-101");
     expect(curriculumItem).toHaveClass("w-full", "rounded-none");
     expect(screen.queryByText("السعر المستحق")).not.toBeInTheDocument();
+
+    const player = document.querySelector("#course-player");
+    const title = screen.getByRole("heading", { name: "كورس التفاضل" });
+    const curriculum = screen.getByTestId("learner-curriculum-sidebar");
+
+    expect(player).not.toBeNull();
+    if (!player) throw new Error("expected #course-player to exist");
+
+    expect(player.compareDocumentPosition(title) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(title.compareDocumentPosition(curriculum) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+  });
+
+  async function renderEnrolledCourseDetail() {
+    fetchMock.mockImplementation((input: string | URL) => {
+      const url = String(input);
+
+      if (url.startsWith("/api/student/my-courses/12")) {
+        return Promise.resolve({ ok: true, status: 200, json: async () => detail });
+      }
+
+      if (url === "/api/student/auth/me") {
+        return Promise.resolve({ ok: true, status: 200, json: async () => ({ id: 1, name: "الطالب" }) });
+      }
+
+      return Promise.resolve({ ok: false, status: 404, json: async () => ({ detail: "not found" }) });
+    });
+
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+    });
+
+    render(
+      <NextIntlClientProvider locale="ar" messages={arMessages}>
+        <QueryClientProvider client={queryClient}>
+          <CourseDetail
+            courseId={12}
+            teacherSlug="ahmad-ali"
+            grades={[{ id: 3, name: "الصف الثالث الثانوي", level: "secondary" }]}
+            streams={[{ id: 1, name: "علمي علوم", slug: "science" }]}
+          />
+        </QueryClientProvider>
+      </NextIntlClientProvider>,
+    );
+
+    await screen.findByTitle("مقدمة في النهايات - فيديو الشرح");
+  }
+
+  it("keeps theater mode off by default with player beside curriculum and details under the player", async () => {
+    await renderEnrolledCourseDetail();
+
+    const enrolledLayout = document.querySelector("[data-enrolled-layout]");
+    const player = document.querySelector("#course-player");
+    const title = screen.getByRole("heading", { name: "كورس التفاضل" });
+    const curriculumSidebar = screen.getByTestId("learner-curriculum-sidebar");
+
+    expect(enrolledLayout).not.toBeNull();
+    expect(player).not.toBeNull();
+    if (!enrolledLayout || !player) {
+      throw new Error("expected enrolled layout and player to exist");
+    }
+
+    expect(enrolledLayout).toHaveClass("lg:grid-cols-[minmax(0,1fr)_minmax(19rem,24rem)]");
+    expect(enrolledLayout).toContainElement(player as HTMLElement);
+    expect(enrolledLayout).toContainElement(curriculumSidebar);
+
+    const playerColumn = player.closest("[data-enrolled-layout] > div");
+    expect(playerColumn).not.toBeNull();
+    if (!playerColumn) throw new Error("expected player column inside enrolled layout");
+    expect(playerColumn).toContainElement(title);
+    expect(playerColumn).not.toContainElement(curriculumSidebar);
+
+    expect(
+      player.compareDocumentPosition(title) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      title.compareDocumentPosition(curriculumSidebar) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("button", { name: arMessages.courseDetail.enterTheaterMode }),
+    ).toHaveAttribute("aria-pressed", "false");
+  });
+
+  it("toggles theater mode on and off with layout changes", async () => {
+    await renderEnrolledCourseDetail();
+
+    const enrolledLayout = document.querySelector("[data-enrolled-layout]");
+    const player = document.querySelector("#course-player");
+    const theaterButton = screen.getByRole("button", {
+      name: arMessages.courseDetail.enterTheaterMode,
+    });
+    const follows = (a: Node, b: Node) =>
+      Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
+
+    expect(player).not.toBeNull();
+    if (!player) throw new Error("expected #course-player to exist");
+
+    const titleOff = screen.getByRole("heading", { name: "كورس التفاضل" });
+    const curriculumOff = screen.getByTestId("learner-curriculum-sidebar");
+    expect(follows(player, titleOff)).toBeTruthy();
+    expect(follows(titleOff, curriculumOff)).toBeTruthy();
+    expect(curriculumOff).toHaveClass("lg:sticky", "overflow-y-auto", "lg:max-h-[calc(100dvh-7rem)]");
+
+    fireEvent.click(theaterButton);
+    expect(theaterButton).toHaveAttribute("aria-pressed", "true");
+    expect(enrolledLayout).toHaveClass("lg:grid-cols-1");
+    const titleOn = screen.getByRole("heading", { name: "كورس التفاضل" });
+    const curriculumOn = screen.getByTestId("learner-curriculum-sidebar");
+    expect(enrolledLayout).toContainElement(player as HTMLElement);
+    expect(enrolledLayout).toContainElement(curriculumOn);
+    expect(enrolledLayout).toContainElement(titleOn);
+    for (const stickyClass of [
+      "lg:sticky",
+      "lg:top-24",
+      "lg:max-h-[calc(100dvh-7rem)]",
+      "overflow-y-auto",
+      "overscroll-contain",
+    ]) {
+      expect(curriculumOn.className).not.toContain(stickyClass);
+    }
+    expect(curriculumOn).toHaveAttribute("data-layout", "stacked");
+    expect(follows(player, curriculumOn)).toBeTruthy();
+    expect(follows(curriculumOn, titleOn)).toBeTruthy();
+    const theaterHeroWrapper = titleOn.closest("[data-enrolled-layout] > div");
+    expect(theaterHeroWrapper).not.toBeNull();
+    expect(theaterHeroWrapper).toHaveClass("order-3", "lg:order-2");
+    expect(document.querySelector("#course-player")).toBe(player);
+    expect(player.closest("[data-enrolled-layout] > div")).not.toContainElement(titleOn);
+
+    fireEvent.click(theaterButton);
+    expect(theaterButton).toHaveAttribute("aria-pressed", "false");
+    expect(enrolledLayout).toHaveClass("lg:grid-cols-[minmax(0,1fr)_minmax(19rem,24rem)]");
+    const titleRestored = screen.getByRole("heading", { name: "كورس التفاضل" });
+    const curriculumRestored = screen.getByTestId("learner-curriculum-sidebar");
+    expect(curriculumRestored).toHaveClass(
+      "lg:sticky",
+      "overflow-y-auto",
+      "lg:max-h-[calc(100dvh-7rem)]",
+    );
+    expect(curriculumRestored).toHaveAttribute("data-layout", "flat");
+    expect(enrolledLayout).toContainElement(player as HTMLElement);
+    expect(follows(player, titleRestored)).toBeTruthy();
+    expect(follows(titleRestored, curriculumRestored)).toBeTruthy();
+    expect(document.querySelector("#course-player")).toBe(player);
+    expect(player.closest("[data-enrolled-layout] > div")).toContainElement(titleRestored);
+    expect(
+      player.closest("[data-enrolled-layout] > div"),
+    ).not.toContainElement(curriculumRestored);
   });
 
   it("previews an enrolled PDF in the learning viewer with a download action", async () => {
@@ -244,6 +406,13 @@ describe("CourseDetail production experience", () => {
     );
 
     await screen.findByTitle("مقدمة في النهايات - فيديو الشرح");
+    const theaterButton = screen.getByRole("button", {
+      name: arMessages.courseDetail.enterTheaterMode,
+    });
+    fireEvent.click(theaterButton);
+    expect(theaterButton).toHaveAttribute("aria-pressed", "true");
+    expect(document.querySelector("[data-enrolled-layout]")).toHaveClass("lg:grid-cols-1");
+
     fireEvent.click(await screen.findByTestId("learner-curriculum-item-102"));
 
     const preview = await screen.findByTitle("مقدمة في النهايات - ملخص الدرس");
@@ -252,6 +421,21 @@ describe("CourseDetail production experience", () => {
       "href",
       "https://cdn.elemni.test/courses/12/lessons/11/items/102.pdf",
     );
+    expect(document.querySelector("[data-enrolled-layout]")).toHaveClass("lg:grid-cols-1");
+
+    const playerAfterSwitch = document.querySelector("#course-player");
+    const curriculumAfterSwitch = screen.getByTestId("learner-curriculum-sidebar");
+    const titleAfterSwitch = screen.getByRole("heading", { name: "كورس التفاضل" });
+    expect(playerAfterSwitch).not.toBeNull();
+    if (!playerAfterSwitch) throw new Error("expected #course-player to exist");
+    expect(
+      playerAfterSwitch.compareDocumentPosition(curriculumAfterSwitch) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      curriculumAfterSwitch.compareDocumentPosition(titleAfterSwitch) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
   });
 
   it("keeps video and document actions available for a mixed-content item", async () => {
@@ -340,7 +524,14 @@ describe("CourseDetail production experience", () => {
     expect(screen.getByRole("heading", { name: "الوحدة الأولى" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /مقدمة في النهايات/ })).toBeInTheDocument();
     expect(screen.queryByRole("navigation", { name: "محتوى الكورس" })).not.toBeInTheDocument();
+    expect(screen.queryByTestId("learner-curriculum-sidebar")).not.toBeInTheDocument();
+    expect(document.querySelector("#course-player")).toBeNull();
+    expect(screen.getByRole("button", { name: "اشترك في الكورس" })).toBeInTheDocument();
     expect(screen.queryByText(/Kashier/i)).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: arMessages.courseDetail.enterTheaterMode }),
+    ).not.toBeInTheDocument();
+    expect(document.querySelector("[data-enrolled-layout]")).toBeNull();
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 

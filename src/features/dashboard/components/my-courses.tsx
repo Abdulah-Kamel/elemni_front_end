@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import {
   ArrowLeft,
@@ -14,10 +13,10 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 import { GlobalLoading } from "@/src/components/ui/global-loading";
+import ImageWithFallback from "@/src/components/ui/image-with-fallback";
 import { Link, useRouter } from "@/src/i18n/navigation";
 import { AnimatePresence, m } from "motion/react";
 import type { EnrollmentDto } from "@/src/lib/student-api/contract";
-import { resolveAssetUrl } from "@/src/lib/asset-url";
 import {
   getStudentErrorMessage,
   isStudentUnauthorized,
@@ -60,8 +59,9 @@ function CourseRow({ enrollment, index }: { enrollment: EnrollmentDto; index: nu
     >
       <Link href={`/my-courses/${course.id}`} aria-label={`فتح كورس ${course.title}`} className="sticker-tile group flex flex-col overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 md:min-h-56 md:flex-row-reverse">
         <div className="relative aspect-video shrink-0 overflow-hidden border-b-2 border-ink bg-brand-100 md:aspect-auto md:w-60 md:border-b-0 md:border-e-2 md:border-ink dark:border-brand-300 dark:bg-slate-800">
-          <Image
-            src={resolveAssetUrl(course.img, lessonFallback.src)}
+          <ImageWithFallback
+            src={course.img}
+            fallbackSrc={lessonFallback}
             alt={course.title}
             fill
             sizes="(max-width: 767px) 100vw, 240px"

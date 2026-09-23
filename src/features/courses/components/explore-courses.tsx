@@ -15,6 +15,7 @@ import {
   UserRound,
 } from "lucide-react";
 import { Link, useRouter } from "@/src/i18n/navigation";
+import ImageWithFallback from "@/src/components/ui/image-with-fallback";
 import { AnimatePresence, m } from "motion/react";
 import type {
   GradeDto,
@@ -89,7 +90,7 @@ function CourseCard({ entry, enrolled, index }: { entry: ExploreCourseEntry; enr
       <article className="sticker-tile group relative flex h-full flex-col overflow-hidden p-4">
         <Link href={href} aria-label={`عرض كورس ${course.title}`} className="absolute inset-0 z-20 rounded-[1.25rem] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-inset" />
         <div className="relative h-40 overflow-hidden rounded-xl border-2 border-ink bg-brand-100 dark:border-brand-300 dark:bg-slate-800">
-          <Image src={resolveAssetUrl(course.img, lessonFallback.src)} alt={course.title} fill sizes="(max-width: 767px) 100vw, 33vw" className="object-cover" />
+          <ImageWithFallback src={course.img} fallbackSrc={lessonFallback} alt={course.title} fill sizes="(max-width: 767px) 100vw, 33vw" className="object-cover" />
           {enrolled && <span className="sticker-badge absolute end-2 top-2 bg-emerald-100 px-2.5 py-1 text-[11px] font-black text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300">ضمن كورساتك</span>}
         </div>
 

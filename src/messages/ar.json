@@ -668,6 +668,8 @@
     "expandResources": "فتح موارد العنصر",
     "documentPreviewFallback": "إذا لم يظهر الملف بشكل صحيح، يمكنك",
     "openDocument": "فتح الملف في نافذة جديدة",
+    "enterTheaterMode": "تفعيل وضع المسرح",
+    "exitTheaterMode": "إلغاء وضع المسرح",
     "requiresEnrollment": "يتطلب الاشتراك",
     "unavailable": "غير متاح حالياً",
     "enrollmentUntil": "الاشتراك متاح حتى {date}",

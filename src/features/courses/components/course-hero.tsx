@@ -4,7 +4,8 @@ import Image from "next/image";
 import { BookOpen, CalendarDays, Clock3, PlayCircle } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/src/i18n/navigation";
-import { resolveAssetUrl } from "@/src/lib/asset-url";
+import ImageWithFallback from "@/src/components/ui/image-with-fallback";
+import lessonFallback from "@/src/assets/images/student-redesign/lesson-study-skills.webp";
 import type {
   PublicCourseDto,
   StudentCourseTeacherDto,
@@ -67,8 +68,6 @@ export default function CourseHero({
   const date = new Intl.DateTimeFormat(locale === "ar" ? "ar-EG" : "en-US", {
     dateStyle: "medium",
   }).format(new Date(course.created_at));
-  const courseImageUrl = course.img ? resolveAssetUrl(course.img, "") : null;
-
   return (
     <section
       aria-labelledby="course-title"
@@ -142,20 +141,15 @@ export default function CourseHero({
         </div>
 
         <div className="relative order-1 aspect-[16/10] min-h-56 overflow-hidden bg-[#142B40] lg:order-2 lg:aspect-auto lg:min-h-[25rem]">
-          {courseImageUrl ? (
-            <Image
-              src={courseImageUrl}
-              alt={course.title}
-              fill
-              priority
-              sizes="(min-width: 1024px) 36vw, 100vw"
-              className="object-cover"
-            />
-          ) : (
-            <div className="flex size-full items-center justify-center text-[#7DD3FC]">
-              <BookOpen className="size-16" strokeWidth={1.25} aria-hidden="true" />
-            </div>
-          )}
+          <ImageWithFallback
+            src={course.img}
+            fallbackSrc={lessonFallback}
+            alt={course.title}
+            fill
+            priority
+            sizes="(min-width: 1024px) 36vw, 100vw"
+            className="object-cover"
+          />
           <div className="pointer-events-none absolute inset-0 bg-[#07131F]/20" />
         </div>
       </div>
