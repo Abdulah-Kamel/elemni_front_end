@@ -204,8 +204,8 @@ describe("CourseDetail production experience", () => {
     const curriculumSidebar = screen.getByTestId("learner-curriculum-sidebar");
     expect(curriculumSidebar).toHaveAttribute("aria-label", "منهج الكورس");
     expect(curriculumSidebar).toHaveAttribute("data-layout", "flat");
-    expect(curriculumSidebar).toHaveClass("overflow-y-auto");
-    expect(curriculumSidebar).toHaveClass("lg:max-h-[calc(100dvh-7rem)]");
+    expect(curriculumSidebar).not.toHaveClass("overflow-y-auto");
+    expect(curriculumSidebar).not.toHaveClass("lg:max-h-[calc(100dvh-7rem)]");
     const curriculumItem = screen.getByTestId("learner-curriculum-item-101");
     expect(curriculumItem).toHaveClass("w-full", "rounded-none");
     expect(screen.queryByText("السعر المستحق")).not.toBeInTheDocument();
@@ -217,7 +217,7 @@ describe("CourseDetail production experience", () => {
     expect(player).not.toBeNull();
     if (!player) throw new Error("expected #course-player to exist");
 
-    expect(player.compareDocumentPosition(title) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(title.compareDocumentPosition(player) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(title.compareDocumentPosition(curriculum) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
@@ -258,7 +258,7 @@ describe("CourseDetail production experience", () => {
     await screen.findByTitle("مقدمة في النهايات - فيديو الشرح");
   }
 
-  it("keeps theater mode off by default with player beside curriculum and details under the player", async () => {
+  it("keeps the lesson title above the player and course summary beneath the curriculum", async () => {
     await renderEnrolledCourseDetail();
 
     const enrolledLayout = document.querySelector("[data-enrolled-layout]");
@@ -283,7 +283,7 @@ describe("CourseDetail production experience", () => {
     expect(playerColumn).not.toContainElement(curriculumSidebar);
 
     expect(
-      player.compareDocumentPosition(title) & Node.DOCUMENT_POSITION_FOLLOWING,
+      title.compareDocumentPosition(player) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
     expect(
       title.compareDocumentPosition(curriculumSidebar) & Node.DOCUMENT_POSITION_FOLLOWING,
@@ -309,9 +309,12 @@ describe("CourseDetail production experience", () => {
 
     const titleOff = screen.getByRole("heading", { name: "كورس التفاضل" });
     const curriculumOff = screen.getByTestId("learner-curriculum-sidebar");
-    expect(follows(player, titleOff)).toBeTruthy();
+    expect(follows(titleOff, player)).toBeTruthy();
     expect(follows(titleOff, curriculumOff)).toBeTruthy();
-    expect(curriculumOff).toHaveClass("lg:sticky", "overflow-y-auto", "lg:max-h-[calc(100dvh-7rem)]");
+    const courseSummaryOff = screen.getByRole("region", {
+      name: arMessages.courseDetail.courseLabel,
+    });
+    expect(curriculumOff.parentElement).toContainElement(courseSummaryOff);
 
     fireEvent.click(theaterButton);
     expect(theaterButton).toHaveAttribute("aria-pressed", "true");
@@ -321,43 +324,28 @@ describe("CourseDetail production experience", () => {
     expect(enrolledLayout).toContainElement(player as HTMLElement);
     expect(enrolledLayout).toContainElement(curriculumOn);
     expect(enrolledLayout).toContainElement(titleOn);
-    for (const stickyClass of [
-      "lg:sticky",
-      "lg:top-24",
-      "lg:max-h-[calc(100dvh-7rem)]",
-      "overflow-y-auto",
-      "overscroll-contain",
-    ]) {
-      expect(curriculumOn.className).not.toContain(stickyClass);
-    }
     expect(curriculumOn).toHaveAttribute("data-layout", "stacked");
     expect(follows(player, curriculumOn)).toBeTruthy();
-    expect(follows(curriculumOn, titleOn)).toBeTruthy();
-    const theaterHeroWrapper = titleOn.closest("[data-enrolled-layout] > div");
-    expect(theaterHeroWrapper).not.toBeNull();
-    expect(theaterHeroWrapper).toHaveClass("order-3", "lg:order-2");
+    expect(follows(titleOn, player)).toBeTruthy();
+    const courseSummaryOn = screen.getByRole("region", {
+      name: arMessages.courseDetail.courseLabel,
+    });
+    expect(curriculumOn.parentElement).toContainElement(courseSummaryOn);
     expect(document.querySelector("#course-player")).toBe(player);
-    expect(player.closest("[data-enrolled-layout] > div")).not.toContainElement(titleOn);
+    expect(player.closest("[data-enrolled-layout] > div")).toContainElement(titleOn);
 
     fireEvent.click(theaterButton);
     expect(theaterButton).toHaveAttribute("aria-pressed", "false");
     expect(enrolledLayout).toHaveClass("lg:grid-cols-[minmax(0,1fr)_minmax(19rem,24rem)]");
     const titleRestored = screen.getByRole("heading", { name: "كورس التفاضل" });
     const curriculumRestored = screen.getByTestId("learner-curriculum-sidebar");
-    expect(curriculumRestored).toHaveClass(
-      "lg:sticky",
-      "overflow-y-auto",
-      "lg:max-h-[calc(100dvh-7rem)]",
-    );
     expect(curriculumRestored).toHaveAttribute("data-layout", "flat");
     expect(enrolledLayout).toContainElement(player as HTMLElement);
-    expect(follows(player, titleRestored)).toBeTruthy();
+    expect(follows(titleRestored, player)).toBeTruthy();
     expect(follows(titleRestored, curriculumRestored)).toBeTruthy();
     expect(document.querySelector("#course-player")).toBe(player);
     expect(player.closest("[data-enrolled-layout] > div")).toContainElement(titleRestored);
-    expect(
-      player.closest("[data-enrolled-layout] > div"),
-    ).not.toContainElement(curriculumRestored);
+    expect(player.closest("[data-enrolled-layout] > div")).not.toContainElement(curriculumRestored);
   });
 
   it("previews an enrolled PDF in the learning viewer with a download action", async () => {
@@ -433,7 +421,7 @@ describe("CourseDetail production experience", () => {
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
     expect(
-      curriculumAfterSwitch.compareDocumentPosition(titleAfterSwitch) &
+      titleAfterSwitch.compareDocumentPosition(playerAfterSwitch) &
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
   });

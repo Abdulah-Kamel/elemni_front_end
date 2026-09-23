@@ -114,6 +114,15 @@ export default function CourseDetail({
   const enrolled = Boolean(detail?.enrollment);
   const chapters = course?.chapters ?? [];
   const lessons = chapters.flatMap((chapter) => chapter.lessons);
+  const playableItems = enrolled
+    ? chapters.flatMap((chapter) =>
+        chapter.lessons.flatMap((lesson) =>
+          lesson.items
+            .filter((item) => Boolean(item.bunny_stream_embed_url) || Boolean(absoluteDocumentUrl(item.document_path)))
+            .map((item) => ({ item, lesson, chapter })),
+        ),
+      )
+    : [];
   const firstContentChapter = chapters.find((chapter) => chapter.lessons.length);
   const resumeItemId = enrolled
     ? detail?.enrollment?.progress.next_item_id ?? detail?.enrollment?.progress.last_item_id
@@ -144,6 +153,12 @@ export default function CourseDetail({
     ...firstPlayableContent,
     type: firstPlayableContent.item.bunny_stream_embed_url ? "video" as const : "document" as const,
   } : null);
+  const visibleActiveIndex = visibleActiveContent
+    ? playableItems.findIndex(({ item }) => item.id === visibleActiveContent.item.id)
+    : -1;
+  const itemPosition = visibleActiveIndex >= 0
+    ? t("lessonItemPosition", { current: visibleActiveIndex + 1, total: playableItems.length })
+    : "";
   const examCount = lessons.flatMap((lesson) => lesson.items).filter((item) => item.has_exam).length;
   const gradeName = grades.find((grade) => grade.id === course?.grade_id)?.name;
   const streamName = streams.find((stream) => stream.id === course?.stream_id)?.name;
@@ -164,6 +179,15 @@ export default function CourseDetail({
     if (enrolled) progressMutation.mutate({ itemId: item.id });
     setActiveContent({ item, lesson, type: "document" });
     window.setTimeout(() => scrollIntoViewById("course-player", { block: "start" }), 0);
+  };
+
+  const goToPlayableItem = (index: number) => {
+    const target = playableItems[index];
+    if (!target) return;
+    setExpandedChapterId(target.chapter.id);
+    setExpandedLessonId(target.lesson.id);
+    if (target.item.bunny_stream_embed_url) playVideo(target.item, target.lesson);
+    else openDocument(target.item, target.lesson);
   };
 
   const handleChapterToggle = (chapterId: number) => {
@@ -257,7 +281,7 @@ export default function CourseDetail({
   };
 
   const pageContent = (
-    <>
+    <div className={cn(!publicMode && enrolled && "min-h-[calc(100vh-4rem)] bg-[#F4F3EF]")}>
       {loading ? (
         <CourseDetailSkeleton label={t("loadingCourse")} />
       ) : error || !detail || !course ? (
@@ -283,15 +307,17 @@ export default function CourseDetail({
           animate="show"
           variants={portalContainerVariants}
         >
-          <m.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="mb-6 w-fit">
-            <Link
-              href={backHref}
-              className="sticker-btn-outline inline-flex items-center gap-2 px-4 py-2 text-sm font-black text-ink dark:text-slate-200"
-            >
-              <ArrowLeft className="size-4" aria-hidden="true" />
-              {backLabel}
-            </Link>
-          </m.div>
+          {!enrolled && (
+            <m.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="mb-6 w-fit">
+              <Link
+                href={backHref}
+                className="sticker-btn-outline inline-flex items-center gap-2 px-4 py-2 text-sm font-black text-ink dark:text-slate-200"
+              >
+                <ArrowLeft className="size-4" aria-hidden="true" />
+                {backLabel}
+              </Link>
+            </m.div>
+          )}
 
           {enrolled ? (
             <div
@@ -303,7 +329,38 @@ export default function CourseDetail({
                   : "lg:grid-cols-[minmax(0,1fr)_minmax(19rem,24rem)]",
               )}
             >
-              <div className="min-w-0 space-y-8">
+              <div className="min-w-0 space-y-5">
+                <div className="flex flex-wrap items-end justify-between gap-4">
+                  <div className="min-w-0">
+                    <div className="mb-2 flex flex-wrap gap-2 text-xs font-semibold">
+                      {(gradeName || streamName) && (
+                        <span className="rounded-full border border-[#E4E2DC] bg-white px-3 py-1.5 text-[#4A505C]">
+                          {[gradeName, streamName].filter(Boolean).join(" · ")}
+                        </span>
+                      )}
+                      {course.subject_name && (
+                        <span className="rounded-full border border-[#F0DDA0] bg-[#FFF4D6] px-3 py-1.5 text-[#6B4E00]">
+                          {course.subject_name}
+                        </span>
+                      )}
+                    </div>
+                    <h1
+                      id="course-title"
+                      className="text-balance text-2xl font-bold tracking-[-0.02em] text-[#15181E] sm:text-[30px]"
+                    >
+                      {course.title}
+                    </h1>
+                  </div>
+                  <m.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                    <Link
+                      href={backHref}
+                      className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#E4E2DC] bg-white px-4 text-sm font-semibold text-[#15181E] transition hover:bg-[#F4F3EF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A5FB4]"
+                    >
+                      <ArrowLeft className="size-4" aria-hidden="true" />
+                      {backLabel}
+                    </Link>
+                  </m.div>
+                </div>
                 <AnimatePresence initial={false}>
                   {visibleActiveContent && (
                     <m.div
@@ -315,6 +372,11 @@ export default function CourseDetail({
                     >
                       <LearnerPlayer
                         activeContent={visibleActiveContent}
+                        itemPosition={itemPosition}
+                        canGoPrevious={visibleActiveIndex > 0}
+                        canGoNext={visibleActiveIndex >= 0 && visibleActiveIndex < playableItems.length - 1}
+                        onPrevious={() => goToPlayableItem(visibleActiveIndex - 1)}
+                        onNext={() => goToPlayableItem(visibleActiveIndex + 1)}
                         theaterMode={theaterMode}
                         onTheaterModeChange={setTheaterMode}
                       />
@@ -322,21 +384,6 @@ export default function CourseDetail({
                   )}
                 </AnimatePresence>
 
-                {!theaterMode && (
-                  <m.div
-                    initial={publicMode || reduced ? false : "hidden"}
-                    animate="show"
-                    variants={portalItemVariants}
-                  >
-                    <CourseHero
-                      course={course}
-                      teacher={detail.teacher}
-                      gradeName={gradeName}
-                      streamName={streamName}
-                      examCount={examCount}
-                    />
-                  </m.div>
-                )}
               </div>
 
               <LearnerCurriculumSidebar
@@ -351,24 +398,18 @@ export default function CourseDetail({
                 onOpen={openDocument}
                 completedItemIds={detail.enrollment?.progress.completed_item_ids ?? []}
                 theaterMode={theaterMode}
-              />
-
-              {theaterMode && (
-                <m.div
-                  className="order-3 lg:order-2"
-                  initial={publicMode || reduced ? false : "hidden"}
-                  animate="show"
-                  variants={portalItemVariants}
-                >
+                completionPercent={detail.enrollment?.progress.completion_percent ?? null}
+                courseSummary={
                   <CourseHero
+                    variant="lesson"
                     course={course}
                     teacher={detail.teacher}
                     gradeName={gradeName}
                     streamName={streamName}
                     examCount={examCount}
                   />
-                </m.div>
-              )}
+                }
+              />
             </div>
           ) : (
             <div className="grid items-start gap-8 lg:grid-cols-[minmax(19rem,24rem)_minmax(0,1fr)]">
@@ -468,7 +509,7 @@ export default function CourseDetail({
           onConfirm={() => void startCheckout()}
         />
       )}
-    </>
+    </div>
   );
 
   return publicMode ? (

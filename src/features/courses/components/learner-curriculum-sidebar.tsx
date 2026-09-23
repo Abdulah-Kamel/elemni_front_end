@@ -2,12 +2,12 @@
 
 import { CircleAlert } from "lucide-react";
 import { useTranslations } from "next-intl";
+import type { ReactNode } from "react";
 import type {
   PublicChapterDto,
   PublicItemDto,
   PublicLessonDto,
 } from "@/src/lib/student-api/contract";
-import { cn } from "@/src/lib/cn";
 import CurriculumAccordion from "./curriculum-accordion";
 
 export default function LearnerCurriculumSidebar({
@@ -22,6 +22,8 @@ export default function LearnerCurriculumSidebar({
   onOpen,
   completedItemIds,
   theaterMode = false,
+  completionPercent = null,
+  courseSummary,
 }: {
   chapters: PublicChapterDto[];
   lessonsCount: number;
@@ -34,74 +36,87 @@ export default function LearnerCurriculumSidebar({
   onOpen: (item: PublicItemDto, lesson: PublicLessonDto) => void;
   completedItemIds: number[];
   theaterMode?: boolean;
+  completionPercent?: number | null;
+  courseSummary?: ReactNode;
 }) {
   const t = useTranslations("courseDetail");
   const hasContent = chapters.some((chapter) => chapter.lessons.length);
+  const percent = Math.min(100, Math.max(0, Math.round(completionPercent ?? 0)));
+  const itemIds = chapters.flatMap((chapter) => chapter.lessons.flatMap((lesson) => lesson.items.map((item) => item.id)));
+  const completedCount = itemIds.filter((id) => completedItemIds.includes(id)).length;
 
   return (
-    <aside
-      data-testid="learner-curriculum-sidebar"
-      data-layout={theaterMode ? "stacked" : "flat"}
-      aria-label={t("curriculum")}
-      className={cn(
-        "order-2 min-w-0 lg:order-1 lg:pe-1",
-        !theaterMode &&
-          "overflow-y-auto overscroll-contain lg:sticky lg:top-24 lg:max-h-[calc(100dvh-7rem)]",
-      )}
-    >
-      <section
-        id="course-content"
-        aria-labelledby="learner-curriculum-title"
-        className="overflow-hidden rounded-2xl border border-[#D8E3EC] bg-white shadow-[0_16px_38px_-30px_rgba(15,38,56,0.8)]"
+    <div className="order-2 min-w-0 space-y-4 lg:order-1 lg:pe-1">
+      <aside
+        data-testid="learner-curriculum-sidebar"
+        data-layout={theaterMode ? "stacked" : "flat"}
+        aria-label={t("curriculum")}
       >
-        <header className="border-b border-[#D8E3EC] bg-[#F4FAFD] px-4 py-4 sm:px-5">
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <p className="text-xs font-black uppercase tracking-[0.12em] text-[#0284C7]">
-                {t("curriculum")}
-              </p>
-              <h2
-                id="learner-curriculum-title"
-                className="mt-1 text-xl font-black tracking-[-0.02em] text-[#0F2638]"
-              >
-                {t("courseContent")}
-              </h2>
+        <section
+          id="course-content"
+          aria-labelledby="learner-curriculum-title"
+          className="overflow-hidden rounded-[18px] border border-[#E4E2DC] bg-white shadow-[0_16px_38px_-30px_rgba(21,24,30,0.35)]"
+        >
+          <header className="border-b border-[#E4E2DC] px-4 py-4 sm:px-5">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-xs font-black uppercase tracking-[0.12em] text-[#0A5FB4]">
+                  {t("curriculum")}
+                </p>
+                <h2
+                  id="learner-curriculum-title"
+                  className="mt-1 text-xl font-black tracking-[-0.02em] text-[#15181E]"
+                >
+                  {t("courseContent")}
+                </h2>
+              </div>
+              <span className="shrink-0 text-sm font-black tabular-nums text-[#15181E]">
+                {percent}%
+              </span>
             </div>
-            <span className="shrink-0 rounded-full border border-[#C7E8F8] bg-white px-2.5 py-1 text-xs font-bold text-[#075985]">
-              {lessonsCount ? t("lessons", { count: lessonsCount }) : t("contentWillAppear")}
-            </span>
-          </div>
-          <p className="mt-2 text-sm leading-6 text-[#6B7E8F]">
-            {t("curriculumDescription")}
-          </p>
-        </header>
+            <div className="mt-3 h-2 overflow-hidden rounded-full bg-[#ECEAE4]" aria-hidden="true">
+              <div
+                className="h-full rounded-full bg-[#0A5FB4] transition-[width] motion-reduce:transition-none"
+                style={{ width: `${percent}%` }}
+              />
+            </div>
+            <p className="mt-3 text-sm leading-6 text-[#5F6573]">
+              {itemIds.length
+                ? t("completedItems", { completed: completedCount, total: itemIds.length })
+                : lessonsCount
+                  ? t("lessons", { count: lessonsCount })
+                  : t("contentWillAppear")}
+            </p>
+          </header>
 
-        <div className="p-0">
-          {hasContent ? (
-            <CurriculumAccordion
-              chapters={chapters}
-              enrolled
-              variant="sidebar"
-              activeContentId={activeContentId}
-              expandedChapterId={expandedChapterId}
-              expandedLessonId={expandedLessonId}
-              onChapterToggle={onChapterToggle}
-              onLessonToggle={onLessonToggle}
-              onPlay={onPlay}
-              onOpen={onOpen}
-              completedItemIds={completedItemIds}
-            />
-          ) : (
-            <div className="m-4 flex min-h-56 flex-col items-center justify-center rounded-xl border border-dashed border-[#B7CDDC] bg-[#FBFDFF] px-5 text-center">
-              <CircleAlert className="mb-4 size-9 text-[#9AB4C5]" aria-hidden="true" />
-              <h3 className="text-base font-black text-[#1C3345]">{t("noContent")}</h3>
-              <p className="mt-2 text-sm leading-6 text-[#6B7E8F]">
-                {t("noContentDescription")}
-              </p>
-            </div>
-          )}
-        </div>
-      </section>
-    </aside>
+          <div className="p-0">
+            {hasContent ? (
+              <CurriculumAccordion
+                chapters={chapters}
+                enrolled
+                variant="sidebar"
+                activeContentId={activeContentId}
+                expandedChapterId={expandedChapterId}
+                expandedLessonId={expandedLessonId}
+                onChapterToggle={onChapterToggle}
+                onLessonToggle={onLessonToggle}
+                onPlay={onPlay}
+                onOpen={onOpen}
+                completedItemIds={completedItemIds}
+              />
+            ) : (
+              <div className="m-4 flex min-h-56 flex-col items-center justify-center rounded-xl border border-dashed border-[#D8E0E9] bg-[#FAF9F5] px-5 text-center">
+                <CircleAlert className="mb-4 size-9 text-[#9AB4C5]" aria-hidden="true" />
+                <h3 className="text-base font-black text-[#15181E]">{t("noContent")}</h3>
+                <p className="mt-2 text-sm leading-6 text-[#5F6573]">
+                  {t("noContentDescription")}
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
+      </aside>
+      {courseSummary}
+    </div>
   );
 }
