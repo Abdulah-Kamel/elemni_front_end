@@ -1,13 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, User, GraduationCap, Sun, Moon, UserPlus, X, Menu, BookOpen, Sparkles, Route, CircleHelp, BookMarked, LayoutDashboard, LogOut } from "lucide-react";
+import Image from "next/image";
+import { Search, User, Sun, Moon, UserPlus, X, Menu, BookOpen, Sparkles, Route, CircleHelp, BookMarked, LayoutDashboard, LogOut } from "lucide-react";
 import { cn } from "@/src/lib/cn";
 import { AnimatePresence, m } from "motion/react";
 import { Link } from "@/src/i18n/navigation";
 import { notifyStudentSessionChanged } from "@/src/lib/student-api/session-events";
 import { useCurrentStudent } from "@/src/features/student/hooks/use-student-queries";
 import { useTranslations } from "next-intl";
+import logoMark from "@/src/assets/logo-icon.png";
 
 interface NavbarProps {
   onOpenAuth: (mode: "signin" | "signup") => void;
@@ -75,8 +77,8 @@ export default function Navbar({ onSearchChange, searchQuery, isDarkMode, onTogg
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 sm:gap-4">
             <a href={`${landingBaseHref}#hero`} onClick={(e) => { if (onGoHome) { e.preventDefault(); onGoHome(); } }} className="flex items-center gap-2.5 group focus:outline-none shrink-0 cursor-pointer">
-              <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-md shadow-primary/20 group-hover:scale-105 transition-transform">
-                <GraduationCap className="w-6 h-6 stroke-[2.2]" />
+              <div className="w-10 h-10 rounded-xl bg-white p-1 shadow-md shadow-primary/20 ring-1 ring-slate-200 group-hover:scale-105 transition-transform">
+                <Image src={logoMark} alt="" width={40} height={40} className="size-full object-contain" />
               </div>
               <span className="text-2xl font-black tracking-tight text-[#0F172A] dark:text-white">
                 {tBrand("name")}

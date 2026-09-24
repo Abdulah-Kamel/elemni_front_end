@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { X, User, Phone, Lock, GraduationCap, ArrowLeft, LoaderCircle, Mail, CircleAlert } from "lucide-react";
+import Image from "next/image";
+import { X, User, Phone, Lock, ArrowLeft, LoaderCircle, Mail, CircleAlert } from "lucide-react";
 import { cn } from "@/src/lib/cn";
 import { notifyStudentSessionChanged } from "@/src/lib/student-api/session-events";
+import logoMark from "@/src/assets/logo-icon.png";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -64,8 +66,8 @@ export default function AuthModal({ isOpen, initialMode, onClose, onSuccess }: A
         </button>
 
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center shadow-md">
-            <GraduationCap className="w-6 h-6" />
+          <div className="w-10 h-10 rounded-xl bg-white p-1 shadow-md ring-1 ring-slate-200">
+            <Image src={logoMark} alt="" width={40} height={40} className="size-full object-contain" />
           </div>
           <div>
             <h3 className="text-xl font-black text-[#0F172A] font-readex">

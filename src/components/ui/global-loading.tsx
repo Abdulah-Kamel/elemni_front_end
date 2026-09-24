@@ -1,4 +1,5 @@
-import { GraduationCap } from "lucide-react";
+import Image from "next/image";
+import logoMark from "@/src/assets/logo-icon.png";
 
 interface GlobalLoadingProps {
   message?: string;
@@ -23,7 +24,7 @@ export function GlobalLoading({
           <span className="global-loading__dot global-loading__dot--three" />
         </span>
         <span className="global-loading__icon">
-          <GraduationCap />
+          <Image src={logoMark} alt="" width={40} height={40} className="size-10 object-contain" />
         </span>
       </div>
 

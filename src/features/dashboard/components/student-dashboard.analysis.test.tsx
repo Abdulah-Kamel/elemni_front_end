@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import StudentDashboard from "./student-dashboard";
@@ -56,7 +56,7 @@ describe("StudentDashboard analysis surface", () => {
     expect(screen.queryByRole("link", { name: "استكشف الكورسات" })).not.toBeInTheDocument();
   });
 
-  it("uses an accessible dark brand surface for the next-step card", () => {
+  it("uses a high-contrast brand surface for the continue-learning card", () => {
     courseItems.push({
       id: 1,
       purchased_at: "2026-09-01T00:00:00Z",
@@ -82,9 +82,40 @@ describe("StudentDashboard analysis surface", () => {
       </NextIntlClientProvider>,
     );
 
-    expect(screen.getByRole("complementary", { name: "خطوتك التالية" })).toHaveClass(
-      "bg-brand-700",
-      "text-white",
+    const continueLearning = screen.getByRole("region", { name: "تابع التعلّم" });
+    expect(continueLearning).toHaveClass("sticker-tile-brand", "border-2");
+    expect(screen.getByRole("progressbar", { name: "نسبة إنجاز 50%" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /تابع التعلّم/ })).toBeInTheDocument();
+  });
+
+  it("filters enrolled courses by progress status", () => {
+    courseItems.push(
+      {
+        id: 1,
+        purchased_at: "2026-09-01T00:00:00Z",
+        expires_at: "2026-10-01T00:00:00Z",
+        course: { id: 7, title: "Course in progress", lesson_count: 3, total_duration_minutes: 60, img: null },
+        progress: { completion_percent: 40, last_opened_at: "2026-09-20T00:00:00Z" },
+      },
+      {
+        id: 2,
+        purchased_at: "2026-08-01T00:00:00Z",
+        expires_at: "2026-10-10T00:00:00Z",
+        course: { id: 8, title: "Course completed", lesson_count: 2, total_duration_minutes: 45, img: null },
+        progress: { completion_percent: 100, last_opened_at: "2026-09-10T00:00:00Z" },
+      },
     );
+
+    render(
+      <NextIntlClientProvider locale="ar" messages={{}}>
+        <StudentDashboard grades={[]} streams={[]} />
+      </NextIntlClientProvider>,
+    );
+
+    expect(screen.getAllByText("Course in progress").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Course completed").length).toBeGreaterThan(0);
+    fireEvent.click(screen.getByRole("button", { name: /مكتملة/ }));
+    expect(screen.queryByRole("link", { name: "فتح كورس Course in progress" })).not.toBeInTheDocument();
+    expect(screen.getAllByText("Course completed").length).toBeGreaterThan(0);
   });
 });

@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
-import { GraduationCap } from "lucide-react";
+import Image from "next/image";
 import { Link } from "@/src/i18n/navigation";
+import logoMark from "@/src/assets/logo-icon.png";
 
 const FOOTER_LINKS = ["legal", "contact"] as const;
 
@@ -12,7 +13,9 @@ export async function Footer() {
     <footer className="bg-brand-900 py-16">
       <div className="mx-auto max-w-6xl px-4 text-center">
         <div className="flex items-center justify-center gap-2 text-xl font-bold text-white">
-          <GraduationCap className="size-6" />
+          <span className="size-8 rounded-lg bg-white p-0.5">
+            <Image src={logoMark} alt="" width={32} height={32} className="size-full object-contain" />
+          </span>
           {brand("name")}
         </div>
         <nav className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">

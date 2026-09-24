@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/src/i18n/navigation";
 import { LocaleSwitcher } from "@/src/components/locale-switcher";
-import { GraduationCap, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
+import logoMark from "@/src/assets/logo-icon.png";
 
 const NAV_ITEMS = ["home", "features", "pricing", "faq", "stories"] as const;
 
@@ -21,7 +23,9 @@ export default function Header() {
           href="/"
           className="flex items-center gap-2 font-bold text-brand-700"
         >
-          <GraduationCap className="size-6" />
+          <span className="size-8 rounded-lg bg-white p-0.5 ring-1 ring-brand-100">
+            <Image src={logoMark} alt="" width={32} height={32} className="size-full object-contain" />
+          </span>
           {tBrand("name")}
         </Link>
 

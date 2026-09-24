@@ -15,20 +15,20 @@ test("public and guarded student routes keep their current baseline behavior", a
   await expect(page.getByRole("heading", { level: 1, name: "جميع المدرسين" })).toBeVisible();
 
   await page.goto("/dashboard");
-  await expect(page).toHaveURL(/\/login$/);
+  await expect(page).toHaveURL(/\/login(?:\?.*)?$/);
 });
 
 test("dashboard and my-courses stay auth-guarded after moving to the dashboard feature", async ({ page }) => {
   await page.goto("/dashboard");
-  await expect(page).toHaveURL(/\/login$/);
+  await expect(page).toHaveURL(/\/login(?:\?.*)?$/);
 
   await page.goto("/my-courses");
-  await expect(page).toHaveURL(/\/login$/);
+  await expect(page).toHaveURL(/\/login(?:\?.*)?$/);
 });
 
 test("onboarding stays auth-guarded after moving to onboarding feature", async ({ page }) => {
   await page.goto("/onboarding");
-  await expect(page).toHaveURL(/\/login$/);
+  await expect(page).toHaveURL(/\/login(?:\?.*)?$/);
 });
 
 test("teachers route still renders after moving to the teachers feature", async ({ page }) => {
@@ -109,25 +109,31 @@ test("a freshly registered student can open migrated authenticated surfaces and 
   await expect(page).toHaveURL(/\/onboarding$/);
 
   await page.goto("/dashboard");
-  await expect(page).not.toHaveURL(/\/login$/);
+  await expect(page).not.toHaveURL(/\/login(?:\?.*)?$/);
   await expect(page.getByRole("navigation", { name: "بوابة الطالب" })).toBeVisible();
-  await expect(page.getByRole("heading", { level: 2, name: "ملخص دراستك" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "ملخص دراستك" })).toBeVisible();
   await expect(page.locator('a[href^="/explore/teachers/"]')).toHaveCount(0);
 
   await page.goto("/my-courses");
-  await expect(page).not.toHaveURL(/\/login$/);
+  await expect(page).not.toHaveURL(/\/login(?:\?.*)?$/);
   await expect(page.getByRole("navigation", { name: "بوابة الطالب" })).toBeVisible();
 
   await page.goto("/explore");
-  await expect(page).not.toHaveURL(/\/login$/);
+  await expect(page).not.toHaveURL(/\/login(?:\?.*)?$/);
   await expect(page.getByRole("navigation", { name: "بوابة الطالب" })).toBeVisible();
   await expect(page.locator('a[href="/browse-teachers"]')).toHaveCount(0);
 
   await expect(page.locator('a[href^="/explore/teachers/"]')).toHaveCount(0);
   await expect(page.locator('a[href^="/teachers/"]').first()).toBeVisible();
 
-  await page.locator('a[href^="/courses/"]').first().click();
-  await expect(page).not.toHaveURL(/\/login$/);
+  const firstCourseLink = page.locator('a[href^="/courses/"]').first();
+  if (await firstCourseLink.count()) {
+    await firstCourseLink.click();
+  } else {
+    // Public catalog data may be empty in the test environment.
+    await page.goto("/courses/1");
+  }
+  await expect(page).not.toHaveURL(/\/login(?:\?.*)?$/);
   await expect(page.getByRole("navigation", { name: "التنقل الرئيسي" })).toBeVisible();
   await expect(page.locator('a[href^="/explore/teachers/"]')).toHaveCount(0);
   await expect(page.locator('a[href^="/teachers/"]').first()).toBeVisible();
@@ -135,7 +141,7 @@ test("a freshly registered student can open migrated authenticated surfaces and 
 
 test("public course detail is separate from the authenticated learner detail", async ({ page }) => {
   await page.goto("/explore");
-  await expect(page).toHaveURL(/\/login$/);
+  await expect(page).toHaveURL(/\/login(?:\?.*)?$/);
 
   await page.goto("/courses/1");
   await expect(page).toHaveURL(/\/courses\/1$/);
@@ -143,7 +149,7 @@ test("public course detail is separate from the authenticated learner detail", a
   await expect(page.getByRole("navigation", { name: "بوابة الطالب" })).toHaveCount(0);
 
   await page.goto("/my-courses/1");
-  await expect(page).toHaveURL(/\/login$/);
+  await expect(page).toHaveURL(/\/login(?:\?.*)?$/);
 });
 
 test("legal and contact pages expose localized, indexable support information", async ({ page }) => {

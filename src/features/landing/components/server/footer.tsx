@@ -1,9 +1,11 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { GraduationCap, Phone } from "lucide-react";
+import Image from "next/image";
+import { Phone } from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
 import { SUPPORT_PHONE, SUPPORT_PHONE_HREF } from "@/src/features/contact/contact-details";
+import logoMark from "@/src/assets/logo-icon.png";
 
 export default function Footer({ homeHref = "" }: { homeHref?: string }) {
   const t = useTranslations("landingFooter");
@@ -16,8 +18,8 @@ export default function Footer({ homeHref = "" }: { homeHref?: string }) {
         <div className="grid grid-cols-1 gap-10 border-b border-slate-800 pb-12 text-start md:grid-cols-2 lg:grid-cols-5">
           <div className="space-y-4 lg:col-span-2">
             <div className="flex items-center gap-3">
-              <div className="flex size-10 items-center justify-center rounded-xl bg-primary text-white shadow-lg">
-                <GraduationCap className="size-6" aria-hidden="true" />
+              <div className="size-10 rounded-xl bg-white p-1 shadow-lg">
+                <Image src={logoMark} alt="" width={40} height={40} className="size-full object-contain" />
               </div>
               <span className="text-2xl font-black tracking-tight text-white">
                 {brand("name")} {" "}

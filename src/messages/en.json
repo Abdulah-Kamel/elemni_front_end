@@ -8,7 +8,10 @@
     "collapseSidebar": "Collapse sidebar",
     "expandSidebar": "Expand sidebar",
     "openMenu": "Open student portal menu",
-    "closeMenu": "Close menu"
+    "closeMenu": "Close menu",
+    "searchCourses": "Search courses",
+    "upcomingLabel": "Upcoming",
+    "mobileNavigation": "Mobile navigation"
   },
   "nav": {
     "home": "Home",

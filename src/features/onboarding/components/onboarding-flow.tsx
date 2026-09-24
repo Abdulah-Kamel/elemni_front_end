@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import logoMark from "@/src/assets/logo-icon.png";
 import { useMemo, useState } from "react";
 import {
   ArrowLeft,
@@ -144,7 +145,7 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
                 whileHover={{ rotate: 3, scale: 1.06 }}
                 transition={popSpring}
               >
-                <GraduationCap className="size-6" />
+                <Image src={logoMark} alt="" width={32} height={32} className="size-8 rounded-lg bg-white p-0.5 object-contain" />
               </m.span>
               <div>
                 <p className="text-xl font-black text-brand-700 dark:text-brand-300">علمني</p>

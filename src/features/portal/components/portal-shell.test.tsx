@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import StudentPortalShell from "@/src/features/portal/components/portal-shell";
@@ -17,6 +17,7 @@ const arabicMessages = {
       myCourses: "كورساتي",
       courses: "الدروس",
       logout: "تسجيل الخروج",
+      searchPlaceholder: "ابحث عن كورس...",
     },
   },
   studentPortal: {
@@ -25,6 +26,9 @@ const arabicMessages = {
     expandSidebar: "توسيع القائمة الجانبية",
     openMenu: "فتح قائمة بوابة الطالب",
     closeMenu: "إغلاق القائمة",
+    searchCourses: "البحث عن كورس",
+    upcomingLabel: "المواعيد",
+    mobileNavigation: "التنقل للموبايل",
   },
 };
 
@@ -36,6 +40,7 @@ const englishMessages = {
       myCourses: "My courses",
       courses: "Courses",
       logout: "Log out",
+      searchPlaceholder: "Search for a course...",
     },
   },
   studentPortal: {
@@ -44,6 +49,9 @@ const englishMessages = {
     expandSidebar: "Expand sidebar",
     openMenu: "Open student portal menu",
     closeMenu: "Close menu",
+    searchCourses: "Search courses",
+    upcomingLabel: "Upcoming",
+    mobileNavigation: "Mobile navigation",
   },
 };
 
@@ -83,7 +91,8 @@ describe("StudentPortalShell", () => {
       "true",
     );
     expect(window.localStorage.getItem("student-sidebar-collapsed")).toBe("true");
-    expect(screen.getByRole("link", { name: "لوحتي" })).toHaveClass(
+    const dashboardLink = within(within(screen.getByRole("complementary")).getByRole("navigation", { name: "بوابة الطالب" })).getByRole("link", { name: "لوحتي" });
+    expect(dashboardLink).toHaveClass(
       "mx-auto",
       "size-12",
       "justify-center",
@@ -134,7 +143,7 @@ describe("StudentPortalShell", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "تصغير القائمة الجانبية" }));
 
-    const dashboardLabel = screen.getByText("لوحتي");
+    const dashboardLabel = within(screen.getByRole("complementary")).getByText("لوحتي");
     expect(dashboardLabel).toHaveClass("sr-only");
     expect(dashboardLabel).not.toHaveClass("relative");
   });
@@ -152,7 +161,7 @@ describe("StudentPortalShell", () => {
 
     expect(shell).toHaveAttribute("dir", "ltr");
     expect(screen.getByRole("navigation", { name: "Student portal" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "My courses" })).toBeInTheDocument();
+    expect(screen.getAllByRole("link", { name: "My courses" }).length).toBeGreaterThan(0);
     expect(screen.getByRole("button", { name: "Collapse sidebar" })).toBeInTheDocument();
     expect(screen.getByText("E")).toBeInTheDocument();
     expect(screen.getByText("Course content")).toBeInTheDocument();

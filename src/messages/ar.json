@@ -8,7 +8,10 @@
     "collapseSidebar": "تصغير القائمة الجانبية",
     "expandSidebar": "توسيع القائمة الجانبية",
     "openMenu": "فتح قائمة بوابة الطالب",
-    "closeMenu": "إغلاق القائمة"
+    "closeMenu": "إغلاق القائمة",
+    "searchCourses": "البحث عن كورس",
+    "upcomingLabel": "المواعيد",
+    "mobileNavigation": "التنقل للموبايل"
   },
   "nav": {
     "home": "الرئيسية",

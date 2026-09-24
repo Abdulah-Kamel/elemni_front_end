@@ -1,6 +1,8 @@
 "use client";
 
-import { X, GraduationCap } from "lucide-react";
+import Image from "next/image";
+import { X } from "lucide-react";
+import logoMark from "@/src/assets/logo-icon.png";
 
 interface VideoModalProps {
   isOpen: boolean;
@@ -21,7 +23,9 @@ export default function VideoModal({ isOpen, onClose }: VideoModalProps) {
         </button>
 
         <div className="flex items-center gap-2 mb-4 pe-2">
-          <GraduationCap className="w-5 h-5 text-primary" />
+          <span className="size-7 shrink-0 rounded-md bg-white p-0.5 ring-1 ring-slate-200">
+            <Image src={logoMark} alt="" width={28} height={28} className="size-full object-contain" />
+          </span>
           <h3 className="text-lg font-black text-[#0F172A] font-readex">جولة توضيحية: كيف تعمل منصة علمني؟</h3>
         </div>
 

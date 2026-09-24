@@ -1,9 +1,17 @@
 .student-portal-shell {
-  --student-sidebar-width: 16rem;
+  --student-sidebar-width: 15rem;
 }
 
 .student-portal-sidebar {
   width: var(--student-sidebar-width);
+}
+
+.student-portal-shell[data-active="dashboard"] {
+  background-image: none;
+}
+
+.dark .student-portal-shell[data-active="dashboard"] {
+  background-image: none;
 }
 
 .student-portal-sidebar,
@@ -54,11 +62,5 @@
   [dir="ltr"].student-portal-shell .student-portal-main {
     margin-right: 0;
     margin-left: var(--student-sidebar-width);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .student-portal-sidebar {
-    transition: none;
   }
 }
