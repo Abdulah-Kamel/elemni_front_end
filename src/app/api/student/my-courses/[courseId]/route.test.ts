@@ -101,7 +101,8 @@ describe("GET /api/student/my-courses/[courseId]", () => {
     };
     mocks.authenticatedBackendFetch
       .mockResolvedValueOnce({ ok: true, status: 200, data: { items: [enrollment] } })
-      .mockResolvedValueOnce({ ok: true, status: 200, data: publicCourse });
+      .mockResolvedValueOnce({ ok: true, status: 200, data: publicCourse })
+      .mockResolvedValueOnce({ ok: true, status: 200, data: { items: [], completion_percent: 0, completed_count: 0, total_count: 0 } });
     mocks.backendFetch.mockImplementation((path: string) => {
       if (path.startsWith("/api/v1/teachers?") || path === "/api/v1/teachers") {
         return Promise.resolve({
@@ -122,7 +123,8 @@ describe("GET /api/student/my-courses/[courseId]", () => {
     await expect(response.json()).resolves.toMatchObject({
       enrollment: { id: 9, course_id: 12 },
       course: { id: 12 },
+      course_tests: { items: [], completion_percent: 0 },
     });
-    expect(mocks.authenticatedBackendFetch).toHaveBeenCalledTimes(2);
+    expect(mocks.authenticatedBackendFetch).toHaveBeenCalledTimes(3);
   });
 });

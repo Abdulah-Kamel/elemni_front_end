@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleAlert } from "lucide-react";
+import { CircleAlert, CircleCheck, CircleX, Clock3, ClipboardCheck, LockKeyhole } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 import type {
@@ -9,6 +9,8 @@ import type {
   PublicLessonDto,
 } from "@/src/lib/student-api/contract";
 import CurriculumAccordion from "./curriculum-accordion";
+import { Link } from "@/src/i18n/navigation";
+import type { CourseTestSidebarItemDto, CourseTestsProgressDto } from "@/src/lib/student-api/contract";
 
 export default function LearnerCurriculumSidebar({
   chapters,
@@ -24,6 +26,8 @@ export default function LearnerCurriculumSidebar({
   theaterMode = false,
   completionPercent = null,
   courseSummary,
+  courseTests,
+  courseId,
 }: {
   chapters: PublicChapterDto[];
   lessonsCount: number;
@@ -38,10 +42,12 @@ export default function LearnerCurriculumSidebar({
   theaterMode?: boolean;
   completionPercent?: number | null;
   courseSummary?: ReactNode;
+  courseTests?: CourseTestsProgressDto | null;
+  courseId: number;
 }) {
   const t = useTranslations("courseDetail");
   const hasContent = chapters.some((chapter) => chapter.lessons.length);
-  const percent = Math.min(100, Math.max(0, Math.round(completionPercent ?? 0)));
+  const percent = Math.min(100, Math.max(0, Math.round(courseTests?.completion_percent ?? completionPercent ?? 0)));
   const itemIds = chapters.flatMap((chapter) => chapter.lessons.flatMap((lesson) => lesson.items.map((item) => item.id)));
   const completedCount = itemIds.filter((id) => completedItemIds.includes(id)).length;
 
@@ -70,7 +76,7 @@ export default function LearnerCurriculumSidebar({
                   {t("courseContent")}
                 </h2>
               </div>
-              <span className="shrink-0 text-sm font-black tabular-nums text-[#15181E]">
+          <span className="shrink-0 text-sm font-black tabular-nums text-[#15181E] dark:text-slate-100">
                 {percent}%
               </span>
             </div>
@@ -80,9 +86,11 @@ export default function LearnerCurriculumSidebar({
                 style={{ width: `${percent}%` }}
               />
             </div>
-            <p className="mt-3 text-sm leading-6 text-[#5F6573]">
-              {itemIds.length
-                ? t("completedItems", { completed: completedCount, total: itemIds.length })
+            <p className="mt-3 text-sm leading-6 text-[#5F6573] dark:text-slate-300">
+              {courseTests?.total_count
+                ? t("completedItems", { completed: courseTests.completed_count, total: courseTests.total_count })
+                : itemIds.length
+                  ? t("completedItems", { completed: completedCount, total: itemIds.length })
                 : lessonsCount
                   ? t("lessons", { count: lessonsCount })
                   : t("contentWillAppear")}
@@ -114,9 +122,33 @@ export default function LearnerCurriculumSidebar({
               </div>
             )}
           </div>
+          {courseTests?.items.length ? (
+            <section aria-label="اختبارات الكورس" className="border-t border-[#E4E2DC] p-3 dark:border-slate-800">
+              <h3 className="mb-2 px-2 text-sm font-black text-[#15181E] dark:text-slate-100">الاختبارات</h3>
+              <div className="space-y-1">
+                {courseTests.items.map((test) => <TestRow key={test.id} test={test} courseId={courseId} />)}
+              </div>
+            </section>
+          ) : null}
         </section>
       </aside>
       {courseSummary}
     </div>
+  );
+}
+
+function TestRow({ test, courseId }: { test: CourseTestSidebarItemDto; courseId: number }) {
+  const stateText: Record<string, string> = {
+    not_started: "لم يبدأ", locked: "مغلق حتى إكمال المتطلب", scheduled: "قريباً", in_progress: "قيد الحل",
+    passed: "ناجح", failed: "لم تجتزه", attempts_exhausted: "استنفدت المحاولات", pending_grading: "قيد التصحيح", closed: "مغلق",
+  };
+  const StateIcon = test.state === "locked" || test.state === "closed" ? LockKeyhole : test.state === "passed" ? CircleCheck : test.state === "failed" || test.state === "attempts_exhausted" ? CircleX : test.state === "pending_grading" || test.state === "scheduled" ? Clock3 : ClipboardCheck;
+  const href = `/my-courses/${courseId}/tests/${test.id}${test.open_attempt_id ? `?attemptId=${test.open_attempt_id}` : ""}`;
+  return (
+    <Link href={href} className={`flex min-h-12 items-center gap-3 rounded-xl px-3 py-2 text-start transition hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 dark:hover:bg-slate-800 ${test.placement === "inside_item" ? "ms-5 border-s border-slate-200 ps-4 dark:border-slate-700" : ""}`}>
+      <span aria-hidden="true" className="grid size-8 shrink-0 place-items-center rounded-lg bg-brand-50 text-brand-700 dark:bg-slate-800 dark:text-brand-300"><StateIcon className="size-4" /></span>
+      <span className="min-w-0 flex-1"><strong className="block truncate text-sm font-bold text-ink dark:text-slate-100">{test.title}</strong><span className="block truncate text-xs text-muted dark:text-slate-400">{test.subtitle || `اختبار · ${test.question_count} أسئلة${test.time_limit_minutes ? ` · ${test.time_limit_minutes} دقيقة` : ""}`}</span></span>
+      <span className="shrink-0 text-xs font-bold text-muted dark:text-slate-400">{test.percent != null ? `${test.percent}%` : stateText[test.state] ?? "اختبار"}</span>
+    </Link>
   );
 }

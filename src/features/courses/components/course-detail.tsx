@@ -407,6 +407,8 @@ export default function CourseDetail({
                     examCount={examCount}
                   />
                 }
+                courseTests={detail.course_tests}
+                courseId={course.id}
               />
             </div>
           ) : (

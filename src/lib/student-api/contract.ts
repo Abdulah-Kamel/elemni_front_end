@@ -136,6 +136,30 @@ export interface StudentCourseDetailDto {
   enrollment: EnrollmentDto | null;
   course: PublicCourseDto;
   teacher: StudentCourseTeacherDto | null;
+  course_tests?: CourseTestsProgressDto | null;
+}
+
+export interface CourseTestSidebarItemDto {
+  id: number;
+  title: string;
+  lesson_id: number | null;
+  position: number;
+  placement: "standalone_item" | "inside_item";
+  parent_item_id: number | null;
+  question_count: number;
+  time_limit_minutes: number | null;
+  state: string;
+  subtitle: string;
+  percent: number | null;
+  attempt_count: number;
+  open_attempt_id: number | null;
+}
+
+export interface CourseTestsProgressDto {
+  items: CourseTestSidebarItemDto[];
+  completion_percent: number;
+  completed_count: number;
+  total_count: number;
 }
 
 export interface LoginDto {
