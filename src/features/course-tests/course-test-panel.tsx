@@ -13,10 +13,6 @@ import { testHref, type TestView } from "./routes";
 
 export type ActiveTest = { testId: number; attemptId: number | null; view: TestView };
 
-export function parseTestView(value: string | undefined): TestView {
-  return value === "attempt" || value === "result" || value === "review" ? value : "intro";
-}
-
 /**
  * Renders the active course test inside the course page (in place of the video
  * player). Decides which screen to show from the URL; each screen loads its own data.

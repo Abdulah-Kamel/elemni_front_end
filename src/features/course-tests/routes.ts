@@ -1,5 +1,9 @@
 export type TestView = "intro" | "attempt" | "result" | "review";
 
+export function parseTestView(value: string | undefined): TestView {
+  return value === "attempt" || value === "result" || value === "review" ? value : "intro";
+}
+
 export function testHref(courseId: number, testId: number, options: { attempt?: number; view?: TestView } = {}) {
   const query = new URLSearchParams();
   if (options.attempt) query.set("attempt", String(options.attempt));
