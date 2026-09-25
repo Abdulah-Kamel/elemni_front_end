@@ -97,17 +97,13 @@ export async function GET(
     detailedCourse = subscribedDetail.ok ? subscribedDetail.data : owner.publicCourse;
   }
 
-  const courseTests = await authenticatedBackendFetch<NonNullable<StudentCourseDetailDto["course_tests"]>>(
-    `/api/v1/my/courses/${courseId}/tests`,
-    { cache: "no-store" },
-  );
   const response: StudentCourseDetailDto = {
     enrollment: { ...enrollment, course: detailedCourse },
     course: detailedCourse,
     teacher: owner
       ? { name: owner.teacher.name, slug: owner.teacher.slug, img: owner.teacher.img }
       : null,
-    course_tests: courseTests.ok ? courseTests.data : null,
+    course_tests: null,
   };
   return Response.json(response);
 }

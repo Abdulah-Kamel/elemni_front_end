@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, Link } from "@/src/i18n/navigation";
 import { ArrowLeft, ArrowRight, Check, Clock3, Flag, LoaderCircle, LockKeyhole, WifiOff } from "lucide-react";
 import { CourseTestAttempt, CourseTestDetail, CourseTestQuestion } from "./types";
+import { saveDemoAnswer, startDemoAttempt, submitDemoAttempt } from "./demo-store";
 
 const arabicDigits = new Intl.NumberFormat("ar-EG");
 const labels: Record<CourseTestQuestion["type"], string> = {
@@ -15,13 +16,28 @@ function formatTime(total: number) {
   return `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
 }
 
+function cachedAttemptValues(attempt: CourseTestAttempt | null) {
+  const responses = Object.fromEntries((attempt?.questions ?? []).map((question) => [question.id, question.response]));
+  const flags = Object.fromEntries((attempt?.questions ?? []).map((question) => [question.id, question.flagged]));
+  if (attempt && typeof window !== "undefined") {
+    try {
+      const pending = JSON.parse(localStorage.getItem(`course-test:${attempt.id}`) ?? "{}");
+      for (const [id, value] of Object.entries(pending)) {
+        responses[Number(id)] = (value as { response: unknown }).response;
+        flags[Number(id)] = Boolean((value as { flagged: boolean }).flagged);
+      }
+    } catch { /* The saved attempt remains available if the retry cache is unreadable. */ }
+  }
+  return { responses, flags };
+}
+
 export function CourseTestFlow({ test, initialAttempt, initialResult }: { test: CourseTestDetail; initialAttempt: CourseTestAttempt | null; initialResult: Record<string, unknown> | null }) {
   const router = useRouter();
   const [attempt, setAttempt] = useState(initialAttempt);
   const [result, setResult] = useState(initialResult);
   const [current, setCurrent] = useState(0);
-  const [answers, setAnswers] = useState<Record<number, unknown>>(() => Object.fromEntries((initialAttempt?.questions ?? []).map((q) => [q.id, q.response])));
-  const [flags, setFlags] = useState<Record<number, boolean>>(() => Object.fromEntries((initialAttempt?.questions ?? []).map((q) => [q.id, q.flagged])));
+  const [answers, setAnswers] = useState<Record<number, unknown>>(() => cachedAttemptValues(initialAttempt).responses);
+  const [flags, setFlags] = useState<Record<number, boolean>>(() => cachedAttemptValues(initialAttempt).flags);
   const [time, setTime] = useState(0);
   const [saveState, setSaveState] = useState<"saved" | "saving" | "failed">("saved");
   const [error, setError] = useState("");
@@ -42,23 +58,11 @@ export function CourseTestFlow({ test, initialAttempt, initialResult }: { test: 
     submitLock.current = true;
     setLoading(true);
     try {
-      const response = await fetch(`/api/student/course-tests/attempts/${attempt.id}/submit`, { method: "POST" });
-      if (!response.ok) throw new Error("تعذر تسليم الإجابات.");
-      const score = await fetch(`/api/student/course-tests/attempts/${attempt.id}/result`).then((r) => r.json());
-      setResult({ ...score, automatic }); setAttempt({ ...attempt, status: score.status ?? "submitted" }); setConfirm(false);
+      const score = submitDemoAttempt(attempt.id, automatic);
+      setResult(score); setAttempt({ ...attempt, status: score.status ?? "submitted" }); setConfirm(false);
       localStorage.removeItem(`course-test:${attempt.id}`);
     } catch (e) { setError(e instanceof Error ? e.message : "تعذر تسليم الإجابات."); }
     finally { setLoading(false); submitLock.current = false; }
-  }, [attempt]);
-
-  useEffect(() => {
-    if (!attempt) return;
-    const pending = JSON.parse(localStorage.getItem(`course-test:${attempt.id}`) ?? "{}");
-    // Hydrate the unsent autosave queue after a reload; localStorage is an external client store.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setAnswers((currentAnswers) => ({ ...currentAnswers, ...Object.fromEntries(Object.entries(pending).map(([id, value]) => [id, (value as { response: unknown }).response])) }));
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setFlags((currentFlags) => ({ ...currentFlags, ...Object.fromEntries(Object.entries(pending).map(([id, value]) => [id, (value as { flagged: boolean }).flagged])) }));
   }, [attempt]);
 
   useEffect(() => {
@@ -82,8 +86,7 @@ export function CourseTestFlow({ test, initialAttempt, initialResult }: { test: 
     const timer = window.setTimeout(async () => {
       setSaveState("saving");
       try {
-        const response = await fetch(`/api/student/course-tests/attempts/${attempt.id}/answers/${question.id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(next) });
-        if (!response.ok) throw new Error("save failed");
+        saveDemoAnswer(attempt.id, question.id, next.response, next.flagged);
         const pending = JSON.parse(localStorage.getItem(key) ?? "{}");
         delete pending[question.id];
         localStorage.setItem(key, JSON.stringify(pending));
@@ -99,31 +102,10 @@ export function CourseTestFlow({ test, initialAttempt, initialResult }: { test: 
     return () => window.clearTimeout(timer);
   }, [answers, attempt, flags, question, saveRetry]);
 
-  useEffect(() => {
-    const sync = async () => {
-      if (!attempt || !navigator.onLine) return;
-      const key = `course-test:${attempt.id}`;
-      const pending = JSON.parse(localStorage.getItem(key) ?? "{}");
-      for (const [questionId, data] of Object.entries(pending)) {
-        const response = await fetch(`/api/student/course-tests/attempts/${attempt.id}/answers/${questionId}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
-        if (!response.ok) return;
-        delete pending[questionId];
-      }
-      localStorage.setItem(key, JSON.stringify(pending));
-      setSaveState("saved");
-      setError("");
-    };
-    window.addEventListener("online", sync);
-    void sync();
-    return () => window.removeEventListener("online", sync);
-  }, [attempt]);
-
   const start = async () => {
     setLoading(true); setError("");
     try {
-      const response = await fetch(`/api/student/course-tests/tests/${test.id}/attempts`, { method: "POST" });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.detail?.message ?? data.detail ?? "تعذر بدء الاختبار.");
+      const data = startDemoAttempt(test.id);
       setAttempt(data); setAnswers(Object.fromEntries(data.questions.map((q: CourseTestQuestion) => [q.id, q.response]))); setFlags({});
     } catch (e) { setError(e instanceof Error ? e.message : "تعذر بدء الاختبار."); }
     finally { setLoading(false); }
@@ -156,7 +138,7 @@ export function CourseTestFlow({ test, initialAttempt, initialResult }: { test: 
         <h1 className="mt-4 text-3xl font-black">{result.automatic ? "سلّمنا إجاباتك تلقائياً" : pending ? "تم التسليم · النتيجة قريباً" : "نتيجة الاختبار"}</h1>
         <p className="mt-3 text-slate-600 dark:text-slate-300">{pending ? `أُرسلت إجاباتك للتصحيح. نقاط الأسئلة الموضوعية: ${result.score_auto ?? 0}.` : result.percent == null ? "تم استلام إجاباتك." : `${result.percent}% · ${result.score_total} من ${result.max_score} درجة`}</p>
         {result.percent != null && <p className="mt-2 text-lg font-extrabold">{result.passed ? "ناجح" : "لم تجتز الاختبار"}</p>}
-        {attempt && <button onClick={() => router.push(`/my-courses/${test.course_id}/tests/${test.id}/review?attemptId=${attempt.id}`)} className="mt-6 min-h-12 rounded-xl border border-slate-300 px-5 font-bold hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800">مراجعة الإجابات</button>}
+        {attempt && <button onClick={() => router.push(`/my-courses/${test.course_id}/tests/${test.id}?attemptId=${attempt.id}&review=true`)} className="mt-6 min-h-12 rounded-xl border border-slate-300 px-5 font-bold hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800">مراجعة الإجابات</button>}
       </section>
     </main>;
   }

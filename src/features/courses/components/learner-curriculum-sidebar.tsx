@@ -2,7 +2,7 @@
 
 import { CircleAlert, CircleCheck, CircleX, Clock3, ClipboardCheck, LockKeyhole } from "lucide-react";
 import { useTranslations } from "next-intl";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import type {
   PublicChapterDto,
   PublicItemDto,
@@ -11,6 +11,7 @@ import type {
 import CurriculumAccordion from "./curriculum-accordion";
 import { Link } from "@/src/i18n/navigation";
 import type { CourseTestSidebarItemDto, CourseTestsProgressDto } from "@/src/lib/student-api/contract";
+import { getDemoSidebarData } from "@/src/features/course-tests/demo-store";
 
 export default function LearnerCurriculumSidebar({
   chapters,
@@ -46,10 +47,19 @@ export default function LearnerCurriculumSidebar({
   courseId: number;
 }) {
   const t = useTranslations("courseDetail");
+  const [localDemoTests, setLocalDemoTests] = useState<CourseTestsProgressDto | null>(null);
   const hasContent = chapters.some((chapter) => chapter.lessons.length);
-  const percent = Math.min(100, Math.max(0, Math.round(courseTests?.completion_percent ?? completionPercent ?? 0)));
   const itemIds = chapters.flatMap((chapter) => chapter.lessons.flatMap((lesson) => lesson.items.map((item) => item.id)));
   const completedCount = itemIds.filter((id) => completedItemIds.includes(id)).length;
+  useEffect(() => {
+    if (courseTests) return;
+    const update = () => setLocalDemoTests(getDemoSidebarData(courseId, itemIds.length, completedCount));
+    update();
+    window.addEventListener("focus", update);
+    return () => window.removeEventListener("focus", update);
+  }, [courseId, courseTests, completedCount, itemIds.length]);
+  const visibleCourseTests = courseTests ?? localDemoTests;
+  const percent = Math.min(100, Math.max(0, Math.round(visibleCourseTests?.completion_percent ?? completionPercent ?? 0)));
 
   return (
     <div className="order-2 min-w-0 space-y-4 lg:order-1 lg:pe-1">
@@ -87,8 +97,8 @@ export default function LearnerCurriculumSidebar({
               />
             </div>
             <p className="mt-3 text-sm leading-6 text-[#5F6573] dark:text-slate-300">
-              {courseTests?.total_count
-                ? t("completedItems", { completed: courseTests.completed_count, total: courseTests.total_count })
+              {visibleCourseTests?.total_count
+                ? t("completedItems", { completed: visibleCourseTests.completed_count, total: visibleCourseTests.total_count })
                 : itemIds.length
                   ? t("completedItems", { completed: completedCount, total: itemIds.length })
                 : lessonsCount
@@ -122,11 +132,11 @@ export default function LearnerCurriculumSidebar({
               </div>
             )}
           </div>
-          {courseTests?.items.length ? (
+          {visibleCourseTests?.items.length ? (
             <section aria-label="اختبارات الكورس" className="border-t border-[#E4E2DC] p-3 dark:border-slate-800">
               <h3 className="mb-2 px-2 text-sm font-black text-[#15181E] dark:text-slate-100">الاختبارات</h3>
               <div className="space-y-1">
-                {courseTests.items.map((test) => <TestRow key={test.id} test={test} courseId={courseId} />)}
+                {visibleCourseTests.items.map((test) => <TestRow key={test.id} test={test} courseId={courseId} />)}
               </div>
             </section>
           ) : null}
