@@ -302,7 +302,11 @@ export default function CourseDetail({
         </div>
       ) : (
         <m.div
-          className="mx-auto max-w-[1400px] px-4 py-7 sm:px-6 sm:py-9 lg:px-8"
+          className={cn(
+            "mx-auto px-4 py-7 sm:px-6 sm:py-9 lg:px-8",
+            // Learners get the full width; the public course page stays centred.
+            enrolled ? "w-full 2xl:px-10" : "max-w-[1400px]",
+          )}
           initial={reduced ? false : "hidden"}
           animate="show"
           variants={portalContainerVariants}
