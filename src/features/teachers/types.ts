@@ -7,7 +7,8 @@ export interface Course {
   title: string;
   description: string;
   price: number;
-  duration: string;
+  /** Null when the teacher has not set a duration. */
+  durationMinutes: number | null;
   sessionsCount: number;
   /** Real cover only; screens draw a subject cover when it is missing. */
   image?: ImageSource;
@@ -40,45 +41,22 @@ export interface CourseChapter {
   lessons: CourseLesson[];
 }
 
+/** Raw teacher data. Screens format and translate it; nothing here is display copy. */
 export interface Teacher {
   id: string;
   name: string;
-  title: string;
-  subject: string;
-  subjects?: string[];
-  category: string;
-  grade: string;
-  gradeLabel: string;
-  gradesList?: string[];
-  gradeIds?: string[];
-  streamIds?: string[];
+  subjects: string[];
+  /** Grade names, in backend order. */
+  grades: string[];
+  gradeIds: string[];
+  streamIds: string[];
   /** Real photo URL only; null renders the teacher's initials. */
   avatar: string | null;
-  studentCount: number;
-  experienceYears: number;
-  pricePerSession: number;
+  /** Empty when the teacher has not written one. */
   bio: string;
-  videoUrl?: string;
-  featured?: boolean;
-  specialties: string[];
-  schedule: string[];
-  courses: Course[];
+  experienceYears: number;
   location?: string;
+  courses: Course[];
 }
 
-export type TeacherSummary = Pick<
-  Teacher,
-  | "id"
-  | "name"
-  | "title"
-  | "subject"
-  | "subjects"
-  | "category"
-  | "grade"
-  | "gradeLabel"
-  | "gradesList"
-  | "gradeIds"
-  | "streamIds"
-  | "avatar"
-  | "bio"
->;
+export type TeacherSummary = Pick<Teacher, "id" | "name" | "subjects" | "grades" | "gradeIds" | "streamIds" | "avatar" | "bio">;

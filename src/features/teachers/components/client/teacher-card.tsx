@@ -2,7 +2,7 @@
 
 import { m } from "motion/react";
 import { BookOpen, ChevronLeft, ChevronRight, GraduationCap } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
+import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { Link } from "@/src/i18n/navigation";
 import { TeacherAvatar } from "./teacher-avatar";
 import "@/src/features/portal/styles/sticker.css";
@@ -26,6 +26,7 @@ export type TeacherCardData = {
 export function TeacherCard({ teacher, index }: { teacher: TeacherCardData; index: number }) {
   const t = useTranslations("teacherDirectory.card");
   const locale = useLocale();
+  const format = useFormatter();
   const Chevron = locale === "ar" ? ChevronLeft : ChevronRight;
   const subjects = teacher.subjects.slice(0, VISIBLE_SUBJECTS);
   const hiddenSubjects = teacher.subjects.length - subjects.length;
@@ -63,7 +64,7 @@ export function TeacherCard({ teacher, index }: { teacher: TeacherCardData; inde
             </Link>
           </h3>
           {subjects.length > 0 && (
-            <ul className="mt-2 flex flex-wrap gap-1.5" aria-label={teacher.subjects.join("، ")}>
+            <ul className="mt-2 flex flex-wrap gap-1.5" aria-label={format.list(teacher.subjects, { type: "conjunction" })}>
               {subjects.map((subject) => (
                 <li key={subject} className="sticker-badge bg-brand-100 px-2.5 py-1 text-[11px] font-black text-brand-700 dark:bg-slate-800 dark:text-brand-300">
                   {subject}

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import ExploreTeachers from "@/src/features/teachers/components/client/explore-teachers";
 import { getGrades, getPublicCourses, getPublicTeachers } from "@/src/lib/student-api/public";
 import { getAccessToken } from "@/src/lib/student-api/session";
@@ -14,7 +14,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   return {
-    title: locale === "ar" ? "استكشف المدرسين | بوابة الطالب | علمني" : "Explore teachers | Student portal | Elemni",
+    title: (await getTranslations({ locale, namespace: "teacherDirectory.meta" }))("exploreTitle"),
   };
 }
 

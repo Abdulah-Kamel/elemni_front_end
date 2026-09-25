@@ -34,51 +34,27 @@ function BrowseTeachersView({
   const [page, setPage] = useState(1);
   const BackArrow = locale === "ar" ? ArrowRight : ArrowLeft;
 
-  const gradeOptions = useMemo(() => grades.length ? [
+  const gradeOptions = useMemo(() => [
     { value: "all", label: t("allGrades") },
     ...grades.map((grade) => ({ value: String(grade.id), label: grade.name })),
-  ] : [
-    { value: "all", label: t("allGrades") },
-    { value: "sec3", label: "الصف الثالث الثانوي" },
-    { value: "sec2", label: "الصف الثاني الثانوي" },
-    { value: "sec1", label: "الصف الأول الثانوي" },
   ], [grades, t]);
 
-  const streamOptions = useMemo(() => streams.length ? [
+  const streamOptions = useMemo(() => [
     { value: "all", label: t("allStreams") },
     ...streams.map((stream) => ({ value: String(stream.id), label: stream.name })),
-  ] : [
-    { value: "all", label: t("allStreams") },
-    { value: "general", label: "عام" },
-    { value: "science", label: "علمي علوم" },
-    { value: "math", label: "علمي رياضة" },
-    { value: "humanities", label: "أدبي / مواد أدبية" },
-    { value: "languages", label: "اللغات واللغويات" },
   ], [streams, t]);
 
   const filteredTeachers = useMemo(() => {
+    const query = searchQuery.trim().toLocaleLowerCase(locale);
     return teachers.filter((teacher) => {
-      const q = searchQuery.trim().toLowerCase();
-      const allText = [teacher.subject, ...(teacher.subjects || []), teacher.name, teacher.title, teacher.gradeLabel].join(" ").toLowerCase();
-
-      let matchGrade = true;
-      if (selectedGrade !== "all") {
-        matchGrade = teacher.grade === selectedGrade || teacher.gradeIds?.includes(selectedGrade) === true;
-      }
-
-      let matchStream = true;
-      if (selectedStream !== "all") {
-        if (teacher.streamIds?.length) matchStream = teacher.streamIds.includes(selectedStream);
-        else if (selectedStream === "science") matchStream = teacher.category === "science" || allText.includes("فيزياء") || allText.includes("أحياء") || allText.includes("كيمياء");
-        else if (selectedStream === "math") matchStream = teacher.category === "math" || allText.includes("رياضيات") || allText.includes("ميكانيكا");
-        else if (selectedStream === "humanities") matchStream = teacher.category === "humanities" || allText.includes("تاريخ") || allText.includes("فلسفة");
-        else if (selectedStream === "languages") matchStream = teacher.category === "languages" || allText.includes("عربي") || allText.includes("English");
-        else if (selectedStream === "general") matchStream = true;
-      }
-
-      return matchGrade && matchStream && (!q || allText.includes(q));
+      const haystack = [teacher.name, teacher.bio, ...teacher.subjects, ...teacher.grades].join(" ").toLocaleLowerCase(locale);
+      return (
+        (selectedGrade === "all" || teacher.gradeIds.includes(selectedGrade)) &&
+        (selectedStream === "all" || teacher.streamIds.includes(selectedStream)) &&
+        (!query || haystack.includes(query))
+      );
     });
-  }, [teachers, selectedGrade, selectedStream, searchQuery]);
+  }, [locale, teachers, selectedGrade, selectedStream, searchQuery]);
 
   const totalPages = Math.ceil(filteredTeachers.length / ITEMS_PER_PAGE);
   const paginatedTeachers = filteredTeachers.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
@@ -174,8 +150,8 @@ function BrowseTeachersView({
                       href: `/teachers/${teacher.id}`,
                       name: teacher.name,
                       avatar: teacher.avatar,
-                      subjects: teacher.subjects?.length ? teacher.subjects : [teacher.subject],
-                      grades: teacher.gradesList?.length ? teacher.gradesList : [teacher.gradeLabel],
+                      subjects: teacher.subjects,
+                      grades: teacher.grades,
                       description: teacher.bio,
                     }}
                   />

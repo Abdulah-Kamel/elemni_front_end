@@ -929,7 +929,22 @@
       "hideContent": "Hide content",
       "noContent": "No content added yet.",
       "checkoutError": "Could not start checkout right now.",
-      "subscribed": "Subscribed"
+      "subscribed": "Subscribed",
+      "tabsLabel": "Teacher page sections",
+      "tabCourses": "Courses",
+      "tabAbout": "About",
+      "noBio": "This teacher hasn't written a bio yet.",
+      "subjectsLabel": "Subjects",
+      "gradesLabel": "Grades",
+      "experienceLabel": "Experience",
+      "locationLabel": "Teaches",
+      "coursesLabel": "Published courses",
+      "durationUnknown": "Duration not set",
+      "duration": "{hours, plural, =0 {} =1 {1 hr} other {# hrs}}{hours, plural, =0 {} other {{minutes, plural, =0 {} other { }}}}{minutes, plural, =0 {} =1 {1 min} other {# min}}",
+      "welcome": "Welcome, {name}!"
+    },
+    "meta": {
+      "exploreTitle": "Explore teachers | Student portal | Elemni"
     }
   }
 }

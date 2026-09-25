@@ -6,36 +6,17 @@ import type {
   PublicTeacherDto,
 } from "./contract";
 
-function subjectCategory(teacher: PublicTeacherDto | PublicTeacherDetailDto) {
-  return teacher.subjects[0]?.slug ?? "general";
-}
-
-export function toTeacherSummary(teacher: PublicTeacherDto): TeacherSummary {
-  const subjects = teacher.subjects.map((subject) => subject.name);
-  const grades = teacher.grades.map((grade) => grade.name);
+export function toTeacherSummary(teacher: PublicTeacherDto | PublicTeacherDetailDto): TeacherSummary {
   return {
     id: teacher.slug,
     name: teacher.name,
-    title: subjects.join("، ") || "مدرس على منصة علمني",
-    subject: subjects[0] ?? "مواد متنوعة",
-    subjects,
-    category: subjectCategory(teacher),
-    grade: teacher.grades[0] ? String(teacher.grades[0].id) : "all",
-    gradeLabel: grades[0] ?? "كل الصفوف",
-    gradesList: grades,
+    subjects: teacher.subjects.map((subject) => subject.name),
+    grades: teacher.grades.map((grade) => grade.name),
     gradeIds: teacher.grades.map((grade) => String(grade.id)),
     streamIds: [...new Set(teacher.subjects.flatMap((subject) => subject.streams.map((stream) => String(stream.id))))],
     avatar: resolveAssetUrl(teacher.img, "") || null,
-    bio: teacher.description ?? "",
+    bio: teacher.description?.trim() ?? "",
   };
-}
-
-function formatDuration(minutes: number | null) {
-  if (!minutes) return "المدة غير محددة";
-  if (minutes < 60) return `${minutes} دقيقة`;
-  const hours = Math.floor(minutes / 60);
-  const rest = minutes % 60;
-  return rest ? `${hours} ساعة و${rest} دقيقة` : `${hours} ساعة`;
 }
 
 export function toCourse(course: PublicCourseDto): Course {
@@ -44,7 +25,7 @@ export function toCourse(course: PublicCourseDto): Course {
     title: course.title,
     description: course.description ?? "",
     price: Number(course.price),
-    duration: formatDuration(course.total_duration_minutes),
+    durationMinutes: course.total_duration_minutes,
     sessionsCount: course.lesson_count,
     image: resolveAssetUrl(course.img, "") || undefined,
     subject: course.subject_name,
@@ -78,31 +59,10 @@ export function toTeacher(
   teacher: PublicTeacherDetailDto | PublicTeacherDto,
   courses: PublicCourseDto[],
 ): Teacher {
-  const subjects = teacher.subjects.map((subject) => subject.name);
-  const grades = teacher.grades.map((grade) => grade.name);
-  const normalizedCourses = courses.map(toCourse);
   return {
-    id: teacher.slug,
-    name: teacher.name,
-    title: subjects.join("، ") || "مدرس على منصة علمني",
-    subject: subjects[0] ?? "مواد متنوعة",
-    subjects,
-    category: subjectCategory(teacher),
-    grade: teacher.grades[0] ? String(teacher.grades[0].id) : "all",
-    gradeLabel: grades[0] ?? "كل الصفوف",
-    gradesList: grades,
-    gradeIds: teacher.grades.map((grade) => String(grade.id)),
-    streamIds: [...new Set(teacher.subjects.flatMap((subject) => subject.streams.map((stream) => String(stream.id))))],
-    avatar: resolveAssetUrl(teacher.img, "") || null,
-    studentCount: 0,
+    ...toTeacherSummary(teacher),
     experienceYears: "experience" in teacher ? teacher.experience ?? 0 : 0,
-    pricePerSession: normalizedCourses.length
-      ? Math.min(...normalizedCourses.map((course) => course.price))
-      : 0,
-    bio: teacher.description ?? "لا توجد نبذة مضافة حتى الآن.",
-    specialties: subjects,
-    schedule: [],
-    courses: normalizedCourses,
+    courses: courses.map(toCourse),
     location: "location" in teacher ? teacher.location ?? undefined : undefined,
   };
 }

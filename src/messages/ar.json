@@ -941,7 +941,22 @@
       "hideContent": "إخفاء المحتوى",
       "noContent": "لم يضف المدرس محتوى للكورس بعد.",
       "checkoutError": "تعذر بدء عملية الدفع حالياً.",
-      "subscribed": "مشترك"
+      "subscribed": "مشترك",
+      "tabsLabel": "أقسام صفحة المدرس",
+      "tabCourses": "الكورسات",
+      "tabAbout": "عن المدرس",
+      "noBio": "لم يكتب المدرس نبذة عن نفسه بعد.",
+      "subjectsLabel": "المواد",
+      "gradesLabel": "الصفوف الدراسية",
+      "experienceLabel": "الخبرة",
+      "locationLabel": "مكان التدريس",
+      "coursesLabel": "الكورسات المنشورة",
+      "durationUnknown": "المدة غير محددة",
+      "duration": "{hours, plural, =0 {} =1 {ساعة} =2 {ساعتان} few {# ساعات} other {# ساعة}}{hours, plural, =0 {} other {{minutes, plural, =0 {} other { و}}}}{minutes, plural, =0 {} =1 {دقيقة} =2 {دقيقتان} few {# دقائق} other {# دقيقة}}",
+      "welcome": "مرحباً بك يا {name}!"
+    },
+    "meta": {
+      "exploreTitle": "استكشف المدرسين | بوابة الطالب | علمني"
     }
   }
 }
