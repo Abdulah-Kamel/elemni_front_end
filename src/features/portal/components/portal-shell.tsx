@@ -9,6 +9,7 @@ import {
   Home,
   CalendarDays,
   Search,
+  UsersRound,
   LogOut,
   Menu,
   PanelLeftClose,
@@ -77,7 +78,7 @@ const enabledNav = [
   { href: "/dashboard", icon: Home, id: "dashboard", translationKey: "dashboard" },
   { href: "/my-courses", icon: GraduationCap, id: "courses", translationKey: "myCourses" },
   { href: "/explore", icon: Compass, id: "discover", translationKey: "courses" },
-  { href: "/dashboard#upcoming", icon: CalendarDays, id: "upcoming", translationKey: "upcomingLabel" },
+  { href: "/explore/teachers", icon: UsersRound, id: "teachers", translationKey: "teachers" },
 ];
 
 const shellSpring = { type: "spring", stiffness: 320, damping: 28 } as const;
@@ -182,8 +183,7 @@ function SidebarContent({
       <nav aria-label={tPortal("sidebarLabel")} className={cn("space-y-2", collapsed ? "px-2" : "px-3")}>
         {enabledNav.map(({ href, icon: Icon, id, translationKey }, index) => {
           const isActive = active === id;
-          const label = id === "upcoming" ? tPortal("upcomingLabel") : tNav(translationKey);
-          const destination = id === "upcoming" && active === "dashboard" ? "#upcoming" : href;
+          const label = id === "teachers" ? tPortal("exploreTeachersNav") : tNav(translationKey);
           return (
             <m.div
               key={id}
@@ -191,7 +191,7 @@ function SidebarContent({
               animate={{ opacity: 1, x: 0 }}
               transition={{ ...shellSpring, delay: 0.05 * index }}
             >
-              <Link href={destination} onClick={close} title={collapsed ? label : undefined} aria-current={isActive ? "page" : undefined} className={cn("relative flex h-12 items-center gap-3 rounded-2xl text-sm font-black transition", collapsed ? "mx-auto size-12 justify-center px-0" : "px-4", isActive ? "text-white" : "text-ink hover:bg-brand-100 dark:text-slate-200 dark:hover:bg-slate-800")}>
+              <Link href={href} onClick={close} title={collapsed ? label : undefined} aria-current={isActive ? "page" : undefined} className={cn("relative flex h-12 items-center gap-3 rounded-2xl text-sm font-black transition", collapsed ? "mx-auto size-12 justify-center px-0" : "px-4", isActive ? "text-white" : "text-ink hover:bg-brand-100 dark:text-slate-200 dark:hover:bg-slate-800")}>
                 {isActive && (
                   <m.span
                     layoutId="portal-nav-active"

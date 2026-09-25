@@ -362,26 +362,24 @@ export default function CourseDetail({
                   </m.div>
                 </div>
                 <AnimatePresence initial={false}>
-                  {visibleActiveContent && (
-                    <m.div
-                      key="course-player"
-                      initial={reduced ? { opacity: 0 } : { opacity: 0, y: 16 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={reduced ? { opacity: 0 } : { opacity: 0, y: -8 }}
-                      transition={{ duration: 0.25 }}
-                    >
-                      <LearnerPlayer
-                        activeContent={visibleActiveContent}
-                        itemPosition={itemPosition}
-                        canGoPrevious={visibleActiveIndex > 0}
-                        canGoNext={visibleActiveIndex >= 0 && visibleActiveIndex < playableItems.length - 1}
-                        onPrevious={() => goToPlayableItem(visibleActiveIndex - 1)}
-                        onNext={() => goToPlayableItem(visibleActiveIndex + 1)}
-                        theaterMode={theaterMode}
-                        onTheaterModeChange={setTheaterMode}
-                      />
-                    </m.div>
-                  )}
+                  <m.div
+                    key="course-player"
+                    initial={reduced ? { opacity: 0 } : { opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={reduced ? { opacity: 0 } : { opacity: 0, y: -8 }}
+                    transition={{ duration: 0.25 }}
+                  >
+                    <LearnerPlayer
+                      activeContent={visibleActiveContent}
+                      itemPosition={itemPosition}
+                      canGoPrevious={visibleActiveIndex > 0}
+                      canGoNext={visibleActiveIndex >= 0 && visibleActiveIndex < playableItems.length - 1}
+                      onPrevious={() => goToPlayableItem(visibleActiveIndex - 1)}
+                      onNext={() => goToPlayableItem(visibleActiveIndex + 1)}
+                      theaterMode={theaterMode}
+                      onTheaterModeChange={setTheaterMode}
+                    />
+                  </m.div>
                 </AnimatePresence>
 
               </div>

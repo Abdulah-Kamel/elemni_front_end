@@ -88,7 +88,7 @@ export default function CourseHero({
       >
         {teacher && (
           <Link
-            href={`/teachers/${teacher.slug}`}
+            href={`/explore/teachers/${teacher.slug}`}
             className="flex items-center gap-3 rounded-xl outline-none transition hover:bg-[#F4F3EF] focus-visible:ring-2 focus-visible:ring-[#0A5FB4] focus-visible:ring-offset-2 focus-visible:ring-offset-white"
           >
             <TeacherAvatar name={teacher.name} image={teacher.img} tone="dark" />
@@ -192,7 +192,7 @@ export default function CourseHero({
 
             {teacher && (
               <Link
-                href={`/teachers/${teacher.slug}`}
+                href={`/explore/teachers/${teacher.slug}`}
                 className={cn(
                   "mt-7 inline-flex w-fit items-center gap-3 rounded-xl outline-none transition focus-visible:ring-2 focus-visible:ring-offset-2",
                   lesson

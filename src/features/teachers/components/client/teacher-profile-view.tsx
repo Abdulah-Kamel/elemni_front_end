@@ -30,9 +30,10 @@ const courseThumbnails = [
 interface TeacherProfileViewProps {
   teacher: Teacher;
   onRequireAuth: () => void;
+  teacherListHref?: string;
 }
 
-export default function TeacherProfileView({ teacher, onRequireAuth }: TeacherProfileViewProps) {
+export default function TeacherProfileView({ teacher, onRequireAuth, teacherListHref = "/teachers" }: TeacherProfileViewProps) {
   const queryClient = useQueryClient();
   const locale = useLocale();
   const [copiedLink, setCopiedLink] = useState(false);
@@ -109,7 +110,7 @@ export default function TeacherProfileView({ teacher, onRequireAuth }: TeacherPr
         <div className="absolute inset-0 bg-slate-950/80 pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 relative z-10 flex items-center justify-between">
-          <Link href="/teachers" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-extrabold text-xs sm:text-sm backdrop-blur-md transition-all">
+          <Link href={teacherListHref} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-extrabold text-xs sm:text-sm backdrop-blur-md transition-all">
             <ArrowRight className="w-4 h-4" />
             <span>كل المدرسين</span>
           </Link>
@@ -157,7 +158,7 @@ export default function TeacherProfileView({ teacher, onRequireAuth }: TeacherPr
                   <span>معلم معتمد</span>
                 </span>
                 {(teacher.subjects?.length ? teacher.subjects : [teacher.subject]).map((sub, idx) => (
-                  <span key={idx} className="bg-sky-500/20 border border-sky-400/40 text-sky-200 font-extrabold text-xs px-3 py-1 rounded-full backdrop-blur-md">{sub}</span>
+                  <span key={idx} className="bg-sky-500/20 border border-sky-400/40 text-white font-extrabold text-xs px-3 py-1 rounded-full backdrop-blur-md">{sub}</span>
                 ))}
               </div>
 

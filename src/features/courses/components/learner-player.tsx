@@ -29,12 +29,28 @@ export default function LearnerPlayer({
   onTheaterModeChange: (enabled: boolean) => void;
 }) {
   const t = useTranslations("courseDetail");
-  if (!activeContent) return null;
+  if (!activeContent) {
+    return (
+      <PlayerEmptyState
+        kind="video"
+        title={t("noContent")}
+        description={t("noContentDescription")}
+      />
+    );
+  }
   const isDocument = activeContent.type === "document";
   const assetUrl = isDocument
     ? resolveAssetUrl(activeContent.item.document_path, "")
     : activeContent.item.bunny_stream_embed_url;
-  if (!assetUrl) return null;
+  if (!assetUrl) {
+    return (
+      <PlayerEmptyState
+        kind={isDocument ? "document" : "video"}
+        title={t("unavailable")}
+        description={t("playerUnavailableDescription")}
+      />
+    );
+  }
 
   return (
     <section
@@ -129,6 +145,78 @@ export default function LearnerPlayer({
             </a>
           </p>
         )}
+      </div>
+    </section>
+  );
+}
+
+function PlayerEmptyState({
+  kind,
+  title,
+  description,
+}: {
+  kind: "video" | "document";
+  title: string;
+  description: string;
+}) {
+  const isDocument = kind === "document";
+
+  return (
+    <section
+      id="course-player"
+      aria-labelledby="player-empty-title"
+      className="scroll-mt-24"
+    >
+      <div
+        className={`learner-player-empty relative isolate flex aspect-video min-h-64 items-center justify-center overflow-hidden rounded-[18px] border border-[#DCE7EF] px-5 py-8 text-center sm:min-h-80 ${
+          isDocument ? "bg-[#ECEAE4]" : "bg-[#0D1015]"
+        }`}
+      >
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 420 240"
+          fill="none"
+          className={`learner-player-empty__art pointer-events-none absolute inset-x-0 top-[2%] mx-auto w-[min(72%,27rem)] ${
+            isDocument ? "text-[#0A5FB4]" : "text-[#7DD3FC]"
+          }`}
+        >
+          {isDocument ? (
+            <>
+              <g className="learner-player-empty__float">
+                <path d="M157 39h83l35 35v119H157z" fill="#fff" stroke="#0F172A" strokeWidth="4" />
+                <path d="M240 40v35h35" fill="#E0F2FE" stroke="#0F172A" strokeWidth="4" strokeLinejoin="round" />
+                <path d="M178 99h58M178 119h76M178 139h66" stroke="#94A3B8" strokeWidth="7" strokeLinecap="round" />
+                <rect x="177" y="155" width="47" height="20" rx="10" fill="#0284C7" stroke="#0F172A" strokeWidth="3" />
+                <path d="M195 161h11" stroke="#fff" strokeWidth="3" strokeLinecap="round" />
+              </g>
+              <circle className="learner-player-empty__spark learner-player-empty__spark--one" cx="116" cy="81" r="7" fill="#F97316" />
+              <circle className="learner-player-empty__spark learner-player-empty__spark--two" cx="305" cy="158" r="5" fill="#38BDF8" />
+              <path d="m127 151 7 7-7 7-7-7z" fill="#0284C7" />
+            </>
+          ) : (
+            <>
+              <g className="learner-player-empty__float">
+                <rect x="121" y="45" width="178" height="130" rx="18" fill="#17212C" stroke="#7DD3FC" strokeWidth="4" />
+                <rect x="135" y="59" width="150" height="102" rx="10" fill="#0F172A" stroke="#334155" strokeWidth="2" />
+                <circle cx="210" cy="110" r="27" fill="#0284C7" stroke="#E0F2FE" strokeWidth="4" />
+                <path d="m204 98 19 12-19 12z" fill="#fff" />
+                <path d="M158 187h104" stroke="#7DD3FC" strokeWidth="4" strokeLinecap="round" />
+                <path d="M183 175v12m54-12v12" stroke="#7DD3FC" strokeWidth="4" />
+              </g>
+              <circle className="learner-player-empty__spark learner-player-empty__spark--one" cx="92" cy="79" r="6" fill="#F97316" />
+              <circle className="learner-player-empty__spark learner-player-empty__spark--two" cx="323" cy="111" r="8" fill="#0284C7" />
+              <path d="m104 155 7 7-7 7-7-7z" fill="#7DD3FC" />
+            </>
+          )}
+        </svg>
+        <div className="absolute inset-x-5 bottom-6 z-10 mx-auto max-w-sm sm:bottom-8">
+          <h2 id="player-empty-title" className={`text-lg font-black sm:text-xl ${isDocument ? "text-[#15181E]" : "text-white"}`}>
+            {title}
+          </h2>
+          <p className={`mt-2 text-sm leading-6 ${isDocument ? "text-[#4A505C]" : "text-slate-300"}`}>
+            {description}
+          </p>
+        </div>
       </div>
     </section>
   );

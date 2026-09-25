@@ -17,11 +17,24 @@ export const dynamic = "force-dynamic";
 
 export default async function ExploreCoursesPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ view?: string; q?: string; tgrade?: string; tsubject?: string; tsort?: string; tpage?: string }>;
 }) {
   const { locale } = await params;
+  const query = await searchParams;
   setRequestLocale(locale);
+  if (query.view === "teachers") {
+    const nextParams = new URLSearchParams();
+    if (query.q) nextParams.set("q", query.q);
+    if (query.tgrade) nextParams.set("grade", query.tgrade);
+    if (query.tsubject) nextParams.set("subject", query.tsubject);
+    if (query.tsort) nextParams.set("sort", query.tsort);
+    if (query.tpage) nextParams.set("page", query.tpage);
+    const destination = locale === "ar" ? "/explore/teachers" : `/${locale}/explore/teachers`;
+    redirect(`${destination}${nextParams.size ? `?${nextParams.toString()}` : ""}`);
+  }
   if (!(await getAccessToken()))
     redirect(locale === "ar" ? "/login?next=/explore" : `/${locale}/login?next=/${locale}/explore`);
 

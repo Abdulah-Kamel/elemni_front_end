@@ -1,73 +1,122 @@
-# DESIGN.md — Elemni Student Surface (Sticker Notebook, B+)
+# DESIGN.md — Elemni Student Frontend
 
-**Creative North Star: "A sticker-covered study notebook that moves."**
+**Creative north star: “A sticker-covered study notebook that moves.”**
 
-## Overview
+## Scope
 
-The student surface (dashboard, my-courses, course detail, explore, payment result,
-onboarding, portal shell) speaks one visual world: bold, youthful, motion-forward.
-Borders carry weight, shadows sit hard, numerals run big, and every transition rides
-a spring. The world never obscures the task: routes, copy, data, and payment logic
-are untouched product truth owned by PRODUCT.md.
+This guide covers the student-facing frontend: the student portal, dashboard,
+course discovery and learning, teacher profiles, authentication, onboarding, and
+marketing pages. Keep the product language, routes, data, and learning flows
+intact while applying this visual system.
 
-**Key Characteristics:**
-- Ink-bordered tiles with hard offset shadows on warm paper.
-- Elemni blue as the single accent; status colors keep semantic meaning.
-- Readex Pro Black display type against regular body, one family.
-- Springs everywhere: entrances stagger, indicators slide, counters roll.
-- Dark mode is a deep-navy twin, not an afterthought.
+The shared student portal uses a playful notebook material language: warm, clear
+surfaces, confident blue, inked outlines, and deliberate hard shadows. Marketing
+and legacy pages can use softer surfaces and gradients where those patterns are
+already established; keep them within the same Elemni palette and typography.
 
-## Colors
+## Brand and color
 
-- **Elemni Blue (accent):** `#0284C7` primary actions, active states, progress. Deep `#0369A1` for emphasis text. Luminous `#38BDF8` on dark grounds.
-- **Paper / Ink (light):** paper `#FAF9F6`, card white, ink `#14202B`, muted slate.
-- **Navy (dark):** ground `#0A1826`, borders `#38BDF8`, ink shadow `#020617`.
-- **Status:** emerald (success/active), amber (pending/test), red (failed/error), sky (info/refund). Never repurposed.
-- **The Single-Accent Rule.** One blue does all the talking. A second saturated accent anywhere is a regression.
+Sky blue is the primary brand color. Use the shared theme tokens in
+`src/app/globals.css` instead of introducing one-off colors.
+
+| Role | Token / value | Use |
+| --- | --- | --- |
+| Primary | `brand-600` / `#0284C7` | Main actions, selected states, progress, focus |
+| Primary hover | `brand-700` / `#0369A1` | Hover and stronger emphasis |
+| Pale brand | `brand-50` / `#F0F9FF`; `brand-100` / `#E0F2FE` | Tinted surfaces and subtle selection |
+| Bright brand | `brand-300` / `#7DD3FC`; `brand-400` / `#38BDF8` | Dark-mode accents and highlights |
+| Ink | `ink` / `#0F172A` | Main text and sticker outlines |
+| Page | `page` / `#F8FAFC` | Light page background |
+| Surface | `surface` / `#FFFFFF` | Cards and controls |
+| Muted surface | `surface-muted` / `#F1F5F9` | Quiet sections and secondary controls |
+| Muted text | `muted` / `#64748B` | Supporting copy and metadata |
+| Orange accent | `accent` / `#F97316` | Occasional highlights; never a second primary action color |
+
+Success (`#22C55E`), warning (`#F59E0B`), and error (`#EF4444`) are semantic
+only. Do not use status colors as decoration or to encode unrelated meaning.
+Gradients are allowed in established marketing treatments; shared portal
+components should rely on solid brand colors, borders, and shadows.
+
+### Dark mode
+
+Dark mode is a supported theme, not a page-specific experiment. The shared dark
+palette uses page `#0B132B`, surface `#0F172A`, muted surface `#162033`, ink
+`#F8FAFC`, muted text `#94A3B8`, and border `#1E293B`. Use pale/bright sky blue
+for accents and `#020617` for hard sticker shadows. Every new shared component
+must remain legible in both themes.
 
 ## Typography
 
-- Readex Pro, Arabic-optimized, already loaded. Display at Black 900 with tight
-  tracking (`-0.02em` max); body regular with comfortable Arabic line-height.
-- **Numerals Rule.** Big numbers are measurement (progress, counts, prices) and always
-  tabular. Monospace only for transaction values, never as decoration.
+- Use **Readex Pro** throughout, loaded for Arabic and Latin in
+  `src/app/layout.tsx`. Apply the existing `font-readex` utility where needed;
+  do not add a second display or body family.
+- Use weights 400–500 for body copy, 600–700 for emphasis and controls. Reserve
+  the heaviest available utility weights for short headings and sticker-style
+  labels rather than long passages.
+- Arabic is the primary language. Keep comfortable line-height for Arabic text,
+  and use logical spacing/alignment so the same hierarchy works in RTL and LTR.
+- Use tabular numerals for prices, counts, durations, and progress values.
+  Monospace is reserved for literal codes or transaction identifiers.
 
-## Shape and Depth
+## Layout and spacing
 
-- Cards: 20-24px radii, 2px ink borders, `5px 5px 0` hard offset shadow.
-- Buttons: pills with 2px borders, `3px 3px 0` shadow, press physics (translate on active).
-- Badges: pills, 2px borders, slight static rotation for stickers.
-- **The Neobrutalist License.** This world chose the hard offset shadow deliberately;
-  soft blurred cards inside it are the regression, not the reverse.
+- Use a responsive single-column flow on small screens and expand into grids as
+  content allows. Keep reading and lesson content at a comfortable line length.
+- Use the existing Tailwind spacing scale consistently. Group related controls
+  closely and provide clear separation between sections.
+- Use logical CSS properties (`start`/`end`, `ps`/`pe`, `ms`/`me`) for layouts
+  that must work in both writing directions.
+- Do not let decorative notebook treatments reduce contrast or compete with
+  course titles, lesson content, and primary actions.
 
-## Motion
+## Shape and depth
 
-- Spring presets (`stiffness 260, damping 22`; shell `320/28`). Staggered entrances,
-  `layoutId` sliding indicators (nav, tabs), rolling counters, animated progress,
-  hover lift with tap press, scroll-triggered reveals below the fold.
-- Only `transform` and `opacity` animate. No scroll-hijacking, no infinite loops.
-- **The Reduced-Motion Rule.** Everything collapses to instant under reduced-motion;
-  counters always hold their final value in the DOM.
+The portal's sticker components are the reference for the notebook material:
 
-## Components
+- Tiles use a 2px ink border, about 20px corner radius, and a `5px 5px 0`
+  hard offset shadow (`.sticker-tile`).
+- Primary and outline buttons use pill corners, 2px borders, and a `3px 3px 0`
+  hard shadow. Pressing moves the button into its shadow.
+- Badges are compact outlined pills. Rotation is optional and static; keep it
+  subtle and do not rotate text that needs to be scanned quickly.
+- Inputs and dense utility surfaces can use quieter borders and smaller radii
+  when that improves usability. Do not force every page into a sticker card.
+- In dark mode, use sky borders and a deep ink shadow so the same forms remain
+  distinct against navy surfaces.
 
-- `sticker-tile`, `sticker-btn`, `sticker-btn-outline`, `sticker-badge`,
-  `sticker-numeral` (`src/features/portal/styles/sticker.css`).
-- `StudyCounter` (animated numeral, reduced-motion safe).
-- Shared frame: ruled-paper shell background, blue selection and focus rings.
+## Motion and interaction
 
-## Rules
+- Use motion to clarify a state change: pressed buttons, selected tabs, expanded
+  sections, progress, and entrances. Keep spring motion short and purposeful.
+- Animate transforms and opacity where possible. Avoid scroll hijacking,
+  persistent decorative motion, and motion that delays access to content.
+- Respect `prefers-reduced-motion`; the shared sticker styles already reduce
+  animation and transition durations in the portal shell.
+- Keep final values present in the DOM when animating counters or progress.
+- Provide visible keyboard focus. The portal shell uses a 3px brand focus
+  outline; preserve at least equivalent focus visibility in other contexts.
 
-- **No Kickers Rule.** No eyebrow label above a heading; the heading carries its weight.
-- **No Gradients Rule.** Depth comes from borders and offset shadows, never gradients.
-- **RTL Rule.** Logical properties throughout; transforms avoid the x-axis except
-  drawer motion that mirrors correctly.
-- **Dark-Twin Rule.** Every token ships as a light/dark pair, verified in both modes.
+## Shared patterns
 
-## Do's and Don'ts
+Use the existing shared styles and utilities before creating new variants:
 
-- Do keep semantic colors on their meaning; don't invent new status hues.
-- Do animate state changes; don't animate decoration for its own sake.
-- Do preserve roles, labels, and copy; redesign never renames the product's language.
-- Don't add routes, slugs, or copy in a visual pass.
-- Don't hand-roll icons; Lucide only, one family.
+- `.sticker-tile`, `.sticker-btn`, `.sticker-btn-outline`, `.sticker-badge`, and
+  `.sticker-numeral` in `src/features/portal/styles/sticker.css`.
+- Brand, surface, ink, page, semantic color, and radius tokens in
+  `src/app/globals.css`.
+- Readex Pro via `font-readex` / `--font-readex-pro`.
+- Lucide icons, used consistently and with accessible labels for icon-only
+  controls.
+
+## Product and accessibility rules
+
+- Keep existing routes, copy, roles, data, and payment/learning behavior intact
+  during visual work.
+- Use semantic colors only for their meaning and maintain readable contrast on
+  both light and dark surfaces.
+- Preserve RTL and LTR behavior, keyboard access, visible focus, and reduced
+  motion support.
+- Avoid eyebrow/kicker labels above headings unless the content hierarchy
+  genuinely needs one.
+- Avoid adding decorative elements that obscure the learning task. Use the
+  notebook language to support clarity, not to make every surface noisy.

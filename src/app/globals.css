@@ -145,6 +145,51 @@
   }
 }
 
+@keyframes learner-player-drift {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes learner-player-spark {
+  0%,
+  100% {
+    opacity: 0.65;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+.learner-player-empty__float {
+  animation: learner-player-drift 3.8s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.learner-player-empty__spark {
+  animation: learner-player-spark 2.8s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.learner-player-empty__spark--two {
+  animation-delay: 0.8s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .learner-player-empty__float,
+  .learner-player-empty__spark {
+    animation: none;
+  }
+}
+
 /* Dark mode fallbacks for hardcoded light-mode colors (e.g., auth pages) */
 .dark .text-\[\#1B1B24\] {
   color: #f8fafc !important;
