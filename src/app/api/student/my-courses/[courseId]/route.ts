@@ -103,7 +103,6 @@ export async function GET(
     teacher: owner
       ? { name: owner.teacher.name, slug: owner.teacher.slug, img: owner.teacher.img }
       : null,
-    course_tests: null,
   };
   return Response.json(response);
 }

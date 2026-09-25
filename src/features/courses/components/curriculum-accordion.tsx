@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState, type ReactNode } from "react";
 import { AnimatePresence, m, useReducedMotion } from "motion/react";
 import {
   ArrowLeft,
@@ -51,6 +51,14 @@ function absoluteDocumentUrl(path: string | null) {
   return resolveAssetUrl(path, "") || null;
 }
 
+/** Extra rows (course tests) placed inside a lesson's item list. */
+export type LessonSlots = {
+  /** Rendered before the content item at `index` (index ≥ items.length → after the last item). */
+  rows: { index: number; key: string; node: ReactNode }[];
+  /** Compact rows rendered inside / under the content item with that id. */
+  subRows: Map<number, ReactNode>;
+};
+
 function LessonRow({
   lesson,
   enrolled,
@@ -61,6 +69,7 @@ function LessonRow({
   onPlay,
   onOpen,
   completedItemIds,
+  slots,
 }: {
   lesson: PublicLessonDto;
   enrolled: boolean;
@@ -71,12 +80,15 @@ function LessonRow({
   onPlay: (item: PublicItemDto, lesson: PublicLessonDto) => void;
   onOpen: (item: PublicItemDto, lesson: PublicLessonDto) => void;
   completedItemIds: number[];
+  slots?: LessonSlots;
 }) {
   const t = useTranslations("courseDetail");
   const reduced = useReducedMotion() === true;
   const hasVideo = lesson.items.some((item) => item.has_video);
   const hasDocument = lesson.items.some((item) => item.has_document);
-  const hasExam = lesson.items.some((item) => item.has_exam);
+  const hasExam = lesson.items.some((item) => item.has_exam) || Boolean(slots?.rows.length || slots?.subRows.size);
+  const rowsAt = (index: number) =>
+    (slots?.rows ?? []).filter((row) => (index >= lesson.items.length ? row.index >= index : row.index === index));
 
   return (
     <div
@@ -124,21 +136,25 @@ function LessonRow({
             {lesson.description && (
               <p className="pb-3 text-sm leading-6 text-[#6B7E8F]">{lesson.description}</p>
             )}
-            {lesson.items.length ? (
+            {lesson.items.length || slots?.rows.length ? (
               <div className={variant === "sidebar" ? "space-y-0 border-t border-[#E4E2DC]" : "space-y-2"}>
-                {lesson.items.map((item) => (
-                  <ItemRow
-                    key={item.id}
-                    item={item}
-                    lesson={lesson}
-                    enrolled={enrolled}
-                    variant={variant}
-                    active={item.id === activeContentId}
-                    completed={completedItemIds.includes(item.id)}
-                    onPlay={onPlay}
-                    onOpen={onOpen}
-                  />
+                {lesson.items.map((item, index) => (
+                  <Fragment key={item.id}>
+                    {rowsAt(index).map((row) => <Fragment key={row.key}>{row.node}</Fragment>)}
+                    <ItemRow
+                      item={item}
+                      lesson={lesson}
+                      enrolled={enrolled}
+                      variant={variant}
+                      active={item.id === activeContentId}
+                      completed={completedItemIds.includes(item.id)}
+                      onPlay={onPlay}
+                      onOpen={onOpen}
+                      subRow={slots?.subRows.get(item.id)}
+                    />
+                  </Fragment>
                 ))}
+                {rowsAt(lesson.items.length).map((row) => <Fragment key={row.key}>{row.node}</Fragment>)}
               </div>
             ) : (
               <p className="text-sm font-medium text-[#6B7E8F]">{t("emptyLesson")}</p>
@@ -159,6 +175,7 @@ function ItemRow({
   completed,
   onPlay,
   onOpen,
+  subRow,
 }: {
   item: PublicItemDto;
   lesson: PublicLessonDto;
@@ -168,6 +185,41 @@ function ItemRow({
   completed: boolean;
   onPlay: (item: PublicItemDto, lesson: PublicLessonDto) => void;
   onOpen: (item: PublicItemDto, lesson: PublicLessonDto) => void;
+  subRow?: ReactNode;
+}) {
+  const row = <ItemRowBody item={item} lesson={lesson} enrolled={enrolled} variant={variant} active={active} completed={completed} onPlay={onPlay} onOpen={onOpen} subRow={subRow} />;
+  if (!subRow || (enrolled && item.bunny_stream_embed_url && absoluteDocumentUrl(item.document_path))) return row;
+  // Items without an inline resource list get their test sub-row right underneath.
+  return (
+    <>
+      {row}
+      <div className={variant === "sidebar" ? "border-t border-[#E4E2DC] bg-[#FAF9F5] px-3 py-1.5 ps-8 dark:border-slate-800 dark:bg-slate-900/60" : "ms-6 mt-1"}>
+        {subRow}
+      </div>
+    </>
+  );
+}
+
+function ItemRowBody({
+  item,
+  lesson,
+  enrolled,
+  variant,
+  active,
+  completed,
+  onPlay,
+  onOpen,
+  subRow,
+}: {
+  item: PublicItemDto;
+  lesson: PublicLessonDto;
+  enrolled: boolean;
+  variant: "default" | "sidebar";
+  active: boolean;
+  completed: boolean;
+  onPlay: (item: PublicItemDto, lesson: PublicLessonDto) => void;
+  onOpen: (item: PublicItemDto, lesson: PublicLessonDto) => void;
+  subRow?: ReactNode;
 }) {
   const t = useTranslations("courseDetail");
   const [resourcesExpanded, setResourcesExpanded] = useState(true);
@@ -229,6 +281,7 @@ function ItemRow({
             <span className={`min-w-0 flex-1 font-bold ${inkClass}`}>{t("document")}</span>
             <ArrowLeft className="size-4 shrink-0 text-[#6B7E8F]" aria-hidden="true" />
           </button>
+          {subRow}
         </div>}
       </div>
     );
@@ -304,6 +357,7 @@ export default function CurriculumAccordion({
   onPlay,
   onOpen,
   completedItemIds = [],
+  lessonSlots,
 }: {
   chapters: PublicChapterDto[];
   enrolled: boolean;
@@ -316,6 +370,8 @@ export default function CurriculumAccordion({
   onPlay: (item: PublicItemDto, lesson: PublicLessonDto) => void;
   onOpen: (item: PublicItemDto, lesson: PublicLessonDto) => void;
   completedItemIds?: number[];
+  /** Places extra rows (course tests) inside each lesson's item list. */
+  lessonSlots?: (lesson: PublicLessonDto) => LessonSlots | undefined;
 }) {
   const t = useTranslations("courseDetail");
   const reduced = useReducedMotion() === true;
@@ -388,6 +444,7 @@ export default function CurriculumAccordion({
                       onPlay={onPlay}
                       onOpen={onOpen}
                       completedItemIds={completedItemIds}
+                      slots={lessonSlots?.(lesson)}
                     />
                   )) : (
                     <p className="px-5 py-5 text-sm text-[#6B7E8F]">{t("noContentDescription")}</p>

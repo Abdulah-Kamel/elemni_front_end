@@ -3,9 +3,19 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NextIntlClientProvider } from "next-intl";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { StudentCourseDetailDto } from "@/src/lib/student-api/contract";
-import arMessages from "@/src/messages/ar.json";
-import enMessages from "@/src/messages/en.json";
+import arBaseMessages from "@/src/messages/ar.json";
+import enBaseMessages from "@/src/messages/en.json";
+import { courseTestMessages } from "@/src/messages/course-tests";
 import CourseDetail from "./course-detail";
+
+const arMessages = { ...arBaseMessages, courseTests: courseTestMessages("ar") };
+const enMessages = { ...enBaseMessages, courseTests: courseTestMessages("en") };
+
+vi.mock("@/src/features/course-tests/course-test-panel", () => ({
+  CourseTestPanel: ({ active }: { active: { testId: number; view: string } }) => (
+    <div data-testid="course-test-panel" data-test-id={active.testId} data-view={active.view} />
+  ),
+}));
 
 vi.mock("@/src/features/portal/components/portal-shell", () => ({
   default: ({
@@ -220,7 +230,53 @@ describe("CourseDetail production experience", () => {
     expect(title.compareDocumentPosition(player) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(title.compareDocumentPosition(curriculum) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
 
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+    // Course detail, the current student and the course-tests progress (the sidebar).
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(3));
+    expect(fetchMock.mock.calls.some(([input]) => String(input) === "/api/student/course-tests/my/courses/12/tests")).toBe(true);
+  });
+
+  async function renderActiveTest(view: "intro" | "attempt") {
+    fetchMock.mockImplementation((input: string | URL) => {
+      const url = String(input);
+      if (url.startsWith("/api/student/my-courses/12")) {
+        return Promise.resolve({ ok: true, status: 200, json: async () => detail });
+      }
+      if (url === "/api/student/auth/me") {
+        return Promise.resolve({ ok: true, status: 200, json: async () => ({ id: 1, name: "الطالب" }) });
+      }
+      return Promise.resolve({ ok: false, status: 404, json: async () => ({ detail: "not found" }) });
+    });
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    render(
+      <NextIntlClientProvider locale="ar" messages={arMessages}>
+        <QueryClientProvider client={queryClient}>
+          <CourseDetail
+            courseId={12}
+            grades={[]}
+            streams={[]}
+            activeTest={{ testId: 501, attemptId: view === "attempt" ? 7 : null, view }}
+          />
+        </QueryClientProvider>
+      </NextIntlClientProvider>,
+    );
+    return screen.findByTestId("course-test-panel");
+  }
+
+  it("shows the course test panel in place of the player, keeping the header and sidebar", async () => {
+    const panel = await renderActiveTest("intro");
+    expect(panel).toHaveAttribute("data-test-id", "501");
+    expect(document.querySelector("#course-player")).toBeNull();
+    expect(screen.getByRole("heading", { name: "كورس التفاضل" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /العودة إلى كورساتي|العودة/ })).toBeInTheDocument();
+    expect(screen.getByTestId("learner-curriculum-sidebar")).toBeInTheDocument();
+  });
+
+  it("uses a focused layout without the course sidebar while taking a test", async () => {
+    const panel = await renderActiveTest("attempt");
+    expect(panel).toHaveAttribute("data-view", "attempt");
+    expect(screen.queryByTestId("learner-curriculum-sidebar")).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "كورس التفاضل" })).not.toBeInTheDocument();
+    expect(document.querySelector("[data-enrolled-layout]")).toHaveClass("lg:grid-cols-1");
   });
 
   async function renderEnrolledCourseDetail() {

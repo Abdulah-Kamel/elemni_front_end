@@ -11,10 +11,11 @@ export default async function MyCourseDetailPage({
   searchParams,
 }: {
   params: Promise<{ locale: string; courseId: string }>;
-  searchParams: Promise<{ teacher?: string }>;
+  searchParams: Promise<{ teacher?: string; item?: string }>;
 }) {
   const { locale, courseId } = await params;
-  const { teacher } = await searchParams;
+  const { teacher, item } = await searchParams;
+  const initialItemId = Number(item);
   setRequestLocale(locale);
 
   if (!(await getAccessToken())) {
@@ -29,6 +30,7 @@ export default async function MyCourseDetailPage({
     <CourseDetail
       courseId={parsedCourseId}
       teacherSlug={teacher?.trim() || undefined}
+      initialItemId={Number.isInteger(initialItemId) && initialItemId > 0 ? initialItemId : null}
       grades={grades.ok ? grades.data : []}
       streams={streams.ok ? streams.data : []}
     />

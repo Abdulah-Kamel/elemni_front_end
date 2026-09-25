@@ -1,0 +1,14 @@
+{
+  "types": { "single": "اختيار واحد", "multi": "اختيار متعدد", "true_false": "صح / خطأ", "short_answer": "إجابة قصيرة", "essay": "مقالي", "ordering": "ترتيب", "matching": "توصيل" },
+  "points": "{count, plural, =1 {درجة واحدة} =2 {درجتان} few {# درجات} many {# درجة} other {# درجة}}",
+  "questions": "{count, plural, =1 {سؤال واحد} =2 {سؤالان} few {# أسئلة} many {# سؤالاً} other {# سؤال}}",
+  "minutes": "{count, plural, =1 {دقيقة واحدة} =2 {دقيقتان} few {# دقائق} other {# دقيقة}}",
+  "attempts": "{count, plural, =1 {محاولة واحدة} =2 {محاولتان} few {# محاولات} other {# محاولة}}",
+  "test": "اختبار",
+  "quiz": "اختبار قصير",
+  "backToCourse": "العودة للكورس",
+  "backToMyCourses": "العودة إلى كورساتي",
+  "loadError": "تعذّر تحميل الاختبار. حاول مرة أخرى.",
+  "retry": "أعد المحاولة",
+  "loading": "جارٍ تحميل الاختبار…"
+}

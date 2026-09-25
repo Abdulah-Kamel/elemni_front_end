@@ -1,0 +1,119 @@
+{
+  "eyebrow": "Taking the test",
+  "eyebrowWithLesson": "Taking the test · {lesson}",
+  "loading": "Loading the test questions…",
+  "loadError": "Couldn't load the test. Check your connection and try again.",
+  "retry": "Try again",
+  "saveAndExit": "Save & exit",
+  "exiting": "Saving…",
+  "save": {
+    "saved": "Saved automatically",
+    "saving": "Saving…",
+    "retrying": "Retrying…",
+    "error": "Not saved yet",
+    "closed": "Attempt ended"
+  },
+  "toast": {
+    "message": "Couldn't save your last answer — check your connection. Your answers are kept on this device for now.",
+    "retry": "Try again"
+  },
+  "timer": {
+    "label": "Time remaining",
+    "warning": "Less than 2 minutes!",
+    "total": "of {time}",
+    "aria": "Time remaining {time}",
+    "announce": "{count, plural, =1 {1 minute left} other {# minutes left}}"
+  },
+  "warningBanner": "Less than two minutes left — your answers will be submitted automatically when time runs out.",
+  "unansweredCount": "{count, plural, =0 {All questions answered} =1 {1 question unanswered} other {# questions unanswered}}",
+  "question": {
+    "position": "Question {n} of {total}",
+    "flag": "Flag for review",
+    "flagged": "Flagged for review",
+    "teacherGraded": "Graded by the teacher",
+    "options": "Options",
+    "yourAnswer": "Your answer",
+    "image": "Question image",
+    "zoomImage": "Enlarge image",
+    "closeImage": "Close image",
+    "code": "Code snippet"
+  },
+  "hints": {
+    "single": "Choose one answer",
+    "multi": "Choose all correct answers",
+    "true_false": "True or false?",
+    "short_answer": "Write a short, precise answer.",
+    "essay": "Answer in your own words; the teacher grades it after you submit.",
+    "ordering": "Drag the items or use the arrows to order them.",
+    "matching": "Pick the match for each item."
+  },
+  "trueFalse": { "true": "True", "false": "False" },
+  "short": { "placeholder": "Type your answer" },
+  "essay": {
+    "placeholder": "Write your answer…",
+    "autosave": "Saved automatically",
+    "words": "{count} / {limit} words",
+    "wordsNoLimit": "{count} words",
+    "overLimit": "Over the limit ({limit} words)"
+  },
+  "ordering": {
+    "list": "Items to order",
+    "moveUp": "Move “{item}” up",
+    "moveDown": "Move “{item}” down",
+    "drag": "Drag to reorder “{item}”",
+    "moved": "“{item}” is now in position {position} of {total}",
+    "keep": "Use this order",
+    "notAnswered": "You haven't ordered the items yet."
+  },
+  "matching": {
+    "placeholder": "Choose a match…",
+    "selectLabel": "Match for {item}"
+  },
+  "nav": {
+    "prev": "Previous",
+    "next": "Next",
+    "prevAria": "Previous question",
+    "reviewAndSubmit": "Review & submit",
+    "backLocked": "You can't go back to previous questions in this test."
+  },
+  "navigator": {
+    "title": "Questions",
+    "answeredOf": "{answered} of {total} answered",
+    "open": "Show all questions",
+    "close": "Close question list",
+    "cell": "Question {n}",
+    "stateAnswered": "answered",
+    "stateUnanswered": "unanswered",
+    "stateCurrent": "current question",
+    "stateFlagged": "flagged for review",
+    "stateLocked": "can't go back",
+    "legendAnswered": "Answered",
+    "legendCurrent": "Current question",
+    "legendUnanswered": "Not answered",
+    "legendFlagged": "Flagged for review",
+    "unansweredHint": "{count, plural, =1 {Question {list} is unanswered — tap it to go there.} other {Questions {list} are unanswered — tap one to go there.}}"
+  },
+  "confirm": {
+    "title": "Submit the test?",
+    "body": "You won't be able to change your answers after submitting.",
+    "remaining": "You still have <b>{time}</b> left.",
+    "answered": "Answered",
+    "unanswered": "Unanswered",
+    "flagged": "Flagged for review",
+    "jumpHint": "Tap any question to go to it",
+    "chipUnanswered": "Question {n} · unanswered",
+    "chipFlagged": "Question {n} · flagged",
+    "submit": "Submit answers",
+    "submitting": "Submitting…",
+    "back": "Back to review",
+    "saveFailed": "We couldn't save all your answers yet. Check your connection and try again — your answers are kept on this device.",
+    "submitFailed": "Couldn't submit the test. Check your connection and try again."
+  },
+  "timeUp": {
+    "title": "Time's up",
+    "body": "We submitted your answers automatically. You answered {answered} of {questions}.",
+    "saved": "All your answers were saved",
+    "unsaved": "We couldn't save your latest changes before time ran out.",
+    "showResult": "Show result"
+  }
+}

@@ -30,6 +30,10 @@ import {
 import { studentQueryKeys } from "@/src/features/student/query-keys";
 import { getEffectiveCoupons, validateCoupon, type CouponValidation } from "@/src/lib/coupons/coupons";
 import { cn } from "@/src/lib/cn";
+import { CourseTestPanel, type ActiveTest } from "@/src/features/course-tests/course-test-panel";
+import { useCourseTestsProgress } from "@/src/features/course-tests/hooks";
+import { courseItemHref } from "@/src/features/course-tests/routes";
+import { findTestLocation } from "@/src/features/course-tests/sidebar/placement";
 import { portalContainerVariants, portalItemVariants, scrollIntoViewById } from "./course-motion";
 import CheckoutConfirmation from "./checkout-confirmation";
 import CourseHero from "./course-hero";
@@ -53,6 +57,8 @@ export default function CourseDetail({
   isAuthenticated = true,
   publicMode = false,
   initialDetail,
+  activeTest,
+  initialItemId,
 }: {
   courseId: number;
   teacherSlug?: string;
@@ -61,6 +67,10 @@ export default function CourseDetail({
   isAuthenticated?: boolean;
   publicMode?: boolean;
   initialDetail?: StudentCourseDetailDto;
+  /** When set, the course test panel replaces the player (tests/[testId] route). */
+  activeTest?: ActiveTest;
+  /** Content item to open first (e.g. `?item=` links from test screens). */
+  initialItemId?: number | null;
 }) {
   const t = useTranslations("courseDetail");
   const locale = useLocale();
@@ -74,12 +84,12 @@ export default function CourseDetail({
   const [couponApplied, setCouponApplied] = useState<CouponValidation | null>(null);
   const [couponError, setCouponError] = useState("");
   const [expandedChapterId, setExpandedChapterId] = useState<number | null | undefined>(
-    () => initialDetail
+    () => initialDetail && !activeTest && !initialItemId
       ? initialDetail.course.chapters.find((chapter) => chapter.lessons.length)?.id ?? null
       : undefined,
   );
   const [expandedLessonId, setExpandedLessonId] = useState<number | null | undefined>(
-    () => initialDetail
+    () => initialDetail && !activeTest && !initialItemId
       ? initialDetail.course.chapters.find((chapter) => chapter.lessons.length)?.lessons[0]?.id ?? null
       : undefined,
   );
@@ -124,8 +134,14 @@ export default function CourseDetail({
       )
     : [];
   const firstContentChapter = chapters.find((chapter) => chapter.lessons.length);
+  const testsProgress = useCourseTestsProgress(courseId, enrolled && !publicMode).data ?? null;
+  const activeTestLocation = activeTest && testsProgress
+    ? findTestLocation(chapters, testsProgress.items, activeTest.testId)
+    : null;
+  // The attempt screen is a focused layout: no course header or curriculum sidebar.
+  const focusedTest = activeTest?.view === "attempt";
   const resumeItemId = enrolled
-    ? detail?.enrollment?.progress.next_item_id ?? detail?.enrollment?.progress.last_item_id
+    ? initialItemId ?? detail?.enrollment?.progress.next_item_id ?? detail?.enrollment?.progress.last_item_id
     : null;
   const resumeLocation = resumeItemId
     ? chapters
@@ -133,10 +149,10 @@ export default function CourseDetail({
         .find(({ lesson }) => lesson.items.some((item) => item.id === resumeItemId))
     : null;
   const visibleExpandedChapterId = expandedChapterId === undefined
-    ? resumeLocation?.chapter.id ?? firstContentChapter?.id ?? null
+    ? activeTestLocation?.chapterId ?? resumeLocation?.chapter.id ?? firstContentChapter?.id ?? null
     : expandedChapterId;
   const visibleExpandedLessonId = expandedLessonId === undefined
-    ? resumeLocation?.lesson.id ?? chapters.find((chapter) => chapter.id === visibleExpandedChapterId)?.lessons[0]?.id ?? null
+    ? activeTestLocation?.lessonId ?? resumeLocation?.lesson.id ?? chapters.find((chapter) => chapter.id === visibleExpandedChapterId)?.lessons[0]?.id ?? null
     : expandedLessonId;
   const firstPlayableContent = enrolled
     ? chapters
@@ -170,12 +186,20 @@ export default function CourseDetail({
       : t("backToExplore");
 
   const playVideo = (item: PublicItemDto, lesson: PublicLessonDto) => {
+    if (activeTest) {
+      router.push(courseItemHref(courseId, { id: item.id, kind: "video" }));
+      return;
+    }
     setActiveContent({ item, lesson, type: "video" });
     if (enrolled) progressMutation.mutate({ itemId: item.id });
     window.setTimeout(() => scrollIntoViewById("course-player", { block: "start" }), 0);
   };
 
   const openDocument = (item: PublicItemDto, lesson: PublicLessonDto) => {
+    if (activeTest) {
+      router.push(courseItemHref(courseId, { id: item.id, kind: "file" }));
+      return;
+    }
     if (enrolled) progressMutation.mutate({ itemId: item.id });
     setActiveContent({ item, lesson, type: "document" });
     window.setTimeout(() => scrollIntoViewById("course-player", { block: "start" }), 0);
@@ -324,13 +348,13 @@ export default function CourseDetail({
               data-enrolled-layout
               className={cn(
                 "grid items-start gap-8",
-                theaterMode
+                theaterMode || focusedTest
                   ? "lg:grid-cols-1"
                   : "lg:grid-cols-[minmax(0,1fr)_minmax(19rem,24rem)]",
               )}
             >
               <div className="min-w-0 space-y-5">
-                <div className="flex flex-wrap items-end justify-between gap-4">
+                {!focusedTest && <div className="flex flex-wrap items-end justify-between gap-4">
                   <div className="min-w-0">
                     <div className="mb-2 flex flex-wrap gap-2 text-xs font-semibold">
                       {(gradeName || streamName) && (
@@ -360,8 +384,19 @@ export default function CourseDetail({
                       {backLabel}
                     </Link>
                   </m.div>
-                </div>
-                <AnimatePresence initial={false}>
+                </div>}
+                <AnimatePresence initial={false} mode="wait">
+                  {activeTest ? (
+                    <m.div
+                      key={`course-test-${activeTest.testId}-${activeTest.view}`}
+                      initial={reduced ? { opacity: 0 } : { opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={reduced ? { opacity: 0 } : { opacity: 0, y: -8 }}
+                      transition={{ duration: 0.25 }}
+                    >
+                      <CourseTestPanel courseId={courseId} active={activeTest} />
+                    </m.div>
+                  ) : (
                   <m.div
                     key="course-player"
                     initial={reduced ? { opacity: 0 } : { opacity: 0, y: 16 }}
@@ -380,14 +415,16 @@ export default function CourseDetail({
                       onTheaterModeChange={setTheaterMode}
                     />
                   </m.div>
+                  )}
                 </AnimatePresence>
 
               </div>
 
-              <LearnerCurriculumSidebar
+              {!focusedTest && <LearnerCurriculumSidebar
                 chapters={chapters}
                 lessonsCount={lessons.length}
-                activeContentId={visibleActiveContent?.item.id ?? null}
+                activeContentId={activeTest ? null : visibleActiveContent?.item.id ?? null}
+                activeTestId={activeTest?.testId ?? null}
                 expandedChapterId={visibleExpandedChapterId}
                 expandedLessonId={visibleExpandedLessonId}
                 onChapterToggle={handleChapterToggle}
@@ -407,9 +444,8 @@ export default function CourseDetail({
                     examCount={examCount}
                   />
                 }
-                courseTests={detail.course_tests}
                 courseId={course.id}
-              />
+              />}
             </div>
           ) : (
             <div className="grid items-start gap-8 lg:grid-cols-[minmax(19rem,24rem)_minmax(0,1fr)]">

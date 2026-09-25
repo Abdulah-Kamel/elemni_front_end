@@ -1,0 +1,14 @@
+{
+  "types": { "single": "Single choice", "multi": "Multiple choice", "true_false": "True / False", "short_answer": "Short answer", "essay": "Essay", "ordering": "Ordering", "matching": "Matching" },
+  "points": "{count, plural, =1 {1 point} other {# points}}",
+  "questions": "{count, plural, =1 {1 question} other {# questions}}",
+  "minutes": "{count, plural, =1 {1 minute} other {# minutes}}",
+  "attempts": "{count, plural, =1 {1 attempt} other {# attempts}}",
+  "test": "Test",
+  "quiz": "Quick quiz",
+  "backToCourse": "Back to course",
+  "backToMyCourses": "Back to my courses",
+  "loadError": "Could not load the test. Try again.",
+  "retry": "Retry",
+  "loading": "Loading test…"
+}

@@ -122,7 +122,6 @@ describe("GET /api/student/my-courses/[courseId]", () => {
     await expect(response.json()).resolves.toMatchObject({
       enrollment: { id: 9, course_id: 12 },
       course: { id: 12 },
-      course_tests: null,
     });
     expect(mocks.authenticatedBackendFetch).toHaveBeenCalledTimes(2);
   });
