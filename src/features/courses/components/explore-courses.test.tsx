@@ -1,7 +1,12 @@
 import type { ReactNode } from "react";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render as rtlRender, screen } from "@testing-library/react";
+import { NextIntlClientProvider } from "next-intl";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import arMessages from "@/src/messages/ar.json";
 import ExploreCourses, { type ExploreCourseEntry } from "./explore-courses";
+
+const render = (ui: ReactNode) =>
+  rtlRender(<NextIntlClientProvider locale="ar" messages={arMessages}>{ui}</NextIntlClientProvider>);
 
 vi.mock("next/image", () => ({
   default: () => <span data-testid="mock-image" />,

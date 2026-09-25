@@ -39,7 +39,7 @@ export function TeacherCard({ teacher, index }: { teacher: TeacherCardData; inde
       aria-labelledby={titleId}
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 8 }}
+      exit={{ opacity: 0, y: 8, transition: { duration: 0.12 } }}
       transition={{ ...popSpring, delay: 0.035 * index }}
       whileHover={{ y: -4 }}
       className="sticker-tile group relative flex h-full flex-col gap-4 p-4 transition-colors focus-within:bg-brand-50/60 hover:bg-brand-50/60 sm:p-5 dark:focus-within:bg-slate-900 dark:hover:bg-slate-900"

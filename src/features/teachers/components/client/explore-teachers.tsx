@@ -3,7 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState, useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { ChevronLeft, ChevronRight, Search, SlidersHorizontal, UserRound } from "lucide-react";
+import { Search, SlidersHorizontal, UserRound } from "lucide-react";
 import { AnimatePresence, m } from "motion/react";
 import type { GradeDto, PublicTeacherDto } from "@/src/lib/student-api/contract";
 import { useRouter } from "@/src/i18n/navigation";
@@ -12,6 +12,7 @@ import { isStudentUnauthorized } from "@/src/lib/student-api/client";
 import { resolveAssetUrl } from "@/src/lib/asset-url";
 import { TeacherCard } from "./teacher-card";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
+import { Pagination } from "@/src/components/ui/pagination";
 import StudentPortalShell from "@/src/features/portal/components/portal-shell";
 
 const TEACHERS_PER_PAGE = 12;
@@ -194,7 +195,7 @@ export default function ExploreTeachers({
               </div>
             )}
             <div className="mb-5 flex items-center justify-between gap-4">
-              <h2 id="teacher-results-title" className="text-2xl font-black tracking-tight text-ink sm:text-3xl dark:text-slate-50">
+              <h2 id="teacher-results-title" className="scroll-mt-24 text-2xl font-black tracking-tight text-ink sm:text-3xl dark:text-slate-50">
                 <MarkerHighlight color="sky" variant={1}>{t("exploreTeachersResultsTitle")}</MarkerHighlight>
               </h2>
               <span className="sticker-badge shrink-0 bg-surface px-3 py-1 text-xs font-black text-muted dark:text-slate-300">
@@ -230,21 +231,7 @@ export default function ExploreTeachers({
                 </m.div>
               )}
             </AnimatePresence>
-            {totalPages > 1 && (
-              <nav className="mt-8 flex items-center justify-center gap-2" aria-label={t("exploreTeachersPageNavigation")}>
-                <button type="button" onClick={() => setPage((current) => Math.max(1, current - 1))} disabled={page === 1} aria-label={t("exploreTeachersPreviousPage")} className="sticker-btn-outline flex size-11 items-center justify-center disabled:cursor-not-allowed disabled:opacity-40">
-                  <ChevronRight className="size-4" aria-hidden="true" />
-                </button>
-                {Array.from({ length: totalPages }, (_, index) => index + 1).map((item) => (
-                  <button key={item} type="button" onClick={() => setPage(item)} aria-current={page === item ? "page" : undefined} className={`size-11 rounded-full border-2 text-sm font-black transition ${page === item ? "border-ink bg-brand-600 text-white shadow-[2px_2px_0_0_var(--color-ink)] dark:border-brand-300" : "sticker-btn-outline"}`}>
-                    {item}
-                  </button>
-                ))}
-                <button type="button" onClick={() => setPage((current) => Math.min(totalPages, current + 1))} disabled={page === totalPages} aria-label={t("exploreTeachersNextPage")} className="sticker-btn-outline flex size-11 items-center justify-center disabled:cursor-not-allowed disabled:opacity-40">
-                  <ChevronLeft className="size-4" aria-hidden="true" />
-                </button>
-              </nav>
-            )}
+            <Pagination page={page} totalPages={totalPages} onPageChange={setPage} scrollTargetId="teacher-results-title" />
           </section>
         </div>
       </div>

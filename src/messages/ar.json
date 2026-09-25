@@ -35,10 +35,7 @@
     "exploreTeachersEmptyDescription": "جرّب اسماً أو صفاً أو مادة مختلفة.",
     "exploreTeacherCourseCount": "{count} كورس",
     "exploreTeacherGradeCount": "{count} صفوف",
-    "exploreTeacherViewProfile": "عرض الملف الشخصي",
-    "exploreTeachersPageNavigation": "صفحات المدرسين",
-    "exploreTeachersPreviousPage": "الصفحة السابقة",
-    "exploreTeachersNextPage": "الصفحة التالية"
+    "exploreTeacherViewProfile": "عرض الملف الشخصي"
   },
   "nav": {
     "home": "الرئيسية",
@@ -912,11 +909,7 @@
       "loadError": "تعذر تحميل قائمة المدرسين من الخادم. حاول تحديث الصفحة بعد قليل.",
       "emptyTitle": "لم نجد معلمين يطابقون بحثك",
       "emptyDescription": "جرّب كلمات أخرى أو اختر صفاً دراسياً مختلفاً.",
-      "resetAll": "إعادة ضبط جميع الفلاتر",
-      "pageNavigation": "صفحات المدرسين",
-      "previousPage": "الصفحة السابقة",
-      "nextPage": "الصفحة التالية",
-      "page": "الصفحة {page}"
+      "resetAll": "إعادة ضبط جميع الفلاتر"
     },
     "profile": {
       "allTeachers": "كل المدرسين",
@@ -924,10 +917,7 @@
       "linkCopied": "تم نسخ الرابط",
       "courses": "{count, plural, =0 {لا كورسات منشورة} =1 {كورس واحد} =2 {كورسان} few {# كورسات} many {# كورساً} other {# كورس}}",
       "experience": "{count, plural, =1 {سنة خبرة} =2 {سنتان خبرة} few {# سنوات خبرة} other {# سنة خبرة}}",
-      "grades": "الصفوف",
       "online": "أونلاين",
-      "aboutTitle": "عن المدرس",
-      "coursesTitle": "كورسات {name}",
       "coursesEmpty": "لم ينشر المدرس كورسات بعد.",
       "lessons": "{count, plural, =0 {بدون دروس بعد} =1 {درس واحد} =2 {درسان} few {# دروس} many {# درساً} other {# درس}}",
       "includesExams": "اختبارات",
@@ -941,22 +931,22 @@
       "hideContent": "إخفاء المحتوى",
       "noContent": "لم يضف المدرس محتوى للكورس بعد.",
       "checkoutError": "تعذر بدء عملية الدفع حالياً.",
-      "subscribed": "مشترك",
-      "tabsLabel": "أقسام صفحة المدرس",
-      "tabCourses": "الكورسات",
-      "tabAbout": "عن المدرس",
-      "noBio": "لم يكتب المدرس نبذة عن نفسه بعد.",
       "subjectsLabel": "المواد",
       "gradesLabel": "الصفوف الدراسية",
-      "experienceLabel": "الخبرة",
-      "locationLabel": "مكان التدريس",
-      "coursesLabel": "الكورسات المنشورة",
       "durationUnknown": "المدة غير محددة",
       "duration": "{hours, plural, =0 {} =1 {ساعة} =2 {ساعتان} few {# ساعات} other {# ساعة}}{hours, plural, =0 {} other {{minutes, plural, =0 {} other { و}}}}{minutes, plural, =0 {} =1 {دقيقة} =2 {دقيقتان} few {# دقائق} other {# دقيقة}}",
-      "welcome": "مرحباً بك يا {name}!"
+      "welcome": "مرحباً بك يا {name}!",
+      "coursesHeading": "الكورسات"
     },
     "meta": {
       "exploreTitle": "استكشف المدرسين | بوابة الطالب | علمني"
     }
+  },
+  "pagination": {
+    "navigation": "التنقل بين الصفحات",
+    "previous": "الصفحة السابقة",
+    "next": "الصفحة التالية",
+    "page": "الصفحة {page}",
+    "status": "الصفحة {page} من {total}"
   }
 }

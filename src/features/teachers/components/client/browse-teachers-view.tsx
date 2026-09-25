@@ -2,13 +2,13 @@
 
 import { memo, useMemo, useState } from "react";
 import { AnimatePresence, m } from "motion/react";
-import { ArrowLeft, ArrowRight, BookOpen, ChevronLeft, ChevronRight, CircleAlert, Search, Sparkles, UserRound, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, CircleAlert, Search, Sparkles, UserRound, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/src/i18n/navigation";
 import type { GradeDto, StreamDto } from "@/src/lib/student-api/contract";
-import { cn } from "@/src/lib/cn";
 import { ModernSelect } from "@/src/components/ui/modern-select";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
+import { Pagination } from "@/src/components/ui/pagination";
 import type { TeacherSummary } from "../../types";
 import { TeacherCard } from "./teacher-card";
 import "@/src/features/portal/styles/sticker.css";
@@ -121,7 +121,7 @@ function BrowseTeachersView({
           </div>
         )}
 
-        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <div id="teacher-directory-results" className="mb-5 flex scroll-mt-24 flex-wrap items-center justify-between gap-3">
           <p className="text-sm font-bold text-muted tabular-nums dark:text-slate-400" aria-live="polite">
             {t("showing", { shown: paginatedTeachers.length, total: filteredTeachers.length })}
           </p>
@@ -178,43 +178,7 @@ function BrowseTeachersView({
           )}
         </AnimatePresence>
 
-        {totalPages > 1 && (
-          <nav className="mt-10 flex items-center justify-center gap-2" aria-label={t("pageNavigation")}>
-            <button
-              type="button"
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page === 1}
-              aria-label={t("previousPage")}
-              className="sticker-btn-outline grid size-11 place-items-center disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              {locale === "ar" ? <ChevronRight className="size-4" aria-hidden="true" /> : <ChevronLeft className="size-4" aria-hidden="true" />}
-            </button>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-              <button
-                key={p}
-                type="button"
-                onClick={() => setPage(p)}
-                aria-label={t("page", { page: p })}
-                aria-current={p === page ? "page" : undefined}
-                className={cn(
-                  "size-11 rounded-full border-2 text-sm font-black tabular-nums transition",
-                  p === page ? "border-ink bg-brand-600 text-white shadow-[2px_2px_0_0_var(--color-ink)] dark:border-brand-300" : "sticker-btn-outline",
-                )}
-              >
-                {p}
-              </button>
-            ))}
-            <button
-              type="button"
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={page === totalPages}
-              aria-label={t("nextPage")}
-              className="sticker-btn-outline grid size-11 place-items-center disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              {locale === "ar" ? <ChevronLeft className="size-4" aria-hidden="true" /> : <ChevronRight className="size-4" aria-hidden="true" />}
-            </button>
-          </nav>
-        )}
+        <Pagination page={page} totalPages={totalPages} onPageChange={setPage} scrollTargetId="teacher-directory-results" />
       </div>
     </div>
   );
