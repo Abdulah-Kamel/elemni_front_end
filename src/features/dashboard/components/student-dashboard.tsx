@@ -3,19 +3,16 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
-  Atom,
   BookOpen,
-  Calculator,
   CalendarDays,
   CircleAlert,
   Clock3,
-  Cpu,
   GraduationCap,
-  Leaf,
   NotebookPen,
   Rocket,
 } from "lucide-react";
 import { GlobalLoading } from "@/src/components/ui/global-loading";
+import { getSubjectArt } from "@/src/features/courses/subject-art";
 import ImageWithFallback from "@/src/components/ui/image-with-fallback";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 import { m } from "motion/react";
@@ -43,15 +40,6 @@ const popSpring = { type: "spring", stiffness: 260, damping: 22 } as const;
 
 function formatExpiry(value: string, locale: string) {
   return new Intl.DateTimeFormat(locale === "ar" ? "ar-EG" : "en-GB", { day: "numeric", month: "short" }).format(new Date(value));
-}
-
-function getCourseArtwork(subject: string | null) {
-  const value = subject?.toLocaleLowerCase() ?? "";
-  if (value.includes("رياض") || value.includes("math")) return { Icon: Calculator, tone: "bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300" };
-  if (value.includes("أحيا") || value.includes("احيا") || value.includes("biology")) return { Icon: Leaf, tone: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300" };
-  if (value.includes("فيزي") || value.includes("physics")) return { Icon: Atom, tone: "bg-violet-50 text-violet-700 dark:bg-violet-950/40 dark:text-violet-300" };
-  if (value.includes("كمبيوتر") || value.includes("computer") || value.includes("برمج")) return { Icon: Cpu, tone: "bg-sky-50 text-sky-700 dark:bg-sky-950/40 dark:text-sky-300" };
-  return { Icon: BookOpen, tone: "bg-sky-50 text-sky-700 dark:bg-sky-950/40 dark:text-sky-300" };
 }
 
 function DashboardLoading() {
@@ -219,7 +207,7 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
               {visibleEnrollments.length ? (
                 <div className="grid gap-4 sm:grid-cols-2">
                   {visibleEnrollments.slice(0, 4).map((enrollment) => {
-                    const { Icon: ArtworkIcon, tone } = getCourseArtwork(enrollment.course.subject_name);
+                    const { Icon: ArtworkIcon, tone } = getSubjectArt(enrollment.course.subject_name);
                     return (
                     <Link key={enrollment.id} href={`/my-courses/${enrollment.course.id}`} aria-label={`فتح كورس ${enrollment.course.title}`} className="sticker-tile group overflow-hidden border-2 border-ink bg-white transition hover:-translate-y-0.5 hover:shadow-[7px_7px_0_0_var(--color-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 dark:border-sky-300 dark:bg-slate-900 dark:hover:shadow-[7px_7px_0_0_#020617]">
                       <div className={`relative h-20 border-b-2 border-ink sm:h-28 dark:border-sky-300 ${tone}`}>

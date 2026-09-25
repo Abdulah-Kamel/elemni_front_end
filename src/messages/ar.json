@@ -887,5 +887,61 @@
       "dashboard": "العودة للرئيسية",
       "explore": "استكشف الكورسات"
     }
+  },
+  "teacherDirectory": {
+    "card": {
+      "courseCount": "{count, plural, =0 {لا كورسات بعد} =1 {كورس واحد} =2 {كورسان} few {# كورسات} many {# كورساً} other {# كورس}}",
+      "gradeCount": "{count, plural, =0 {كل الصفوف} =1 {صف واحد} =2 {صفّان} few {# صفوف} other {# صفاً}}",
+      "moreSubjects": "+{count}",
+      "viewProfile": "عرض الملف",
+      "noBio": "لم يضف المدرس نبذة بعد."
+    },
+    "browse": {
+      "backHome": "العودة للرئيسية",
+      "title": "جميع المدرسين",
+      "description": "ابحث بالاسم أو المادة، واختر الصف والشعبة لتجد المدرس المناسب.",
+      "gradeLabel": "الصف الدراسي",
+      "streamLabel": "الشعبة / التخصص",
+      "searchLabel": "البحث باسم المعلم أو المادة",
+      "searchPlaceholder": "ابحث عن معلم أو مادة…",
+      "clearSearch": "مسح البحث",
+      "allGrades": "جميع الصفوف الدراسية",
+      "allStreams": "جميع الشعب والتخصصات",
+      "showing": "عرض {shown} من {total} معلم",
+      "reset": "إعادة ضبط",
+      "loadError": "تعذر تحميل قائمة المدرسين من الخادم. حاول تحديث الصفحة بعد قليل.",
+      "emptyTitle": "لم نجد معلمين يطابقون بحثك",
+      "emptyDescription": "جرّب كلمات أخرى أو اختر صفاً دراسياً مختلفاً.",
+      "resetAll": "إعادة ضبط جميع الفلاتر",
+      "pageNavigation": "صفحات المدرسين",
+      "previousPage": "الصفحة السابقة",
+      "nextPage": "الصفحة التالية",
+      "page": "الصفحة {page}"
+    },
+    "profile": {
+      "allTeachers": "كل المدرسين",
+      "share": "مشاركة",
+      "linkCopied": "تم نسخ الرابط",
+      "courses": "{count, plural, =0 {لا كورسات منشورة} =1 {كورس واحد} =2 {كورسان} few {# كورسات} many {# كورساً} other {# كورس}}",
+      "experience": "{count, plural, =1 {سنة خبرة} =2 {سنتان خبرة} few {# سنوات خبرة} other {# سنة خبرة}}",
+      "grades": "الصفوف",
+      "online": "أونلاين",
+      "aboutTitle": "عن المدرس",
+      "coursesTitle": "كورسات {name}",
+      "coursesEmpty": "لم ينشر المدرس كورسات بعد.",
+      "lessons": "{count, plural, =0 {بدون دروس بعد} =1 {درس واحد} =2 {درسان} few {# دروس} many {# درساً} other {# درس}}",
+      "includesExams": "اختبارات",
+      "includesDocuments": "ملفات",
+      "currency": "ج.م",
+      "perPeriod": "/ الشهر",
+      "free": "مجاني",
+      "subscribe": "اشترك الآن",
+      "redirecting": "جارٍ التحويل…",
+      "showContent": "محتوى الكورس",
+      "hideContent": "إخفاء المحتوى",
+      "noContent": "لم يضف المدرس محتوى للكورس بعد.",
+      "checkoutError": "تعذر بدء عملية الدفع حالياً.",
+      "subscribed": "مشترك"
+    }
   }
 }

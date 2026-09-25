@@ -9,7 +9,9 @@ export interface Course {
   price: number;
   duration: string;
   sessionsCount: number;
+  /** Real cover only; screens draw a subject cover when it is missing. */
   image?: ImageSource;
+  subject?: string | null;
   isSubscribed?: boolean;
   chapters?: CourseChapter[];
 }
@@ -50,7 +52,8 @@ export interface Teacher {
   gradesList?: string[];
   gradeIds?: string[];
   streamIds?: string[];
-  avatar: ImageSource;
+  /** Real photo URL only; null renders the teacher's initials. */
+  avatar: string | null;
   studentCount: number;
   experienceYears: number;
   pricePerSession: number;

@@ -2,38 +2,54 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { useLocale } from "next-intl";
-import type { Teacher } from "../../types";
-import { BookOpen, Clock, CheckCircle2, ArrowRight, Award, Sparkles, Share2, Check, MapPin, LoaderCircle, CircleAlert, PlayCircle, FileText, ClipboardList, ChevronDown } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
+import { AnimatePresence, m } from "motion/react";
+import Image from "next/image";
+import {
+  ArrowLeft,
+  ArrowRight,
+  BookOpen,
+  Check,
+  ChevronDown,
+  CircleAlert,
+  ClipboardList,
+  Clock,
+  FileText,
+  GraduationCap,
+  LoaderCircle,
+  MapPin,
+  PlayCircle,
+  Share2,
+  Award,
+} from "lucide-react";
+import type { Course, Teacher } from "../../types";
 import { cn } from "@/src/lib/cn";
 import { isCheckoutRedirectDto, resolveCheckoutRedirect } from "@/src/lib/student-api/checkout";
 import type { CheckoutRedirectDto } from "@/src/lib/student-api/contract";
 import { studentQueryKeys } from "@/src/features/student/query-keys";
+import { getSubjectArt } from "@/src/features/courses/subject-art";
 import { Link } from "@/src/i18n/navigation";
-import { Reveal } from "@/src/components/ui/reveal";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
-import { AnimatePresence, m } from "motion/react";
-import Image from "next/image";
-import profileBackground from "@/src/assets/images/student-redesign/profile-background.webp";
-import lessonCalculus from "@/src/assets/images/student-redesign/lesson-calculus.webp";
-import lessonMechanics from "@/src/assets/images/student-redesign/lesson-mechanics.webp";
-import lessonStudySkills from "@/src/assets/images/student-redesign/lesson-study-skills.webp";
-import lessonArabic from "@/src/assets/images/student-redesign/lesson-arabic.webp";
-
-const courseThumbnails = [
-  lessonCalculus,
-  lessonMechanics,
-  lessonStudySkills,
-  lessonArabic,
-];
+import { TeacherAvatar } from "./teacher-avatar";
+import "@/src/features/portal/styles/sticker.css";
 
 interface TeacherProfileViewProps {
   teacher: Teacher;
   onRequireAuth: () => void;
   teacherListHref?: string;
+  /** Inside the student portal the page uses the full content width. */
+  fullWidth?: boolean;
 }
 
-export default function TeacherProfileView({ teacher, onRequireAuth, teacherListHref = "/teachers" }: TeacherProfileViewProps) {
+const popSpring = { type: "spring", stiffness: 260, damping: 22 } as const;
+
+function courseIncludes(course: Course) {
+  const items = course.chapters?.flatMap((chapter) => chapter.lessons.flatMap((lesson) => lesson.items)) ?? [];
+  return { exams: items.some((item) => item.hasExam), documents: items.some((item) => item.hasDocument) };
+}
+
+export default function TeacherProfileView({ teacher, onRequireAuth, teacherListHref = "/teachers", fullWidth = false }: TeacherProfileViewProps) {
+  const t = useTranslations("teacherDirectory.profile");
   const queryClient = useQueryClient();
   const locale = useLocale();
   const [copiedLink, setCopiedLink] = useState(false);
@@ -43,6 +59,10 @@ export default function TeacherProfileView({ teacher, onRequireAuth, teacherList
   const [expandedCourses, setExpandedCourses] = useState<Record<string, boolean>>({});
   const [processingCourse, setProcessingCourse] = useState<string | null>(null);
   const [checkoutError, setCheckoutError] = useState("");
+  const BackArrow = locale === "ar" ? ArrowRight : ArrowLeft;
+  const container = fullWidth ? "w-full px-4 sm:px-6 lg:px-8 2xl:px-10" : "mx-auto max-w-7xl px-4 sm:px-6 lg:px-8";
+  const subjects = teacher.subjects?.length ? teacher.subjects : [teacher.subject];
+  const grades = teacher.gradesList ?? [];
 
   const handleShare = () => {
     if (navigator.clipboard) {
@@ -81,7 +101,7 @@ export default function TeacherProfileView({ teacher, onRequireAuth, teacherList
     }
     if (!response?.ok) {
       const body = await response?.json().catch(() => null);
-      setCheckoutError(body?.detail ?? "تعذر بدء عملية الدفع حالياً.");
+      setCheckoutError(body?.detail ?? t("checkoutError"));
       setProcessingCourse(null);
       return;
     }
@@ -90,7 +110,7 @@ export default function TeacherProfileView({ teacher, onRequireAuth, teacherList
     // The backend owns payment state: paid courses return a Kashier hosted
     // checkout URL, free courses return the relative "/my-courses".
     if (!isCheckoutRedirectDto(body)) {
-      setCheckoutError("تعذر بدء عملية الدفع حالياً.");
+      setCheckoutError(t("checkoutError"));
       setProcessingCourse(null);
       return;
     }
@@ -98,255 +118,263 @@ export default function TeacherProfileView({ teacher, onRequireAuth, teacherList
   };
 
   return (
-    <div dir="rtl" className="bg-page text-ink pb-16">
-      <div className="relative overflow-hidden bg-slate-950 pt-24 text-white shadow-xl">
-        <Image
-          src={profileBackground}
-          alt=""
-          fill
-          sizes="100vw"
-          className="pointer-events-none object-cover object-center opacity-25 mix-blend-overlay"
-        />
-        <div className="absolute inset-0 bg-slate-950/80 pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 relative z-10 flex items-center justify-between">
-          <Link href={teacherListHref} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-extrabold text-xs sm:text-sm backdrop-blur-md transition-all">
-            <ArrowRight className="w-4 h-4" />
-            <span>كل المدرسين</span>
+    <div className="bg-page pb-16 text-ink dark:text-slate-100">
+      <div className={cn(container, "pt-6 sm:pt-8")}>
+        <nav className="flex items-center justify-between gap-3">
+          <Link href={teacherListHref} className="sticker-btn-outline inline-flex min-h-11 items-center gap-2 px-4 text-sm font-black text-ink dark:text-slate-100">
+            <BackArrow className="size-4" aria-hidden="true" />
+            {t("allTeachers")}
           </Link>
-
-          <button onClick={handleShare} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 border border-sky-400/30 text-sky-200 font-extrabold text-xs sm:text-sm backdrop-blur-md transition-all cursor-pointer">
-            {copiedLink ? <Check className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4" />}
-            <span>{copiedLink ? "تم نسخ الرابط!" : "مشاركة"}</span>
+          <button type="button" onClick={handleShare} className="sticker-btn-outline inline-flex min-h-11 items-center gap-2 px-4 text-sm font-black text-brand-700 dark:text-brand-300">
+            {copiedLink ? <Check className="size-4 text-emerald-600" aria-hidden="true" /> : <Share2 className="size-4" aria-hidden="true" />}
+            <span aria-live="polite">{copiedLink ? t("linkCopied") : t("share")}</span>
           </button>
-        </div>
+        </nav>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-16 sm:pb-20 relative z-10">
-          <div className="flex flex-col md:flex-row items-center md:items-end gap-6 sm:gap-8 text-center md:text-start">
-            <m.div
-              initial={{ opacity: 0, scale: 0.94 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="relative shrink-0 group"
-            >
-              <div className="w-44 h-52 sm:w-56 sm:h-64 md:w-64 md:h-72 rounded-3xl p-1.5 bg-gradient-to-tr from-amber-400/80 via-sky-400/80 to-primary/80 shadow-2xl">
-                <div className="w-full h-full rounded-[20px] overflow-hidden bg-slate-900 border border-white/10 relative">
-                  <Image
-                    src={teacher.avatar}
-                    alt={teacher.name}
-                    fill
-                    sizes="(max-width: 639px) 176px, (max-width: 767px) 224px, 256px"
-                    className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent opacity-60" />
-                  <div className="absolute bottom-3 end-3 bg-emerald-500 border-2 border-slate-900 px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1.5">
-                    <CheckCircle2 className="w-4 h-4 text-white stroke-[3]" />
-                    <span className="text-[11px] font-black text-white">معلم موثوق</span>
-                  </div>
-                </div>
-              </div>
-            </m.div>
+        <m.header
+          className="sticker-tile relative mt-6 grid gap-6 overflow-hidden p-5 sm:p-8 md:grid-cols-[auto_minmax(0,1fr)] md:items-center md:gap-10"
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={popSpring}
+        >
+          {/* Ruled-notebook lines behind the header, faded out towards the avatar side. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(to_bottom,transparent_0,transparent_31px,color-mix(in_oklab,var(--color-brand-600)_10%,transparent)_31px,color-mix(in_oklab,var(--color-brand-600)_10%,transparent)_32px)] [mask-image:linear-gradient(to_left,black,transparent_70%)] rtl:[mask-image:linear-gradient(to_right,black,transparent_70%)]"
+          />
+          <m.div
+            className="relative mx-auto md:mx-0"
+            initial={{ rotate: -10, scale: 0.9 }}
+            animate={{ rotate: -3, scale: 1 }}
+            transition={{ type: "spring", stiffness: 220, damping: 14, delay: 0.08 }}
+          >
+            <TeacherAvatar
+              name={teacher.name}
+              src={teacher.avatar}
+              sizes="(max-width: 639px) 144px, 176px"
+              priority
+              className="size-36 rounded-[1.75rem] shadow-[5px_5px_0_0_var(--color-ink)] sm:size-44 dark:shadow-[5px_5px_0_0_#020617]"
+              initialsClassName="text-5xl sm:text-6xl"
+            />
+          </m.div>
 
-            <m.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="space-y-3 flex-1"
-            >
-              <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
-                <span className="bg-amber-400 text-slate-950 font-black text-xs px-3 py-1 rounded-full flex items-center gap-1 shadow-md">
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>معلم معتمد</span>
-                </span>
-                {(teacher.subjects?.length ? teacher.subjects : [teacher.subject]).map((sub, idx) => (
-                  <span key={idx} className="bg-sky-500/20 border border-sky-400/40 text-white font-extrabold text-xs px-3 py-1 rounded-full backdrop-blur-md">{sub}</span>
-                ))}
-              </div>
-
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white font-readex tracking-tight">{teacher.name}</h1>
-              <p className="text-slate-300 text-sm sm:text-base font-semibold max-w-2xl">{teacher.title}</p>
-
-              <div className="pt-2 flex flex-wrap items-center justify-center md:justify-start gap-3 text-xs sm:text-sm font-bold text-slate-200">
-                <div className="bg-white/10 border border-white/15 px-3.5 py-1.5 rounded-xl backdrop-blur-md flex items-center gap-2">
-                  <Award className="w-4 h-4 text-sky-400" />
-                  <span>{teacher.experienceYears} سنة خبرة</span>
-                </div>
-                <div className="bg-white/10 border border-white/15 px-3.5 py-1.5 rounded-xl backdrop-blur-md flex items-center gap-2">
-                  <BookOpen className="w-4 h-4 text-emerald-400" />
-                  <span>{teacher.courses.length} كورسات متاحة</span>
-                </div>
-              </div>
-            </m.div>
+          <div className="relative min-w-0 text-center md:text-start">
+            <h1 className="text-balance text-3xl font-black tracking-tight text-ink sm:text-5xl dark:text-slate-50">{teacher.name}</h1>
+            <ul className="mt-4 flex flex-wrap justify-center gap-2 md:justify-start" aria-label={subjects.join("، ")}>
+              {subjects.map((subject) => (
+                <li key={subject} className="sticker-badge bg-brand-100 px-3 py-1 text-xs font-black text-brand-700 dark:bg-slate-800 dark:text-brand-300">{subject}</li>
+              ))}
+            </ul>
+            <p className="mx-auto mt-4 max-w-[65ch] text-sm leading-7 font-medium text-muted sm:text-base md:mx-0 dark:text-slate-300">{teacher.bio}</p>
+            <ul className="mt-5 flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm font-bold text-ink/80 md:justify-start dark:text-slate-300">
+              <li className="inline-flex items-center gap-2 tabular-nums">
+                <BookOpen className="size-4 text-brand-600 dark:text-brand-300" aria-hidden="true" />
+                {t("courses", { count: teacher.courses.length })}
+              </li>
+              {grades.length > 0 && (
+                <li className="inline-flex items-center gap-2">
+                  <GraduationCap className="size-4 text-brand-600 dark:text-brand-300" aria-hidden="true" />
+                  <span className="sr-only">{t("grades")}: </span>
+                  <span dir="auto">{grades.join(" · ")}</span>
+                </li>
+              )}
+              {teacher.experienceYears > 0 && (
+                <li className="inline-flex items-center gap-2 tabular-nums">
+                  <Award className="size-4 text-brand-600 dark:text-brand-300" aria-hidden="true" />
+                  {t("experience", { count: teacher.experienceYears })}
+                </li>
+              )}
+              <li className="inline-flex items-center gap-2">
+                <MapPin className="size-4 text-accent" aria-hidden="true" />
+                {teacher.location ?? t("online")}
+              </li>
+            </ul>
           </div>
-        </div>
+        </m.header>
       </div>
 
-      <section className="border-b border-slate-200/70 bg-white py-10 dark:border-slate-800 dark:bg-slate-900">
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[1.4fr_1fr] lg:px-8">
-          <Reveal>
-            <div>
-              <p className="mb-2 text-xs font-extrabold text-primary">عن المدرس</p>
-              <h2 className="text-2xl font-black text-ink"><MarkerHighlight color="sky" variant={1}>خبرة تساعدك تفهم، مش تحفظ</MarkerHighlight></h2>
-              <p className="mt-3 max-w-3xl text-sm font-medium leading-7 text-muted">{teacher.bio}</p>
-              <div className="mt-5 flex flex-wrap gap-2">
-                {teacher.specialties.map((specialty) => (
-                  <span key={specialty} className="rounded-lg border border-sky-200 bg-sky-50 px-3 py-1.5 text-xs font-bold text-sky-800 dark:border-slate-700 dark:bg-slate-800 dark:text-sky-300">
-                    {specialty}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </Reveal>
-          <Reveal delay={80}>
-            <div className="grid h-full grid-cols-2 gap-px overflow-hidden rounded-xl border border-slate-200 bg-slate-200 dark:border-slate-700 dark:bg-slate-700">
-              <div className="bg-page p-4">
-                <BookOpen className="mb-3 size-5 text-primary" />
-                <strong className="block text-xl font-black">{teacher.courses.length}</strong>
-                <span className="text-xs text-muted">كورسات منشورة</span>
-              </div>
-              <div className="bg-page p-4">
-                <MapPin className="mb-3 size-5 text-accent" />
-                <strong className="block text-sm font-black leading-6">{teacher.location ?? "أونلاين"}</strong>
-                <span className="text-xs text-muted">مكان التدريس</span>
-              </div>
-            </div>
-          </Reveal>
+      <section className={cn(container, "mt-12")} aria-labelledby="teacher-courses-title">
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+          <h2 id="teacher-courses-title" className="text-2xl font-black tracking-tight text-ink sm:text-3xl dark:text-slate-50">
+            <MarkerHighlight color="yellow" variant={1}>{t("coursesTitle", { name: teacher.name })}</MarkerHighlight>
+          </h2>
+          <span className="sticker-badge bg-surface px-3 py-1 text-xs font-black text-muted tabular-nums dark:text-slate-300">
+            {t("courses", { count: teacher.courses.length })}
+          </span>
         </div>
-      </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
-        <section className="space-y-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2 border-b border-slate-200/60 dark:border-slate-800">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-sky-100 dark:bg-slate-800 text-primary dark:text-sky-300 font-extrabold text-xs mb-2">
-                <BookOpen className="w-3.5 h-3.5" />
-                <span>تصفح المحاضرات والاشتراكات</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-black text-ink font-readex"><MarkerHighlight color="yellow" variant={1}>الكورسات المتاحة</MarkerHighlight></h2>
-            </div>
+        {checkoutError && (
+          <div role="alert" className="sticker-tile mb-6 flex items-center gap-2 border-red-500 bg-red-50 px-4 py-3 text-sm font-bold text-red-700 dark:bg-red-500/10 dark:text-red-300">
+            <CircleAlert className="size-5 shrink-0" aria-hidden="true" />
+            <span>{checkoutError}</span>
           </div>
+        )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
-            {checkoutError && (
-              <div role="alert" className="col-span-full flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-300">
-                <CircleAlert className="size-5 shrink-0" />
-                <span>{checkoutError}</span>
-              </div>
-            )}
+        {teacher.courses.length === 0 ? (
+          <div className="sticker-tile flex min-h-48 flex-col items-center justify-center gap-3 p-8 text-center">
+            <BookOpen className="size-9 text-brand-600 dark:text-brand-300" aria-hidden="true" />
+            <p className="text-sm font-bold text-muted dark:text-slate-400">{t("coursesEmpty")}</p>
+          </div>
+        ) : (
+          <ul className={cn("grid grid-cols-1 items-start gap-6 sm:grid-cols-2 lg:grid-cols-3", fullWidth && "2xl:grid-cols-4")}>
             {teacher.courses.map((course, index) => {
               const isSubscribed = subscribedCourses[course.id];
-              const thumbnail = course.image ?? courseThumbnails[index % courseThumbnails.length];
               const isProcessing = processingCourse === course.id;
               const isExpanded = expandedCourses[course.id];
+              const includes = courseIncludes(course);
+              const art = getSubjectArt(course.subject ?? subjects[0]);
+              const contentId = `course-content-${course.id}`;
 
               return (
-                <m.article
+                <m.li
                   key={course.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.2 }}
-                  whileHover={{ y: -5 }}
-                  transition={{ delay: index * 0.06 }}
-                  className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-md hover:shadow-2xl dark:border-slate-700 dark:bg-slate-800/95"
+                  initial={{ opacity: 0, y: 18 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ ...popSpring, delay: 0.12 + index * 0.05 }}
+                  whileHover={{ y: -4 }}
+                  className="sticker-tile group flex h-full flex-col overflow-hidden"
                 >
-                  <div>
-                    <div className="relative w-full aspect-video overflow-hidden bg-slate-900">
+                  <div className={cn("relative aspect-[16/9] overflow-hidden border-b-2 border-ink dark:border-brand-300", !course.image && art.tone)}>
+                    {course.image ? (
                       <Image
-                        src={thumbnail}
-                        alt={course.title}
+                        src={course.image}
+                        alt=""
                         fill
                         loading="lazy"
                         sizes="(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) 50vw, 33vw"
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:group-hover:scale-100"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
-                      <div className="absolute end-3 top-3 bg-primary/90 text-white text-[11px] font-black px-3 py-1 rounded-full backdrop-blur-md shadow-sm">{teacher.subject}</div>
-                      <div className="absolute bottom-3 start-3 bg-slate-900/80 text-slate-200 text-[11px] font-bold px-2.5 py-1 rounded-lg backdrop-blur-md flex items-center gap-1">
-                        <Clock className="w-3 h-3 text-sky-400" />
-                        <span>{course.duration}</span>
+                    ) : (
+                      <div className="grid h-full place-items-center" aria-hidden="true">
+                        <art.Icon className="size-16 stroke-[1.5] transition-transform duration-500 group-hover:-rotate-6 group-hover:scale-110 motion-reduce:group-hover:transform-none" />
                       </div>
-                    </div>
-                    <div className="p-5 space-y-3">
-                      <h3 className="text-lg font-black text-ink group-hover:text-primary transition-colors font-readex leading-snug line-clamp-2 min-h-[52px]">{course.title}</h3>
-                      <p className="text-xs text-muted leading-relaxed font-medium line-clamp-2">{course.description}</p>
-                      <div className="flex items-center justify-between text-xs font-bold text-muted pt-2 border-t border-slate-100 dark:border-slate-700/80">
-                        <div className="flex items-center gap-1.5">
-                          <BookOpen className="w-3.5 h-3.5 text-primary" />
-                          <span>{course.sessionsCount} محاضرة</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
-                          <CheckCircle2 className="w-3.5 h-3.5" />
-                          <span>اختبارات وملازم</span>
-                        </div>
-                      </div>
-                    </div>
+                    )}
+                    {course.subject && (
+                      <span className="sticker-badge absolute start-3 top-3 bg-surface px-2.5 py-1 text-[11px] font-black text-ink dark:text-slate-100">{course.subject}</span>
+                    )}
+                    <span className="absolute bottom-3 end-3 inline-flex items-center gap-1 rounded-full bg-ink/85 px-2.5 py-1 text-[11px] font-bold text-white tabular-nums backdrop-blur-sm dark:bg-slate-950/85">
+                      <Clock className="size-3" aria-hidden="true" />
+                      {course.duration}
+                    </span>
                   </div>
-                  <div className="p-5 pt-0 mt-2">
-                    <div className="flex items-center justify-between gap-3 pt-3 border-t border-slate-100 dark:border-slate-700/80">
-                      <div>
-                        <span className="text-2xl font-black text-ink font-readex">{course.price}</span>
-                        <span className="ms-1 text-xs font-bold text-muted">ج.م / الشهر</span>
-                      </div>
-                      <button onClick={() => handleCourseAction(course.id, isSubscribed)}
-                        disabled={isProcessing}
-                        className={cn(
-                          "py-2.5 px-5 font-black text-xs sm:text-sm rounded-xl shadow-md transition-all cursor-pointer flex items-center gap-2",
-                          isSubscribed ? "bg-emerald-600 text-white" : "bg-primary hover:bg-primary-hover text-white active:scale-95 shadow-primary/20"
-                        )}
-                      >
-                        <AnimatePresence mode="wait" initial={false}>
-                          <m.span
-                            key={isSubscribed ? "subscribed" : "subscribe"}
-                            initial={{ opacity: 0, y: 6 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -6 }}
-                            className="flex items-center gap-2"
-                          >
-                            {isProcessing ? <><LoaderCircle className="w-4 h-4 animate-spin" /><span>جاري التحويل</span></> : isSubscribed ? <><ChevronDown className={cn("w-4 h-4 transition-transform", isExpanded && "rotate-180")} /><span>محتوى الكورس</span></> : <><BookOpen className="w-4 h-4" /><span>اشترك الآن</span></>}
-                          </m.span>
-                        </AnimatePresence>
-                      </button>
-                    </div>
-                  </div>
-                  {isSubscribed && isExpanded && (
-                    <div className="border-t border-slate-200 bg-slate-50 px-5 py-4 dark:border-slate-700 dark:bg-slate-900/60">
-                      {course.chapters?.length ? (
-                        <div className="space-y-4">
-                          {course.chapters.map((chapter) => (
-                            <div key={chapter.id}>
-                              {chapter.title && <h4 className="mb-2 text-sm font-black text-ink">{chapter.title}</h4>}
-                              <div className="space-y-2">
-                                {chapter.lessons.map((lesson) => (
-                                  <div key={lesson.id} className="border-b border-slate-200 pb-2 last:border-0 dark:border-slate-700">
-                                    <p className="text-xs font-extrabold text-ink">{lesson.title}</p>
-                                    <div className="mt-2 flex flex-wrap gap-2">
-                                      {lesson.items.map((item) => (
-                                        <span key={item.id} className="inline-flex items-center gap-1.5 text-[11px] font-bold text-muted">
-                                          {item.hasVideo ? <PlayCircle className="size-3.5 text-primary" /> : item.hasDocument ? <FileText className="size-3.5 text-emerald-600" /> : <ClipboardList className="size-3.5 text-amber-600" />}
-                                          {item.videoUrl ? (
-                                            <a href={item.videoUrl} target="_blank" rel="noreferrer" className="text-primary hover:underline">{item.title}</a>
-                                          ) : item.documentPath ? (
-                                            <a href={item.documentPath} target="_blank" rel="noreferrer" className="text-primary hover:underline">{item.title}</a>
-                                          ) : item.title}
-                                        </span>
-                                      ))}
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="text-xs font-bold text-muted">لم يضف المدرس محتوى للكورس بعد.</p>
+
+                  <div className="flex flex-1 flex-col gap-3 p-5">
+                    <h3 className="line-clamp-2 text-lg font-black leading-snug text-ink dark:text-slate-50">{course.title}</h3>
+                    {course.description && <p className="line-clamp-2 text-[13px] leading-6 font-medium text-muted dark:text-slate-400">{course.description}</p>}
+                    <ul className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs font-bold text-muted dark:text-slate-400">
+                      <li className="inline-flex items-center gap-1.5 tabular-nums">
+                        <BookOpen className="size-3.5 text-brand-600 dark:text-brand-300" aria-hidden="true" />
+                        {t("lessons", { count: course.sessionsCount })}
+                      </li>
+                      {includes.exams && (
+                        <li className="inline-flex items-center gap-1.5">
+                          <ClipboardList className="size-3.5 text-amber-600 dark:text-amber-400" aria-hidden="true" />
+                          {t("includesExams")}
+                        </li>
                       )}
-                    </div>
-                  )}
-                </m.article>
+                      {includes.documents && (
+                        <li className="inline-flex items-center gap-1.5">
+                          <FileText className="size-3.5 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
+                          {t("includesDocuments")}
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-3 border-t-2 border-dashed border-ink/10 px-5 py-4 dark:border-slate-700">
+                    <p className="min-w-0">
+                      {course.price > 0 ? (
+                        <>
+                          <span className="text-2xl font-black text-ink tabular-nums dark:text-slate-50">{course.price}</span>
+                          <span className="ms-1 text-sm font-black text-ink dark:text-slate-100">{t("currency")}</span>
+                          <span className="ms-1 text-xs font-bold text-muted dark:text-slate-400">{t("perPeriod")}</span>
+                        </>
+                      ) : (
+                        <span className="text-2xl font-black text-emerald-700 dark:text-emerald-400">{t("free")}</span>
+                      )}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => handleCourseAction(course.id, isSubscribed)}
+                      disabled={isProcessing}
+                      aria-expanded={isSubscribed ? Boolean(isExpanded) : undefined}
+                      aria-controls={isSubscribed ? contentId : undefined}
+                      className={cn(
+                        "inline-flex min-h-11 shrink-0 items-center gap-2 px-5 text-sm font-black disabled:cursor-progress disabled:opacity-80",
+                        isSubscribed ? "sticker-btn-outline text-emerald-700 dark:text-emerald-400" : "sticker-btn text-white",
+                      )}
+                    >
+                      <AnimatePresence mode="wait" initial={false}>
+                        <m.span
+                          key={isProcessing ? "processing" : isSubscribed ? "subscribed" : "subscribe"}
+                          initial={{ opacity: 0, y: 6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -6 }}
+                          className="flex items-center gap-2"
+                        >
+                          {isProcessing ? (
+                            <><LoaderCircle className="size-4 animate-spin" aria-hidden="true" />{t("redirecting")}</>
+                          ) : isSubscribed ? (
+                            <><ChevronDown className={cn("size-4 transition-transform", isExpanded && "rotate-180")} aria-hidden="true" />{isExpanded ? t("hideContent") : t("showContent")}</>
+                          ) : (
+                            t("subscribe")
+                          )}
+                        </m.span>
+                      </AnimatePresence>
+                    </button>
+                  </div>
+
+                  <AnimatePresence initial={false}>
+                    {isSubscribed && isExpanded && (
+                      <m.div
+                        id={contentId}
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                        className="overflow-hidden border-t-2 border-ink/10 bg-surface-muted dark:border-slate-700 dark:bg-slate-900/60"
+                      >
+                        <div className="px-5 py-4">
+                          {course.chapters?.length ? (
+                            <div className="space-y-4">
+                              {course.chapters.map((chapter) => (
+                                <div key={chapter.id}>
+                                  {chapter.title && <h4 className="mb-2 text-sm font-black text-ink dark:text-slate-100">{chapter.title}</h4>}
+                                  <div className="space-y-2">
+                                    {chapter.lessons.map((lesson) => (
+                                      <div key={lesson.id} className="border-b border-slate-200 pb-2 last:border-0 dark:border-slate-700">
+                                        <p className="text-xs font-extrabold text-ink dark:text-slate-100">{lesson.title}</p>
+                                        <div className="mt-2 flex flex-wrap gap-2">
+                                          {lesson.items.map((item) => (
+                                            <span key={item.id} className="inline-flex items-center gap-1.5 text-[11px] font-bold text-muted dark:text-slate-400">
+                                              {item.hasVideo ? <PlayCircle className="size-3.5 text-brand-600" aria-hidden="true" /> : item.hasDocument ? <FileText className="size-3.5 text-emerald-600" aria-hidden="true" /> : <ClipboardList className="size-3.5 text-amber-600" aria-hidden="true" />}
+                                              {item.videoUrl ? (
+                                                <a href={item.videoUrl} target="_blank" rel="noreferrer" className="text-brand-700 hover:underline dark:text-brand-300">{item.title}</a>
+                                              ) : item.documentPath ? (
+                                                <a href={item.documentPath} target="_blank" rel="noreferrer" className="text-brand-700 hover:underline dark:text-brand-300">{item.title}</a>
+                                              ) : item.title}
+                                            </span>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-xs font-bold text-muted dark:text-slate-400">{t("noContent")}</p>
+                          )}
+                        </div>
+                      </m.div>
+                    )}
+                  </AnimatePresence>
+                </m.li>
               );
             })}
-          </div>
-        </section>
-      </div>
+          </ul>
+        )}
+      </section>
     </div>
   );
 }

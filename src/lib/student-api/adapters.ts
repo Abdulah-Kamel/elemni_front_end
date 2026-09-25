@@ -1,4 +1,3 @@
-import teacherFallback from "@/src/assets/images/student-redesign/teacher-ahmad.webp";
 import { resolveAssetUrl } from "@/src/lib/asset-url";
 import type { Course, Teacher, TeacherSummary } from "@/src/features/teachers/types";
 import type {
@@ -26,7 +25,7 @@ export function toTeacherSummary(teacher: PublicTeacherDto): TeacherSummary {
     gradesList: grades,
     gradeIds: teacher.grades.map((grade) => String(grade.id)),
     streamIds: [...new Set(teacher.subjects.flatMap((subject) => subject.streams.map((stream) => String(stream.id))))],
-    avatar: resolveAssetUrl(teacher.img, teacherFallback.src),
+    avatar: resolveAssetUrl(teacher.img, "") || null,
     bio: teacher.description ?? "",
   };
 }
@@ -47,7 +46,8 @@ export function toCourse(course: PublicCourseDto): Course {
     price: Number(course.price),
     duration: formatDuration(course.total_duration_minutes),
     sessionsCount: course.lesson_count,
-    image: resolveAssetUrl(course.img, teacherFallback.src),
+    image: resolveAssetUrl(course.img, "") || undefined,
+    subject: course.subject_name,
     isSubscribed: course.is_subscribed,
     chapters: course.chapters.map((chapter) => ({
       id: chapter.id,
@@ -93,7 +93,7 @@ export function toTeacher(
     gradesList: grades,
     gradeIds: teacher.grades.map((grade) => String(grade.id)),
     streamIds: [...new Set(teacher.subjects.flatMap((subject) => subject.streams.map((stream) => String(stream.id))))],
-    avatar: resolveAssetUrl(teacher.img, teacherFallback.src),
+    avatar: resolveAssetUrl(teacher.img, "") || null,
     studentCount: 0,
     experienceYears: "experience" in teacher ? teacher.experience ?? 0 : 0,
     pricePerSession: normalizedCourses.length

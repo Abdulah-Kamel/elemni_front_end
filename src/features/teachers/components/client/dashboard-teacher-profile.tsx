@@ -15,6 +15,7 @@ export default function DashboardTeacherProfile({ teacher, user }: { teacher: Te
         key={teacher.courses.map((course) => `${course.id}:${course.isSubscribed}`).join("|")}
         teacher={teacher}
         teacherListHref="/explore/teachers"
+        fullWidth
         onRequireAuth={() => router.replace("/login")}
       />
     </StudentPortalShell>

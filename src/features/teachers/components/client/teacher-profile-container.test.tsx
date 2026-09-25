@@ -166,7 +166,7 @@ describe("TeacherProfileView production experience", () => {
       "en",
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "اشترك الآن" }));
+    fireEvent.click(screen.getByRole("button", { name: "Subscribe" }));
 
     await waitFor(() => expect(assignMock).toHaveBeenCalledTimes(1));
     expect(assignMock).toHaveBeenCalledWith("/en/my-courses");

@@ -1,100 +1,22 @@
 "use client";
 
-import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState, useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { BookOpen, ChevronLeft, ChevronRight, GraduationCap, Search, SlidersHorizontal, UserRound } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search, SlidersHorizontal, UserRound } from "lucide-react";
 import { AnimatePresence, m } from "motion/react";
 import type { GradeDto, PublicTeacherDto } from "@/src/lib/student-api/contract";
-import { Link, useRouter } from "@/src/i18n/navigation";
+import { useRouter } from "@/src/i18n/navigation";
 import { useCurrentStudent } from "@/src/features/student/hooks/use-student-queries";
 import { isStudentUnauthorized } from "@/src/lib/student-api/client";
 import { resolveAssetUrl } from "@/src/lib/asset-url";
+import { TeacherCard } from "./teacher-card";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 import StudentPortalShell from "@/src/features/portal/components/portal-shell";
-import teacherFallback from "@/src/assets/images/student-redesign/teacher-ahmad.webp";
 
-const TEACHERS_PER_PAGE = 8;
+const TEACHERS_PER_PAGE = 12;
 const popSpring = { type: "spring", stiffness: 260, damping: 22 } as const;
 type TeacherSort = "courses" | "name";
-
-function TeacherCard({
-  teacher,
-  courseCount,
-  index,
-}: {
-  teacher: PublicTeacherDto;
-  courseCount: number;
-  index: number;
-}) {
-  const t = useTranslations("studentPortal");
-  const locale = useLocale();
-
-  return (
-    <m.article
-      initial={{ opacity: 0, y: 18 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 8 }}
-      transition={{ ...popSpring, delay: 0.04 * (index % TEACHERS_PER_PAGE) }}
-      whileHover={{ y: -4 }}
-      whileTap={{ scale: 0.99 }}
-      className="sticker-tile group flex min-h-56 flex-col items-stretch gap-4 p-4 transition-colors hover:bg-brand-50/60 sm:p-5 dark:hover:bg-slate-900"
-    >
-      <div className="flex min-w-0 items-center gap-4">
-        <div className="relative size-20 shrink-0 overflow-hidden rounded-[1.25rem] border-2 border-ink bg-brand-100 shadow-[3px_3px_0_0_var(--color-ink)] transition-transform group-hover:-rotate-2 sm:size-[5.5rem] dark:border-brand-300 dark:bg-slate-800 dark:shadow-[3px_3px_0_0_#334155]">
-          <Image
-            src={resolveAssetUrl(teacher.img, teacherFallback.src)}
-            alt={teacher.name}
-            fill
-            sizes="88px"
-            className="object-cover object-center"
-          />
-        </div>
-        <div className="min-w-0 flex-1">
-          <h3 className="truncate text-lg font-black leading-tight text-ink sm:text-xl dark:text-slate-50">
-            {teacher.name}
-          </h3>
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {teacher.subjects.slice(0, 3).map((subject) => (
-              <span key={subject.id} className="sticker-badge bg-brand-100 px-2.5 py-1 text-[11px] font-black text-brand-700 dark:bg-slate-800 dark:text-brand-300">
-                {subject.name}
-              </span>
-            ))}
-          </div>
-          {teacher.description && (
-            <p className="mt-2 line-clamp-2 text-xs leading-5 font-medium text-muted dark:text-slate-400">
-              {teacher.description}
-            </p>
-          )}
-        </div>
-      </div>
-      <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-ink/10 pt-3 dark:border-slate-700">
-        <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs font-black text-muted dark:text-slate-400">
-          <span className="inline-flex items-center gap-1.5">
-            <BookOpen className="size-3.5 text-brand-600 dark:text-brand-300" aria-hidden="true" />
-            {t("exploreTeacherCourseCount", { count: courseCount })}
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <GraduationCap className="size-3.5 text-brand-600 dark:text-brand-300" aria-hidden="true" />
-            {t("exploreTeacherGradeCount", { count: teacher.grades.length })}
-          </span>
-        </div>
-        <Link
-          href={`/explore/teachers/${teacher.slug}`}
-          className="sticker-btn-outline inline-flex min-h-10 shrink-0 items-center gap-2 px-4 text-xs font-black text-brand-700 transition-transform group-hover:translate-x-0.5 dark:text-brand-300"
-        >
-          {t("exploreTeacherViewProfile")}
-          {locale === "ar" ? (
-            <ChevronLeft className="size-3.5" aria-hidden="true" />
-          ) : (
-            <ChevronRight className="size-3.5" aria-hidden="true" />
-          )}
-        </Link>
-      </div>
-    </m.article>
-  );
-}
 
 export default function ExploreTeachers({
   teachers,
@@ -188,9 +110,9 @@ export default function ExploreTeachers({
 
   return (
     <StudentPortalShell user={user} active="teachers">
-      <div className="mx-auto max-w-[1400px] px-4 py-8 sm:px-6 lg:px-8">
+      <div className="w-full px-4 py-8 sm:px-6 lg:px-8 2xl:px-10">
         <m.header
-          className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"
+          className="flex flex-col gap-4"
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={popSpring}
@@ -204,9 +126,6 @@ export default function ExploreTeachers({
               {t("exploreTeachersDescription")}
             </p>
           </div>
-          <span className="sticker-badge inline-flex w-fit rotate-1 items-center gap-2 bg-brand-100 px-4 py-2 text-xs font-black text-brand-700 dark:bg-slate-800 dark:text-brand-300">
-            {t("exploreTeachersCount", { count: teachers.length })}
-          </span>
         </m.header>
 
         <div className="mt-6 lg:hidden">
@@ -284,11 +203,24 @@ export default function ExploreTeachers({
             </div>
             <AnimatePresence mode="wait" initial={false}>
               {visibleTeachers.length ? (
-                <m.div key={visibleTeacherSlugs} className="grid gap-5 md:grid-cols-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
+                <m.ul key={visibleTeacherSlugs} className="grid items-stretch gap-5 md:grid-cols-2 2xl:grid-cols-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
                   {visibleTeachers.map((teacher, index) => (
-                    <TeacherCard key={teacher.slug} teacher={teacher} courseCount={courseCounts[teacher.slug] ?? 0} index={index} />
+                    <li key={teacher.slug}>
+                      <TeacherCard
+                        index={index}
+                        teacher={{
+                          href: `/explore/teachers/${teacher.slug}`,
+                          name: teacher.name,
+                          avatar: resolveAssetUrl(teacher.img, "") || null,
+                          subjects: teacher.subjects.map((item) => item.name),
+                          grades: teacher.grades.map((item) => item.name),
+                          description: teacher.description,
+                          courseCount: courseCounts[teacher.slug] ?? 0,
+                        }}
+                      />
+                    </li>
                   ))}
-                </m.div>
+                </m.ul>
               ) : (
                 <m.div key="empty-teachers" className="sticker-tile flex min-h-64 flex-col items-center justify-center px-5 text-center" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={popSpring}>
                   <UserRound className="mb-4 size-9 text-brand-600 dark:text-brand-300" aria-hidden="true" />

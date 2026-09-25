@@ -875,5 +875,61 @@
       "dashboard": "Back to dashboard",
       "explore": "Explore courses"
     }
+  },
+  "teacherDirectory": {
+    "card": {
+      "courseCount": "{count, plural, =0 {No courses yet} =1 {1 course} other {# courses}}",
+      "gradeCount": "{count, plural, =0 {All grades} =1 {1 grade} other {# grades}}",
+      "moreSubjects": "+{count}",
+      "viewProfile": "View profile",
+      "noBio": "No bio yet."
+    },
+    "browse": {
+      "backHome": "Back to home",
+      "title": "All teachers",
+      "description": "Search by name or subject, then pick a grade and stream to find the right teacher.",
+      "gradeLabel": "Grade",
+      "streamLabel": "Stream",
+      "searchLabel": "Search by teacher or subject",
+      "searchPlaceholder": "Search teachers or subjects…",
+      "clearSearch": "Clear search",
+      "allGrades": "All grades",
+      "allStreams": "All streams",
+      "showing": "Showing {shown} of {total} teachers",
+      "reset": "Reset",
+      "loadError": "Could not load teachers. Refresh the page in a moment.",
+      "emptyTitle": "No teachers match your search",
+      "emptyDescription": "Try other words or a different grade.",
+      "resetAll": "Reset all filters",
+      "pageNavigation": "Teacher pages",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "page": "Page {page}"
+    },
+    "profile": {
+      "allTeachers": "All teachers",
+      "share": "Share",
+      "linkCopied": "Link copied",
+      "courses": "{count, plural, =0 {No published courses} =1 {1 course} other {# courses}}",
+      "experience": "{count, plural, =1 {1 year of experience} other {# years of experience}}",
+      "grades": "Grades",
+      "online": "Online",
+      "aboutTitle": "About",
+      "coursesTitle": "{name}'s courses",
+      "coursesEmpty": "No published courses yet.",
+      "lessons": "{count, plural, =0 {No lessons yet} =1 {1 lesson} other {# lessons}}",
+      "includesExams": "Exams",
+      "includesDocuments": "Files",
+      "currency": "EGP",
+      "perPeriod": "/ month",
+      "free": "Free",
+      "subscribe": "Subscribe",
+      "redirecting": "Redirecting…",
+      "showContent": "Course content",
+      "hideContent": "Hide content",
+      "noContent": "No content added yet.",
+      "checkoutError": "Could not start checkout right now.",
+      "subscribed": "Subscribed"
+    }
   }
 }
