@@ -74,7 +74,7 @@ export default function TeacherProfileView({ teacher, onRequireAuth, teacherList
   const totalCoursePages = pageCount(teacher.courses.length, COURSES_PER_PAGE);
   const currentCoursePage = clampPage(coursePage, totalCoursePages);
   const visibleCourses = teacher.courses.slice((currentCoursePage - 1) * COURSES_PER_PAGE, currentCoursePage * COURSES_PER_PAGE);
-  const container = "mx-auto w-full max-w-[64rem] px-4 sm:px-6 lg:px-8";
+  const container = "mx-auto w-full max-w-[1400px] px-4 sm:px-6 lg:px-8";
   // Backend names are often Latin ("Grade 12"); a neutral separator reads well in both directions.
   const list = (items: string[]) => items.join(" · ");
   const doodleIcons = (teacher.subjects.length ? teacher.subjects : [""]).map((subject) => getSubjectArt(subject).Icon);
