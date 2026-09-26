@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { useState, useSyncExternalStore, type ReactNode } from "react";
 import {
-  Bell,
   Compass,
   GraduationCap,
   Home,
@@ -253,7 +252,6 @@ export default function StudentPortalShell({ children, user, active = "dashboard
               <input id="portal-course-search" type="search" name="q" placeholder={tNav("searchPlaceholder")} className="min-w-0 flex-1 bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-500 dark:text-white dark:placeholder:text-slate-400" />
             </div>
           </form>
-          <Link href={active === "dashboard" ? "#upcoming" : "/dashboard#upcoming"} aria-label={tPortal("upcomingLabel")} className="flex size-10 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"><Bell className="size-5" /></Link>
         </header>
 
         {mobileOpen && (
