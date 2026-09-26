@@ -875,5 +875,75 @@
       "dashboard": "Back to dashboard",
       "explore": "Explore courses"
     }
+  },
+  "onboarding": {
+    "meta": "Set up your learning | Elemni",
+    "dashboardPrompt": "Complete your study profile",
+    "brand": "Elemni",
+    "tagline": "Learning platform for secondary students",
+    "skip": "Skip for now",
+    "steps": {
+      "label": "Account setup steps",
+      "grade": "Grade",
+      "stream": "Stream",
+      "subjects": "Subjects",
+      "progress": "Step {current} of {total}"
+    },
+    "welcome": {
+      "title": "Welcome to Elemni",
+      "subtitle": "Let's set things up in under a minute",
+      "body": "Three quick questions so we can show teachers and courses for your grade and stream.",
+      "perk1": "Teachers matched to your level",
+      "perk2": "Courses for your grade",
+      "perk3": "Organised study in one place",
+      "start": "Let's start",
+      "imageAlt": "A student planning their study"
+    },
+    "grade": {
+      "title": "Which grade are you in?",
+      "body": "Choose your school year.",
+      "empty": "No grades are available right now."
+    },
+    "stream": {
+      "title": "Choose your stream",
+      "body": "We'll show the subjects and courses for it.",
+      "subjectCount": "{count, plural, =0 {No subjects yet} =1 {1 subject} other {# subjects}}",
+      "empty": "No streams are available right now."
+    },
+    "subjects": {
+      "title": "Your subjects",
+      "body": "We picked the subjects for your grade and stream. Remove any you don't need.",
+      "selectAll": "Select all",
+      "clear": "Clear",
+      "selected": "{count, plural, =0 {No subjects selected} =1 {1 subject selected} other {# subjects selected}}",
+      "empty": "No subjects for this grade and stream yet. You can continue and choose later.",
+      "needOne": "Choose at least one subject."
+    },
+    "card": {
+      "title": "Your study card",
+      "grade": "Grade",
+      "stream": "Stream",
+      "subjects": "Subjects",
+      "pending": "—"
+    },
+    "back": "Back",
+    "next": "Next",
+    "finish": "Save and start",
+    "saving": "Saving…",
+    "errors": {
+      "save": "We couldn't save your choices. Check your connection and try again.",
+      "retry": "Try again"
+    },
+    "done": {
+      "title": "You're all set!",
+      "body": "We've lined up teachers and courses for {profile}.",
+      "local": "Your choices are saved on this device.",
+      "dashboard": "Go to dashboard",
+      "explore": "Browse courses for your grade"
+    },
+    "footer": {
+      "terms": "Terms & privacy",
+      "help": "Help"
+    }
   }
 }

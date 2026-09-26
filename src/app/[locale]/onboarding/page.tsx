@@ -1,10 +1,13 @@
 import { redirect } from "next/navigation";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import OnboardingFlow from "@/src/features/onboarding/components/onboarding-flow";
 import { getGrades, getStreams, getSubjects } from "@/src/lib/student-api/public";
 import { getAccessToken } from "@/src/lib/student-api/session";
 
-export const metadata = { title: "جهز تجربتك التعليمية | علمني" };
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  return { title: (await getTranslations({ locale, namespace: "onboarding" }))("meta") };
+}
 export const dynamic = "force-dynamic";
 
 export default async function OnboardingPage({ params }: { params: Promise<{ locale: string }> }) {

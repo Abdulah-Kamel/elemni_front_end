@@ -114,7 +114,9 @@ export default function StudentAuthForm({ mode, returnTo }: { mode: AuthMode; re
     }
 
     notifyStudentSessionChanged("login");
-    router.replace(!isRegister && returnTo ? returnTo : "/onboarding");
+    // New accounts set up their study profile; returning students go back to
+    // where they were (or the dashboard) instead of onboarding again.
+    router.replace(isRegister ? "/onboarding" : returnTo || "/dashboard");
   };
 
   return (

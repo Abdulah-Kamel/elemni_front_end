@@ -20,7 +20,7 @@ import ImageWithFallback from "@/src/components/ui/image-with-fallback";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 import { m } from "motion/react";
 import { Link, useRouter } from "@/src/i18n/navigation";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import type { GradeDto, StreamDto } from "@/src/lib/student-api/contract";
 import {
   getStudentErrorMessage,
@@ -61,7 +61,9 @@ function DashboardLoading() {
 export default function StudentDashboard({ grades, streams }: { grades: GradeDto[]; streams: StreamDto[] }) {
   const locale = useLocale();
   const router = useRouter();
+  const tOnboarding = useTranslations("onboarding");
   const [profileLabel, setProfileLabel] = useState("");
+  const [profileChecked, setProfileChecked] = useState(false);
   const [courseFilter, setCourseFilter] = useState<"all" | "in-progress" | "completed">("all");
   const userQuery = useCurrentStudent();
   const coursesQuery = useMyCourses();
@@ -83,6 +85,7 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
   useEffect(() => {
     const timer = window.setTimeout(() => {
       const rawDraft = localStorage.getItem("elemni-student-onboarding-v1");
+      setProfileChecked(true);
       if (rawDraft) {
         try {
           const draft = JSON.parse(rawDraft) as OnboardingDraft;
@@ -153,7 +156,11 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
                   تابع تقدّم كورساتك ومواعيد انتهاء اشتراكاتك.
                 </p>
               </div>
-              {profileLabel && <span className="sticker-badge inline-flex rotate-1 bg-amber-300 px-3 py-2 text-xs font-extrabold text-ink dark:bg-amber-300 dark:text-ink">{profileLabel}</span>}
+              {profileLabel ? (
+                <Link href="/onboarding" className="sticker-badge inline-flex rotate-1 bg-amber-300 px-3 py-2 text-xs font-extrabold text-ink hover:-rotate-1 dark:bg-amber-300 dark:text-ink">{profileLabel}</Link>
+              ) : profileChecked ? (
+                <Link href="/onboarding" className="sticker-btn-outline inline-flex min-h-11 items-center px-4 text-xs font-black text-brand-700 dark:text-brand-300">{tOnboarding("dashboardPrompt")}</Link>
+              ) : null}
             </m.header>
 
             {primary ? (
