@@ -28,7 +28,8 @@ import {
   useUpdateCourseProgress,
 } from "@/src/features/student/hooks/use-student-queries";
 import { studentQueryKeys } from "@/src/features/student/query-keys";
-import { getEffectiveCoupons, validateCoupon, type CouponValidation } from "@/src/lib/coupons/coupons";
+import type { CouponValidation } from "@/src/lib/coupons/coupons";
+import { checkCoupon } from "@/src/lib/coupons/validate";
 import { cn } from "@/src/lib/cn";
 import { portalContainerVariants, portalItemVariants, scrollIntoViewById } from "./course-motion";
 import CheckoutConfirmation from "./checkout-confirmation";
@@ -73,6 +74,7 @@ export default function CourseDetail({
   const [couponCode, setCouponCode] = useState("");
   const [couponApplied, setCouponApplied] = useState<CouponValidation | null>(null);
   const [couponError, setCouponError] = useState("");
+  const [couponChecking, setCouponChecking] = useState(false);
   const [expandedChapterId, setExpandedChapterId] = useState<number | null | undefined>(
     () => initialDetail
       ? initialDetail.course.chapters.find((chapter) => chapter.lessons.length)?.id ?? null
@@ -230,8 +232,13 @@ export default function CourseDetail({
   };
 
   const basePrice = Number(detail?.enrollment?.course_price ?? course?.price ?? 0);
-  const applyCoupon = (raw: string) => {
-    const r = validateCoupon(raw, basePrice, new Date(), getEffectiveCoupons());
+  // The backend validates the code for this student and course and returns
+  // the discount and final price; nothing about the price is computed here.
+  const applyCoupon = async (raw: string) => {
+    setCouponChecking(true);
+    setCouponError("");
+    const r = await checkCoupon(raw, courseId, basePrice);
+    setCouponChecking(false);
     if (r.ok) { setCouponApplied(r); setCouponCode(r.coupon!.code); setCouponError(""); }
     else { setCouponApplied(null); setCouponError(t(`couponError_${r.error}` as never) || t("couponInvalid")); }
   };
@@ -488,7 +495,8 @@ export default function CourseDetail({
                   onContinue={startCourse}
                   couponApplied={couponApplied}
                   couponError={couponError}
-                  onCouponApply={applyCoupon}
+                  onCouponApply={(code) => void applyCoupon(code)}
+                  couponChecking={couponChecking}
                   onCouponRemove={removeCoupon}
                 />
               </aside>
