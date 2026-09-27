@@ -6,7 +6,6 @@ import {
   ChevronDown,
   FileVideo,
   Plus,
-  TrendingUp,
   User,
 } from "lucide-react";
 import { Button, Badge } from "@/src/components/ui/button";
@@ -148,13 +147,6 @@ export default async function Hero() {
             </div>
           </div>
 
-          <div
-            className="absolute -top-3 start-[-0.75rem] inline-flex items-center gap-1.5 rounded-full bg-accent-500 px-3 py-1.5 text-xs font-bold text-white shadow-lift motion-safe:animate-float"
-            style={{ animationDelay: "1s" }}
-          >
-            <TrendingUp className="size-3.5" />
-            {t("mock.earningsPill")}
-          </div>
         </div>
       </div>
     </Section>

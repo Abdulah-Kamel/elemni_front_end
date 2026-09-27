@@ -66,9 +66,9 @@ const BOARD_NOTES: StickyNoteData[] = [
     category: "step",
     stepNumber: "3",
     numberDisplay: "٣",
-    title: "ابدأ التعلم المباشر",
-    content: "احضر الحصص المباشرة، حل الأسئلة، وتابع تقدمك أولاً بأول.",
-    highlightWords: ["الحصص المباشرة", "تابع تقدمك"],
+    title: "ابدأ التعلم من الكورس",
+    content: "شاهد دروس الفيديو المسجلة، واستخدم الملفات والاختبارات المتاحة.",
+    highlightWords: ["دروس الفيديو المسجلة", "الاختبارات"],
     color: "#BBF7D0", // Bright Light Green
     textColor: "#064E3B",
     headerColor: "#10B981",
@@ -86,7 +86,7 @@ const BOARD_NOTES: StickyNoteData[] = [
     stepNumber: "01",
     numberDisplay: "٤",
     title: "افهم صح",
-    content: "دروس تفاعلية وبث مباشر مع نخبة من أذكى المدرسين.",
+    content: "اختر من الكورسات المنشورة وتعلّم من محتواها المسجل.",
     highlightWords: ["دروس تفاعلية", "أذكى المدرسين"],
     color: "#E9D5FF", // Bright Purple
     textColor: "#3B0764",

@@ -45,7 +45,6 @@
     "features": "Features",
     "pricing": "Pricing",
     "faq": "FAQ",
-    "stories": "Success stories",
     "login": "Log in",
     "cta": "Start free",
     "menu": "Menu"
@@ -59,7 +58,6 @@
     "searchWord": "WhatsApp",
     "mock": {
       "greeting": "Good evening, Ahmed Mahmoud",
-      "earningsPill": "EGP 42,300 this month",
       "uploadTitle": "Upload a new lesson",
       "uploadHint": "Drag your video here",
       "subjectLabel": "Subject",
@@ -70,20 +68,6 @@
       "streamValue": "Science",
       "progressTitle": "Electromagnetic induction lesson",
       "progressStatus": "Uploading 60%"
-    }
-  },
-  "stats": {
-    "earnings": {
-      "label": "EGP earned by teachers",
-      "suffix": "M"
-    },
-    "students": {
-      "label": "monthly active students",
-      "suffix": ""
-    },
-    "teachers": {
-      "label": "teachers trust us",
-      "suffix": "+"
     }
   },
   "features": {
@@ -184,27 +168,9 @@
     "url": "elemni.com/dashboard"
   },
   "payments": {
-    "heading": "You teach. We collect the money.",
-    "subtitle": "Collecting your earnings is easier than ever. Multiple payment methods for every student, and instant transfer to your bank or wallet.",
-    "methodsTitle": "Payment methods for everyone",
-    "calcTitle": "Simple math, guaranteed profit",
-    "calcCourseLabel": "Course price",
-    "calcCourseValue": "EGP 250",
-    "calcStudentsLabel": "Students",
-    "calcStudentsValue": "500",
-    "calcResultLabel": "Your net profit (monthly)",
-    "calcResultValue": "EGP 125,000",
-    "cardsTitle": "Student top-up cards",
-    "cardsBadge": "Exclusive",
-    "cardsDesc": "Print top-up cards with unique codes and hand them out at centers or bookshops so students without an e-wallet can pay easily.",
-    "note": "Instant transfer to your bank or wallet with no delay.",
-    "methods": {
-      "instapay": "InstaPay",
-      "fawry": "Fawry",
-      "vodafone": "Vodafone Cash",
-      "meeza": "Meeza",
-      "card": "Visa / Mastercard"
-    }
+    "heading": "Payments through Kashier",
+    "subtitle": "Student subscriptions are paid through Kashier hosted checkout.",
+    "checkoutDescription": "Secure online payment through Kashier"
   },
   "comparison": {
     "heading": "Why not just WhatsApp?",
@@ -257,7 +223,7 @@
         "desc": "Your lessons end up on Telegram and your effort goes to waste."
       },
       "2": {
-        "title": "Chasing Vodafone Cash payments",
+        "title": "Manually tracking payments",
         "desc": "Checking messages and manual transfers eats all your time."
       },
       "3": {
@@ -287,41 +253,6 @@
     "subtitle": "The easiest platform to use — built to save your time.",
     "cta": "Start your free trial now"
   },
-  "migration": {
-    "1": {
-      "title": "Send us your student list and videos"
-    },
-    "2": {
-      "title": "We upload and organize everything"
-    },
-    "3": {
-      "title": "Your platform is live within 48 hours"
-    },
-    "heading": "Already have students? We'll move them with you.",
-    "cta": "Talk to our team",
-    "note": "Free for any teacher with more than 50 students."
-  },
-  "testimonials": {
-    "1": {
-      "quote": "Payment was so easy for students, and the top-up cards saved us a huge amount of time and effort.",
-      "name": "Mr. Ahmed Kamal",
-      "role": "Physics teacher – Alexandria",
-      "result": "50% sales growth"
-    },
-    "2": {
-      "quote": "Video protection was my biggest obstacle; with Elemni I upload my content 100% reassured.",
-      "name": "Ms. Mona El-Sayed",
-      "role": "Biology teacher – Giza",
-      "result": "Full content protection"
-    },
-    "3": {
-      "quote": "A powerful, easy platform. I reached many students fast and the support is excellent.",
-      "name": "Mr. Mahmoud Hassan",
-      "role": "Arabic teacher – Cairo",
-      "result": "340+ students in one term"
-    },
-    "heading": "What our success partners say"
-  },
   "pricing": {
     "heading": "Pricing built around your platform",
     "cta": "Contact us",
@@ -333,15 +264,13 @@
     "q1": "Does my content stay mine?",
     "a1": "Absolutely. Your content stays 100% yours. We only provide the platform and tools to protect and sell it safely. We claim no rights over your videos or materials.",
     "q2": "How do students pay?",
-    "a2": "Students pay however suits them — InstaPay, Fawry, Vodafone Cash, Visa, or top-up cards — and the lesson activates instantly.",
+    "a2": "Payment is processed through Kashier hosted checkout.",
     "q3": "Can the videos be leaked?",
     "a3": "Your videos are HLS-encrypted with a per-student watermark, and we block any screen-recording attempt.",
     "q4": "Do I need technical skills?",
-    "a4": "Not at all. If you can send a video on WhatsApp, you can use Elemni — and our team helps you set up.",
+    "a4": "Payment is processed through Kashier. Check the checkout page for available options.",
     "q5": "How much does it cost?",
-    "a5": "We're still finalising our plans. Talk to us and we'll put together an offer that fits your student numbers and your content.",
-    "q6": "Can I migrate my current students?",
-    "a6": "Yes — our team migrates your students and videos within 48 hours, free if you have more than 50 students."
+    "a5": "We're still finalising our plans. Talk to us and we'll put together an offer that fits your student numbers and your content."
   },
   "finalCta": {
     "heading": "Your first lecture is 10 minutes away",
@@ -373,10 +302,8 @@
       "ctaSecondary": "Browse teachers",
       "ctaSignup": "Sign up free",
       "ctaSignin": "Sign in",
-      "proofValue": "180,000+ students",
-      "proofLabel": "Studying with us right now",
       "nowPlayingTitle": "Physics lesson",
-      "nowPlayingLabel": "Now playing"
+      "nowPlayingLabel": "Recorded video lesson"
     },
     "nav": {
       "features": "Features",
@@ -449,7 +376,7 @@
       },
       "payments": {
         "title": "Easy & secure payment",
-        "desc": "InstaPay, Vodafone Cash, Fawry, Visa — every way you need."
+        "desc": "Secure online payment through Kashier."
       },
       "exams": {
         "title": "Quizzes & reviews",
@@ -481,42 +408,21 @@
       },
       "cta": "Start free now"
     },
-    "testimonials": {
-      "heading": "Students like you — their success started here",
-      "1": {
-        "quote": "After starting with Elemni, my physics grade completely changed. The explanations are simple and payment is easy.",
-        "name": "Ahmed Khaled",
-        "role": "High school student — Cairo",
-        "result": "30% grade improvement"
-      },
-      "2": {
-        "quote": "I used to pay so much for private tutoring. Now I study for much less.",
-        "name": "Mariam Ali",
-        "role": "High school student — Giza",
-        "result": "Saved 60% on tutoring costs"
-      },
-      "3": {
-        "quote": "A simple, organised platform. I love that I can rewatch lessons anytime.",
-        "name": "Youssef Omar",
-        "role": "High school student — Alexandria",
-        "result": "Consistent study habits"
-      }
-    },
     "faq": {
       "heading": "Frequently asked questions",
       "subtitle": "Everything you need to know to start learning.",
       "q1": "How can I pay?",
-      "a1": "You can pay via InstaPay, Vodafone Cash, Fawry, or Visa/Mastercard. All methods are available.",
+      "a1": "Payment is processed through Kashier hosted checkout.",
       "q2": "Can I watch from my phone?",
       "a2": "Absolutely. The platform works on any phone, tablet, or laptop.",
       "q3": "Are there free lessons?",
-      "a3": "Free lessons are always available so you can try the platform. Then subscribe to what suits you.",
+      "a3": "Check the course page for content available before subscribing.",
       "q4": "What if I don't have a bank account?",
-      "a4": "You don't need one. Pay in cash via Fawry or use top-up cards.",
+      "a4": "Payment is processed through Kashier. Check the checkout page for available options.",
       "q5": "Can I download lessons?",
       "a5": "Lessons are available for online viewing only to protect content, but you can rewatch anytime.",
       "q6": "How do I access my purchased lessons?",
-      "a6": "All purchased lessons are in your personal library — accessible anytime."
+      "a6": "Your enrolled course is available in My courses during the 30-day subscription."
     },
     "comparison": {
       "heading": "Why Elemni over anything else?",
@@ -608,10 +514,22 @@
     "bento": {
       "heading": "Why study on Elemni?",
       "subtitle": "We've provided all the tools you need to focus on studying and achieve your goals.",
-      "card1": { "title": "Fast & easy payment", "body": "Pay the way that works for you — Vodafone Cash, Fawry, or InstaPay." },
-      "card2": { "title": "Full HD video quality", "body": "Watch your lessons in high quality and clear audio, and replay them anytime." },
-      "card3": { "title": "Auto quizzes & reviews", "body": "Test yourself after every lesson and see your results instantly to find your weak spots." },
-      "card4": { "title": "Smart subject organisation", "body": "Content organised by subject, grade, and track — find any lesson in seconds." }
+      "card1": {
+        "title": "Fast & easy payment",
+        "body": "Secure online payment through Kashier."
+      },
+      "card2": {
+        "title": "Recorded video lessons",
+        "body": "Watch recorded lessons and use course files."
+      },
+      "card3": {
+        "title": "Course tests",
+        "body": "Use the tests available in course content."
+      },
+      "card4": {
+        "title": "Smart subject organisation",
+        "body": "Content organised by subject, grade, and track — find any lesson in seconds."
+      }
     },
     "mobile": {
       "headingLine1": "Study from your phone",
@@ -828,25 +746,35 @@
     "callAction": "Call support",
     "form": {
       "title": "Send us a message",
-      "description": "This form is ready for support requests. We will connect it to the support API soon.",
+      "description": "Send your question to our support team.",
       "jump": "Send a message",
       "name": "Your Name",
       "namePlaceholder": "Enter your name",
       "email": "Email Address",
       "emailPlaceholder": "Enter your email",
+      "contactByEmailOrPhone": "Provide an email address or phone number.",
+      "phone": "Phone number",
+      "phonePlaceholder": "Enter your phone number",
       "message": "Message",
       "messagePlaceholder": "How can we help you?",
       "submit": "Send Message",
       "sending": "Sending...",
-      "success": "Message saved locally for now. API delivery will be added soon.",
-      "error": "Something went wrong. Please try again later."
+      "success": "Your message was sent successfully.",
+      "error": "We could not send your message. Please try again.",
+      "notConfigured": "The message form is temporarily unavailable. Call us at {phone} or use WhatsApp.",
+      "callSupport": "Call support",
+      "whatsappSupport": "Contact us on WhatsApp"
     }
   },
   "paymentResult": {
     "eyebrow": "Payment result",
     "metaTitle": "Payment result | Student portal | Elemni",
     "title": {
-      "completed": "Payment successful",
+      "completed": "Checking your enrollment",
+      "confirmed": "Enrollment confirmed",
+      "confirming": "Confirming your payment...",
+      "notFound": "We are confirming your payment",
+      "notLoggedIn": "Sign in to check your enrollment",
       "failed": "Payment could not be completed",
       "pending": "Payment is under review",
       "cancelled": "Payment was cancelled",
@@ -854,7 +782,11 @@
       "unknown": "Payment result is unclear"
     },
     "description": {
-      "completed": "Your enrollment is confirmed. You can open the course and continue learning now.",
+      "completed": "We are checking your active enrollment.",
+      "confirmed": "Your enrollment is active. You can open the course and continue learning.",
+      "confirming": "Please wait while we check your courses.",
+      "notFound": "Payment confirmation can take a minute. Refresh this page or check My courses.",
+      "notLoggedIn": "Sign in to check whether your course enrollment is active.",
       "failed": "No amount was charged. You can try again or choose another payment method.",
       "pending": "We received your request and the payment is under review. We will update your enrollment once confirmed.",
       "cancelled": "The payment was cancelled before completion. You can go back and pick the course again.",
@@ -867,11 +799,14 @@
     "amountLabel": "Amount",
     "cardLabel": "Card",
     "referenceLabel": "Reference",
+    "supportReferenceLabel": "Order reference for support",
+    "refresh": "Refresh status",
     "testModeBadge": "Test mode",
     "testModeNote": "This is a test transaction with no real charge.",
     "actions": {
       "openCourse": "Open course",
       "myCourses": "View my courses",
+      "login": "Sign in",
       "dashboard": "Back to dashboard",
       "explore": "Explore courses"
     }

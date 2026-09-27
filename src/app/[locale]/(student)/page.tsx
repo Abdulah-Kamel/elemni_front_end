@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata() {
   return {
     title: "علمني | منصة التعلم الذكي",
-    description: "علمني .. بوابتك للتعلم الذكي — المنصة الأولى للتعلم التفاعلي وكورسات المدرسين 2026",
+    description: "علمني .. بوابتك للتعلم مع المعلمين والكورسات المنشورة على المنصة.",
   };
 }
 

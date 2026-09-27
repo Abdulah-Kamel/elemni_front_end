@@ -7,6 +7,7 @@ import { cn } from "@/src/lib/cn";
 import { Reveal } from "@/src/components/ui/reveal";
 import { AnimatePresence, m } from "motion/react";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
+import { WHATSAPP_URL } from "@/src/features/contact/contact-details";
 
 export default function FaqSection() {
   const [openId, setOpenId] = useState<string | null>("faq1");
@@ -26,7 +27,7 @@ export default function FaqSection() {
               </MarkerHighlight>
             </h2>
             <p className="text-sm sm:text-base text-[#334155]">
-              كل ما تحتاج معرفته عن التسجيل، الحصص المباشرة، وطرق الاشتراك على منصة علمني.
+              معلومات عن التسجيل والكورسات والاشتراكات على منصة علمني.
             </p>
           </div>
         </Reveal>
@@ -84,11 +85,11 @@ export default function FaqSection() {
               </div>
               <div>
                 <h4 className="font-extrabold text-sm text-[#0F172A]">هل لديك سؤال آخر؟</h4>
-                <p className="text-xs text-[#334155]">فريق الدعم الفني متواجد لمساعدتك طوال اليوم عبر الواتساب.</p>
+                <p className="text-xs text-[#334155]">تواصل مع فريق الدعم الفني عبر الواتساب.</p>
               </div>
             </div>
             <a
-              href="https://wa.me/201000000000"
+              href={WHATSAPP_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="px-5 py-2.5 bg-primary text-white font-bold text-xs rounded-xl hover:bg-primary-hover transition-all shadow-md shrink-0"

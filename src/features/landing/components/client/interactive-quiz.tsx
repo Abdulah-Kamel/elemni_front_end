@@ -57,7 +57,7 @@ export default function InteractiveQuiz({ onExploreTeachers }: InteractiveQuizPr
           <div className="text-center space-y-3 mb-10">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary-light text-primary font-bold text-xs sm:text-sm">
               <HelpCircle className="w-4 h-4" />
-              <span>تجربة تفاعلية حية على المنصة</span>
+              <span>تجربة تفاعلية على المنصة</span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-black text-[#0F172A] font-readex">اختبر مستواك الآن</h2>
             <p className="text-sm sm:text-base text-[#334155]">
@@ -153,7 +153,7 @@ export default function InteractiveQuiz({ onExploreTeachers }: InteractiveQuizPr
                 <h3 className="text-2xl font-black text-[#0F172A]">ممتاز! أكملت التقييم بنجاح 🎉</h3>
                 <p className="text-base font-bold text-primary">حصلت على {score} من {QUIZ_QUESTIONS.length} إجابات صحيحة</p>
                 <p className="text-xs text-slate-600 max-w-md mx-auto">
-                  هذا النموذج المصغر هو مجرد زاوية بسيطة من بنك الأسئلة الشامل على منصة علمني والذي يحتوي على أكثر من 50,000 سؤال محلول بالفيديو!
+                  جرّب النموذج المصغر وتعرّف على طريقة الإجابة وشرح الحل.
                 </p>
               </div>
               <div className="flex flex-wrap items-center justify-center gap-4 pt-4">

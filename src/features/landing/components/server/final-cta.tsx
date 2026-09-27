@@ -30,7 +30,7 @@ export default function FinalCta() {
               </h2>
 
               <p className="max-w-xl text-base sm:text-lg font-medium text-slate-600 dark:text-slate-300 leading-relaxed">
-                انضم لأكثر من 50,000 طالب واستفيد من أقوى الكورسات التفاعلية مع{" "}
+                اختر الكورس المناسب وابدأ التعلم مع المعلم الذي تفضله{" "}
                 <MarkerHighlight color="sky" variant={2}>
                   نخبة المدرسين
                 </MarkerHighlight>
@@ -58,7 +58,7 @@ export default function FinalCta() {
                 <span className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-purple-500 shrink-0" />
                   <MarkerHighlight color="purple" variant={4}>
-                    جدول مذاكرة منظم
+                    دروس فيديو مسجلة
                   </MarkerHighlight>
                 </span>
               </div>
@@ -78,7 +78,7 @@ export default function FinalCta() {
                 {/* Floating Paper Sticker 2 */}
                 <div className="absolute -bottom-2 -inset-e-2 z-20 rotate-3 rounded-xl bg-sky-100 dark:bg-sky-950/80 px-3.5 py-2 text-xs font-black text-sky-900 dark:text-sky-200 shadow-md border border-sky-200 dark:border-sky-800">
                   <MarkerHighlight color="sky" variant={2}>
-                    متابعة حقيقية 100%
+                    دروس فيديو وملفات واختبارات
                   </MarkerHighlight>
                 </div>
 

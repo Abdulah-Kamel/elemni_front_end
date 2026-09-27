@@ -8,7 +8,7 @@ export default function Features() {
       stepNumber: "01",
       icon: Target,
       title: "افهم صح",
-      description: "دروس تفاعلية وبث مباشر مع نخبة من المدرسين.",
+      description: "دروس فيديو مسجلة وملفات واختبارات ضمن الكورس.",
     },
     {
       id: "step-2",

@@ -95,6 +95,8 @@ export default function Navbar({ onSearchChange, searchQuery, isDarkMode, onTogg
                   : "bg-sky-100/90 border-sky-200 text-slate-900"
               )}
               title={isDarkMode ? tNav("lightMode") : tNav("darkMode")}
+              aria-label={isDarkMode ? tNav("lightMode") : tNav("darkMode")}
+              aria-pressed={isDarkMode}
             >
               <div className={cn(
                 "w-5 h-5 rounded-full flex items-center justify-center transition-all",
@@ -237,6 +239,8 @@ export default function Navbar({ onSearchChange, searchQuery, isDarkMode, onTogg
             <button
               type="button"
               onClick={onToggleDarkMode}
+              aria-label={isDarkMode ? tNav("lightMode") : tNav("darkMode")}
+              aria-pressed={isDarkMode}
               className={cn(
                 "flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer",
                 isDarkMode ? "bg-slate-800 text-sky-400 border border-slate-700" : "bg-sky-50 text-slate-900 border border-sky-100"

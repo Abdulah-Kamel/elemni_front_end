@@ -16,6 +16,8 @@ import type {
   PaymentResultDetails,
   PaymentResultStatus,
 } from "../parse-payment-result";
+import { useMyCourses } from "@/src/features/student/hooks/use-student-queries";
+import { isStudentUnauthorized } from "@/src/lib/student-api/client";
 
 const popSpring = { type: "spring", stiffness: 260, damping: 20 } as const;
 
@@ -55,28 +57,25 @@ export default function PaymentResultView({
   result: PaymentResultDetails;
 }) {
   const t = useTranslations("paymentResult");
-  const style = STATUS_STYLE[result.status] ?? STATUS_STYLE.unknown;
+  const coursesQuery = useMyCourses();
+  const enrollment = result.status === "completed" && result.courseId !== null && !coursesQuery.error
+    ? coursesQuery.data?.items.find((item) => item.course_id === result.courseId) ?? null
+    : null;
+  const loggedOut = isStudentUnauthorized(coursesQuery.error);
+  const confirming = result.status === "completed" && !loggedOut && !enrollment && coursesQuery.isFetching;
+  const resultState = result.status === "completed"
+    ? loggedOut ? "notLoggedIn" : enrollment ? "confirmed" : confirming ? "confirming" : "notFound"
+    : result.status;
+  const style = STATUS_STYLE[result.status === "completed" && !enrollment ? "pending" : result.status] ?? STATUS_STYLE.unknown;
   const Icon = style.icon;
 
-  const amountValue =
-    result.amount || result.currency
-      ? [result.amount, result.currency].filter(Boolean).join(" ")
-      : null;
-  const cardValue =
-    result.cardBrand || result.maskedCard
-      ? [result.cardBrand, result.maskedCard].filter(Boolean).join(" ")
-      : null;
-
   const details: Array<{ id: string; label: string; value: string }> = [];
-  if (result.orderId) details.push({ id: "order", label: t("orderLabel"), value: result.orderId });
-  if (result.transactionId)
-    details.push({ id: "transaction", label: t("transactionLabel"), value: result.transactionId });
-  if (amountValue) details.push({ id: "amount", label: t("amountLabel"), value: amountValue });
-  if (cardValue) details.push({ id: "card", label: t("cardLabel"), value: cardValue });
-  if (result.orderReference)
-    details.push({ id: "reference", label: t("referenceLabel"), value: result.orderReference });
+  if (result.orderId) details.push({ id: "order", label: t("supportReferenceLabel"), value: result.orderId });
 
-  const showCourseLink = result.status === "completed" && result.courseHref !== null;
+  const courseHref = enrollment ? `/my-courses/${enrollment.course_id}` : null;
+  const enrollmentPrice = enrollment
+    ? `${enrollment.total_paid} ${enrollment.currency}`
+    : null;
 
   return (
     <div className="mx-auto w-full max-w-xl px-4 py-10 sm:px-6">
@@ -106,7 +105,7 @@ export default function PaymentResultView({
           animate={{ opacity: 1, y: 0 }}
           transition={{ ...popSpring, delay: 0.2 }}
         >
-          {t(`title.${result.status}`)}
+          {t(`title.${resultState}`)}
         </m.h1>
         <m.p
           className="mx-auto mt-3 max-w-md text-sm leading-7 font-medium text-muted dark:text-slate-400"
@@ -114,8 +113,15 @@ export default function PaymentResultView({
           animate={{ opacity: 1, y: 0 }}
           transition={{ ...popSpring, delay: 0.25 }}
         >
-          {t(`description.${result.status}`)}
+          {t(`description.${resultState}`)}
         </m.p>
+
+        {enrollment && (
+          <div className="mt-5 rounded-xl border-2 border-emerald-200 bg-emerald-50 p-4 text-start dark:border-emerald-900 dark:bg-emerald-950/30">
+            <p className="font-black text-ink dark:text-slate-100">{enrollment.course.title}</p>
+            <p className="mt-1 text-sm font-bold text-muted dark:text-slate-300">{enrollmentPrice}</p>
+          </div>
+        )}
 
         {result.isTestMode && (
           <p className="sticker-badge mx-auto mt-4 w-fit rotate-1 bg-amber-300 px-3 py-1 text-xs font-black text-ink">
@@ -162,15 +168,29 @@ export default function PaymentResultView({
           animate={{ opacity: 1, y: 0 }}
           transition={{ ...popSpring, delay: 0.35 }}
         >
-          {showCourseLink && result.courseHref && (
+          {courseHref && (
             <m.div whileHover={{ scale: 1.03, rotate: -0.5 }} whileTap={{ scale: 0.97 }} transition={popSpring}>
               <Link
-                href={result.courseHref}
+                href={courseHref}
                 className="sticker-btn inline-flex h-13 w-full items-center justify-center px-6 py-3.5 text-base font-black"
               >
                 {t("actions.openCourse")}
               </Link>
             </m.div>
+          )}
+          {result.status === "completed" && !loggedOut && !enrollment && !confirming && (
+            <button
+              type="button"
+              onClick={() => void coursesQuery.refetch()}
+              className="sticker-btn inline-flex h-12 w-full items-center justify-center px-5 text-sm font-black"
+            >
+              {t("refresh")}
+            </button>
+          )}
+          {result.status === "completed" && loggedOut && (
+            <Link href="/login" className="sticker-btn inline-flex h-12 items-center justify-center px-5 text-sm font-black">
+              {t("actions.login")}
+            </Link>
           )}
           <div className="grid gap-2.5 sm:grid-cols-2">
             <Link

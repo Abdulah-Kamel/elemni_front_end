@@ -40,7 +40,7 @@ export default function VideoModal({ isOpen, onClose }: VideoModalProps) {
         </div>
 
         <p className="text-xs text-slate-500 mt-3 text-center">
-          تعرف في دقيقتين على كيفية دخول الحصص المباشرة، التفاعل مع الأستاذ، وحل بنوك الأسئلة الذكية.
+          تعرّف على الكورسات المنشورة وما تتضمنه من دروس فيديو مسجلة وملفات واختبارات.
         </p>
       </div>
     </div>

@@ -38,17 +38,17 @@ export default async function StudentLandingPage() {
       subjects={subjectsResult.ok ? subjectsResult.data : []}
       afterCourses={
         <>
-          <SubjectGrid subjects={subjectsResult.ok ? subjectsResult.data : []} />
-          <BentoGrid />
-          <InteractiveWhiteboard3D />
-          <Comparison />
+          <SubjectGrid key="subjects" subjects={subjectsResult.ok ? subjectsResult.data : []} />
+          <BentoGrid key="bento" />
+          <InteractiveWhiteboard3D key="whiteboard" />
+          <Comparison key="comparison" />
           {/* <MobileApp /> */}
         </>
       }
       afterQuiz={
         <>
-          <FaqSection />
-          <FinalCta />
+          <FaqSection key="faq" />
+          <FinalCta key="final-cta" />
         </>
       }
       footer={<Footer />}

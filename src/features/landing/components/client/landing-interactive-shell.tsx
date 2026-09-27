@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState, type ReactNode } from "react";
+import { Fragment, useState, type ReactNode } from "react";
 import type {
   GradeDto,
   PublicCourseDto,
@@ -81,8 +81,8 @@ export default function LandingInteractiveShell({
             onSearchChange={setSearchQuery}
             loadError={coursesLoadError}
           />
-          {afterCourses}
-          {afterQuiz}
+          <Fragment key="after-courses">{afterCourses}</Fragment>
+          <Fragment key="after-quiz">{afterQuiz}</Fragment>
         </main>
 
         {footer}

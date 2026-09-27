@@ -10,7 +10,6 @@ const matrix = {
   organize: { elemni: true, youtube: false, tutor: false, books: true },
   mobile: { elemni: true, youtube: true, tutor: false, books: false },
   repeat: { elemni: true, youtube: true, tutor: false, books: false },
-  tracking: { elemni: true, youtube: false, tutor: false, books: false },
 };
 
 const rowLabels: Record<string, string> = {
@@ -19,7 +18,6 @@ const rowLabels: Record<string, string> = {
   organize: "تنظيم المذاكرة",
   mobile: "مشاهدة على الموبايل",
   repeat: "إعادة المشاهدة",
-  tracking: "متابعة ولي الأمر",
 };
 
 const cols = [

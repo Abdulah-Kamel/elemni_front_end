@@ -34,15 +34,15 @@ export default function MobileApp() {
             </h2>
 
             <p className="text-base sm:text-lg leading-relaxed text-slate-600 dark:text-slate-300 max-w-xl font-medium">
-              تطبيق الطالب الذكي يضع المنصة بالكامل في جيبك. احضر البث المباشر، تابع المواعيد، وحل الامتحانات التفاعلية في أي وقت ومن أي مكان.
+              تصفح محتوى الكورسات من أجهزتك. شاهد دروس الفيديو المسجلة واستخدم الملفات والاختبارات المتاحة.
             </p>
 
             {/* Feature Highlights List with Marker Highlighters */}
             <div className="space-y-3 pt-2">
               {[
-                { text: "بث مباشر تفاعلي عالي الجودة وبدون تقطيع", color: "sky" as const },
-                { text: "تنبيهات فورية بمواعيد الحصص والامتحانات القادمة", color: "purple" as const },
-                { text: "حل بنوك الأسئلة مع تصحيح فوري وشرح بالفيديو", color: "pink" as const },
+                { text: "دروس فيديو مسجلة ضمن الكورس", color: "sky" as const },
+                { text: "ملفات متاحة ضمن محتوى الكورس", color: "purple" as const },
+                { text: "اختبارات ضمن محتوى الكورس", color: "pink" as const },
                 { text: "متابعة نسبة إنجازك والدرجات أولاً بأول", color: "yellow" as const },
               ].map((item, i) => (
                 <div key={i} className="flex items-center gap-3">
@@ -200,7 +200,7 @@ export default function MobileApp() {
                   <div className="bg-linear-to-r from-primary to-sky-600 rounded-2xl p-3 text-white shadow-md space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="inline-flex items-center gap-1 bg-rose-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full">
-                        مباشر الآن
+                        درس مسجل
                       </span>
                       <span className="text-[9px] text-sky-100 font-bold">مادة الفيزياء</span>
                     </div>

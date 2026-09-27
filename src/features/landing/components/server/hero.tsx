@@ -44,9 +44,9 @@ export default function Hero({
 
             {/* Subtitle Paragraph with Marker Highlight */}
             <p className="hero-enter hero-enter-2 max-w-2xl text-base font-medium leading-relaxed text-slate-600 dark:text-slate-300 sm:text-lg">
-              كورسات مباشرة ومسجلة، بنوك أسئلة، و{" "}
+              دروس فيديو مسجلة وملفات واختبارات، و{" "}
               <MarkerHighlight color="pink" variant={3}>
-                متابعة حقيقية
+                متابعة تقدمك
               </MarkerHighlight>{" "}
               تساعدك تذاكر بثقة من أول حصة لحد الامتحان.
             </p>
@@ -77,7 +77,7 @@ export default function Hero({
               <span className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
                 <MarkerHighlight color="emerald" variant={4}>
-                  كورسات تفاعلية مباشرة
+                  كورسات من معلمين مختلفين
                 </MarkerHighlight>
               </span>
               <span className="flex items-center gap-2">
@@ -89,7 +89,7 @@ export default function Hero({
               <span className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-purple-500 shrink-0" />
                 <MarkerHighlight color="purple" variant={2}>
-                  اختبارات دورية وتصحيح فوري
+                  اختبارات ضمن محتوى الكورس
                 </MarkerHighlight>
               </span>
             </div>

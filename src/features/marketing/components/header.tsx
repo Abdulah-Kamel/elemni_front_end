@@ -9,7 +9,7 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import logoMark from "@/src/assets/logo-icon.png";
 
-const NAV_ITEMS = ["home", "features", "pricing", "faq", "stories"] as const;
+const NAV_ITEMS = ["home", "features", "pricing", "faq"] as const;
 
 export default function Header() {
   const [open, setOpen] = useState(false);

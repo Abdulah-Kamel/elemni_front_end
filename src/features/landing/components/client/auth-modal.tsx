@@ -74,7 +74,7 @@ export default function AuthModal({ isOpen, initialMode, onClose, onSuccess }: A
               {mode === "signup" ? "إنشاء حساب طالب جديد" : "تسجيل الدخول لمنصة علمني"}
             </h3>
             <p className="text-xs text-[#334155]">
-              {mode === "signup" ? "انضم لأكثر من 50,000 طالب متفوق اليوم" : "أهلاً بعودتك! ادخل بيانات حسابك للمتابعة"}
+              {mode === "signup" ? "أنشئ حسابك واختر معلمك والكورس المناسب لك" : "أهلاً بعودتك! ادخل بيانات حسابك للمتابعة"}
             </p>
           </div>
         </div>

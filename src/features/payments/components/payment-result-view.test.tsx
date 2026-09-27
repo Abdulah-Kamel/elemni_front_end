@@ -1,10 +1,19 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { parsePaymentResult } from "../parse-payment-result";
 import PaymentResultView from "./payment-result-view";
 import arMessages from "@/src/messages/ar.json";
+
+const { mockUseMyCourses } = vi.hoisted(() => ({ mockUseMyCourses: vi.fn() }));
+
+vi.mock("@/src/features/student/hooks/use-student-queries", () => ({
+  useMyCourses: mockUseMyCourses,
+}));
+vi.mock("@/src/lib/student-api/client", () => ({
+  isStudentUnauthorized: (error: unknown) => Boolean(error && typeof error === "object" && "status" in error && error.status === 401),
+}));
 
 vi.mock("@/src/i18n/navigation", () => ({
   Link: ({
@@ -27,26 +36,59 @@ function renderView(input: Record<string, string | string[] | undefined>) {
 }
 
 describe("PaymentResultView", () => {
-  afterEach(() => {
-    cleanup();
+  beforeEach(() => {
+    mockUseMyCourses.mockReturnValue({ data: { items: [] }, isLoading: false, error: null, refetch: vi.fn() });
   });
 
-  it("links a completed payment to the course only when the course id is valid", () => {
-    renderView({ status: "completed", course_id: "12" });
+  afterEach(() => {
+    cleanup();
+    mockUseMyCourses.mockReset();
+    mockUseMyCourses.mockReturnValue({ data: { items: [] }, isLoading: false, error: null, refetch: vi.fn() });
+  });
+
+  it("confirms and links a completed payment only when the backend reports an enrollment", () => {
+    mockUseMyCourses.mockReturnValue({
+      data: { items: [{ course_id: 12, total_paid: "250.00", currency: "EGP", course: { title: "Physics" } }] },
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+    });
+    renderView({ status: "completed", course_id: "12", amount: "1.00", order_id: "FAKE" });
 
     expect(screen.getByRole("link", { name: arMessages.paymentResult.actions.openCourse })).toHaveAttribute(
       "href",
       "/my-courses/12",
     );
+    expect(screen.getByText("Physics")).toBeInTheDocument();
+    expect(screen.getByText("250.00 EGP")).toBeInTheDocument();
+    expect(document.body.textContent).not.toContain("1.00");
+    expect(screen.getByText(arMessages.paymentResult.supportReferenceLabel)).toBeInTheDocument();
+    expect(screen.getByText("FAKE")).toBeInTheDocument();
   });
 
-  it("does not link to a specific course when the course id is missing or invalid", () => {
+  it("shows a refresh path when the enrollment is not found yet", () => {
     renderView({ status: "completed", course_id: "0" });
 
     expect(
       screen.queryByRole("link", { name: arMessages.paymentResult.actions.openCourse }),
     ).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: arMessages.paymentResult.actions.myCourses })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: arMessages.paymentResult.refresh })).toBeInTheDocument();
+  });
+
+  it("shows a confirming state while the enrollment query is loading", () => {
+    mockUseMyCourses.mockReturnValue({ data: undefined, isLoading: true, isFetching: true, error: null, refetch: vi.fn() });
+    renderView({ status: "completed", course_id: "12" });
+
+    expect(screen.getByRole("heading", { name: arMessages.paymentResult.title.confirming })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: arMessages.paymentResult.refresh })).not.toBeInTheDocument();
+  });
+
+  it("prompts unauthenticated students to sign in", () => {
+    mockUseMyCourses.mockReturnValue({ data: undefined, isLoading: false, error: { status: 401 }, refetch: vi.fn() });
+    renderView({ status: "completed", course_id: "12" });
+
+    expect(screen.getByRole("link", { name: arMessages.paymentResult.actions.login })).toHaveAttribute("href", "/login");
   });
 
   it("does not offer a course link for non-completed statuses", () => {
@@ -65,9 +107,10 @@ describe("PaymentResultView", () => {
   )("renders distinct title copy for status $status", ({ status }) => {
     renderView({ status });
 
-    expect(
-      screen.getByRole("heading", { name: arMessages.paymentResult.title[status] }),
-    ).toBeInTheDocument();
+    const expected = status === "completed"
+      ? arMessages.paymentResult.title.notFound
+      : arMessages.paymentResult.title[status];
+    expect(screen.getByRole("heading", { name: expected })).toBeInTheDocument();
   });
 
   it("renders the unknown title for unrecognized statuses", () => {
