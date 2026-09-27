@@ -27,6 +27,7 @@ import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 import { MotionProvider } from "@/src/components/ui/motion-provider";
 import type { GradeDto, StreamDto, SubjectDto } from "@/src/lib/student-api/contract";
 import { useRouter } from "@/src/i18n/navigation";
+import { useTranslations } from "next-intl";
 import studyImage from "@/src/assets/images/student-redesign/lesson-study-skills.webp";
 import { saveStudentOnboarding } from "../client";
 
@@ -54,10 +55,11 @@ function streamIcon(name: string) {
 }
 
 function StepProgress({ step }: { step: Exclude<Step, "welcome"> }) {
+  const t = useTranslations("studentOnboarding");
   const active = orderedSteps.indexOf(step);
   return (
-    <div className="flex flex-col items-center gap-2" aria-label={`الخطوة ${active} من 3`}>
-      <span className="sticker-numeral text-xs font-black text-ink dark:text-slate-200">الخطوة {active} من 3</span>
+    <div className="flex flex-col items-center gap-2" aria-label={t("stepProgress", { step: active })}>
+      <span className="sticker-numeral text-xs font-black text-ink dark:text-slate-200">{t("stepProgress", { step: active })}</span>
       <div className="flex w-36 gap-2" aria-hidden="true">
         {[1, 2, 3].map((item) => (
           <span key={item} className="h-2.5 flex-1 overflow-hidden rounded-full border border-ink bg-surface dark:border-brand-300">
@@ -88,6 +90,7 @@ function SelectIndicator({ selected }: { selected: boolean }) {
 }
 
 export default function OnboardingFlow({ grades, streams, subjects }: { grades: GradeDto[]; streams: StreamDto[]; subjects: SubjectDto[] }) {
+  const t = useTranslations("studentOnboarding");
   const router = useRouter();
   const [step, setStep] = useState<Step>("welcome");
   const [gradeId, setGradeId] = useState<number | null>(null);
@@ -149,7 +152,7 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
               </m.span>
               <div>
                 <p className="text-xl font-black text-brand-700 dark:text-brand-300">علمني</p>
-                <p className="hidden text-xs font-medium text-muted sm:block dark:text-slate-400">منصة تعليمية لطلاب الثانوية</p>
+                <p className="hidden text-xs font-medium text-muted sm:block dark:text-slate-400">{t("brandTagline")}</p>
               </div>
             </div>
             {step !== "welcome" && <StepProgress step={step} />}
@@ -169,21 +172,21 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
                 {step === "welcome" && (
                   <div className="p-5 sm:p-8">
                     <div className="relative mx-auto mb-7 aspect-[16/7] w-full max-w-md overflow-hidden rounded-xl border-2 border-ink bg-brand-100 dark:border-brand-300 dark:bg-slate-800">
-                      <Image src={studyImage} alt="طالب يخطط لمذاكرته" fill loading="eager" sizes="(max-width: 640px) calc(100vw - 3rem), 448px" className="object-cover" />
+                      <Image src={studyImage} alt={t("studyImageAlt")} fill loading="eager" sizes="(max-width: 640px) calc(100vw - 3rem), 448px" className="object-cover" />
                     </div>
                     <div className="mx-auto max-w-lg text-center">
-                      <h1 className="text-3xl font-black tracking-tight text-brand-700 sm:text-4xl dark:text-brand-300"><MarkerHighlight color="yellow" variant={1}>أهلاً بيك في علمني</MarkerHighlight></h1>
-                      <h2 className="mt-2 text-lg font-black text-ink dark:text-slate-50">خلينا نجهز تجربتك التعليمية</h2>
-                      <p className="mt-2 text-sm leading-6 font-medium text-muted dark:text-slate-400">جاوب على كام سؤال بسيط عشان نعرضلك المدرسين والكورسات المناسبة ليك.</p>
+                      <h1 className="text-3xl font-black tracking-tight text-brand-700 sm:text-4xl dark:text-brand-300"><MarkerHighlight color="yellow" variant={1}>{t("welcomeTitle")}</MarkerHighlight></h1>
+                      <h2 className="mt-2 text-lg font-black text-ink dark:text-slate-50">{t("welcomeHeading")}</h2>
+                      <p className="mt-2 text-sm leading-6 font-medium text-muted dark:text-slate-400">{t("welcomeDescription")}</p>
                     </div>
                     <div className="mx-auto my-7 max-w-lg divide-y-2 divide-ink/10 border-y-2 border-ink/10 text-sm font-black text-ink dark:divide-white/10 dark:border-white/10 dark:text-slate-100">
-                      <p className="flex items-center gap-3 py-3"><span className="sticker-badge flex size-8 items-center justify-center bg-brand-100 text-brand-700 dark:bg-slate-800 dark:text-brand-300"><UserRoundCheck className="size-4" /></span>مدرسين مناسبين لمستواك</p>
-                      <p className="flex items-center gap-3 py-3"><span className="sticker-badge flex size-8 items-center justify-center bg-brand-100 text-brand-700 dark:bg-slate-800 dark:text-brand-300"><BookOpen className="size-4" /></span>كورسات حسب سنتك الدراسية</p>
-                      <p className="flex items-center gap-3 py-3"><span className="sticker-badge flex size-8 items-center justify-center bg-brand-100 text-brand-700 dark:bg-slate-800 dark:text-brand-300"><Target className="size-4" /></span>تجربة مذاكرة منظمة</p>
+                      <p className="flex items-center gap-3 py-3"><span className="sticker-badge flex size-8 items-center justify-center bg-brand-100 text-brand-700 dark:bg-slate-800 dark:text-brand-300"><UserRoundCheck className="size-4" /></span>{t("benefitTeachers")}</p>
+                      <p className="flex items-center gap-3 py-3"><span className="sticker-badge flex size-8 items-center justify-center bg-brand-100 text-brand-700 dark:bg-slate-800 dark:text-brand-300"><BookOpen className="size-4" /></span>{t("benefitCourses")}</p>
+                      <p className="flex items-center gap-3 py-3"><span className="sticker-badge flex size-8 items-center justify-center bg-brand-100 text-brand-700 dark:bg-slate-800 dark:text-brand-300"><Target className="size-4" /></span>{t("benefitStudy")}</p>
                     </div>
                     <div className="mx-auto flex max-w-lg flex-col gap-3">
-                      <m.button onClick={() => goTo("grade")} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={popSpring} className="sticker-btn flex h-13 cursor-pointer items-center justify-center gap-2 py-3.5 font-black">ابدأ الآن<ArrowLeft className="size-4 ltr:-scale-x-100" /></m.button>
-                      <button onClick={skip} className="h-11 cursor-pointer rounded-xl text-sm font-bold text-brand-700 transition hover:underline dark:text-brand-300">تخطي الآن</button>
+                      <m.button onClick={() => goTo("grade")} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={popSpring} className="sticker-btn flex h-13 cursor-pointer items-center justify-center gap-2 py-3.5 font-black">{t("start")}<ArrowLeft className="size-4 ltr:-scale-x-100" /></m.button>
+                      <button onClick={skip} className="h-11 cursor-pointer rounded-xl text-sm font-bold text-brand-700 transition hover:underline dark:text-brand-300">{t("skip")}</button>
                     </div>
                   </div>
                 )}
@@ -191,8 +194,8 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
                 {step === "grade" && (
                   <div className="p-5 sm:p-8">
                     <div className="mb-7 text-center">
-                      <h1 className="text-3xl font-black tracking-tight sm:text-4xl"><MarkerHighlight color="yellow" variant={1}>أنت في سنة كام؟</MarkerHighlight></h1>
-                      <p className="mt-2 text-sm leading-6 font-medium text-muted dark:text-slate-400">اختار سنتك الدراسية عشان نعرضلك الكورسات والمدرسين المناسبين.</p>
+                      <h1 className="text-3xl font-black tracking-tight sm:text-4xl"><MarkerHighlight color="yellow" variant={1}>{t("gradeQuestion")}</MarkerHighlight></h1>
+                      <p className="mt-2 text-sm leading-6 font-medium text-muted dark:text-slate-400">{t("gradeDescription")}</p>
                     </div>
                     <div className="space-y-3">
                       {grades.map((grade, index) => {
@@ -205,10 +208,10 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
                         </m.button>;
                       })}
                     </div>
-                    {!grades.length && <p className="sticker-tile border-amber-500 bg-amber-50 p-4 text-center text-sm font-black text-amber-800">لا توجد صفوف دراسية متاحة حالياً.</p>}
+                    {!grades.length && <p className="sticker-tile border-amber-500 bg-amber-50 p-4 text-center text-sm font-black text-amber-800">{t("noGrades")}</p>}
                     <div className="mt-7 flex items-center justify-between border-t-2 border-ink/10 pt-5 dark:border-white/10">
-                      <button onClick={() => goTo("welcome")} className="flex cursor-pointer items-center gap-1.5 text-sm font-bold text-muted transition hover:text-brand-700 dark:text-slate-400"><ArrowRight className="size-4 ltr:-scale-x-100" />العودة</button>
-                      <button disabled={!gradeId} onClick={() => goTo("stream")} className="sticker-btn flex h-12 cursor-pointer items-center gap-2 px-8 font-black disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none">التالي<ArrowLeft className="size-4 ltr:-scale-x-100" /></button>
+                      <button onClick={() => goTo("welcome")} className="flex cursor-pointer items-center gap-1.5 text-sm font-bold text-muted transition hover:text-brand-700 dark:text-slate-400"><ArrowRight className="size-4 ltr:-scale-x-100" />{t("back")}</button>
+                      <button disabled={!gradeId} onClick={() => goTo("stream")} className="sticker-btn flex h-12 cursor-pointer items-center gap-2 px-8 font-black disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none">{t("next")}<ArrowLeft className="size-4 ltr:-scale-x-100" /></button>
                     </div>
                   </div>
                 )}
@@ -216,8 +219,8 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
                 {step === "stream" && (
                   <div>
                     <div className="border-b-2 border-ink/10 p-5 text-center sm:p-7 dark:border-white/10">
-                      <h1 className="text-3xl font-black tracking-tight"><MarkerHighlight color="yellow" variant={1}>اختار شعبتك</MarkerHighlight></h1>
-                      <p className="mt-2 text-sm font-medium text-muted dark:text-slate-400">عشان نعرضلك المواد والكورسات المناسبة ليك</p>
+                      <h1 className="text-3xl font-black tracking-tight"><MarkerHighlight color="yellow" variant={1}>{t("streamQuestion")}</MarkerHighlight></h1>
+                      <p className="mt-2 text-sm font-medium text-muted dark:text-slate-400">{t("streamDescription")}</p>
                     </div>
                     <div className="p-5 sm:p-8">
                       <div className="grid gap-3 sm:grid-cols-3">
@@ -227,14 +230,14 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
                           return <m.button key={stream.id} aria-pressed={selected} onClick={() => { setStreamId(stream.id); setSubjectIds([]); }} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ ...popSpring, delay: 0.05 * index }} whileHover={{ y: -3 }} whileTap={{ scale: 0.97 }} className={`relative min-h-36 cursor-pointer rounded-2xl border-2 p-4 text-start transition ${selected ? "border-ink bg-brand-600 text-white shadow-[3px_3px_0_0_var(--color-ink)] dark:border-brand-300" : "border-ink/20 bg-surface hover:border-ink dark:border-slate-700 dark:hover:border-brand-300"}`}>
                             <div className="mb-4 flex items-center justify-between"><span className={`sticker-badge flex size-10 items-center justify-center ${selected ? "bg-white text-brand-700" : "bg-brand-100 text-brand-700 dark:bg-slate-800 dark:text-brand-300"}`}><Icon className="size-5" /></span><SelectIndicator selected={selected} /></div>
                             <strong className="block text-base font-black">{stream.name}</strong>
-                            <span className={`mt-1 block text-xs leading-5 font-medium ${selected ? "text-brand-100" : "text-muted dark:text-slate-400"}`}>محتوى ومدرسون مناسبون للشعبة</span>
+                            <span className={`mt-1 block text-xs leading-5 font-medium ${selected ? "text-brand-100" : "text-muted dark:text-slate-400"}`}>{t("streamNote")}</span>
                           </m.button>;
                         })}
                       </div>
-                      {!streams.length && <p className="sticker-tile border-amber-500 bg-amber-50 p-4 text-center text-sm font-black text-amber-800">لا توجد شعب دراسية متاحة حالياً.</p>}
+                      {!streams.length && <p className="sticker-tile border-amber-500 bg-amber-50 p-4 text-center text-sm font-black text-amber-800">{t("noStreams")}</p>}
                       <div className="mt-7 flex items-center justify-between border-t-2 border-ink/10 pt-5 dark:border-white/10">
-                        <button onClick={() => goTo("grade")} className="flex cursor-pointer items-center gap-1.5 text-sm font-bold text-muted transition hover:text-brand-700 dark:text-slate-400"><ArrowRight className="size-4 ltr:-scale-x-100" />العودة</button>
-                        <button disabled={!streamId} onClick={continueToSubjects} className="sticker-btn flex h-12 cursor-pointer items-center gap-2 px-8 font-black disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none">التالي<ArrowLeft className="size-4 ltr:-scale-x-100" /></button>
+                        <button onClick={() => goTo("grade")} className="flex cursor-pointer items-center gap-1.5 text-sm font-bold text-muted transition hover:text-brand-700 dark:text-slate-400"><ArrowRight className="size-4 ltr:-scale-x-100" />{t("back")}</button>
+                        <button disabled={!streamId} onClick={continueToSubjects} className="sticker-btn flex h-12 cursor-pointer items-center gap-2 px-8 font-black disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none">{t("next")}<ArrowLeft className="size-4 ltr:-scale-x-100" /></button>
                       </div>
                     </div>
                   </div>
@@ -243,8 +246,8 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
                 {step === "subjects" && (
                   <div className="p-5 sm:p-8">
                     <div className="mb-7 text-center">
-                      <h1 className="text-3xl font-black tracking-tight sm:text-4xl"><MarkerHighlight color="yellow" variant={1}>جهزنا موادك الدراسية</MarkerHighlight></h1>
-                      <p className="mt-2 text-sm font-medium text-muted dark:text-slate-400">بناءً على اختيارك، اخترنا لك المواد المناسبة. تقدر تعدلها الآن.</p>
+                      <h1 className="text-3xl font-black tracking-tight sm:text-4xl"><MarkerHighlight color="yellow" variant={1}>{t("subjectsTitle")}</MarkerHighlight></h1>
+                      <p className="mt-2 text-sm font-medium text-muted dark:text-slate-400">{t("subjectsDescription")}</p>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       {relevantSubjects.map((subject, index) => {
@@ -257,10 +260,10 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
                         </m.button>;
                       })}
                     </div>
-                    {!relevantSubjects.length && <p className="sticker-tile border-amber-500 bg-amber-50 p-4 text-center text-sm font-black text-amber-800">لم نجد مواد مرتبطة بهذه الاختيارات حالياً. ارجع واختر شعبة أخرى.</p>}
+                    {!relevantSubjects.length && <p className="sticker-tile border-amber-500 bg-amber-50 p-4 text-center text-sm font-black text-amber-800">{t("noSubjects")}</p>}
                     <div className="mt-7 flex flex-col gap-3 border-t-2 border-ink/10 pt-5 dark:border-white/10">
-                      <m.button disabled={!subjectIds.length || saving} onClick={() => void finish()} whileTap={!subjectIds.length || saving ? undefined : { scale: 0.98 }} className="sticker-btn flex h-13 w-full cursor-pointer items-center justify-center gap-2 py-3.5 font-black disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none">{saving ? <><LoaderCircle className="size-5 animate-spin" />جاري التجهيز...</> : <>ابدأ رحلتي<ArrowLeft className="size-4 ltr:-scale-x-100" /></>}</m.button>
-                      <button onClick={() => goTo("stream")} className="flex h-10 cursor-pointer items-center justify-center gap-1.5 text-sm font-bold text-muted transition hover:text-brand-700 dark:text-slate-400"><ArrowRight className="size-4 ltr:-scale-x-100" />العودة</button>
+                      <m.button disabled={!subjectIds.length || saving} onClick={() => void finish()} whileTap={!subjectIds.length || saving ? undefined : { scale: 0.98 }} className="sticker-btn flex h-13 w-full cursor-pointer items-center justify-center gap-2 py-3.5 font-black disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none">{saving ? <><LoaderCircle className="size-5 animate-spin" />{t("saving")}</> : <>{t("beginJourney")}<ArrowLeft className="size-4 ltr:-scale-x-100" /></>}</m.button>
+                      <button onClick={() => goTo("stream")} className="flex h-10 cursor-pointer items-center justify-center gap-1.5 text-sm font-bold text-muted transition hover:text-brand-700 dark:text-slate-400"><ArrowRight className="size-4 ltr:-scale-x-100" />{t("back")}</button>
                     </div>
                   </div>
                 )}
@@ -268,7 +271,7 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
             </AnimatePresence>
           </div>
 
-          <footer className="mt-7 flex justify-center gap-6 text-xs font-medium text-muted dark:text-slate-500"><span>الشروط</span><span>الخصوصية</span><span>المساعدة</span></footer>
+          <footer className="mt-7 flex justify-center gap-6 text-xs font-medium text-muted dark:text-slate-500"><span>{t("terms")}</span><span>{t("privacy")}</span><span>{t("help")}</span></footer>
         </div>
       </div>
     </MotionProvider>

@@ -63,6 +63,7 @@ export default function CourseDetail({
   initialDetail?: StudentCourseDetailDto;
 }) {
   const t = useTranslations("courseDetail");
+  const tApi = useTranslations("apiErrors");
   const locale = useLocale();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -99,7 +100,7 @@ export default function CourseDetail({
     isStudentUnauthorized(courseQuery.error) ||
     (isAuthenticated && isStudentUnauthorized(userQuery.error));
   const loading = courseQuery.isPending || (isAuthenticated && userQuery.isPending);
-  const error = getStudentErrorMessage(courseQuery.error, t("loadError"));
+  const error = getStudentErrorMessage(courseQuery.error, tApi("generic"), (key) => tApi(key));
   const courseNotFound = courseQuery.error instanceof StudentApiError && courseQuery.error.status === 404;
 
   useEffect(() => {
@@ -265,7 +266,10 @@ export default function CourseDetail({
     }
     if (!response?.ok) {
       const body = await response?.json().catch(() => null);
-      setCheckoutError(typeof body?.detail === "string" ? body.detail : t("checkoutError"));
+      const codeMessage = body?.code === "CHECKOUT_UNAVAILABLE" ? tApi("checkoutUnavailable")
+        : body?.code === "STUDENT_ACCOUNT_REQUIRED" ? tApi("studentAccountRequired")
+          : undefined;
+      setCheckoutError(codeMessage ?? (typeof body?.detail === "string" ? body.detail : tApi("checkoutUnavailable")));
       setCheckoutLoading(false);
       return;
     }

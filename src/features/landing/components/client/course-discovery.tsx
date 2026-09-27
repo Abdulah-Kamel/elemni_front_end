@@ -116,7 +116,7 @@ export default function CourseDiscovery({
       <Reveal>
         <div className="mx-auto mb-10 max-w-3xl text-center">
           <h2 className="font-readex text-3xl font-black tracking-tight text-[#0F172A] dark:text-white sm:text-4xl lg:text-5xl">
-            اختار <MarkerHighlight color="sky" variant={1}>{t("titleHighlight")}</MarkerHighlight>
+            {t("titleLead")} <MarkerHighlight color="sky" variant={1}>{t("titleHighlight")}</MarkerHighlight>
           </h2>
           <p className="mt-4 text-sm leading-7 text-slate-600 dark:text-slate-300 sm:text-base">
             {t("description")}

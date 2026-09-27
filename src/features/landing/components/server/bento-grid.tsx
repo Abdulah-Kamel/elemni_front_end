@@ -4,6 +4,7 @@ import { Section } from "@/src/components/ui/section";
 import { Reveal } from "@/src/components/ui/reveal";
 import { cn } from "@/src/lib/cn";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
+import { getTranslations } from "next-intl/server";
 
 const cards: {
   key: string;
@@ -42,27 +43,28 @@ const cards: {
     },
   ];
 
-const content = {
-  card1: { title: "اشتراكك", items: ["دفع إلكتروني آمن عبر Kashier", "إمكانية الوصول لمدة 30 يومًا"] },
-  card2: { title: "محتوى الكورس", desc: "دروس فيديو مسجلة وملفات واختبارات ضمن الكورس." },
-  card3: { title: "اختر ما يناسبك", desc: "تصفح الكورسات واختر المعلم والكورس المناسبين لك." },
-  card4: { title: "تابع تقدمك", items: ["تقدمك في محتوى الكورس", "الدروس التي أنهيتها", "العودة إلى التعلم"] },
+const content: Record<string, { title: string; description?: string; items?: string[] }> = {
+  card1: { title: "card1Title", items: ["securePayment", "accessDays"] },
+  card2: { title: "card2Title", description: "card2Description" },
+  card3: { title: "card3Title", description: "card3Description" },
+  card4: { title: "card4Title", items: ["progress", "completedLessons", "resumeLearning"] },
 };
 
-export default function BentoGrid() {
+export default async function BentoGrid() {
+  const t = await getTranslations("landingBento");
   return (
     <Section id="why" className="bg-sky-50">
       <Reveal>
         <h2 className="mb-3 text-center text-3xl font-black text-[#0F172A] md:text-4xl font-readex">
-          ليه{" "}
+          {t("titleLead")} {" "}
           <MarkerHighlight color="yellow" variant={1}>
-            علمني؟
+            {t("titleHighlight")}
           </MarkerHighlight>
         </h2>
         <p className="mx-auto mb-10 max-w-2xl text-center text-sm text-[#334155]">
-          منصة متكاملة بتوفرلك كل اللي تحتاجه{" "}
+          {t("descriptionLead")} {" "}
           <MarkerHighlight color="sky" variant={2}>
-            للتفوق
+            {t("descriptionHighlight")}
           </MarkerHighlight>
           .
         </p>
@@ -82,55 +84,28 @@ export default function BentoGrid() {
               >
                 <Icon size={24} />
               </div>
-              {"desc" in content[key as keyof typeof content] &&
-                "items" in content[key as keyof typeof content] === false ? (
+              {"description" in content[key as keyof typeof content] ? (
                 <>
                   <h3 className="mb-1 text-lg font-bold text-[#0F172A] font-readex">
-                    {
-                      (
-                        content[key as keyof typeof content] as {
-                          title: string;
-                          desc: string;
-                        }
-                      ).title
-                    }
+                    {t(content[key as keyof typeof content].title)}
                   </h3>
                   <p className="text-sm text-[#334155]">
-                    {
-                      (
-                        content[key as keyof typeof content] as {
-                          title: string;
-                          desc: string;
-                        }
-                      ).desc
-                    }
+                    {t(content[key].description!)}
                   </p>
                 </>
               ) : (
                 <>
                   <h3 className="mb-3 text-lg font-bold text-[#0F172A] font-readex">
-                    {
-                      (
-                        content[key as keyof typeof content] as {
-                          title: string;
-                          items: string[];
-                        }
-                      ).title
-                    }
+                    {t(content[key].title)}
                   </h3>
                   <ul className="space-y-2">
-                    {(
-                      content[key as keyof typeof content] as {
-                        title: string;
-                        items: string[];
-                      }
-                    ).items.map((item, idx) => (
+                    {(content[key].items ?? []).map((item, idx) => (
                       <li
                         key={idx}
                         className="flex items-center gap-2 text-sm text-[#334155]"
                       >
                         <Check className="size-4 text-primary shrink-0" />
-                        <span>{item}</span>
+                        <span>{t(item)}</span>
                       </li>
                     ))}
                   </ul>

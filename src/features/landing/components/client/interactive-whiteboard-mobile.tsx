@@ -1,16 +1,20 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { m } from "motion/react";
 import { Hand } from "lucide-react";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 
 interface MobileNoteData {
   id: string;
-  numberDisplay: string;
-  title: string;
-  content: string;
-  highlightWords: string[];
+  titleKey: string;
+  contentKey: string;
+  highlightKeys: string[];
+  title?: string;
+  content?: string;
+  highlightWords?: string[];
+  numberDisplay?: string;
   color: string; // Background paper color
   headerColor: string; // Top accent bar
   textColor: string;
@@ -24,10 +28,9 @@ interface MobileNoteData {
 const MOBILE_NOTES: MobileNoteData[] = [
   {
     id: "m-step-1",
-    numberDisplay: "١",
-    title: "إنشاء حساب",
-    content: "سجّل مجاناً باستخدام هاتفك في أقل من دقيقة وابدأ رحلتك.",
-    highlightWords: ["أقل من دقيقة", "مجاناً"],
+    titleKey: "step1Title",
+    contentKey: "step1Content",
+    highlightKeys: ["step1Highlight1", "step1Highlight2"],
     color: "bg-amber-100/95 dark:bg-amber-950/80 border-amber-300",
     headerColor: "bg-amber-500",
     textColor: "text-amber-950 dark:text-amber-100",
@@ -39,10 +42,9 @@ const MOBILE_NOTES: MobileNoteData[] = [
   },
   {
     id: "m-step-2",
-    numberDisplay: "٢",
-    title: "اختر المدرس والكورس",
-    content: "تصفح المدرسين المتخصصين واختر الكورس المناسب لمادتك.",
-    highlightWords: ["المدرسين المتخصصين", "الكورس المناسب"],
+    titleKey: "step2Title",
+    contentKey: "step2Content",
+    highlightKeys: ["step2Highlight1", "step2Highlight2"],
     color: "bg-sky-100/95 dark:bg-sky-950/80 border-sky-300",
     headerColor: "bg-sky-500",
     textColor: "text-sky-950 dark:text-sky-100",
@@ -54,10 +56,9 @@ const MOBILE_NOTES: MobileNoteData[] = [
   },
   {
     id: "m-step-3",
-    numberDisplay: "٣",
-    title: "ابدأ التعلم من الكورس",
-    content: "شاهد دروس الفيديو المسجلة، واستخدم الملفات والاختبارات المتاحة.",
-    highlightWords: ["دروس الفيديو المسجلة", "الاختبارات"],
+    titleKey: "step3Title",
+    contentKey: "step3Content",
+    highlightKeys: ["step3Highlight1", "step3Highlight2"],
     color: "bg-emerald-100/95 dark:bg-emerald-950/80 border-emerald-300",
     headerColor: "bg-emerald-500",
     textColor: "text-emerald-950 dark:text-emerald-100",
@@ -69,10 +70,9 @@ const MOBILE_NOTES: MobileNoteData[] = [
   },
   {
     id: "m-feature-1",
-    numberDisplay: "٤",
-    title: "افهم صح",
-    content: "اختر من الكورسات المنشورة وتعلّم من محتواها المسجل.",
-    highlightWords: ["دروس تفاعلية", "أذكى المدرسين"],
+    titleKey: "feature1Title",
+    contentKey: "feature1Content",
+    highlightKeys: ["feature1Highlight1", "feature1Highlight2"],
     color: "bg-purple-100/95 dark:bg-purple-950/80 border-purple-300",
     headerColor: "bg-purple-500",
     textColor: "text-purple-950 dark:text-purple-100",
@@ -84,10 +84,9 @@ const MOBILE_NOTES: MobileNoteData[] = [
   },
   {
     id: "m-feature-2",
-    numberDisplay: "٥",
-    title: "اتدرب كتير",
-    content: "امتحانات مستمرة وبنوك أسئلة شاملة عشان تثبت المعلومة.",
-    highlightWords: ["بنوك أسئلة", "تثبت المعلومة"],
+    titleKey: "feature2Title",
+    contentKey: "feature2Content",
+    highlightKeys: ["feature2Highlight1", "feature2Highlight2"],
     color: "bg-pink-100/95 dark:bg-pink-950/80 border-pink-300",
     headerColor: "bg-pink-500",
     textColor: "text-pink-950 dark:text-pink-100",
@@ -99,10 +98,9 @@ const MOBILE_NOTES: MobileNoteData[] = [
   },
   {
     id: "m-feature-3",
-    numberDisplay: "٦",
-    title: "تفوق بجدارة",
-    content: "تقارير أداء ودعم مستمر معاك لحد باب اللجان.",
-    highlightWords: ["تقارير أداء", "باب اللجان"],
+    titleKey: "feature3Title",
+    contentKey: "feature3Content",
+    highlightKeys: ["feature3Highlight1", "feature3Highlight2"],
     color: "bg-orange-100/95 dark:bg-orange-950/80 border-orange-300",
     headerColor: "bg-orange-500",
     textColor: "text-orange-950 dark:text-orange-100",
@@ -115,6 +113,15 @@ const MOBILE_NOTES: MobileNoteData[] = [
 ];
 
 export default function InteractiveWhiteboardMobile() {
+  const locale = useLocale();
+  const t = useTranslations("landingWhiteboard");
+  const notes = MOBILE_NOTES.map((note, index) => ({
+    ...note,
+    title: t(note.titleKey as never),
+    content: t(note.contentKey as never),
+    highlightWords: note.highlightKeys.map((key) => t(key as never)),
+    numberDisplay: new Intl.NumberFormat(locale).format(index + 1),
+  }));
   const boardRef = useRef<HTMLDivElement>(null);
   const [positions, setPositions] = useState<{ [key: string]: { x: number; y: number } }>({});
   const [activeTab, setActiveTab] = useState<"board" | "list">("board");
@@ -178,7 +185,7 @@ export default function InteractiveWhiteboardMobile() {
               }`}
           >
             <Hand className="w-3.5 h-3.5" />
-            <span>السبورة التفاعلية 📌</span>
+            <span>{t("boardLabel")}</span>
           </button>
           <button
             onClick={() => setActiveTab("list")}
@@ -187,7 +194,7 @@ export default function InteractiveWhiteboardMobile() {
                 : "text-slate-600 dark:text-slate-300 hover:text-slate-900"
               }`}
           >
-            <span>عرض القائمة 📝</span>
+            <span>{t("listLabel")}</span>
           </button>
         </div>
       </div>
@@ -251,7 +258,7 @@ export default function InteractiveWhiteboardMobile() {
 
           {/* Interactive Mobile Draggable Sticky Notes Grid */}
           <div className="grid grid-cols-2 gap-3 relative z-20 pb-12">
-            {MOBILE_NOTES.map((note) => (
+            {notes.map((note) => (
               <m.div
                 key={note.id}
                 drag
@@ -288,7 +295,7 @@ export default function InteractiveWhiteboardMobile() {
                     {note.numberDisplay}
                   </div>
                   <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                    خطوة {note.numberDisplay}
+                    {t("stepLabel", { number: note.numberDisplay })}
                   </span>
                 </div>
 
@@ -320,7 +327,7 @@ export default function InteractiveWhiteboardMobile() {
       ) : (
         /* Readable Mobile List View */
         <div className="space-y-3 font-readex">
-          {MOBILE_NOTES.map((note) => (
+          {notes.map((note) => (
             <div
               key={note.id}
               className={`p-4 rounded-2xl border-2 shadow-sm relative overflow-hidden ${note.color}`}

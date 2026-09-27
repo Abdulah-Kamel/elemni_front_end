@@ -5,6 +5,7 @@ import type { Course, Teacher } from "../../types";
 import { X, Play, Clock, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 interface TeacherModalProps {
   teacher: Teacher | null;
@@ -13,6 +14,7 @@ interface TeacherModalProps {
 }
 
 export default function TeacherModal({ teacher, onClose, onBook }: TeacherModalProps) {
+  const t = useTranslations("teacherModal");
   const [isPlayingVideo, setIsPlayingVideo] = useState(false);
 
   if (!teacher) return null;
@@ -64,11 +66,11 @@ export default function TeacherModal({ teacher, onClose, onBook }: TeacherModalP
                 <button onClick={() => setIsPlayingVideo(true)} className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all mx-auto">
                   <Play className="w-6 h-6 fill-current" />
                 </button>
-                <p className="text-white font-bold text-xs mt-2">شاهد فيديو تعريفي</p>
+                <p className="text-white font-bold text-xs mt-2">{t("watchIntro")}</p>
               </div>
             </div>
           ) : (
-            <iframe className="w-full h-full" src={`${teacher.videoUrl}?autoplay=1`} title="فيديو تعريفي" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+            <iframe className="w-full h-full" src={`${teacher.videoUrl}?autoplay=1`} title={t("videoTitle")} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
           )}
         </div>
 
@@ -91,27 +93,27 @@ export default function TeacherModal({ teacher, onClose, onBook }: TeacherModalP
                   <div className="flex items-center gap-2 text-[11px] text-slate-500">
                     <span>{course.duration}</span>
                     <span>·</span>
-                    <span>{course.sessionsCount} حصص</span>
+                    <span>{t("sessions", { count: course.sessionsCount })}</span>
                   </div>
                 </div>
                 <div className="text-end shrink-0">
                   <span className="text-lg font-black text-primary font-readex">{course.price}</span>
-                  <span className="text-[11px] text-slate-500"> ج.م</span>
+                  <span className="text-[11px] text-slate-500"> {t("currency")}</span>
                   <button onClick={() => handleEnrollClick(course)} className="block w-full mt-1 px-3 py-1 bg-primary hover:bg-primary-hover text-white font-bold text-[11px] rounded-lg transition-all cursor-pointer">
-                    اشتراك
+                    {t("subscribe")}
                   </button>
                 </div>
               </div>
             ))
           ) : (
-            <p className="text-xs text-slate-500 bg-[#F8FAFC] p-4 rounded-xl text-center">لا توجد كورسات معروضة حالياً.</p>
+            <p className="text-xs text-slate-500 bg-[#F8FAFC] p-4 rounded-xl text-center">{t("noCourses")}</p>
           )}
         </div>
 
         <div className="pt-2 border-t border-slate-100 text-center mb-2">
           <Link href={`/ar/teachers/${teacher.id}`}
             className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline">
-            <span>عرض الملف الشخصي الكامل</span>
+            <span>{t("viewFullProfile")}</span>
             <ArrowLeft className="w-3 h-3 ltr:-scale-x-100" />
           </Link>
         </div>

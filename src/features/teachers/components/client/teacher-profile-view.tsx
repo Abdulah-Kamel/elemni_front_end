@@ -2,7 +2,7 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import type { Teacher } from "../../types";
 import { BookOpen, Clock, CheckCircle2, ArrowRight, Award, Sparkles, Share2, Check, MapPin, LoaderCircle, CircleAlert, PlayCircle, FileText, ClipboardList, ChevronDown } from "lucide-react";
 import { cn } from "@/src/lib/cn";
@@ -36,6 +36,8 @@ interface TeacherProfileViewProps {
 export default function TeacherProfileView({ teacher, onRequireAuth, teacherListHref = "/teachers" }: TeacherProfileViewProps) {
   const queryClient = useQueryClient();
   const locale = useLocale();
+  const tApi = useTranslations("apiErrors");
+  const t = useTranslations("teacherProfile");
   const [copiedLink, setCopiedLink] = useState(false);
   const [subscribedCourses, setSubscribedCourses] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(teacher.courses.map((course) => [course.id, course.isSubscribed === true])),
@@ -81,7 +83,10 @@ export default function TeacherProfileView({ teacher, onRequireAuth, teacherList
     }
     if (!response?.ok) {
       const body = await response?.json().catch(() => null);
-      setCheckoutError(body?.detail ?? "تعذر بدء عملية الدفع حالياً.");
+      const codeMessage = body?.code === "CHECKOUT_UNAVAILABLE" ? tApi("checkoutUnavailable")
+        : body?.code === "STUDENT_ACCOUNT_REQUIRED" ? tApi("studentAccountRequired")
+          : undefined;
+      setCheckoutError(codeMessage ?? body?.detail ?? tApi("checkoutUnavailable"));
       setProcessingCourse(null);
       return;
     }
@@ -90,7 +95,7 @@ export default function TeacherProfileView({ teacher, onRequireAuth, teacherList
     // The backend owns payment state: paid courses return a Kashier hosted
     // checkout URL, free courses return the relative "/my-courses".
     if (!isCheckoutRedirectDto(body)) {
-      setCheckoutError("تعذر بدء عملية الدفع حالياً.");
+      setCheckoutError(tApi("checkoutUnavailable"));
       setProcessingCourse(null);
       return;
     }
@@ -112,12 +117,12 @@ export default function TeacherProfileView({ teacher, onRequireAuth, teacherList
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 relative z-10 flex items-center justify-between">
           <Link href={teacherListHref} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-extrabold text-xs sm:text-sm backdrop-blur-md transition-all">
             <ArrowRight className="w-4 h-4 ltr:-scale-x-100" />
-            <span>كل المدرسين</span>
+            <span>{t("allTeachers")}</span>
           </Link>
 
           <button onClick={handleShare} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 border border-sky-400/30 text-sky-200 font-extrabold text-xs sm:text-sm backdrop-blur-md transition-all cursor-pointer">
             {copiedLink ? <Check className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4" />}
-            <span>{copiedLink ? "تم نسخ الرابط!" : "مشاركة"}</span>
+            <span>{copiedLink ? t("copied") : t("share")}</span>
           </button>
         </div>
 
@@ -140,7 +145,7 @@ export default function TeacherProfileView({ teacher, onRequireAuth, teacherList
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent opacity-60" />
                   <div className="absolute bottom-3 end-3 bg-emerald-500 border-2 border-slate-900 px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1.5">
                     <CheckCircle2 className="w-4 h-4 text-white stroke-[3]" />
-                    <span className="text-[11px] font-black text-white">معلم موثوق</span>
+                    <span className="text-[11px] font-black text-white">{t("trustedTeacher")}</span>
                   </div>
                 </div>
               </div>
@@ -155,7 +160,7 @@ export default function TeacherProfileView({ teacher, onRequireAuth, teacherList
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
                 <span className="bg-amber-400 text-slate-950 font-black text-xs px-3 py-1 rounded-full flex items-center gap-1 shadow-md">
                   <Sparkles className="w-3.5 h-3.5" />
-                  <span>معلم معتمد</span>
+                  <span>{t("verifiedTeacher")}</span>
                 </span>
                 {(teacher.subjects?.length ? teacher.subjects : [teacher.subject]).map((sub, idx) => (
                   <span key={idx} className="bg-sky-500/20 border border-sky-400/40 text-white font-extrabold text-xs px-3 py-1 rounded-full backdrop-blur-md">{sub}</span>
@@ -168,11 +173,11 @@ export default function TeacherProfileView({ teacher, onRequireAuth, teacherList
               <div className="pt-2 flex flex-wrap items-center justify-center md:justify-start gap-3 text-xs sm:text-sm font-bold text-slate-200">
                 <div className="bg-white/10 border border-white/15 px-3.5 py-1.5 rounded-xl backdrop-blur-md flex items-center gap-2">
                   <Award className="w-4 h-4 text-sky-400" />
-                  <span>{teacher.experienceYears} سنة خبرة</span>
+                  <span>{t("experience", { count: teacher.experienceYears })}</span>
                 </div>
                 <div className="bg-white/10 border border-white/15 px-3.5 py-1.5 rounded-xl backdrop-blur-md flex items-center gap-2">
                   <BookOpen className="w-4 h-4 text-emerald-400" />
-                  <span>{teacher.courses.length} كورسات متاحة</span>
+                  <span>{t("availableCourses", { count: teacher.courses.length })}</span>
                 </div>
               </div>
             </m.div>
@@ -184,8 +189,8 @@ export default function TeacherProfileView({ teacher, onRequireAuth, teacherList
         <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[1.4fr_1fr] lg:px-8">
           <Reveal>
             <div>
-              <p className="mb-2 text-xs font-extrabold text-primary">عن المدرس</p>
-              <h2 className="text-2xl font-black text-ink"><MarkerHighlight color="sky" variant={1}>خبرة تساعدك تفهم، مش تحفظ</MarkerHighlight></h2>
+              <p className="mb-2 text-xs font-extrabold text-primary">{t("about")}</p>
+              <h2 className="text-2xl font-black text-ink"><MarkerHighlight color="sky" variant={1}>{t("aboutHeading")}</MarkerHighlight></h2>
               <p className="mt-3 max-w-3xl text-sm font-medium leading-7 text-muted">{teacher.bio}</p>
               <div className="mt-5 flex flex-wrap gap-2">
                 {teacher.specialties.map((specialty) => (
@@ -201,12 +206,12 @@ export default function TeacherProfileView({ teacher, onRequireAuth, teacherList
               <div className="bg-page p-4">
                 <BookOpen className="mb-3 size-5 text-primary" />
                 <strong className="block text-xl font-black">{teacher.courses.length}</strong>
-                <span className="text-xs text-muted">كورسات منشورة</span>
+                <span className="text-xs text-muted">{t("publishedCourses")}</span>
               </div>
               <div className="bg-page p-4">
                 <MapPin className="mb-3 size-5 text-accent" />
-                <strong className="block text-sm font-black leading-6">{teacher.location ?? "أونلاين"}</strong>
-                <span className="text-xs text-muted">مكان التدريس</span>
+                <strong className="block text-sm font-black leading-6">{teacher.location ?? t("online")}</strong>
+                <span className="text-xs text-muted">{t("teachingLocation")}</span>
               </div>
             </div>
           </Reveal>
@@ -219,9 +224,9 @@ export default function TeacherProfileView({ teacher, onRequireAuth, teacherList
             <div>
               <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-sky-100 dark:bg-slate-800 text-primary dark:text-sky-300 font-extrabold text-xs mb-2">
                 <BookOpen className="w-3.5 h-3.5" />
-                <span>تصفح المحاضرات والاشتراكات</span>
+                <span>{t("browseLessons")}</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-black text-ink font-readex"><MarkerHighlight color="yellow" variant={1}>الكورسات المتاحة</MarkerHighlight></h2>
+              <h2 className="text-2xl sm:text-3xl font-black text-ink font-readex"><MarkerHighlight color="yellow" variant={1}>{t("coursesHeading")}</MarkerHighlight></h2>
             </div>
           </div>
 
@@ -271,11 +276,11 @@ export default function TeacherProfileView({ teacher, onRequireAuth, teacherList
                       <div className="flex items-center justify-between text-xs font-bold text-muted pt-2 border-t border-slate-100 dark:border-slate-700/80">
                         <div className="flex items-center gap-1.5">
                           <BookOpen className="w-3.5 h-3.5 text-primary" />
-                          <span>{course.sessionsCount} محاضرة</span>
+                          <span>{t("sessions", { count: course.sessionsCount })}</span>
                         </div>
                         <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
                           <CheckCircle2 className="w-3.5 h-3.5" />
-                          <span>اختبارات وملازم</span>
+                          <span>{t("quizzesAndNotes")}</span>
                         </div>
                       </div>
                     </div>
@@ -284,7 +289,7 @@ export default function TeacherProfileView({ teacher, onRequireAuth, teacherList
                     <div className="flex items-center justify-between gap-3 pt-3 border-t border-slate-100 dark:border-slate-700/80">
                       <div>
                         <span className="text-2xl font-black text-ink font-readex">{course.price}</span>
-                        <span className="ms-1 text-xs font-bold text-muted">ج.م / الشهر</span>
+                        <span className="ms-1 text-xs font-bold text-muted">{t("monthlyPrice")}</span>
                       </div>
                       <button onClick={() => handleCourseAction(course.id, isSubscribed)}
                         disabled={isProcessing}
@@ -301,7 +306,7 @@ export default function TeacherProfileView({ teacher, onRequireAuth, teacherList
                             exit={{ opacity: 0, y: -6 }}
                             className="flex items-center gap-2"
                           >
-                            {isProcessing ? <><LoaderCircle className="w-4 h-4 animate-spin" /><span>جاري التحويل</span></> : isSubscribed ? <><ChevronDown className={cn("w-4 h-4 transition-transform", isExpanded && "rotate-180")} /><span>محتوى الكورس</span></> : <><BookOpen className="w-4 h-4" /><span>اشترك الآن</span></>}
+                            {isProcessing ? <><LoaderCircle className="w-4 h-4 animate-spin" /><span>{t("processing")}</span></> : isSubscribed ? <><ChevronDown className={cn("w-4 h-4 transition-transform", isExpanded && "rotate-180")} /><span>{t("courseContent")}</span></> : <><BookOpen className="w-4 h-4" /><span>{t("subscribe")}</span></>}
                           </m.span>
                         </AnimatePresence>
                       </button>
@@ -337,7 +342,7 @@ export default function TeacherProfileView({ teacher, onRequireAuth, teacherList
                           ))}
                         </div>
                       ) : (
-                        <p className="text-xs font-bold text-muted">لم يضف المدرس محتوى للكورس بعد.</p>
+                        <p className="text-xs font-bold text-muted">{t("noCourseContent")}</p>
                       )}
                     </div>
                   )}

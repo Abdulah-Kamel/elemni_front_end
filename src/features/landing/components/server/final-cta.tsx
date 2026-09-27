@@ -3,8 +3,10 @@ import Image from "next/image";
 import groupStudentsLight from "@/src/assets/images/student-redesign/final_cta_group_students.png";
 import groupStudentsDark from "@/src/assets/images/student-redesign/final_cta_group_students_dark.png";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
+import { getTranslations } from "next-intl/server";
 
-export default function FinalCta() {
+export default async function FinalCta() {
+  const t = await getTranslations("landingFinalCta");
   return (
     <section className="bg-[#F8FAFC] dark:bg-slate-950 px-4 py-16 md:py-24 font-readex">
       <div className="mx-auto max-w-6xl">
@@ -20,17 +22,17 @@ export default function FinalCta() {
             <div className="lg:col-span-7 text-start space-y-6">
 
               <h2 className="text-3xl font-black text-slate-900 dark:text-white sm:text-4xl md:text-5xl leading-[1.3] tracking-tight">
-                جهز نفسك للتفوق —{" "}
+                {t("titleLead")} {" "}
                 <br className="hidden sm:inline" />
                 <MarkerHighlight color="yellow" variant={1}>
-                  ابدأ دلوقتي
+                  {t("titleHighlight")}
                 </MarkerHighlight>
               </h2>
 
               <p className="max-w-xl text-base sm:text-lg font-medium text-slate-600 dark:text-slate-300 leading-relaxed">
-                اختر الكورس المناسب وابدأ التعلم مع المعلم الذي تفضله{" "}
+                {t("descriptionLead")} {" "}
                 <MarkerHighlight color="sky" variant={2}>
-                  نخبة المدرسين
+                  {t("descriptionHighlight")}
                 </MarkerHighlight>
                 .
               </p>
@@ -40,7 +42,7 @@ export default function FinalCta() {
                   href="#hero"
                   className="inline-flex min-h-12 items-center gap-2.5 rounded-2xl bg-primary px-8 py-3.5 text-base font-black text-white shadow-xl shadow-primary/20 transition-all hover:-translate-y-0.5 hover:bg-primary-hover active:scale-[0.98] cursor-pointer"
                 >
-                  <span>ابدأ تجربة المنصة مجاناً</span>
+                  <span>{t("cta")}</span>
                   <ArrowLeft className="w-5 h-5 stroke-[2.5] ltr:-scale-x-100" />
                 </a>
               </div>
@@ -50,13 +52,13 @@ export default function FinalCta() {
                 <span className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
                   <MarkerHighlight color="emerald" variant={3}>
-                    بدون رسوم تسجيل
+                    {t("noSignupFee")}
                   </MarkerHighlight>
                 </span>
                 <span className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-purple-500 shrink-0" />
                   <MarkerHighlight color="purple" variant={4}>
-                    دروس فيديو مسجلة
+                    {t("videoLessons")}
                   </MarkerHighlight>
                 </span>
               </div>
@@ -69,21 +71,21 @@ export default function FinalCta() {
                 {/* Floating Paper Sticker 1 */}
                 <div className="absolute -top-4 -inset-s-2 z-20 rotate-[-4deg] rounded-xl bg-amber-100 dark:bg-amber-950/80 px-3.5 py-2 text-xs font-black text-amber-900 dark:text-amber-200 shadow-md border border-amber-200 dark:border-amber-800">
                   <MarkerHighlight color="yellow" variant={1}>
-                    خطتك واضحة ✨
+                    {t("stickerOne")}
                   </MarkerHighlight>
                 </div>
 
                 {/* Floating Paper Sticker 2 */}
                 <div className="absolute -bottom-2 -inset-e-2 z-20 rotate-3 rounded-xl bg-sky-100 dark:bg-sky-950/80 px-3.5 py-2 text-xs font-black text-sky-900 dark:text-sky-200 shadow-md border border-sky-200 dark:border-sky-800">
                   <MarkerHighlight color="sky" variant={2}>
-                    دروس فيديو وملفات واختبارات
+                    {t("stickerTwo")}
                   </MarkerHighlight>
                 </div>
 
                 {/* Light Mode Korean Students Group Doodle */}
                 <Image
                   src={groupStudentsLight}
-                  alt="رسم تخطيطي لمجموعة من الطلاب يذاكرون معاً على منصة علمني"
+                  alt={t("groupImageAlt")}
                   width={520}
                   height={420}
                 loading="lazy"
@@ -94,7 +96,7 @@ export default function FinalCta() {
                 {/* Dark Mode Korean Students Group Doodle */}
                 <Image
                   src={groupStudentsDark}
-                  alt="رسم تخطيطي لمجموعة من الطلاب يذاكرون معاً على منصة علمني (الوضع الداكن)"
+                  alt={t("groupImageDarkAlt")}
                   width={520}
                   height={420}
                 loading="lazy"

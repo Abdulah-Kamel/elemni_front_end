@@ -85,13 +85,13 @@ const enabledNav = [
 const shellSpring = { type: "spring", stiffness: 320, damping: 28 } as const;
 
 function StudentIdentity({ user, collapsed = false }: { user: UserDto | null; collapsed?: boolean }) {
-  const locale = useLocale();
+  const tPortal = useTranslations("studentPortal");
   const initials = user?.name
     .split(" ")
     .filter(Boolean)
     .slice(0, 2)
     .map((part) => part[0])
-    .join("") || (locale === "ar" ? "ع" : "E");
+    .join("") || tPortal("fallbackInitial");
 
   return (
     <div className="flex items-center gap-2.5">

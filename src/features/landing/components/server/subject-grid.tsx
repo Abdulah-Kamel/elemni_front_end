@@ -4,25 +4,27 @@ import { Section } from "@/src/components/ui/section";
 import { Reveal } from "@/src/components/ui/reveal";
 import type { SubjectDto } from "@/src/lib/student-api/contract";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
+import { getTranslations } from "next-intl/server";
 
 const icons = [Atom, Sigma, FlaskRound, Dna, BookOpen];
 
-export default function SubjectGrid({ subjects }: { subjects: SubjectDto[] }) {
+export default async function SubjectGrid({ subjects }: { subjects: SubjectDto[] }) {
+  const t = await getTranslations("landingSubjectGrid");
   if (!subjects.length) return null;
 
   return (
     <Section id="subjects" className="bg-white dark:bg-[#0B132B]">
       <Reveal>
         <h2 className="mb-3 text-center text-3xl font-black text-[#0F172A] md:text-4xl font-readex">
-          تصفح{" "}
+          {t("titleLead")} {" "}
           <MarkerHighlight color="purple" variant={2}>
-            المواد المتاحة
+            {t("title")}
           </MarkerHighlight>
         </h2>
         <p className="mx-auto mb-10 max-w-2xl text-center text-sm text-[#334155]">
-          اختر المادة التي تريدها وابدأ رحلة التعلم من خلال{" "}
+          {t("descriptionLead")} {" "}
           <MarkerHighlight color="sky" variant={1}>
-            أفضل الكورسات
+            {t("descriptionHighlight")}
           </MarkerHighlight>
           .
         </p>
@@ -40,7 +42,7 @@ export default function SubjectGrid({ subjects }: { subjects: SubjectDto[] }) {
                   <Icon className="size-8 text-primary" />
                 </div>
                 <p className="font-black text-[#0F172A] font-readex">{subject.name}</p>
-                <p className="mt-1 text-xs text-[#334155]">{subject.grades.length} صفوف دراسية</p>
+                <p className="mt-1 text-xs text-[#334155]">{t("gradeCount", { count: subject.grades.length })}</p>
               </Link>
             </Reveal>
           );

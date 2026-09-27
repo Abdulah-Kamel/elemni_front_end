@@ -34,7 +34,7 @@ describe("GET /api/student/auth/me", () => {
     getAccessToken.mockResolvedValue("expired-token");
     authenticatedBackendFetch.mockResolvedValue({
       ok: false,
-      error: { status: 401, message: "Session expired" },
+      error: { status: 401, code: "SESSION_EXPIRED" },
     });
 
     const response = await GET();

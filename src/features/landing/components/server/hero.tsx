@@ -5,6 +5,7 @@ import Image from "next/image";
 import heroStudentLight from "@/src/assets/images/student-redesign/hero_student_processed.png";
 import heroStudentDark from "@/src/assets/images/student-redesign/hero_student_dark.png";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
+import { useTranslations } from "next-intl";
 
 interface HeroProps {
   onOpenAuth: (mode: "signup" | "signin") => void;
@@ -15,6 +16,7 @@ export default function Hero({
   onOpenAuth,
   onOpenVideoTour,
 }: HeroProps) {
+  const t = useTranslations("landingHero");
   return (
     <section
       id="hero"
@@ -32,23 +34,23 @@ export default function Hero({
 
             {/* Title with Marker Highlights (No Badges, No Sparkles) */}
             <h1 className="hero-enter hero-enter-1 text-4xl font-black leading-[1.3] text-slate-900 dark:text-white sm:text-5xl lg:text-6xl tracking-tight">
-              مدرسك الصح.
+              {t("titleFirst")}
               <br />
               <MarkerHighlight color="yellow" variant={1}>
-                خطتك أوضح.
+                {t("titleSecond")}
               </MarkerHighlight>{" "}
               <MarkerHighlight color="sky" variant={2}>
-                نتيجتك أقرب.
+                {t("titleThird")}
               </MarkerHighlight>
             </h1>
 
             {/* Subtitle Paragraph with Marker Highlight */}
             <p className="hero-enter hero-enter-2 max-w-2xl text-base font-medium leading-relaxed text-slate-600 dark:text-slate-300 sm:text-lg">
-              دروس فيديو مسجلة وملفات واختبارات، و{" "}
+              {t("descriptionStart")} {" "}
               <MarkerHighlight color="pink" variant={3}>
-                متابعة تقدمك
+                {t("progress")}
               </MarkerHighlight>{" "}
-              تساعدك تذاكر بثقة من أول حصة لحد الامتحان.
+              {t("descriptionEnd")}
             </p>
 
             {/* Action CTAs */}
@@ -57,7 +59,7 @@ export default function Hero({
                 onClick={() => onOpenAuth("signup")}
                 className="inline-flex min-h-12 items-center gap-2.5 rounded-2xl bg-primary px-7 py-3.5 text-sm font-black text-white shadow-xl shadow-primary/20 transition-all hover:-translate-y-0.5 hover:bg-primary-hover active:scale-[0.98] cursor-pointer"
               >
-                <span>ابدأ مجاناً</span>
+                <span>{t("signup")}</span>
                 <ArrowLeft className="w-5 h-5 stroke-[2.5] ltr:-scale-x-100" />
               </button>
 
@@ -68,7 +70,7 @@ export default function Hero({
                 <span className="grid size-6 place-items-center rounded-full bg-primary text-white">
                   <Play className="size-3 fill-current ms-0.5" />
                 </span>
-                <span>شاهد تجربة المنصة</span>
+                <span>{t("watchTour")}</span>
               </button>
             </div>
 
@@ -77,19 +79,19 @@ export default function Hero({
               <span className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
                 <MarkerHighlight color="emerald" variant={4}>
-                  كورسات من معلمين مختلفين
+                  {t("benefitCourses")}
                 </MarkerHighlight>
               </span>
               <span className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-sky-500 shrink-0" />
                 <MarkerHighlight color="sky" variant={1}>
-                  مدرسون متخصصون
+                  {t("benefitTeachers")}
                 </MarkerHighlight>
               </span>
               <span className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-purple-500 shrink-0" />
                 <MarkerHighlight color="purple" variant={2}>
-                  اختبارات ضمن محتوى الكورس
+                  {t("benefitQuizzes")}
                 </MarkerHighlight>
               </span>
             </div>
@@ -101,7 +103,7 @@ export default function Hero({
               {/* Light Mode Artwork */}
               <Image
                 src={heroStudentLight}
-                alt="رسم تخطيطي لطالبة ثانوية تذاكر في غرفتها على منصة علمني"
+                alt={t("studentImageAlt")}
                 width={560}
                 height={560}
                 fetchPriority="high"
@@ -111,7 +113,7 @@ export default function Hero({
               {/* Dark Mode Artwork */}
               <Image
                 src={heroStudentDark}
-                alt="رسم تخطيطي لطالبة ثانوية تذاكر في غرفتها على منصة علمني (الوضع الداكن)"
+                alt={t("studentImageDarkAlt")}
                 width={560}
                 height={560}
                 loading="lazy"

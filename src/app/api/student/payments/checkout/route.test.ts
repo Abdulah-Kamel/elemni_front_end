@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
-  backendErrorResponse: vi.fn((error: { status: number; message: string }) =>
-    Response.json({ detail: error.message }, { status: error.status }),
+  backendErrorResponse: vi.fn((error: { status: number; code: string; detail?: string }) =>
+    Response.json({ code: error.code, ...(error.detail ? { detail: error.detail } : {}) }, { status: error.status }),
   ),
   authenticatedBackendFetch: vi.fn(),
 }));
@@ -104,14 +104,14 @@ describe("POST /api/student/payments/checkout", () => {
   it("forwards backend checkout errors with their status", async () => {
     mocks.authenticatedBackendFetch.mockResolvedValue({
       ok: false,
-      error: { status: 409, message: "Already enrolled" },
+      error: { status: 409, code: "ALREADY_ENROLLED" },
     });
 
     const response = await postCheckout({ course_id: 12 });
 
     expect(mocks.backendErrorResponse).toHaveBeenCalledWith({
       status: 409,
-      message: "Already enrolled",
+      code: "ALREADY_ENROLLED",
     });
     expect(response.status).toBe(409);
   });

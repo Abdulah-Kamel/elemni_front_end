@@ -5,6 +5,7 @@ import { Section } from "@/src/components/ui/section";
 import { Reveal } from "@/src/components/ui/reveal";
 import type { PublicCourseDto } from "@/src/lib/student-api/contract";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
+import { getTranslations } from "next-intl/server";
 
 export interface FeaturedCourse {
   course: PublicCourseDto;
@@ -12,25 +13,30 @@ export interface FeaturedCourse {
   teacherSlug: string;
 }
 
-function durationLabel(minutes: number | null) {
+function durationLabel(minutes: number | null, t: Awaited<ReturnType<typeof getTranslations<"courseCounts">>>) {
   if (!minutes) return null;
-  return minutes < 60 ? `${minutes} دقيقة` : `${Math.round(minutes / 60)} ساعة`;
+  const hours = Math.floor(minutes / 60);
+  const remainder = minutes % 60;
+  if (hours && remainder) return `${t("hourCount", { count: hours })} ${t("minuteCount", { count: remainder })}`;
+  return hours ? t("hourCount", { count: hours }) : t("minuteCount", { count: minutes });
 }
 
-export default function FeaturedLessons({ courses }: { courses: FeaturedCourse[] }) {
+export default async function FeaturedLessons({ courses }: { courses: FeaturedCourse[] }) {
+  const t = await getTranslations("landingFeaturedLessons");
+  const tCounts = await getTranslations("courseCounts");
   if (!courses.length) return null;
 
   return (
     <Section id="featured-courses">
       <Reveal>
         <h2 className="mb-3 text-center text-3xl font-black text-[#0F172A] md:text-4xl font-readex">
-          ابدأ بأحدث{" "}
+          {t("titleLead")} {" "}
           <MarkerHighlight color="pink" variant={1}>
-            كورسات المنصة
+            {t("titleHighlight")}
           </MarkerHighlight>
         </h2>
         <p className="mx-auto mb-10 max-w-2xl text-center text-sm text-[#334155]">
-          كورسات منشورة فعلياً من مكتبات المدرسين على علمني.
+          {t("description")}
         </p>
       </Reveal>
       <div className="grid gap-6 md:grid-cols-3">
@@ -43,10 +49,10 @@ export default function FeaturedLessons({ courses }: { courses: FeaturedCourse[]
               <div className="flex flex-1 flex-col p-5">
                 <p className="text-xs font-extrabold text-primary">{course.subject_name ?? teacherName}</p>
                 <h3 className="mt-2 line-clamp-2 text-lg font-black text-ink">{course.title}</h3>
-                <p className="mt-2 line-clamp-2 text-xs leading-6 text-muted">{course.description ?? `كورس مقدم من ${teacherName}`}</p>
+                <p className="mt-2 line-clamp-2 text-xs leading-6 text-muted">{course.description ?? t("courseFallback", { teacher: teacherName })}</p>
                 <div className="mt-auto flex items-center justify-between gap-3 border-t border-slate-100 pt-4 text-xs font-bold text-muted dark:border-slate-700">
-                  <span className="flex items-center gap-1.5"><BookOpen className="size-4 text-primary" />{course.lesson_count} درس</span>
-                  {durationLabel(course.total_duration_minutes) && <span className="flex items-center gap-1.5"><Clock className="size-4 text-emerald-600" />{durationLabel(course.total_duration_minutes)}</span>}
+                  <span className="flex items-center gap-1.5"><BookOpen className="size-4 text-primary" />{tCounts("lessonCount", { count: course.lesson_count })}</span>
+                  {durationLabel(course.total_duration_minutes, tCounts) && <span className="flex items-center gap-1.5"><Clock className="size-4 text-emerald-600" />{durationLabel(course.total_duration_minutes, tCounts)}</span>}
                 </div>
               </div>
             </Link>

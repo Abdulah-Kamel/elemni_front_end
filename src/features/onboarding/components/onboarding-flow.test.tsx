@@ -1,6 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import OnboardingFlow from "./onboarding-flow";
+import { NextIntlClientProvider } from "next-intl";
+import arMessages from "@/src/messages/ar.json";
 
 vi.mock("next/image", () => ({
   default: ({ src, alt, ...props }: React.ComponentProps<"img"> & { fill?: boolean }) => (
@@ -23,7 +25,11 @@ vi.mock("../client", () => ({
 
 describe("OnboardingFlow", () => {
   it("uses the sticker world tokens on the welcome step", () => {
-    render(<OnboardingFlow grades={[]} streams={[]} subjects={[]} />);
+    render(
+      <NextIntlClientProvider locale="ar" messages={arMessages}>
+        <OnboardingFlow grades={[]} streams={[]} subjects={[]} />
+      </NextIntlClientProvider>,
+    );
 
     const shell = screen.getByText("أهلاً بيك في علمني").closest(".student-portal-shell");
     const primaryCta = screen.getByRole("button", { name: /ابدأ الآن/i });

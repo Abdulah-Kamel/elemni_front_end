@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useMemo } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import * as THREE from "three";
 import { Hand } from "lucide-react";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
@@ -11,10 +12,13 @@ interface StickyNoteData {
   id: string;
   category: "step" | "feature";
   stepNumber: string;
-  numberDisplay: string; // Arabic numeral for badge (١, ٢, ٣, ٤, ٥, ٦)
-  title: string;
-  content: string;
-  highlightWords: string[];
+  titleKey: string;
+  contentKey: string;
+  highlightKeys: string[];
+  title?: string;
+  content?: string;
+  highlightWords?: string[];
+  numberDisplay?: string;
   color: string;
   textColor: string;
   headerColor: string;
@@ -27,15 +31,14 @@ interface StickyNoteData {
 
 // 6 Sticky Notes arranged in RTL sequence (Starting from Top-Right to Top-Left, then Bottom-Right to Bottom-Left)
 const BOARD_NOTES: StickyNoteData[] = [
-  // --- Row 1: كيف تبدأ (RTL: Step 1 Right -> Step 2 Center -> Step 3 Left) ---
+  // Learning board content is localized from message keys.
   {
     id: "step-1",
     category: "step",
     stepNumber: "1",
-    numberDisplay: "١",
-    title: "إنشاء حساب",
-    content: "سجّل مجاناً باستخدام هاتفك في أقل من دقيقة وابدأ رحلتك.",
-    highlightWords: ["أقل من دقيقة", "مجاناً"],
+    titleKey: "step1Title",
+    contentKey: "step1Content",
+    highlightKeys: ["step1Highlight1", "step1Highlight2"],
     color: "#FEF08A", // Bright Yellow
     textColor: "#3F2305",
     headerColor: "#F59E0B",
@@ -49,10 +52,9 @@ const BOARD_NOTES: StickyNoteData[] = [
     id: "step-2",
     category: "step",
     stepNumber: "2",
-    numberDisplay: "٢",
-    title: "اختر المدرس والكورس",
-    content: "تصفح المدرسين المتخصصين واختر الكورس المناسب لمادتك.",
-    highlightWords: ["المدرسين المتخصصين", "الكورس المناسب"],
+    titleKey: "step2Title",
+    contentKey: "step2Content",
+    highlightKeys: ["step2Highlight1", "step2Highlight2"],
     color: "#BAE6FD", // Bright Sky Blue
     textColor: "#0C4A6E",
     headerColor: "#0284C7",
@@ -66,10 +68,9 @@ const BOARD_NOTES: StickyNoteData[] = [
     id: "step-3",
     category: "step",
     stepNumber: "3",
-    numberDisplay: "٣",
-    title: "ابدأ التعلم من الكورس",
-    content: "شاهد دروس الفيديو المسجلة، واستخدم الملفات والاختبارات المتاحة.",
-    highlightWords: ["دروس الفيديو المسجلة", "الاختبارات"],
+    titleKey: "step3Title",
+    contentKey: "step3Content",
+    highlightKeys: ["step3Highlight1", "step3Highlight2"],
     color: "#BBF7D0", // Bright Light Green
     textColor: "#064E3B",
     headerColor: "#10B981",
@@ -80,15 +81,14 @@ const BOARD_NOTES: StickyNoteData[] = [
     rotation: -0.03,
   },
 
-  // --- Row 2: رحلة التفوق مع علمني (RTL: Feature 1 Right -> Feature 2 Center -> Feature 3 Left) ---
+  // Learning board content is localized from message keys.
   {
     id: "feature-1",
     category: "feature",
     stepNumber: "01",
-    numberDisplay: "٤",
-    title: "افهم صح",
-    content: "اختر من الكورسات المنشورة وتعلّم من محتواها المسجل.",
-    highlightWords: ["دروس تفاعلية", "أذكى المدرسين"],
+    titleKey: "feature1Title",
+    contentKey: "feature1Content",
+    highlightKeys: ["feature1Highlight1", "feature1Highlight2"],
     color: "#E9D5FF", // Bright Purple
     textColor: "#3B0764",
     headerColor: "#8B5CF6",
@@ -102,10 +102,9 @@ const BOARD_NOTES: StickyNoteData[] = [
     id: "feature-2",
     category: "feature",
     stepNumber: "02",
-    numberDisplay: "٥",
-    title: "اتدرب كتير",
-    content: "امتحانات مستمرة وبنوك أسئلة شاملة عشان تثبت المعلومة.",
-    highlightWords: ["بنوك أسئلة", "تثبت المعلومة"],
+    titleKey: "feature2Title",
+    contentKey: "feature2Content",
+    highlightKeys: ["feature2Highlight1", "feature2Highlight2"],
     color: "#FBCFE8", // Bright Pink
     textColor: "#4C0519",
     headerColor: "#EC4899",
@@ -119,10 +118,9 @@ const BOARD_NOTES: StickyNoteData[] = [
     id: "feature-3",
     category: "feature",
     stepNumber: "03",
-    numberDisplay: "٦",
-    title: "تفوق بجدارة",
-    content: "تقارير أداء ودعم مستمر معاك لحد باب اللجان.",
-    highlightWords: ["تقارير أداء", "باب اللجان"],
+    titleKey: "feature3Title",
+    contentKey: "feature3Content",
+    highlightKeys: ["feature3Highlight1", "feature3Highlight2"],
     color: "#FED7AA", // Bright Orange
     textColor: "#431407",
     headerColor: "#F97316",
@@ -135,6 +133,15 @@ const BOARD_NOTES: StickyNoteData[] = [
 ];
 
 export default function InteractiveWhiteboard3D() {
+  const locale = useLocale();
+  const t = useTranslations("landingWhiteboard");
+  const notes = useMemo(() => BOARD_NOTES.map((note) => ({
+    ...note,
+    title: t(note.titleKey as never),
+    content: t(note.contentKey as never),
+    highlightWords: note.highlightKeys.map((key) => t(key as never)),
+    numberDisplay: new Intl.NumberFormat(locale).format(note.category === "step" ? Number(note.stepNumber) : Number(note.stepNumber) + 3),
+  })), [locale, t]);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHoveringNote, setIsHoveringNote] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -219,7 +226,7 @@ export default function InteractiveWhiteboard3D() {
     ctx.textAlign = "center";
     ctx.fillStyle = note.textColor;
     ctx.font = "bold 38px 'Readex Pro', 'Segoe UI', Arial, sans-serif";
-    ctx.fillText(note.numberDisplay, 96, 61);
+    ctx.fillText(note.numberDisplay ?? "", 96, 61);
 
     // Context RTL setup for title & text
     ctx.direction = "rtl";
@@ -227,7 +234,7 @@ export default function InteractiveWhiteboard3D() {
 
     // --- Title rendering with imperfect highlighter stroke ---
     ctx.font = "bold 68px 'Readex Pro', 'Segoe UI', Arial, sans-serif";
-    const titleWidth = ctx.measureText(note.title).width;
+    const titleWidth = ctx.measureText(note.title ?? "").width;
 
     drawImperfectHighlighter(
       ctx,
@@ -238,7 +245,7 @@ export default function InteractiveWhiteboard3D() {
     );
 
     ctx.fillStyle = note.textColor;
-    ctx.fillText(note.title, 940, 210);
+    ctx.fillText(note.title ?? "", 940, 210);
 
     // Header Separator Line
     ctx.strokeStyle = note.headerColor;
@@ -250,7 +257,7 @@ export default function InteractiveWhiteboard3D() {
 
     // --- Body Text & Word Highlighters ---
     ctx.font = "bold 72px 'Readex Pro', 'Segoe UI', Arial, sans-serif";
-    const words = note.content.split(" ");
+    const words = (note.content ?? "").split(" ");
     const lines: string[] = [];
     let line = "";
     const maxWidth = 860;
@@ -271,7 +278,7 @@ export default function InteractiveWhiteboard3D() {
     const lineHeight = 86;
 
     lines.forEach((lText) => {
-      note.highlightWords.forEach((phrase) => {
+      note.highlightWords?.forEach((phrase) => {
         if (lText.includes(phrase)) {
           const phraseIndex = lText.indexOf(phrase);
           const textBefore = lText.substring(0, phraseIndex);
@@ -626,7 +633,7 @@ export default function InteractiveWhiteboard3D() {
       return pinGroup;
     };
 
-    BOARD_NOTES.forEach((noteData) => {
+    notes.forEach((noteData) => {
       const noteContainer = new THREE.Group();
 
       const texture = createStickyNoteTexture(noteData, maxAnisotropy);
@@ -660,7 +667,7 @@ export default function InteractiveWhiteboard3D() {
 
     if (document.fonts) {
       document.fonts.ready.then(() => {
-        BOARD_NOTES.forEach((noteData) => {
+        notes.forEach((noteData) => {
           const container = noteMeshesMap.get(noteData.id);
           if (container) {
             const paperMesh = container.children[0] as THREE.Mesh;
@@ -974,34 +981,30 @@ export default function InteractiveWhiteboard3D() {
       controllerCleanup();
       stop();
     };
-  }, []);
+  }, [notes]);
 
   return (
     <section className="relative w-full py-12 sm:py-16 bg-[#FAF8FF] dark:bg-[#0B132B] border-y border-violet-tint/60 dark:border-slate-800/80 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Title Header with Imperfect Hand-Drawn Highlighters */}
         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white mb-4 font-readex leading-tight">
-          كيف تبدأ{" "}
+          {t("headingLead")} {" "}
           <MarkerHighlight color="yellow" variant={1}>
-            وتتفوق
+            {t("headingMiddle")}
           </MarkerHighlight>{" "}
-          مع منصة{" "}
+          {t("headingBrand")} {" "}
           <MarkerHighlight color="purple" variant={2}>
-            علمني؟
+            {t("headingQuestion")}
           </MarkerHighlight>
         </h2>
 
         {/* Subtitle Paragraph with Organic Marker Highlighters */}
         <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-8 leading-relaxed font-medium">
-          خطوات بسيطة وممنهجة تأخذك من{" "}
+          {t("descriptionLead")} {" "}
           <MarkerHighlight color="sky" variant={3}>
-            البداية وحتى القمة
+            {t("descriptionMiddle")}
           </MarkerHighlight>
-          . يمكنك{" "}
-          <MarkerHighlight color="pink" variant={4}>
-            سحب الملاحظات المترابطة
-          </MarkerHighlight>{" "}
-          بحبال التوصيل لتنظيم رحلتك بنفسك!
+          . {t("descriptionTail")}
         </p>
 
         {/* Drag Hint Bar with Marker Highlighter */}
@@ -1009,11 +1012,11 @@ export default function InteractiveWhiteboard3D() {
           <div className="inline-flex items-center gap-2 bg-white/90 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 shadow-sm">
             <Hand className="w-4 h-4 text-violet shrink-0" />
             <span>
-              اسحب أو حرك بالملمس أي{" "}
+              {t("dragLead")} {" "}
               <MarkerHighlight color="emerald" variant={1}>
-                ملاحظة
+                {t("dragNote")}
               </MarkerHighlight>{" "}
-              لتعديل موقعها على السبورة
+              {t("dragTail")}
             </span>
           </div>
         </div>

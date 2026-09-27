@@ -2,8 +2,10 @@
 
 import { m } from "motion/react";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
+import { useTranslations } from "next-intl";
 
 export default function MobileApp() {
+  const t = useTranslations("landingMobileApp");
   return (
     <section
       id="mobile"
@@ -25,25 +27,25 @@ export default function MobileApp() {
             className="lg:col-span-6 space-y-6 text-start"
           >
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-[1.35]">
-              حمّل{" "}
+              {t("titleLead")} {" "}
               <MarkerHighlight color="emerald" variant={2}>
-                تطبيق علمني
+                {t("titleHighlight")}
               </MarkerHighlight>
               <br />
-              وذاكر من أي مكان
+              {t("titleTail")}
             </h2>
 
             <p className="text-base sm:text-lg leading-relaxed text-slate-600 dark:text-slate-300 max-w-xl font-medium">
-              تصفح محتوى الكورسات من أجهزتك. شاهد دروس الفيديو المسجلة واستخدم الملفات والاختبارات المتاحة.
+              {t("description")}
             </p>
 
             {/* Feature Highlights List with Marker Highlighters */}
             <div className="space-y-3 pt-2">
               {[
-                { text: "دروس فيديو مسجلة ضمن الكورس", color: "sky" as const },
-                { text: "ملفات متاحة ضمن محتوى الكورس", color: "purple" as const },
-                { text: "اختبارات ضمن محتوى الكورس", color: "pink" as const },
-                { text: "متابعة نسبة إنجازك والدرجات أولاً بأول", color: "yellow" as const },
+                { text: t("benefitLessons"), color: "sky" as const },
+                { text: t("benefitFiles"), color: "purple" as const },
+                { text: t("benefitQuizzes"), color: "pink" as const },
+                { text: t("benefitProgress"), color: "yellow" as const },
               ].map((item, i) => (
                 <div key={i} className="flex items-center gap-3">
                   <span className="w-2.5 h-2.5 rounded-full bg-primary shrink-0" />
@@ -63,7 +65,7 @@ export default function MobileApp() {
                   <path d="M3.609 1.814L13.792 12 3.61 22.186a2.372 2.372 0 0 1-.61-1.603V3.417c0-.62.228-1.18.609-1.603zm11.6 11.6l2.35 2.35-12.012 6.945 9.662-9.295zm0-2.828L5.547 1.291l12.012 6.945-2.35 2.35zm1.414 1.414l3.196 1.846c.866.501.866 1.314 0 1.815l-3.196 1.846-2.02-2.02 2.02-2.02z" />
                 </svg>
                 <div className="text-start leading-tight">
-                  <div className="text-[10px] uppercase tracking-wider opacity-70 font-medium">متاح على</div>
+                  <div className="text-[10px] uppercase tracking-wider opacity-70 font-medium">{t("availableOn")}</div>
                   <div className="text-sm font-black">Google Play</div>
                 </div>
               </button>
@@ -73,7 +75,7 @@ export default function MobileApp() {
                   <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.85c.66-.8 1.11-1.92.99-3.04-.96.04-2.13.64-2.81 1.44-.6.69-1.13 1.83-0.99 2.93 1.07.08 2.16-.53 2.81-1.33z" />
                 </svg>
                 <div className="text-start leading-tight">
-                  <div className="text-[10px] uppercase tracking-wider opacity-70 font-medium">متاح على</div>
+                  <div className="text-[10px] uppercase tracking-wider opacity-70 font-medium">{t("availableOn")}</div>
                   <div className="text-sm font-black">App Store</div>
                 </div>
               </button>
@@ -107,7 +109,7 @@ export default function MobileApp() {
               >
                 <div className="bg-amber-100 text-amber-950 px-3.5 py-2 rounded-2xl border border-amber-300 shadow-md font-black text-xs select-none">
                   <MarkerHighlight color="yellow" variant={1}>
-                    100/100 متفوق
+                    {t("scoreSticker")}
                   </MarkerHighlight>
                 </div>
               </m.div>
@@ -121,7 +123,7 @@ export default function MobileApp() {
               >
                 <div className="bg-purple-100 text-purple-950 px-3.5 py-2 rounded-2xl border border-purple-300 shadow-md font-black text-xs select-none">
                   <MarkerHighlight color="purple" variant={2}>
-                    ثانوية عامة
+                    {t("gradeSticker")}
                   </MarkerHighlight>
                 </div>
               </m.div>
@@ -135,7 +137,7 @@ export default function MobileApp() {
               >
                 <div className="bg-rose-100 text-rose-950 px-3.5 py-2 rounded-2xl border border-rose-300 shadow-md font-black text-xs select-none">
                   <MarkerHighlight color="pink" variant={3}>
-                    12 يوم حماسي
+                    {t("streakSticker")}
                   </MarkerHighlight>
                 </div>
               </m.div>
@@ -149,7 +151,7 @@ export default function MobileApp() {
               >
                 <div className="bg-emerald-100 text-emerald-950 px-3.5 py-2 rounded-2xl border border-emerald-300 shadow-md font-black text-xs select-none">
                   <MarkerHighlight color="emerald" variant={4}>
-                    الأول على الدفعة
+                    {t("rankSticker")}
                   </MarkerHighlight>
                 </div>
               </m.div>
@@ -163,7 +165,7 @@ export default function MobileApp() {
               >
                 <div className="bg-sky-100 text-sky-950 px-3 py-1.5 rounded-xl border border-sky-300 shadow-sm font-black text-[11px] select-none">
                   <MarkerHighlight color="sky" variant={1}>
-                    تطبيق الطالب
+                    {t("appSticker")}
                   </MarkerHighlight>
                 </div>
               </m.div>
@@ -184,15 +186,15 @@ export default function MobileApp() {
                   <div className="flex items-center justify-between pb-1 border-b border-slate-200/60 dark:border-slate-800">
                     <div className="flex items-center gap-2">
                       <div className="w-8 h-8 rounded-full bg-linear-to-tr from-primary to-sky-400 text-white font-black text-xs flex items-center justify-center shadow-xs">
-                        أ
+                        {t("avatarInitial")}
                       </div>
                       <div>
-                        <div className="text-[11px] font-black text-slate-900 dark:text-white leading-tight">أهلاً أحمد</div>
-                        <div className="text-[9px] font-bold text-slate-600 dark:text-slate-400">الصف الثالث الثانوي</div>
+                        <div className="text-[11px] font-black text-slate-900 dark:text-white leading-tight">{t("welcome")}</div>
+                        <div className="text-[9px] font-bold text-slate-600 dark:text-slate-400">{t("grade")}</div>
                       </div>
                     </div>
                     <div className="text-[9px] font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
-                      نشط
+                      {t("active")}
                     </div>
                   </div>
 
@@ -200,19 +202,19 @@ export default function MobileApp() {
                   <div className="bg-linear-to-r from-primary to-sky-600 rounded-2xl p-3 text-white shadow-md space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="inline-flex items-center gap-1 bg-rose-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full">
-                        درس مسجل
+                        {t("recordedLesson")}
                       </span>
-                      <span className="text-[9px] text-sky-100 font-bold">مادة الفيزياء</span>
+                      <span className="text-[9px] text-sky-100 font-bold">{t("physics")}</span>
                     </div>
                     <div className="text-xs font-black leading-tight">
                       <MarkerHighlight color="yellow" variant={1}>
-                        شرح القوانين الكهربية
+                        {t("lessonTitle")}
                       </MarkerHighlight>
                     </div>
                     <div className="flex items-center justify-between pt-1">
-                      <div className="text-[9px] text-sky-100 font-bold">د. محمد عبدالمعبود</div>
+                      <div className="text-[9px] text-sky-100 font-bold">{t("teacherName")}</div>
                       <div className="text-[9px] font-extrabold bg-white/20 px-2 py-0.5 rounded-full">
-                        مشاهدة
+                        {t("watch")}
                       </div>
                     </div>
                   </div>
@@ -220,7 +222,7 @@ export default function MobileApp() {
                   {/* Course Progress Widget */}
                   <div className="bg-white dark:bg-slate-800 rounded-2xl p-3 border border-slate-200/80 dark:border-slate-700/80 space-y-1.5 shadow-2xs">
                     <div className="flex items-center justify-between text-[10px] font-black text-slate-800 dark:text-slate-200">
-                      <span>كورس الرياضيات التطبيقية</span>
+                      <span>{t("courseTitle")}</span>
                       <span className="text-primary">78%</span>
                     </div>
                     <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden">
@@ -231,20 +233,20 @@ export default function MobileApp() {
                   {/* Upcoming Quiz Reminder Widget */}
                   <div className="bg-amber-50 dark:bg-amber-950/40 rounded-2xl p-2.5 border border-amber-200 dark:border-amber-900/60 flex items-center justify-between">
                     <div className="leading-tight">
-                      <div className="text-[10px] font-black text-amber-950 dark:text-amber-200">امتحان الكيمياء الشامل</div>
-                      <div className="text-[9px] font-bold text-amber-700 dark:text-amber-400">غداً الساعة 06:00 مساءً</div>
+                      <div className="text-[10px] font-black text-amber-950 dark:text-amber-200">{t("examTitle")}</div>
+                      <div className="text-[9px] font-bold text-amber-700 dark:text-amber-400">{t("examTime")}</div>
                     </div>
                     <div className="text-[9px] font-black bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full">
-                      تذكير
+                      {t("reminder")}
                     </div>
                   </div>
 
                   {/* App Bottom Navigation Bar */}
                   <div className="pt-1 flex items-center justify-around text-slate-500 border-t border-slate-200/60 dark:border-slate-800 text-[9px] font-black">
-                    <span className="text-primary font-black">الرئيسية</span>
-                    <span>الحصص</span>
-                    <span>الامتحانات</span>
-                    <span>حسابي</span>
+                    <span className="text-primary font-black">{t("home")}</span>
+                    <span>{t("lessons")}</span>
+                    <span>{t("exams")}</span>
+                    <span>{t("account")}</span>
                   </div>
 
                 </div>

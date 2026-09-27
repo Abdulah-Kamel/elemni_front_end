@@ -1,14 +1,14 @@
 import type { FAQItem, QuizQuestion } from "../types";
 
 export const QUIZ_QUESTIONS: QuizQuestion[] = [
-  { id: 1, subject: "الفيزياء", question: "في دائرة تيار متردد تحتوي على ملف حث حثه الذاتي (L) ومكثف سعته (C)، متى تكون الدائرة في حالة رنين؟", options: ["عندما تكون المفاعلة الحثية مساوية للمفاعلة السعوية (XL = XC)", "عندما تكون زاوية الطور بين الجهد والتيار تساوي 90 درجة", "عندما تكون المقاومة الأومية أعلى ما يمكن", "عندما ينعدم التيار الكهربي في الدائرة"], correctAnswer: 0, explanation: "تحدث حالة الرنين في دوائر التيار المتردد عندما تتساوى المفاعلة الحثية (XL) مع المفاعلة السعوية (XC)، وعندها تكون المعاوقة (Z) أقل ما يمكن وتساوي المقاومة الأومية (R) ويكون التيار أكبر ما يمكن." },
-  { id: 2, subject: "الرياضيات", question: "ما هو ميل المماس للمنحنى ص = س³ - 3س عند النقطة (2، 2)؟", options: ["3", "9", "6", "12"], correctAnswer: 1, explanation: "ميل المماس هو المشتقة الأولى (ص'). ص' = 3س² - 3. بالتعويض عن س = 2: ص' = 3(2)² - 3 = 3(4) - 3 = 12 - 3 = 9." },
-  { id: 3, subject: "اللغة العربية", question: "ما إعراب كلمة \"طالباً\" في جملة: \"حضر اليوم ثلاثون طالباً\"؟", options: ["مفعول به منصوب وعلامة نصبه الفتحة", "تمييز ملفوظ منصوب وعلامة نصبه الفتحة", "حال منصوبة وعلامة نصبها الفتحة", "مضاف إليه مجرور وعلامة جره الكسرة"], correctAnswer: 1, explanation: "الأعداد من 11 إلى 99 يكون تمييزها مفرداً منصوباً، ولذلك كلمة \"طالباً\" إعرابها تمييز منصوب بالفتحة الظاهرة." },
+  { id: 1, subjectKey: "subject1", questionKey: "q1", optionKeys: ["q1o1", "q1o2", "q1o3", "q1o4"], correctAnswer: 0, explanationKey: "q1e" },
+  { id: 2, subjectKey: "subject2", questionKey: "q2", optionKeys: ["q2o1", "q2o2", "q2o3", "q2o4"], correctAnswer: 1, explanationKey: "q2e" },
+  { id: 3, subjectKey: "subject3", questionKey: "q3", optionKeys: ["q3o1", "q3o2", "q3o3", "q3o4"], correctAnswer: 1, explanationKey: "q3e" },
 ];
 
 export const FAQ_ITEMS: FAQItem[] = [
-  { id: "faq1", question: "كيف يمكنني التسجيل والاشتراك في كورسات المدرسين؟", answer: "أنشئ حسابًا، ثم تصفح قائمة المدرسين واختر الكورس المناسب للاشتراك به.", category: "general" },
-  { id: "faq2", question: "ما المحتوى المتاح في الكورس؟", answer: "تتضمن الكورسات المنشورة دروس فيديو مسجلة وملفات واختبارات. يتاح محتوى الكورس للمشترك خلال 30 يومًا.", category: "classes" },
-  { id: "faq3", question: "كيف تعمل اشتراكات الكورسات الخاصة بالمعلمين؟", answer: "لكل معلم كورساته الخاصة بمواضيع ومناهج محددة وأسعار مستقلة. يمكنك الاشتراك في الكورس الذي تحتاجه فقط مع المعلم المفضّل لديك دون الحاجة لاشتراكات إجمالية.", category: "payment" },
-  { id: "faq4", question: "كيف يمكنني الدفع؟", answer: "يتم الدفع إلكترونيًا بأمان عبر Kashier.", category: "payment" },
+  { id: "faq1", questionKey: "q1", answerKey: "a1", category: "general" },
+  { id: "faq2", questionKey: "q2", answerKey: "a2", category: "classes" },
+  { id: "faq3", questionKey: "q3", answerKey: "a3", category: "payment" },
+  { id: "faq4", questionKey: "q4", answerKey: "a4", category: "payment" },
 ];

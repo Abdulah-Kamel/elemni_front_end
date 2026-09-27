@@ -138,7 +138,7 @@ describe("TeacherProfileView production experience", () => {
     });
     renderProfile({ ...teacher, courses: [{ ...teacher.courses[0], isSubscribed: false }] });
 
-    fireEvent.click(screen.getByRole("button", { name: "اشترك الآن" }));
+    fireEvent.click(screen.getByRole("button", { name: arMessages.teacherProfile.subscribe }));
 
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith(
@@ -166,7 +166,7 @@ describe("TeacherProfileView production experience", () => {
       "en",
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "اشترك الآن" }));
+    fireEvent.click(screen.getByRole("button", { name: enMessages.teacherProfile.subscribe }));
 
     await waitFor(() => expect(assignMock).toHaveBeenCalledTimes(1));
     expect(assignMock).toHaveBeenCalledWith("/en/my-courses");

@@ -26,6 +26,7 @@ export default async function CourseDetailPage({
   const { locale, courseId } = await params;
   const { teacher } = await searchParams;
   setRequestLocale(locale);
+  const tTeacher = await getTranslations({ locale, namespace: "studentTeacherData" });
 
   const parsedCourseId = Number(courseId);
   if (!Number.isInteger(parsedCourseId) || parsedCourseId <= 0) notFound();
@@ -54,7 +55,7 @@ export default async function CourseDetailPage({
           ? {
               name: teacherResult?.ok
                 ? teacherResult.data.name
-                : publicCourse.teacher_name || "مدرس علمني",
+                : publicCourse.teacher_name || tTeacher("teacherFallback"),
               slug: teacherSlug,
               img: teacherResult?.ok ? teacherResult.data.img : null,
             }

@@ -6,6 +6,7 @@ import { X, User, Phone, Lock, ArrowLeft, LoaderCircle, Mail, CircleAlert } from
 import { cn } from "@/src/lib/cn";
 import { notifyStudentSessionChanged } from "@/src/lib/student-api/session-events";
 import logoMark from "@/src/assets/logo-icon.png";
+import { useTranslations } from "next-intl";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -15,6 +16,7 @@ interface AuthModalProps {
 }
 
 export default function AuthModal({ isOpen, initialMode, onClose, onSuccess }: AuthModalProps) {
+  const t = useTranslations("landingAuthModal");
   const [mode, setMode] = useState<"signin" | "signup">(initialMode);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -43,14 +45,14 @@ export default function AuthModal({ isOpen, initialMode, onClose, onSuccess }: A
 
     if (!response?.ok) {
       const body = await response?.json().catch(() => null);
-      setError(body?.detail ?? "تعذر الاتصال بالخادم. حاول مرة أخرى.");
+      setError(body?.code === "AUTH_FIELDS_REQUIRED" || body?.code === "REGISTRATION_FIELDS_REQUIRED" ? t("requiredError") : body?.detail ?? t("genericError"));
       setSubmitted(false);
       return;
     }
 
     const user = await response.json();
     notifyStudentSessionChanged("login");
-    onSuccess(user.name ?? name ?? "الطالب");
+    onSuccess(user.name ?? name ?? t("studentFallback"));
     onClose();
     setSubmitted(false);
   };
@@ -71,10 +73,10 @@ export default function AuthModal({ isOpen, initialMode, onClose, onSuccess }: A
           </div>
           <div>
             <h3 className="text-xl font-black text-[#0F172A] font-readex">
-              {mode === "signup" ? "إنشاء حساب طالب جديد" : "تسجيل الدخول لمنصة علمني"}
+              {mode === "signup" ? t("signupTitle") : t("signinTitle")}
             </h3>
             <p className="text-xs text-[#334155]">
-              {mode === "signup" ? "أنشئ حسابك واختر معلمك والكورس المناسب لك" : "أهلاً بعودتك! ادخل بيانات حسابك للمتابعة"}
+              {mode === "signup" ? t("signupDescription") : t("signinDescription")}
             </p>
           </div>
         </div>
@@ -87,7 +89,7 @@ export default function AuthModal({ isOpen, initialMode, onClose, onSuccess }: A
               mode === "signup" ? "bg-white text-primary shadow-sm" : "text-[#334155]"
             )}
           >
-            حساب جديد
+            {t("signupTab")}
           </button>
           <button
             onClick={() => { setMode("signin"); setError(""); }}
@@ -96,21 +98,21 @@ export default function AuthModal({ isOpen, initialMode, onClose, onSuccess }: A
               mode === "signin" ? "bg-white text-primary shadow-sm" : "text-[#334155]"
             )}
           >
-            تسجيل الدخول
+            {t("signinTab")}
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {mode === "signup" && (
             <div>
-              <label className="block text-xs font-bold text-[#334155] mb-1">اسم الطالب رباعي</label>
+              <label className="block text-xs font-bold text-[#334155] mb-1">{t("nameLabel")}</label>
               <div className="relative">
                 <input
                   type="text"
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="أدخل اسمك الكامل..."
+                  placeholder={t("namePlaceholder")}
                   className="w-full pe-10 ps-4 py-2.5 bg-[#F8FAFC] border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 />
                 <User className="w-4 h-4 text-slate-400 absolute end-3.5 top-1/2 -translate-y-1/2" />
@@ -119,7 +121,7 @@ export default function AuthModal({ isOpen, initialMode, onClose, onSuccess }: A
           )}
 
           <div>
-            <label className="block text-xs font-bold text-[#334155] mb-1">البريد الإلكتروني</label>
+            <label className="block text-xs font-bold text-[#334155] mb-1">{t("emailLabel")}</label>
             <div className="relative">
               <input
                 type="email"
@@ -136,7 +138,7 @@ export default function AuthModal({ isOpen, initialMode, onClose, onSuccess }: A
 
           {mode === "signup" && (
             <div>
-              <label className="block text-xs font-bold text-[#334155] mb-1">رقم الموبايل (أو الواتساب)</label>
+              <label className="block text-xs font-bold text-[#334155] mb-1">{t("phoneLabel")}</label>
               <div className="relative">
                 <input
                   type="tel"
@@ -153,7 +155,7 @@ export default function AuthModal({ isOpen, initialMode, onClose, onSuccess }: A
           )}
 
           <div>
-            <label className="block text-xs font-bold text-[#334155] mb-1">كلمة المرور</label>
+            <label className="block text-xs font-bold text-[#334155] mb-1">{t("passwordLabel")}</label>
             <div className="relative">
               <input
                 type="password"
@@ -182,11 +184,11 @@ export default function AuthModal({ isOpen, initialMode, onClose, onSuccess }: A
           >
             {submitted ? (
               <span className="flex items-center gap-2">
-                <LoaderCircle className="w-4 h-4 animate-spin" /> جاري الاتصال...
+                <LoaderCircle className="w-4 h-4 animate-spin" /> {t("loading")}
               </span>
             ) : (
               <span className="flex items-center gap-2">
-                {mode === "signup" ? "تأكيد ودخول المنصة" : "تسجيل الدخول"}
+                {mode === "signup" ? t("signupSubmit") : t("signinSubmit")}
                 <ArrowLeft className="w-4 h-4 ltr:-scale-x-100" />
               </span>
             )}
@@ -194,7 +196,7 @@ export default function AuthModal({ isOpen, initialMode, onClose, onSuccess }: A
         </form>
 
         <p className="text-[11px] text-slate-400 text-center mt-4">
-          بالمتابعة فإنك توافق على شروط الاستخدام وسياسة الخصوصية الخاصة بمنصة علمني.
+          {t("legalNotice")}
         </p>
       </div>
     </div>

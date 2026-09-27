@@ -30,6 +30,7 @@ export default async function ExploreCoursesPage({
   const { locale } = await params;
   const query = await searchParams;
   setRequestLocale(locale);
+  const tTeacher = await getTranslations({ locale, namespace: "studentTeacherData" });
   if (query.view === "teachers") {
     const nextParams = new URLSearchParams();
     if (query.q) nextParams.set("q", query.q);
@@ -65,7 +66,7 @@ export default async function ExploreCoursesPage({
           {
             course,
             teacher: {
-              name: course.teacher_name || teacher?.name || "مدرس علمني",
+              name: course.teacher_name || teacher?.name || tTeacher("teacherFallback"),
               slug: course.teacher_slug,
               img: teacher?.img ?? null,
               subjects: teacher?.subjects.map((subject) => subject.name) ?? [],

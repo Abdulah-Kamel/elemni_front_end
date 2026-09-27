@@ -1,11 +1,13 @@
 import { WHATSAPP_URL } from "@/src/features/contact/contact-details";
+import { getTranslations } from "next-intl/server";
 
-export default function WhatsAppButton() {
+export default async function WhatsAppButton() {
+  const t = await getTranslations("landingWhatsapp");
   return (
     <div className="group pointer-events-auto fixed bottom-6 start-6 z-50 flex items-center gap-3 dir-rtl">
       <div className="pointer-events-none hidden translate-x-2 items-center gap-2 rounded-xl border border-slate-700 bg-[#0F172A] px-3.5 py-2 text-xs font-bold text-white opacity-0 shadow-xl transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 sm:flex">
         <span className="size-2 rounded-full bg-[#25D366]" />
-        <span>تحدث معنا عبر الواتساب</span>
+        <span>{t("label")}</span>
       </div>
 
       <a
@@ -13,7 +15,7 @@ export default function WhatsAppButton() {
         target="_blank"
         rel="noopener noreferrer"
         className="relative group w-14 h-14 bg-[#25D366] hover:bg-[#20ba5a] text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all cursor-pointer"
-        aria-label="تواصل معنا عبر الواتساب"
+        aria-label={t("ariaLabel")}
       >
         <span className="pointer-events-none absolute inset-0 rounded-full border border-white/30" />
         <svg className="w-8 h-8 fill-current relative z-10" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

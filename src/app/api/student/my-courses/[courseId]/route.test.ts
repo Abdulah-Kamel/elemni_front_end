@@ -2,8 +2,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   backendFetch: vi.fn(),
-  backendErrorResponse: vi.fn((error: { status: number; message: string }) =>
-    Response.json({ detail: error.message }, { status: error.status }),
+  backendErrorResponse: vi.fn((error: { status: number; code: string; detail?: string }) =>
+    Response.json({ code: error.code, ...(error.detail ? { detail: error.detail } : {}) }, { status: error.status }),
   ),
   authenticatedBackendFetch: vi.fn(),
   getAccessToken: vi.fn(),
@@ -48,7 +48,7 @@ describe("GET /api/student/my-courses/[courseId]", () => {
     mocks.getAccessToken.mockResolvedValue(undefined);
     mocks.authenticatedBackendFetch.mockResolvedValue({
       ok: false,
-      error: { status: 401, message: "يرجى تسجيل الدخول أولاً." },
+      error: { status: 401, code: "SESSION_REQUIRED" },
     });
     mocks.backendFetch.mockImplementation((path: string) => {
       if (path.startsWith("/api/v1/teachers?") || path === "/api/v1/teachers") {

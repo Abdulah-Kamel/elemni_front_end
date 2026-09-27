@@ -2,12 +2,14 @@ import { UserPlus, CheckCircle2, ArrowLeft, ShieldCheck, TrendingUp } from "luci
 import Image from "next/image";
 import teacherJoin from "@/src/assets/images/student-redesign/teacher-join.webp";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
+import { getTranslations } from "next-intl/server";
 
 interface TeacherJoinCTAProps {
   href: string;
 }
 
-export default function TeacherJoinCTA({ href }: TeacherJoinCTAProps) {
+export default async function TeacherJoinCTA({ href }: TeacherJoinCTAProps) {
+  const t = await getTranslations("landingTeacherJoin");
   return (
     <section className="py-16 sm:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -19,7 +21,7 @@ export default function TeacherJoinCTA({ href }: TeacherJoinCTAProps) {
             <div className="relative z-10 w-full max-w-[320px] aspect-4/5 rounded-[28px] border-2 border-sky-300/80 bg-[#C0DFF8] shadow-xl overflow-hidden group">
               <Image
                 src={teacherJoin}
-                alt="معلم متميز"
+                alt={t("imageAlt")}
                 fill
                 loading="lazy"
                 sizes="320px"
@@ -30,28 +32,28 @@ export default function TeacherJoinCTA({ href }: TeacherJoinCTAProps) {
 
           <div className="lg:w-[58%] p-8 sm:p-12 lg:p-14 flex flex-col justify-center space-y-6 text-end relative z-10">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white leading-tight font-readex">
-              انضم لنخبة المعلمين على{" "}
+              {t("titleLead")} {" "}
               <MarkerHighlight color="yellow" variant={1}>
-                منصة علمني
+                {t("titleHighlight")}
               </MarkerHighlight>
             </h2>
 
             <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-medium max-w-xl">
-              شارك في بناء مستقبل التعليم الرقمي، قدم محتواك لآلاف الطلاب.
+              {t("description")}
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
               <div className="flex items-center justify-center gap-2 bg-[#0E334D]/90 border border-sky-800/60 rounded-xl p-3 text-center">
                 <TrendingUp className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span className="text-xs font-bold text-slate-200">توسع وانتشار لآلاف الطلاب</span>
+                <span className="text-xs font-bold text-slate-200">{t("benefitReach")}</span>
               </div>
               <div className="flex items-center justify-center gap-2 bg-[#0E334D]/90 border border-sky-800/60 rounded-xl p-3 text-center">
                 <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span className="text-xs font-bold text-slate-200">حماية كاملة للمحتوى والدروس</span>
+                <span className="text-xs font-bold text-slate-200">{t("benefitProtection")}</span>
               </div>
               <div className="flex items-center justify-center gap-2 bg-[#0E334D]/90 border border-sky-800/60 rounded-xl p-3 text-center">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span className="text-xs font-bold text-slate-200">أدوات سهلة لإدارة الكورسات</span>
+                <span className="text-xs font-bold text-slate-200">{t("benefitTools")}</span>
               </div>
             </div>
 
@@ -59,7 +61,7 @@ export default function TeacherJoinCTA({ href }: TeacherJoinCTAProps) {
               <a href={href}
                 className="w-full sm:w-auto py-3.5 px-8 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-base rounded-2xl shadow-lg shadow-amber-400/20 transition-all cursor-pointer flex items-center justify-center gap-3 group">
                 <ArrowLeft className="w-5 h-5 text-slate-950 group-hover:-translate-x-1 transition-transform ltr:-scale-x-100" />
-                <span>انضم إلينا كمعلم</span>
+                <span>{t("cta")}</span>
                 <UserPlus className="w-5 h-5 text-slate-950" />
               </a>
             </div>

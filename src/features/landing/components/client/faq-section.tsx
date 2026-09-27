@@ -8,8 +8,11 @@ import { Reveal } from "@/src/components/ui/reveal";
 import { AnimatePresence, m } from "motion/react";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 import { WHATSAPP_URL } from "@/src/features/contact/contact-details";
+import { useTranslations } from "next-intl";
 
 export default function FaqSection() {
+  const t = useTranslations("landingFaq");
+  const tData = useTranslations("landingFaqData");
   const [openId, setOpenId] = useState<string | null>("faq1");
 
   const toggleItem = (id: string) => {
@@ -23,11 +26,11 @@ export default function FaqSection() {
           <div className="text-center space-y-3 mb-14">
             <h2 className="text-3xl sm:text-4xl font-black text-[#0F172A] font-readex">
               <MarkerHighlight color="yellow" variant={1}>
-                الأسئلة الشائعة
+              {t("heading")}
               </MarkerHighlight>
             </h2>
             <p className="text-sm sm:text-base text-[#334155]">
-              معلومات عن التسجيل والكورسات والاشتراكات على منصة علمني.
+              {t("subtitle")}
             </p>
           </div>
         </Reveal>
@@ -47,7 +50,7 @@ export default function FaqSection() {
                     aria-controls={`${item.id}-answer`}
                     className="flex w-full cursor-pointer items-center justify-between gap-4 p-5 text-start text-base font-bold text-[#0F172A] focus:outline-none"
                   >
-                    <span className="flex-1 font-readex">{item.question}</span>
+                    <span className="flex-1 font-readex">{tData(item.questionKey)}</span>
                     <div className={cn(
                       "w-8 h-8 rounded-full bg-primary-light text-primary flex items-center justify-center shrink-0 transition-transform duration-300",
                       isOpen ? "rotate-180 bg-primary text-white" : ""
@@ -66,7 +69,7 @@ export default function FaqSection() {
                         className="overflow-hidden"
                       >
                         <div className="border-t border-slate-100 px-5 pb-5 pt-4 text-start text-sm leading-relaxed text-[#334155]">
-                          <p>{item.answer}</p>
+                          <p>{tData(item.answerKey)}</p>
                         </div>
                       </m.div>
                     )}
@@ -84,8 +87,8 @@ export default function FaqSection() {
                 <MessageSquare className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="font-extrabold text-sm text-[#0F172A]">هل لديك سؤال آخر؟</h4>
-                <p className="text-xs text-[#334155]">تواصل مع فريق الدعم الفني عبر الواتساب.</p>
+                <h4 className="font-extrabold text-sm text-[#0F172A]">{t("otherQuestion")}</h4>
+                <p className="text-xs text-[#334155]">{t("supportDescription")}</p>
               </div>
             </div>
             <a
@@ -94,7 +97,7 @@ export default function FaqSection() {
               rel="noopener noreferrer"
               className="px-5 py-2.5 bg-primary text-white font-bold text-xs rounded-xl hover:bg-primary-hover transition-all shadow-md shrink-0"
             >
-              تحدث مع الدعم الفني
+              {t("supportCta")}
             </a>
           </div>
         </Reveal>

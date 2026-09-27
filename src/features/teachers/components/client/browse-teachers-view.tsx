@@ -9,6 +9,7 @@ import { Search, BookOpen, Sparkles, ChevronRight, ArrowLeft, ChevronLeft, Circl
 import { cn } from "@/src/lib/cn";
 import { ModernSelect } from "@/src/components/ui/modern-select";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
+import { useTranslations } from "next-intl";
 
 const ITEMS_PER_PAGE = 8;
 
@@ -23,32 +24,33 @@ function BrowseTeachersView({
   streams: StreamDto[];
   loadError?: boolean;
 }) {
+  const t = useTranslations("teacherBrowse");
   const [selectedGrade, setSelectedGrade] = useState("all");
   const [selectedStream, setSelectedStream] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
 
   const gradeOptions = useMemo(() => grades.length ? [
-    { value: "all", label: "جميع الصفوف الدراسية" },
+    { value: "all", label: t("allGrades") },
     ...grades.map((grade) => ({ value: String(grade.id), label: grade.name })),
   ] : [
-    { value: "all", label: "جميع الصفوف الدراسية" },
-    { value: "sec3", label: "الصف الثالث الثانوي" },
-    { value: "sec2", label: "الصف الثاني الثانوي" },
-    { value: "sec1", label: "الصف الأول الثانوي" },
-  ], [grades]);
+    { value: "all", label: t("allGrades") },
+    { value: "sec3", label: t("grade3") },
+    { value: "sec2", label: t("grade2") },
+    { value: "sec1", label: t("grade1") },
+  ], [grades, t]);
 
   const streamOptions = useMemo(() => streams.length ? [
-    { value: "all", label: "جميع الشعب والتخصصات" },
+    { value: "all", label: t("allStreams") },
     ...streams.map((stream) => ({ value: String(stream.id), label: stream.name })),
   ] : [
-    { value: "all", label: "جميع الشعب والتخصصات" },
-    { value: "general", label: "عام" },
-    { value: "science", label: "علمي علوم" },
-    { value: "math", label: "علمي رياضة" },
-    { value: "humanities", label: "أدبي / مواد أدبية" },
-    { value: "languages", label: "اللغات واللغويات" },
-  ], [streams]);
+    { value: "all", label: t("allStreams") },
+    { value: "general", label: t("general") },
+    { value: "science", label: t("science") },
+    { value: "math", label: t("math") },
+    { value: "humanities", label: t("humanities") },
+    { value: "languages", label: t("languages") },
+  ], [streams, t]);
 
   const filteredTeachers = useMemo(() => {
     return teachers.filter((teacher) => {
@@ -93,24 +95,24 @@ function BrowseTeachersView({
         <div className="mb-8">
           <Link href="/" className="inline-flex items-center gap-1 text-sm font-bold text-primary hover:underline mb-4">
             <ArrowLeft className="w-4 h-4 ltr:-scale-x-100" />
-            <span>العودة للرئيسية</span>
+            <span>{t("home")}</span>
           </Link>
-          <h1 className="text-3xl sm:text-4xl font-black text-ink font-readex"><MarkerHighlight color="yellow" variant={1}>جميع المدرسين</MarkerHighlight></h1>
-          <p className="text-muted mt-1">تصفح جميع المدرسين المتخصصين على المنصة</p>
+          <h1 className="text-3xl sm:text-4xl font-black text-ink font-readex"><MarkerHighlight color="yellow" variant={1}>{t("title")}</MarkerHighlight></h1>
+          <p className="text-muted mt-1">{t("subtitle")}</p>
         </div>
 
         {/* Filters */}
         <div className="bg-white dark:bg-slate-800 rounded-3xl p-4 sm:p-6 shadow-md border border-slate-200/80 dark:border-slate-700 mb-8 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
             <ModernSelect
-              label="الصف الدراسي"
+              label={t("gradeLabel")}
               options={gradeOptions}
               value={selectedGrade}
               onChange={handleFilterChange(setSelectedGrade)}
               icon={BookOpen}
             />
             <ModernSelect
-              label="الشعبة / التخصص"
+              label={t("streamLabel")}
               options={streamOptions}
               value={selectedStream}
               onChange={handleFilterChange(setSelectedStream)}
@@ -118,7 +120,7 @@ function BrowseTeachersView({
             />
             <div className="relative text-start font-readex">
               <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 font-readex">
-                البحث باسم المعلم أو المادة
+                {t("searchLabel")}
               </label>
               <div className="relative">
                 <input
@@ -128,7 +130,7 @@ function BrowseTeachersView({
                     setSearchQuery(e.target.value);
                     setPage(1);
                   }}
-                  placeholder="ابحث عن معلم..."
+                  placeholder={t("searchPlaceholder")}
                   className="w-full rounded-2xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-900/80 py-3 pe-10 ps-10 text-sm font-bold text-ink placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-readex backdrop-blur-sm"
                 />
                 <Search className="w-4 h-4 text-slate-400 absolute inset-s-3 top-1/2 -translate-y-1/2 stroke-[2.2]" />
@@ -152,13 +154,13 @@ function BrowseTeachersView({
         {loadError && (
           <div className="mb-6 flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-bold text-amber-900 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-200">
             <CircleAlert className="size-5 shrink-0" />
-            <span>تعذر تحميل قائمة المدرسين من الخادم. حاول تحديث الصفحة بعد قليل.</span>
+            <span>{t("loadError")}</span>
           </div>
         )}
         <p className="text-sm text-muted mb-6">
-          عرض {paginatedTeachers.length} من {filteredTeachers.length} معلم
+          {t("results", { shown: paginatedTeachers.length, total: filteredTeachers.length })}
           {(selectedGrade !== "all" || selectedStream !== "all" || searchQuery) && (
-            <button onClick={() => { setSelectedGrade("all"); setSelectedStream("all"); setSearchQuery(""); setPage(1); }} className="ms-3 text-primary font-bold hover:underline text-xs">إعادة ضبط</button>
+            <button onClick={() => { setSelectedGrade("all"); setSelectedStream("all"); setSearchQuery(""); setPage(1); }} className="ms-3 text-primary font-bold hover:underline text-xs">{t("reset")}</button>
           )}
         </p>
 
@@ -199,7 +201,7 @@ function BrowseTeachersView({
                         <span key={idx} className="text-[11px] font-extrabold text-sky-800 dark:text-sky-300 bg-sky-100/90 dark:bg-slate-700/80 px-2.5 py-0.5 rounded-full">{grade}</span>
                       ))}
                       {remainingCount > 0 && (
-                        <span className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 bg-slate-200/80 dark:bg-slate-600/80 px-2 py-0.5 rounded-full">+{remainingCount} صفوف أخرى</span>
+                        <span className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 bg-slate-200/80 dark:bg-slate-600/80 px-2 py-0.5 rounded-full">{t("moreGrades", { count: remainingCount })}</span>
                       )}
                     </div>
                     {teacher.bio && (
@@ -211,7 +213,7 @@ function BrowseTeachersView({
                   <div className="pt-3 border-t border-sky-200/50 dark:border-slate-700/80 shrink-0">
                     <div className="w-full py-2.5 px-4 bg-primary group-hover:bg-primary-hover text-white font-bold text-xs sm:text-sm rounded-xl shadow-md shadow-primary/20 group-hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
                       <BookOpen className="w-4 h-4" />
-                      <span>عرض الكورسات</span>
+                      <span>{t("viewCourses")}</span>
                     </div>
                   </div>
                 </Link>
@@ -221,10 +223,10 @@ function BrowseTeachersView({
         ) : (
           <div className="text-center py-16">
             <Search className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-            <h3 className="text-lg font-bold text-ink"><MarkerHighlight color="pink" variant={4}>لم نجد معلمين يطابقون بحثك</MarkerHighlight></h3>
-            <p className="text-sm text-muted mt-1">جرب البحث بكلمات أخرى أو اختر صف دراسي مختلف.</p>
+            <h3 className="text-lg font-bold text-ink"><MarkerHighlight color="pink" variant={4}>{t("emptyTitle")}</MarkerHighlight></h3>
+            <p className="text-sm text-muted mt-1">{t("emptyDescription")}</p>
             <button onClick={() => { setSelectedGrade("all"); setSelectedStream("all"); setSearchQuery(""); setPage(1); }}
-              className="mt-4 px-6 py-2.5 bg-primary text-white font-bold text-sm rounded-xl">إعادة ضبط جميع الفلاتر</button>
+              className="mt-4 px-6 py-2.5 bg-primary text-white font-bold text-sm rounded-xl">{t("resetAll")}</button>
           </div>
         )}
 
