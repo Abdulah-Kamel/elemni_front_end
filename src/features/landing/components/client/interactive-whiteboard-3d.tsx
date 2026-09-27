@@ -5,6 +5,7 @@ import * as THREE from "three";
 import { Hand } from "lucide-react";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 import InteractiveWhiteboardMobile from "./interactive-whiteboard-mobile";
+import { observeWhiteboardVisibility } from "./whiteboard-visibility-controller";
 
 interface StickyNoteData {
   id: string;
@@ -308,7 +309,9 @@ export default function InteractiveWhiteboard3D() {
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
+    let disposeRenderer: (() => void) | undefined;
 
+    const initializeRenderer = (staticFrame = false) => {
     // 1. Scene Setup
     const scene = new THREE.Scene();
     const getBgColor = () =>
@@ -896,8 +899,6 @@ export default function InteractiveWhiteboard3D() {
     const clock = new THREE.Clock();
 
     const animate = () => {
-      animationFrameId = requestAnimationFrame(animate);
-
       camera.position.x = THREE.MathUtils.lerp(
         camera.position.x,
         targetCamX,
@@ -921,6 +922,7 @@ export default function InteractiveWhiteboard3D() {
       updateAllRopes();
 
       renderer.render(scene, camera);
+      if (!staticFrame) animationFrameId = requestAnimationFrame(animate);
     };
 
     animate();
@@ -939,7 +941,38 @@ export default function InteractiveWhiteboard3D() {
         container.removeChild(renderer.domElement);
       }
       themeObserver.disconnect();
+      scene.traverse((object) => {
+        const mesh = object as THREE.Mesh;
+        mesh.geometry?.dispose();
+        const materials = Array.isArray(mesh.material) ? mesh.material : mesh.material ? [mesh.material] : [];
+        for (const material of materials) {
+          for (const value of Object.values(material)) {
+            if (value instanceof THREE.Texture) value.dispose();
+          }
+          material.dispose();
+        }
+      });
       renderer.dispose();
+    };
+    };
+
+    const stop = () => {
+      disposeRenderer?.();
+      disposeRenderer = undefined;
+    };
+    const controllerCleanup = observeWhiteboardVisibility(container, {
+      startLoop: () => {
+        disposeRenderer = initializeRenderer(false);
+      },
+      stopLoop: stop,
+      renderStaticFrame: () => {
+        disposeRenderer = initializeRenderer(true);
+      },
+      threshold: 0.1,
+    });
+    return () => {
+      controllerCleanup();
+      stop();
     };
   }, []);
 

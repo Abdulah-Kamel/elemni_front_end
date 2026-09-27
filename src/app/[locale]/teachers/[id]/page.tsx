@@ -4,6 +4,8 @@ import TeacherProfileShell from "@/src/features/teachers/components/client/teach
 import { toTeacher } from "@/src/lib/student-api/adapters";
 import { getPublicTeacher, getPublicTeacherCourses, getPublicTeachers } from "@/src/lib/student-api/public";
 
+export const revalidate = 300;
+
 export default async function TeacherProfilePage({
   params,
 }: {

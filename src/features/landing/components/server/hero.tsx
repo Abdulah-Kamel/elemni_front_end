@@ -104,7 +104,8 @@ export default function Hero({
                 alt="رسم تخطيطي لطالبة ثانوية تذاكر في غرفتها على منصة علمني"
                 width={560}
                 height={560}
-                priority
+                fetchPriority="high"
+                sizes="(max-width: 1023px) 100vw, 520px"
                 className="w-full h-auto object-contain block dark:hidden opacity-95 pointer-events-none select-none"
               />
               {/* Dark Mode Artwork */}
@@ -113,7 +114,8 @@ export default function Hero({
                 alt="رسم تخطيطي لطالبة ثانوية تذاكر في غرفتها على منصة علمني (الوضع الداكن)"
                 width={560}
                 height={560}
-                priority
+                loading="lazy"
+                sizes="(max-width: 1023px) 100vw, 520px"
                 className="w-full h-auto object-contain hidden dark:block opacity-95 pointer-events-none select-none drop-shadow-[0_0_20px_rgba(56,189,248,0.15)]"
               />
             </div>

@@ -1,7 +1,7 @@
 import { setRequestLocale } from "next-intl/server";
 import LandingPage from "@/src/features/landing/page";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export async function generateMetadata() {
   return {

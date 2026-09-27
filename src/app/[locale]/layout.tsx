@@ -5,7 +5,7 @@ import { routing } from "@/src/i18n/routing";
 import StudentQueryProvider from "@/src/components/providers/student-query-provider";
 import { HtmlLangDir } from "./html-lang-dir";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));

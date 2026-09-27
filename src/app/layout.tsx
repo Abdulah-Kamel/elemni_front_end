@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { Readex_Pro } from "next/font/google";
-import { headers } from "next/headers";
 import "./globals.css";
 
 const readexPro = Readex_Pro({
@@ -10,9 +9,8 @@ const readexPro = Readex_Pro({
   weight: ["400", "500", "600", "700"],
 });
 
-export default async function RootLayout({ children }: { children: ReactNode }) {
-  const locale = (await headers()).get("X-NEXT-INTL-LOCALE") ?? "ar";
-
+export default function RootLayout({ children }: { children: ReactNode }) {
+  const locale = "ar";
   return (
     <html
       lang={locale}

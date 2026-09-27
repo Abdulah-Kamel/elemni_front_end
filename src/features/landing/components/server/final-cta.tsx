@@ -1,5 +1,3 @@
-"use client";
-
 import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import groupStudentsLight from "@/src/assets/images/student-redesign/final_cta_group_students.png";
@@ -88,7 +86,8 @@ export default function FinalCta() {
                   alt="رسم تخطيطي لمجموعة من الطلاب يذاكرون معاً على منصة علمني"
                   width={520}
                   height={420}
-                  priority
+                loading="lazy"
+                sizes="(max-width: 1023px) 100vw, 520px"
                   className="w-full h-auto object-contain block dark:hidden opacity-95 pointer-events-none select-none"
                 />
 
@@ -98,7 +97,8 @@ export default function FinalCta() {
                   alt="رسم تخطيطي لمجموعة من الطلاب يذاكرون معاً على منصة علمني (الوضع الداكن)"
                   width={520}
                   height={420}
-                  priority
+                loading="lazy"
+                sizes="(max-width: 1023px) 100vw, 520px"
                   className="w-full h-auto object-contain hidden dark:block opacity-95 pointer-events-none select-none drop-shadow-[0_0_20px_rgba(56,189,248,0.15)]"
                 />
 

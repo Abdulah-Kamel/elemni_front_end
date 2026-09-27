@@ -4,6 +4,8 @@ import { TermsAccordion } from "@/src/features/legal/components/terms-accordion"
 import { RefundSection } from "@/src/features/legal/components/refund-section";
 import Footer from "@/src/features/landing/components/server/footer";
 
+export const revalidate = 300;
+
 type LegalPageProps = {
   params: Promise<{ locale: string }>;
 };

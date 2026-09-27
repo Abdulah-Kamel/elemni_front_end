@@ -165,7 +165,7 @@ function BrowseTeachersView({
         {/* Teacher grid */}
         {paginatedTeachers.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-stretch">
-            {paginatedTeachers.map((teacher) => {
+            {paginatedTeachers.map((teacher, index) => {
               const subjectsList = teacher.subjects?.length ? teacher.subjects : [teacher.subject];
               const gradesList = teacher.gradesList?.length ? teacher.gradesList : [teacher.gradeLabel];
               const visibleGrades = gradesList.slice(0, 2);
@@ -181,7 +181,7 @@ function BrowseTeachersView({
                         src={teacher.avatar}
                         alt={teacher.name}
                         fill
-                        loading="lazy"
+                        {...(index < 2 ? { priority: true } : { loading: "lazy" as const })}
                         sizes="(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) 50vw, 25vw"
                         className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
                       />

@@ -9,7 +9,6 @@ import {
   getPublicTeacherCourse,
   getStreams,
 } from "@/src/lib/student-api/public";
-import { getAccessToken } from "@/src/lib/student-api/session";
 
 export const metadata = { title: "تفاصيل الكورس | علمني" };
 
@@ -26,18 +25,18 @@ export default async function CourseDetailPage({
 
   const parsedCourseId = Number(courseId);
   if (!Number.isInteger(parsedCourseId) || parsedCourseId <= 0) notFound();
-  const isAuthenticated = Boolean(await getAccessToken());
 
   const requestedTeacher = teacher?.trim() || undefined;
-  const [grades, streams, catalog] = await Promise.all([
-    getGrades(),
-    getStreams(),
-    getPublicCourses(),
-  ]);
-  const catalogCourse = catalog?.ok
-    ? catalog.data.find((course) => course.id === parsedCourseId)
-    : undefined;
-  const teacherSlug = requestedTeacher || catalogCourse?.teacher_slug || undefined;
+  const [grades, streams, teacherSlug] = requestedTeacher
+    ? await Promise.all([getGrades(), getStreams(), Promise.resolve(requestedTeacher)])
+    : await (async () => {
+        const [gradeResult, streamResult, catalog] = await Promise.all([
+          getGrades(), getStreams(), getPublicCourses(),
+        ]);
+        return [gradeResult, streamResult, catalog?.ok
+          ? catalog.data.find((course) => course.id === parsedCourseId)?.teacher_slug ?? undefined
+          : undefined] as const;
+      })();
   const [courseResult, teacherResult] = await Promise.all([
     teacherSlug ? getPublicTeacherCourse(teacherSlug, parsedCourseId) : Promise.resolve(null),
     teacherSlug ? getPublicTeacher(teacherSlug) : Promise.resolve(null),
@@ -65,7 +64,7 @@ export default async function CourseDetailPage({
       teacherSlug={teacherSlug}
       grades={grades.ok ? grades.data : []}
       streams={streams.ok ? streams.data : []}
-      isAuthenticated={isAuthenticated}
+      isAuthenticated={false}
       publicMode
       initialDetail={initialDetail}
     />
