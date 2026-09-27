@@ -3,20 +3,14 @@
 import { useEffect, useRef } from "react";
 import { CheckCircle2, CircleAlert, LoaderCircle, ShieldCheck, TicketPercent, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import ImageWithFallback from "@/src/components/ui/image-with-fallback";
-import lessonFallback from "@/src/assets/images/student-redesign/lesson-study-skills.webp";
+import CourseCover from "./course-cover-placeholder";
+import { formatMoney } from "@/src/lib/format/money";
 import type { CouponValidation } from "@/src/lib/coupons/coupons";
 import type {
   PublicCourseDto,
   StudentCourseTeacherDto,
 } from "@/src/lib/student-api/contract";
 
-function formatPrice(value: string | number, locale: string) {
-  return new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(Number(value));
-}
 
 export default function CheckoutConfirmation({
   open,
@@ -104,27 +98,20 @@ export default function CheckoutConfirmation({
 
         <div className="mt-6 flex gap-4 rounded-xl border border-[#E4ECF2] bg-[#F8FBFD] p-3">
           <div className="relative size-20 shrink-0 overflow-hidden rounded-lg bg-[#DDF2FC]">
-            <ImageWithFallback
-              src={course.img}
-              fallbackSrc={lessonFallback}
-              alt=""
-              fill
-              sizes="80px"
-              className="object-cover"
-            />
+            <CourseCover src={course.img} subject={course.subject_name} alt={course.title} sizes="80px" className="object-cover" />
           </div>
           <div className="min-w-0">
             <h3 className="truncate text-sm font-black text-[#0F2638]">{course.title}</h3>
             {teacher && <p className="mt-1 truncate text-xs text-[#6B7E8F]">{teacher.name}</p>}
             {coupon?.ok ? (
               <div className="mt-2 rounded-xl border-2 border-dashed border-ink/20 bg-white px-3 py-2.5 text-sm font-bold text-ink tabular-nums dark:border-white/20 dark:bg-slate-900 dark:text-slate-50">
-                <p className="flex justify-between text-muted dark:text-slate-400"><span>{t("couponOriginal")}</span><span className="line-through">{formatPrice(coupon.originalPrice, locale)}</span></p>
-                <p className="mt-1 flex justify-between text-emerald-700 dark:text-emerald-300"><span className="inline-flex items-center gap-1.5"><TicketPercent className="size-4" aria-hidden="true" />{t("couponDiscount", { code: coupon.coupon!.code })}</span><span>-{formatPrice(coupon.discount, locale)}</span></p>
-                <p className="mt-1.5 flex items-baseline justify-between border-t-2 border-ink/10 pt-1.5 dark:border-white/10"><span className="font-black">{t("couponTotal")}</span><span className="sticker-numeral text-xl font-black tracking-tight">{formatPrice(coupon.finalPrice, locale)} <span className="text-xs">{t("currency")}</span></span></p>
+                <p className="flex justify-between text-muted dark:text-slate-400"><span>{t("couponOriginal")}</span><span className="line-through">{formatMoney(coupon.originalPrice, locale)}</span></p>
+                <p className="mt-1 flex justify-between text-emerald-700 dark:text-emerald-300"><span className="inline-flex items-center gap-1.5"><TicketPercent className="size-4" aria-hidden="true" />{t("couponDiscount", { code: coupon.coupon!.code })}</span><span>-{formatMoney(coupon.discount, locale)}</span></p>
+                <p className="mt-1.5 flex items-baseline justify-between border-t-2 border-ink/10 pt-1.5 dark:border-white/10"><span className="font-black">{t("couponTotal")}</span><span className="sticker-numeral text-xl font-black tracking-tight">{formatMoney(coupon.finalPrice, locale)}</span></p>
               </div>
             ) : (
               <p className="sticker-numeral mt-2 text-xl font-black tracking-tight text-ink dark:text-slate-50">
-                {formatPrice(course.price, locale)} <span className="text-xs">{t("currency")}</span>
+                {formatMoney(course.price, locale)}
               </p>
             )}
           </div>
@@ -164,7 +151,7 @@ export default function CheckoutConfirmation({
             className="sticker-btn order-1 inline-flex h-12 cursor-pointer items-center justify-center gap-2 px-4 text-sm font-black disabled:cursor-wait disabled:opacity-60 disabled:shadow-none sm:order-2"
           >
             {loading && <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />}
-            {loading ? t("redirecting") : coupon?.ok ? t("continueToPaymentWithTotal", { total: formatPrice(coupon.finalPrice, locale) }) : t("continueToPayment")}
+            {loading ? t("redirecting") : coupon?.ok ? t("continueToPaymentWithTotal", { total: formatMoney(coupon.finalPrice, locale) }) : t("continueToPayment")}
           </button>
         </div>
       </section>

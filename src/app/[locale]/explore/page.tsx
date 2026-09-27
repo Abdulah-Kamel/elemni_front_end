@@ -79,6 +79,7 @@ export default async function ExploreCoursesPage({
       streams={streams.ok ? streams.data : []}
       subjects={subjects.ok ? subjects.data : []}
       loadError={!courses.ok || !teachers.ok}
+      locale={locale}
     />
   );
 }

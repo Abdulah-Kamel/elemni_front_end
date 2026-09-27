@@ -656,7 +656,12 @@
       "discussions": "المناقشات",
       "progress": "التقدم",
       "comingSoon": "قريباً"
-    }
+    },
+    "courseNotFoundTitle": "لم نعثر على هذا الكورس.",
+    "courseNotFoundExplore": "استكشف الكورسات",
+    "documentSupportNote": "إذا لم يعمل الملف، افتحه مباشرة أو تواصل مع الدعم.",
+    "contactSupport": "تواصل مع الدعم",
+    "videoLoadError": "تعذر تحميل الفيديو."
   },
   "teachers": {
     "meta": {
@@ -810,5 +815,10 @@
       "dashboard": "العودة للرئيسية",
       "explore": "استكشف الكورسات"
     }
+  },
+  "studentDashboard": {
+    "upcomingTitle": "ينتهي الوصول قريباً",
+    "allMyCourses": "كل كورساتي",
+    "endsIn": "ينتهي {relative}"
   }
 }

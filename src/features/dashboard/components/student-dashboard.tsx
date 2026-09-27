@@ -3,24 +3,21 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
-  Atom,
   BookOpen,
-  Calculator,
   CalendarDays,
   CircleAlert,
   Clock3,
-  Cpu,
   GraduationCap,
-  Leaf,
-  NotebookPen,
   Rocket,
 } from "lucide-react";
 import { GlobalLoading } from "@/src/components/ui/global-loading";
-import ImageWithFallback from "@/src/components/ui/image-with-fallback";
+import CourseCover from "@/src/features/courses/components/course-cover-placeholder";
+import { formatDate, formatRelativeDays } from "@/src/lib/format/date";
+import { getCourseArtwork } from "@/src/features/courses/subject-art";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 import { m } from "motion/react";
 import { Link, useRouter } from "@/src/i18n/navigation";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import type { GradeDto, StreamDto } from "@/src/lib/student-api/contract";
 import {
   getStudentErrorMessage,
@@ -30,7 +27,6 @@ import {
   useCurrentStudent,
   useMyCourses,
 } from "@/src/features/student/hooks/use-student-queries";
-import lessonFallback from "@/src/assets/images/student-redesign/lesson-study-skills.webp";
 import StudentAppShell from "@/src/features/portal/components/portal-shell";
 import StudyCounter from "./study-counter";
 
@@ -42,17 +38,9 @@ interface OnboardingDraft {
 const popSpring = { type: "spring", stiffness: 260, damping: 22 } as const;
 
 function formatExpiry(value: string, locale: string) {
-  return new Intl.DateTimeFormat(locale === "ar" ? "ar-EG" : "en-GB", { day: "numeric", month: "short" }).format(new Date(value));
+  return formatDate(value, locale, "short");
 }
 
-function getCourseArtwork(subject: string | null) {
-  const value = subject?.toLocaleLowerCase() ?? "";
-  if (value.includes("رياض") || value.includes("math")) return { Icon: Calculator, tone: "bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300" };
-  if (value.includes("أحيا") || value.includes("احيا") || value.includes("biology")) return { Icon: Leaf, tone: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300" };
-  if (value.includes("فيزي") || value.includes("physics")) return { Icon: Atom, tone: "bg-violet-50 text-violet-700 dark:bg-violet-950/40 dark:text-violet-300" };
-  if (value.includes("كمبيوتر") || value.includes("computer") || value.includes("برمج")) return { Icon: Cpu, tone: "bg-sky-50 text-sky-700 dark:bg-sky-950/40 dark:text-sky-300" };
-  return { Icon: BookOpen, tone: "bg-sky-50 text-sky-700 dark:bg-sky-950/40 dark:text-sky-300" };
-}
 
 function DashboardLoading() {
   return <GlobalLoading variant="content" message="جاري تجهيز صفحتك..." />;
@@ -60,8 +48,10 @@ function DashboardLoading() {
 
 export default function StudentDashboard({ grades, streams }: { grades: GradeDto[]; streams: StreamDto[] }) {
   const locale = useLocale();
+  const dashboardT = useTranslations("studentDashboard");
   const router = useRouter();
   const [profileLabel, setProfileLabel] = useState("");
+  const [currentTime, setCurrentTime] = useState<number | null>(null);
   const [courseFilter, setCourseFilter] = useState<"all" | "in-progress" | "completed">("all");
   const userQuery = useCurrentStudent();
   const coursesQuery = useMyCourses();
@@ -81,6 +71,7 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
   }, [router, unauthorized]);
 
   useEffect(() => {
+    const clockTimer = window.setTimeout(() => setCurrentTime(Date.now()), 0);
     const timer = window.setTimeout(() => {
       const rawDraft = localStorage.getItem("elemni-student-onboarding-v1");
       if (rawDraft) {
@@ -94,7 +85,7 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
         }
       }
     }, 0);
-    return () => window.clearTimeout(timer);
+    return () => { window.clearTimeout(timer); window.clearTimeout(clockTimer); };
   }, [grades, streams]);
 
   const loadDashboard = () => {
@@ -119,9 +110,10 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
       new Date(first.progress.last_opened_at ?? first.purchased_at).getTime(),
   );
   const primary = sortedEnrollments.find((enrollment) => enrollment.progress.completion_percent < 100) ?? sortedEnrollments[0];
-  const expiringSoon = [...enrollments]
-    .sort((first, second) => new Date(first.expires_at).getTime() - new Date(second.expires_at).getTime())
-    .slice(0, 4);
+  const expiringSoon = currentTime === null ? [] : enrollments.filter((enrollment) => {
+    const expiry = new Date(enrollment.expires_at).getTime();
+    return expiry >= currentTime && expiry <= currentTime + 14 * 24 * 60 * 60 * 1000;
+  }).sort((first, second) => new Date(first.expires_at).getTime() - new Date(second.expires_at).getTime());
   const visibleEnrollments = enrollments.filter((enrollment) => {
     if (courseFilter === "completed") return enrollment.progress.completion_percent === 100;
     if (courseFilter === "in-progress") return enrollment.progress.completion_percent < 100;
@@ -160,11 +152,7 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
               <section aria-label="تابع التعلّم" className="sticker-tile sticker-tile-brand order-2 overflow-hidden border-2 border-ink lg:col-start-1">
                 <div className="flex min-h-[250px] flex-col sm:flex-row">
                   <div className="relative min-h-40 bg-amber-50 text-amber-700 sm:min-h-0 sm:w-44 lg:w-48">
-                    {primary.course.img ? (
-                      <ImageWithFallback src={primary.course.img} fallbackSrc={lessonFallback} alt={primary.course.title} fill sizes="(max-width: 639px) 100vw, 192px" className="object-cover" />
-                    ) : (
-                      <div className="flex h-full min-h-40 items-center justify-center"><NotebookPen className="size-12" strokeWidth={1.7} /></div>
-                    )}
+                    <CourseCover src={primary.course.img} subject={primary.course.subject_name} alt={primary.course.title} sizes="(max-width: 639px) 100vw, 192px" className="object-cover" />
                   </div>
                   <div className="flex min-w-0 flex-1 flex-col justify-center p-5 sm:p-6 lg:p-7">
                     <div className="flex flex-wrap items-center gap-2 text-sm font-semibold text-white">
@@ -219,11 +207,11 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
               {visibleEnrollments.length ? (
                 <div className="grid gap-4 sm:grid-cols-2">
                   {visibleEnrollments.slice(0, 4).map((enrollment) => {
-                    const { Icon: ArtworkIcon, tone } = getCourseArtwork(enrollment.course.subject_name);
+                    const { tone } = getCourseArtwork(enrollment.course.subject_name);
                     return (
                     <Link key={enrollment.id} href={`/my-courses/${enrollment.course.id}`} aria-label={`فتح كورس ${enrollment.course.title}`} className="sticker-tile group overflow-hidden border-2 border-ink bg-white transition hover:-translate-y-0.5 hover:shadow-[7px_7px_0_0_var(--color-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 dark:border-sky-300 dark:bg-slate-900 dark:hover:shadow-[7px_7px_0_0_#020617]">
                       <div className={`relative h-20 border-b-2 border-ink sm:h-28 dark:border-sky-300 ${tone}`}>
-                        {enrollment.course.img ? <ImageWithFallback src={enrollment.course.img} fallbackSrc={lessonFallback} alt={enrollment.course.title} fill sizes="(max-width: 639px) 100vw, 50vw" className="object-cover" /> : <div className="flex h-full items-center justify-center"><ArtworkIcon className="size-9" strokeWidth={1.7} /></div>}
+                        <CourseCover src={enrollment.course.img} subject={enrollment.course.subject_name} alt={enrollment.course.title} sizes="(max-width: 639px) 100vw, 50vw" className="object-cover" />
                         {enrollment.course.subject_name && <span className="sticker-badge absolute end-3 top-3 -rotate-2 bg-amber-300 px-2.5 py-1 text-[11px] font-extrabold text-ink dark:bg-amber-300 dark:text-ink">{enrollment.course.subject_name}</span>}
                       </div>
                       <div className="p-4">
@@ -263,18 +251,18 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
               ))}
             </section>
 
-            <section id="upcoming" aria-labelledby="upcoming-heading" className="sticker-tile order-5 scroll-mt-24 border-2 border-ink bg-white p-5 dark:border-sky-300 dark:bg-slate-900 lg:col-start-2 lg:row-start-3 lg:self-start">
+            {expiringSoon.length > 0 && <section id="upcoming" aria-labelledby="upcoming-heading" className="sticker-tile order-5 scroll-mt-24 border-2 border-ink bg-white p-5 dark:border-sky-300 dark:bg-slate-900 lg:col-start-2 lg:row-start-3 lg:self-start">
               <div className="mb-4 flex items-center justify-between gap-2">
-                <h2 id="upcoming-heading" className="text-lg font-extrabold text-slate-900 dark:text-white">ينتهي الوصول قريباً</h2>
-                <Link href="/my-courses" className="text-xs font-semibold text-brand-700 hover:underline dark:text-brand-300">التقويم</Link>
+                <h2 id="upcoming-heading" className="text-lg font-extrabold text-slate-900 dark:text-white">{dashboardT("upcomingTitle")}</h2>
+                <Link href="/my-courses" className="text-xs font-semibold text-brand-700 hover:underline dark:text-brand-300">{dashboardT("allMyCourses")}</Link>
               </div>
               {expiringSoon.length ? (
                 <ul className="space-y-4">
                   {expiringSoon.map((enrollment) => (
                     <li key={enrollment.id}>
                       <Link href={`/my-courses/${enrollment.course.id}`} className="flex items-center gap-3 rounded-lg transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 dark:hover:bg-slate-800">
-                        <span className="flex size-11 shrink-0 flex-col items-center justify-center rounded-lg bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200"><span className="text-base font-extrabold leading-5 tabular-nums">{new Intl.DateTimeFormat(locale === "ar" ? "ar-EG" : "en-GB", { day: "numeric" }).format(new Date(enrollment.expires_at))}</span><span className="text-[9px] font-semibold">{new Intl.DateTimeFormat(locale === "ar" ? "ar-EG" : "en-GB", { month: "short" }).format(new Date(enrollment.expires_at))}</span></span>
-                        <span className="min-w-0 flex-1"><span className="block truncate text-sm font-bold text-slate-900 dark:text-white">{enrollment.course.title}</span><span className="mt-1 block text-xs text-slate-600 dark:text-slate-300">{enrollment.progress.completion_percent === 100 ? "مكتمل · متاح للمراجعة" : "متاح ضمن اشتراكك"}</span></span>
+                        <span className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200"><CalendarDays className="size-5" aria-hidden="true" /></span>
+                        <span className="min-w-0 flex-1"><span className="block truncate text-sm font-bold text-slate-900 dark:text-white">{enrollment.course.title}</span><span className="mt-1 block text-xs text-slate-600 dark:text-slate-300">{dashboardT("endsIn", { relative: formatRelativeDays(enrollment.expires_at, locale) })}<span className="mt-1 block text-xs text-slate-500 dark:text-slate-400">{formatDate(enrollment.expires_at, locale, "long")}</span></span></span>
                       </Link>
                     </li>
                   ))}
@@ -282,7 +270,7 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
               ) : (
                 <p className="text-sm leading-6 text-slate-600 dark:text-slate-300">لا توجد اشتراكات تنتهي قريباً.</p>
               )}
-            </section>
+            </section>}
         </div>
       )}
     </StudentAppShell>

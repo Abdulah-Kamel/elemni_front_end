@@ -9,14 +9,14 @@ import { Section } from "@/src/components/ui/section";
 import { Reveal } from "@/src/components/ui/reveal";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 import { ModernSelect } from "@/src/components/ui/modern-select";
-import ImageWithFallback from "@/src/components/ui/image-with-fallback";
+import CourseCover from "@/src/features/courses/components/course-cover-placeholder";
 import type {
   GradeDto,
   PublicCourseDto,
   StreamDto,
   SubjectDto,
 } from "@/src/lib/student-api/contract";
-import lessonFallback from "@/src/assets/images/student-redesign/lesson-calculus.webp";
+import { formatMoney } from "@/src/lib/format/money";
 import { filterLandingCourses, type LandingCourseFilters } from "./course-filter";
 
 const initialFilters: LandingCourseFilters = {
@@ -33,14 +33,6 @@ function formatDuration(minutes: number | null, t: ReturnType<typeof useTranslat
     : t("hours", { count: Math.round(minutes / 60) });
 }
 
-function formatPrice(price: string | number, locale: string, t: ReturnType<typeof useTranslations<"studentLanding.courses">>) {
-  const value = Number(price);
-  if (!Number.isFinite(value) || value === 0) return t("free");
-
-  return `${new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-EG", {
-    maximumFractionDigits: 2,
-  }).format(value)} ${t("currency")}`;
-}
 
 function courseDetailsHref(course: PublicCourseDto) {
   const teacherSlug = course.teacher_slug?.trim();
@@ -195,15 +187,7 @@ export default function CourseDiscovery({
                       data-testid="course-card-image"
                       className="relative h-36 w-full overflow-hidden bg-slate-100 dark:bg-slate-700"
                     >
-                      <ImageWithFallback
-                        src={course.img}
-                        fallbackSrc={lessonFallback}
-                        alt={course.title}
-                        fill
-                        loading="lazy"
-                        sizes="(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) 50vw, 33vw"
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
+                      <CourseCover src={course.img} subject={course.subject_name} alt={course.title} sizes="(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) 50vw, 33vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
                       <span className="absolute start-3 bottom-3 w-fit max-w-[75%] truncate rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-extrabold text-primary shadow-sm backdrop-blur-sm dark:bg-slate-900/90">
                         {course.subject_name || t("courseLabel")}
                       </span>
@@ -224,7 +208,7 @@ export default function CourseDiscovery({
                         {duration && <span className="inline-flex items-center gap-1.5"><Clock3 className="size-4 text-emerald-600" aria-hidden="true" />{duration}</span>}
                       </div>
                       <div className="mt-auto flex items-center justify-end gap-3 pt-4">
-                        <span className="text-base font-black text-[#0F172A] dark:text-white sm:text-lg">{formatPrice(course.price, locale, t)}</span>
+                        <span className="text-base font-black text-[#0F172A] dark:text-white sm:text-lg">{formatMoney(course.price, locale)}</span>
                       </div>
                     </div>
                   </m.article>

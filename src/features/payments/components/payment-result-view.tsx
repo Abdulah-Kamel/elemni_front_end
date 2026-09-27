@@ -12,6 +12,8 @@ import { m } from "motion/react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/src/i18n/navigation";
 import { cn } from "@/src/lib/cn";
+import { useLocale } from "next-intl";
+import { formatMoney } from "@/src/lib/format/money";
 import type {
   PaymentResultDetails,
   PaymentResultStatus,
@@ -57,6 +59,7 @@ export default function PaymentResultView({
   result: PaymentResultDetails;
 }) {
   const t = useTranslations("paymentResult");
+  const locale = useLocale();
   const coursesQuery = useMyCourses();
   const enrollment = result.status === "completed" && result.courseId !== null && !coursesQuery.error
     ? coursesQuery.data?.items.find((item) => item.course_id === result.courseId) ?? null
@@ -74,7 +77,7 @@ export default function PaymentResultView({
 
   const courseHref = enrollment ? `/my-courses/${enrollment.course_id}` : null;
   const enrollmentPrice = enrollment
-    ? `${enrollment.total_paid} ${enrollment.currency}`
+    ? formatMoney(enrollment.total_paid, locale, enrollment.currency)
     : null;
 
   return (

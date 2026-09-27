@@ -60,7 +60,7 @@ describe("PaymentResultView", () => {
       "/my-courses/12",
     );
     expect(screen.getByText("Physics")).toBeInTheDocument();
-    expect(screen.getByText("250.00 EGP")).toBeInTheDocument();
+    expect(screen.getByText(/250\s+ج\.م/)).toBeInTheDocument();
     expect(document.body.textContent).not.toContain("1.00");
     expect(screen.getByText(arMessages.paymentResult.supportReferenceLabel)).toBeInTheDocument();
     expect(screen.getByText("FAKE")).toBeInTheDocument();

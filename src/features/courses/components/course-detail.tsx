@@ -18,7 +18,7 @@ import type {
 } from "@/src/lib/student-api/contract";
 import { isCheckoutRedirectDto, resolveCheckoutRedirect } from "@/src/lib/student-api/checkout";
 import { resolveAssetUrl } from "@/src/lib/asset-url";
-import {
+import { StudentApiError,
   getStudentErrorMessage,
   isStudentUnauthorized,
 } from "@/src/lib/student-api/client";
@@ -100,6 +100,7 @@ export default function CourseDetail({
     (isAuthenticated && isStudentUnauthorized(userQuery.error));
   const loading = courseQuery.isPending || (isAuthenticated && userQuery.isPending);
   const error = getStudentErrorMessage(courseQuery.error, t("loadError"));
+  const courseNotFound = courseQuery.error instanceof StudentApiError && courseQuery.error.status === 404;
 
   useEffect(() => {
     if (unauthorized) router.replace("/login");
@@ -288,12 +289,13 @@ export default function CourseDetail({
         <div className="mx-auto flex min-h-[70vh] max-w-xl items-center px-4">
           <div role="alert" className="sticker-tile w-full border-red-600 bg-red-50 p-6 text-center text-sm font-black text-red-700 dark:border-red-400 dark:bg-red-500/10 dark:text-red-300">
             <CircleAlert className="mx-auto mb-3 size-8" aria-hidden="true" />
-            <p>{error || t("notFound")}</p>
+            <p>{courseNotFound ? t("courseNotFoundTitle") : error || t("notFound")}</p>
             <div className="mt-5 flex justify-center gap-4">
-              <button type="button" onClick={loadCourse} className="inline-flex cursor-pointer items-center gap-2 font-black text-brand-700 hover:underline dark:text-brand-300">
+              {!courseNotFound && <button type="button" onClick={loadCourse} className="inline-flex cursor-pointer items-center gap-2 font-black text-brand-700 hover:underline dark:text-brand-300">
                 <RotateCcw className="size-4" aria-hidden="true" />
                 {t("retry")}
-              </button>
+              </button>}
+              {courseNotFound && <Link href="/explore" className="inline-flex items-center gap-2 font-bold text-brand-700 hover:underline dark:text-brand-300">{t("courseNotFoundExplore")}</Link>}
               <Link href={backHref} className="inline-flex items-center gap-2 font-bold text-muted hover:underline dark:text-slate-400">
                 {backLabel}
               </Link>

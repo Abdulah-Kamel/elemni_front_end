@@ -13,7 +13,8 @@ import {
   UserRound,
 } from "lucide-react";
 import { Link, useRouter } from "@/src/i18n/navigation";
-import ImageWithFallback from "@/src/components/ui/image-with-fallback";
+import CourseCover from "./course-cover-placeholder";
+import { formatMoney } from "@/src/lib/format/money";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 import { AnimatePresence, m } from "motion/react";
 import type {
@@ -28,7 +29,6 @@ import {
   useCurrentStudent,
   useMyCourses,
 } from "@/src/features/student/hooks/use-student-queries";
-import lessonFallback from "@/src/assets/images/student-redesign/lesson-study-skills.webp";
 import StudentAppShell from "@/src/features/portal/components/portal-shell";
 
 export interface ExploreCourseEntry {
@@ -60,11 +60,7 @@ function formatDuration(minutes: number | null) {
   return remainder ? `${hours} س ${remainder} د` : `${hours} ساعات`;
 }
 
-function formatPrice(value: string | number) {
-  return new Intl.NumberFormat("ar-EG", { maximumFractionDigits: 2 }).format(Number(value));
-}
-
-function CourseCard({ entry, enrolled, index }: { entry: ExploreCourseEntry; enrolled: boolean; index: number }) {
+function CourseCard({ entry, enrolled, index, locale }: { entry: ExploreCourseEntry; enrolled: boolean; index: number; locale: string }) {
   const { course, teacher } = entry;
   const href = enrolled
     ? `/my-courses/${course.id}`
@@ -83,7 +79,7 @@ function CourseCard({ entry, enrolled, index }: { entry: ExploreCourseEntry; enr
       <article className="sticker-tile group relative flex h-full flex-col overflow-hidden p-4">
         <Link href={href} aria-label={`عرض كورس ${course.title}`} className="absolute inset-0 z-20 rounded-[1.25rem] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-inset" />
         <div className="relative h-40 overflow-hidden rounded-xl border-2 border-ink bg-brand-100 dark:border-brand-300 dark:bg-slate-800">
-          <ImageWithFallback src={course.img} fallbackSrc={lessonFallback} alt={course.title} fill sizes="(max-width: 767px) 100vw, 33vw" className="object-cover" />
+          <CourseCover src={course.img} subject={course.subject_name} alt={course.title} sizes="(max-width: 767px) 100vw, 33vw" className="object-cover" />
           {enrolled && <span className="sticker-badge absolute end-2 top-2 bg-emerald-100 px-2.5 py-1 text-[11px] font-black text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300">ضمن كورساتك</span>}
         </div>
 
@@ -99,7 +95,7 @@ function CourseCard({ entry, enrolled, index }: { entry: ExploreCourseEntry; enr
           </div>
 
           <div className="mt-auto pt-5">
-            <span><strong className="sticker-numeral block text-2xl font-black text-ink dark:text-slate-50">{formatPrice(course.price)}</strong><span className="text-[11px] font-black text-muted dark:text-slate-400">ج.م</span></span>
+            <span><strong className="sticker-numeral block text-2xl font-black text-ink dark:text-slate-50">{formatMoney(course.price, locale)}</strong></span>
           </div>
         </div>
       </article>
@@ -114,6 +110,7 @@ export default function ExploreCourses({
   streams,
   subjects,
   loadError,
+  locale,
 }: {
   catalog: ExploreCourseEntry[];
   teachers: PublicTeacherDto[];
@@ -121,6 +118,7 @@ export default function ExploreCourses({
   streams: StreamDto[];
   subjects: SubjectDto[];
   loadError: boolean;
+  locale: string;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -300,7 +298,7 @@ export default function ExploreCourses({
               <m.div key="courses" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: 0.2 }}>
               <section id="all-courses" className="scroll-mt-24" aria-labelledby="all-courses-heading">
                 <div className="mb-5 flex items-center justify-between gap-4"><h2 id="all-courses-heading" className="text-3xl font-black tracking-tight text-ink dark:text-slate-50"><MarkerHighlight color="sky" variant={1}>كل الكورسات</MarkerHighlight></h2><span className="sticker-badge bg-surface px-3 py-1 text-xs font-black text-muted dark:text-slate-300">{filteredCourses.length} كورس</span></div>
-                <AnimatePresence mode="wait" initial={false}>{visibleCourses.length ? <m.div key={`results-${visibleCourseIdsKey}`} className="grid gap-5 md:grid-cols-2 xl:grid-cols-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>{visibleCourses.map((entry, index) => <CourseCard key={entry.course.id} entry={entry} enrolled={enrolledCourseIds.includes(entry.course.id)} index={index} />)}</m.div> : <m.div key="empty-courses" className="sticker-tile flex min-h-64 flex-col items-center justify-center px-4 text-center" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={popSpring}><Search className="mb-4 size-9 text-muted" /><h3 className="text-lg font-black text-ink dark:text-slate-50"><MarkerHighlight color="pink" variant={3}>لا توجد كورسات مطابقة</MarkerHighlight></h3><p className="mt-2 text-sm font-medium text-muted dark:text-slate-400">جرّب تغيير البحث أو اختيار تصنيف آخر.</p>{hasCourseFilters && <button type="button" onClick={resetCourseFilters} className="mt-4 cursor-pointer text-sm font-black text-brand-700 hover:underline dark:text-brand-300">مسح الفلاتر</button>}</m.div>}</AnimatePresence>
+                <AnimatePresence mode="wait" initial={false}>{visibleCourses.length ? <m.div key={`results-${visibleCourseIdsKey}`} className="grid gap-5 md:grid-cols-2 xl:grid-cols-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>{visibleCourses.map((entry, index) => <CourseCard key={entry.course.id} entry={entry} enrolled={enrolledCourseIds.includes(entry.course.id)} index={index} locale={locale} />)}</m.div> : <m.div key="empty-courses" className="sticker-tile flex min-h-64 flex-col items-center justify-center px-4 text-center" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={popSpring}><Search className="mb-4 size-9 text-muted" /><h3 className="text-lg font-black text-ink dark:text-slate-50"><MarkerHighlight color="pink" variant={3}>لا توجد كورسات مطابقة</MarkerHighlight></h3><p className="mt-2 text-sm font-medium text-muted dark:text-slate-400">جرّب تغيير البحث أو اختيار تصنيف آخر.</p>{hasCourseFilters && <button type="button" onClick={resetCourseFilters} className="mt-4 cursor-pointer text-sm font-black text-brand-700 hover:underline dark:text-brand-300">مسح الفلاتر</button>}</m.div>}</AnimatePresence>
                 {totalCoursePages > 1 && <nav className="mt-8 flex items-center justify-center gap-2" aria-label="صفحات الكورسات"><button type="button" onClick={() => setCoursePage((current) => Math.max(1, current - 1))} disabled={coursePage === 1} aria-label="الصفحة السابقة" className="sticker-btn-outline flex size-11 items-center justify-center disabled:cursor-not-allowed disabled:opacity-40"><ChevronRight className="size-4" /></button>{Array.from({ length: totalCoursePages }, (_, index) => index + 1).map((item) => <button key={item} type="button" onClick={() => setCoursePage(item)} aria-current={coursePage === item ? "page" : undefined} className={`size-11 rounded-full border-2 text-sm font-black transition ${coursePage === item ? "border-ink bg-brand-600 text-white shadow-[2px_2px_0_0_var(--color-ink)] dark:border-brand-300" : "sticker-btn-outline"}`}>{item}</button>)}<button type="button" onClick={() => setCoursePage((current) => Math.min(totalCoursePages, current + 1))} disabled={coursePage === totalCoursePages} aria-label="الصفحة التالية" className="sticker-btn-outline flex size-11 items-center justify-center disabled:cursor-not-allowed disabled:opacity-40"><ChevronLeft className="size-4" /></button></nav>}
               </section>
               </m.div>

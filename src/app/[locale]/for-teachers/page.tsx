@@ -1,18 +1,6 @@
-import { notFound } from "next/navigation";
+import { permanentRedirect } from "next/navigation";
 
-export const dynamic = "force-dynamic";
-
-export async function generateMetadata() {
-  return {
-    title: "Page Not Found",
-    robots: {
-      index: false,
-      follow: false,
-      googleBot: { index: false, follow: false },
-    },
-  };
-}
-
-export default async function ForTeachersPage() {
-  notFound();
+export default async function ForTeachersPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  permanentRedirect(locale === "ar" ? "/" : `/${locale}`);
 }

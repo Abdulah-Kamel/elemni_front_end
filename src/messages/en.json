@@ -656,7 +656,12 @@
       "discussions": "Discussions",
       "progress": "Progress",
       "comingSoon": "Coming soon"
-    }
+    },
+    "courseNotFoundTitle": "Course not found.",
+    "courseNotFoundExplore": "Explore courses",
+    "documentSupportNote": "If the file does not load, open it directly or contact support.",
+    "contactSupport": "Contact support",
+    "videoLoadError": "The video could not be loaded."
   },
   "teachers": {
     "meta": {
@@ -810,5 +815,10 @@
       "dashboard": "Back to dashboard",
       "explore": "Explore courses"
     }
+  },
+  "studentDashboard": {
+    "upcomingTitle": "Access ending soon",
+    "allMyCourses": "All my courses",
+    "endsIn": "Ends {relative}"
   }
 }

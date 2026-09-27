@@ -63,7 +63,7 @@ export async function GET(
   if (!enrollment) {
     const teacherSlug = new URL(request.url).searchParams.get("teacher")?.trim();
     if (!teacherSlug) {
-      return Response.json({ detail: "تعذر تحديد مدرس هذا الكورس." }, { status: 404 });
+      return Response.json({ code: "COURSE_NOT_FOUND", detail: "تعذر العثور على الكورس." }, { status: 404 });
     }
 
     const [courseResult, teachersResult] = await Promise.all([
@@ -73,7 +73,10 @@ export async function GET(
       ),
       backendFetch<PublicTeacherDto[]>("/api/v1/teachers", discoveryCache),
     ]);
-    if (!courseResult.ok) return backendErrorResponse(courseResult.error);
+    if (!courseResult.ok) {
+      if (courseResult.error.status === 404) return Response.json({ code: "COURSE_NOT_FOUND", detail: "تعذر العثور على الكورس." }, { status: 404 });
+      return backendErrorResponse(courseResult.error);
+    }
 
     const teacher = teachersResult.ok
       ? teachersResult.data.find((item) => item.slug === teacherSlug)

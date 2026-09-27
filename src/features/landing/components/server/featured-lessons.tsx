@@ -1,10 +1,9 @@
 import { BookOpen, Clock } from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
-import ImageWithFallback from "@/src/components/ui/image-with-fallback";
+import CourseCover from "@/src/features/courses/components/course-cover-placeholder";
 import { Section } from "@/src/components/ui/section";
 import { Reveal } from "@/src/components/ui/reveal";
 import type { PublicCourseDto } from "@/src/lib/student-api/contract";
-import lessonFallback from "@/src/assets/images/student-redesign/lesson-calculus.webp";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 
 export interface FeaturedCourse {
@@ -39,15 +38,7 @@ export default function FeaturedLessons({ courses }: { courses: FeaturedCourse[]
           <Reveal key={course.id} delay={index * 80} className="h-full">
             <Link href={`/teachers/${teacherSlug}`} className="group flex h-full flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition-transform hover:-translate-y-1 dark:border-slate-700 dark:bg-slate-800">
               <div className="relative aspect-video w-full overflow-hidden bg-slate-900">
-                <ImageWithFallback
-                  src={course.img}
-                  fallbackSrc={lessonFallback}
-                  alt={course.title}
-                  fill
-                  loading="lazy"
-                  sizes="(max-width: 767px) calc(100vw - 2rem), 33vw"
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                />
+                <CourseCover src={course.img} subject={course.subject_name} alt={course.title} sizes="(max-width: 767px) calc(100vw - 2rem), 33vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
               </div>
               <div className="flex flex-1 flex-col p-5">
                 <p className="text-xs font-extrabold text-primary">{course.subject_name ?? teacherName}</p>

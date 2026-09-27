@@ -13,9 +13,11 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 import { GlobalLoading } from "@/src/components/ui/global-loading";
-import ImageWithFallback from "@/src/components/ui/image-with-fallback";
+import CourseCover from "@/src/features/courses/components/course-cover-placeholder";
+import { formatDate } from "@/src/lib/format/date";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 import { Link, useRouter } from "@/src/i18n/navigation";
+import { useLocale } from "next-intl";
 import { AnimatePresence, m } from "motion/react";
 import type { EnrollmentDto } from "@/src/lib/student-api/contract";
 import {
@@ -26,7 +28,6 @@ import {
   useCurrentStudent,
   useMyCourses,
 } from "@/src/features/student/hooks/use-student-queries";
-import lessonFallback from "@/src/assets/images/student-redesign/lesson-study-skills.webp";
 import StudentAppShell from "@/src/features/portal/components/portal-shell";
 import StudyCounter from "./study-counter";
 
@@ -34,9 +35,6 @@ type CourseSort = "recent" | "expiring" | "title";
 
 const popSpring = { type: "spring", stiffness: 260, damping: 22 } as const;
 
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("ar-EG", { day: "numeric", month: "long", year: "numeric" }).format(new Date(value));
-}
 
 function formatDuration(minutes: number | null) {
   if (!minutes) return "غير محددة";
@@ -46,7 +44,7 @@ function formatDuration(minutes: number | null) {
   return remainder ? `${hours} س ${remainder} د` : `${hours} ساعات`;
 }
 
-function CourseCard({ enrollment, index }: { enrollment: EnrollmentDto; index: number }) {
+function CourseCard({ enrollment, index, locale }: { enrollment: EnrollmentDto; index: number; locale: string }) {
   const { course } = enrollment;
 
   return (
@@ -61,14 +59,7 @@ function CourseCard({ enrollment, index }: { enrollment: EnrollmentDto; index: n
     >
       <Link href={`/my-courses/${course.id}`} aria-label={`فتح كورس ${course.title}`} className="sticker-tile group flex h-full flex-col overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2">
         <div className="relative aspect-video shrink-0 overflow-hidden border-b-2 border-ink bg-brand-100 dark:border-brand-300 dark:bg-slate-800">
-          <ImageWithFallback
-            src={course.img}
-            fallbackSrc={lessonFallback}
-            alt={course.title}
-            fill
-            sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 33vw"
-            className="object-cover"
-          />
+          <CourseCover src={course.img} subject={course.subject_name} alt={course.title} sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 33vw" className="object-cover" />
         </div>
 
         <div className="flex min-w-0 flex-1 flex-col p-5 sm:p-6">
@@ -98,7 +89,7 @@ function CourseCard({ enrollment, index }: { enrollment: EnrollmentDto; index: n
           <div className="mt-auto flex flex-wrap gap-x-5 gap-y-2 border-t-2 border-ink/10 pt-4 text-xs font-black text-muted dark:border-white/10 dark:text-slate-400">
             <span className="inline-flex items-center gap-1.5"><BookOpen className="size-4 text-brand-600 dark:text-brand-300" />{course.lesson_count} درس</span>
             <span className="inline-flex items-center gap-1.5"><Clock3 className="size-4 text-brand-600 dark:text-brand-300" />{formatDuration(course.total_duration_minutes)}</span>
-            <span className="inline-flex items-center gap-1.5"><CalendarClock className="size-4 text-brand-600 dark:text-brand-300" />متاح حتى {formatDate(enrollment.expires_at)}</span>
+            <span className="inline-flex items-center gap-1.5"><CalendarClock className="size-4 text-brand-600 dark:text-brand-300" />متاح حتى {formatDate(enrollment.expires_at, locale, "long")}</span>
           </div>
 
         </div>
@@ -108,6 +99,7 @@ function CourseCard({ enrollment, index }: { enrollment: EnrollmentDto; index: n
 }
 
 export default function MyCourses() {
+  const locale = useLocale();
   const router = useRouter();
   const coursesQuery = useMyCourses();
   const userQuery = useCurrentStudent();
@@ -263,7 +255,7 @@ export default function MyCourses() {
               {visibleCourses.length ? (
                 <m.div key={`results-${visibleEnrollmentIdsKey}`} className="grid grid-cols-1 items-stretch gap-5 md:grid-cols-2 xl:grid-cols-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
                   {visibleCourses.map((enrollment, index) => (
-                    <CourseCard key={enrollment.id} enrollment={enrollment} index={index} />
+                    <CourseCard key={enrollment.id} enrollment={enrollment} index={index} locale={locale} />
                   ))}
                 </m.div>
               ) : enrollments.length ? (

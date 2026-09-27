@@ -93,6 +93,7 @@ describe("ExploreCourses", () => {
         streams={[]}
         subjects={[]}
         loadError={false}
+        locale="ar"
       />,
     );
 
@@ -110,6 +111,7 @@ describe("ExploreCourses", () => {
         streams={[]}
         subjects={[]}
         loadError={false}
+        locale="ar"
       />,
     );
 
