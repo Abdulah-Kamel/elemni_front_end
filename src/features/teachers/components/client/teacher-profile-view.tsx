@@ -98,7 +98,7 @@ export default function TeacherProfileView({ teacher, onRequireAuth, teacherList
   };
 
   return (
-    <div dir="rtl" className="bg-page text-ink pb-16">
+    <div className="bg-page text-ink pb-16">
       <div className="relative overflow-hidden bg-slate-950 pt-24 text-white shadow-xl">
         <Image
           src={profileBackground}
@@ -111,7 +111,7 @@ export default function TeacherProfileView({ teacher, onRequireAuth, teacherList
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 relative z-10 flex items-center justify-between">
           <Link href={teacherListHref} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-extrabold text-xs sm:text-sm backdrop-blur-md transition-all">
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4 ltr:-scale-x-100" />
             <span>كل المدرسين</span>
           </Link>
 

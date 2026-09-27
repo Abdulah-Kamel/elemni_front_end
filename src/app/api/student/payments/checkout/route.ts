@@ -7,7 +7,7 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   const courseId = Number(body?.course_id);
   if (!Number.isInteger(courseId) || courseId <= 0) {
-    return Response.json({ detail: "معرّف الكورس غير صالح." }, { status: 400 });
+    return Response.json({ code: "INVALID_COURSE_ID" }, { status: 400 });
   }
 
   const rawCode = typeof body?.coupon_code === "string" ? body.coupon_code.trim().toUpperCase().slice(0, 20) : "";
@@ -21,7 +21,7 @@ export async function POST(request: Request) {
   // hosted checkout URL, free courses return the relative "/my-courses".
   // Never trust or reshape anything else here.
   if (!isCheckoutRedirectDto(result.data)) {
-    return Response.json({ detail: "تعذر بدء عملية الدفع حالياً." }, { status: 502 });
+    return Response.json({ code: "CHECKOUT_UNAVAILABLE" }, { status: 502 });
   }
   return Response.json(result.data);
 }

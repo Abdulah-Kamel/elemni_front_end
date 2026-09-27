@@ -241,7 +241,7 @@ export default function TeacherGrid({ teachers, grades, streams, searchQuery, lo
                 <Link href="/teachers"
                   className="px-8 py-3.5 bg-primary hover:bg-primary-hover active:scale-95 text-white font-extrabold text-sm rounded-2xl shadow-lg shadow-primary/25 transition-all inline-flex items-center gap-2 font-readex">
                   <span>عرض جميع المدرسين</span>
-                  <ArrowLeft className="w-4 h-4" />
+                  <ArrowLeft className="w-4 h-4 ltr:-scale-x-100" />
                 </Link>
               </div>
             </Reveal>

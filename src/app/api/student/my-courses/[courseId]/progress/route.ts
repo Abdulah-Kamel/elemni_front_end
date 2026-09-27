@@ -9,14 +9,14 @@ export async function PUT(
   const { courseId: rawCourseId } = await params;
   const courseId = Number(rawCourseId);
   if (!Number.isInteger(courseId) || courseId <= 0) {
-    return Response.json({ detail: "معرّف الكورس غير صالح." }, { status: 400 });
+    return Response.json({ code: "INVALID_COURSE_ID" }, { status: 400 });
   }
 
   let body: unknown;
   try {
     body = await request.json();
   } catch {
-    return Response.json({ detail: "بيانات التقدم غير صالحة." }, { status: 400 });
+    return Response.json({ code: "INVALID_PROGRESS" }, { status: 400 });
   }
 
   if (
@@ -25,7 +25,7 @@ export async function PUT(
     !Number.isInteger((body as { item_id?: unknown }).item_id) ||
     typeof (body as { completed?: unknown }).completed !== "boolean"
   ) {
-    return Response.json({ detail: "بيانات التقدم غير مكتملة." }, { status: 400 });
+    return Response.json({ code: "INCOMPLETE_PROGRESS" }, { status: 400 });
   }
 
   const result = await authenticatedBackendFetch<EnrollmentProgressDto>(

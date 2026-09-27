@@ -58,8 +58,9 @@ export async function backendFetch<T>(
 }
 
 export function backendErrorResponse(error: BackendError) {
+  const status = error.status >= 400 && error.status <= 599 ? error.status : 502;
   return Response.json(
-    { detail: error.message },
-    { status: error.status >= 400 && error.status <= 599 ? error.status : 502 },
+    { code: `BACKEND_ERROR_${status}`, detail: error.message },
+    { status },
   );
 }

@@ -49,6 +49,7 @@ function DashboardLoading() {
 export default function StudentDashboard({ grades, streams }: { grades: GradeDto[]; streams: StreamDto[] }) {
   const locale = useLocale();
   const dashboardT = useTranslations("studentDashboard");
+  const tCounts = useTranslations("courseDetail");
   const router = useRouter();
   const [profileLabel, setProfileLabel] = useState("");
   const [currentTime, setCurrentTime] = useState<number | null>(null);
@@ -162,7 +163,7 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
                     <h2 className="mt-3 line-clamp-2 text-2xl font-black sm:text-3xl">{primary.course.title}</h2>
                     <p className="mt-2 text-sm text-white">
                       {primary.progress.completion_percent === 0 ? "ابدأ أول درس في الكورس" : `تقدّمك في الكورس ${primary.progress.completion_percent}%`}
-                      <span className="mx-2 text-white/60">·</span>{primary.course.lesson_count} درس
+                      <span className="mx-2 text-white/60">·</span>{tCounts("lessons", { count: primary.course.lesson_count })}
                     </p>
                     <div className="mt-5 flex items-center gap-3">
                       <div className="h-2 flex-1 overflow-hidden rounded-full bg-white/25" role="progressbar" aria-label={`نسبة إنجاز ${primary.progress.completion_percent}%`} aria-valuenow={primary.progress.completion_percent} aria-valuemin={0} aria-valuemax={100}>
@@ -172,7 +173,7 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
                     </div>
                     <div className="mt-5 flex flex-wrap items-center gap-3">
                       <Link href={`/my-courses/${primary.course.id}`} className="sticker-badge inline-flex h-11 items-center gap-2 rounded-xl border-2 border-ink bg-amber-400 px-5 text-sm font-extrabold text-ink shadow-[3px_3px_0_0_var(--color-ink)] transition hover:-translate-y-0.5 hover:bg-amber-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white dark:border-sky-200 dark:shadow-[3px_3px_0_0_#020617]">
-                        {primary.progress.completion_percent ? "تابع التعلّم" : "ابدأ التعلّم"}<ArrowLeft className="size-4" />
+                        {primary.progress.completion_percent ? "تابع التعلّم" : "ابدأ التعلّم"}<ArrowLeft className="size-4 ltr:-scale-x-100" />
                       </Link>
                       <Link href={`/my-courses/${primary.course.id}`} className="inline-flex h-11 items-center rounded-lg border border-white/40 px-4 text-sm font-bold text-white transition hover:bg-white/10">تفاصيل الكورس</Link>
                       <span className="text-xs text-white">متاح حتى {formatExpiry(primary.expires_at, locale)}</span>
@@ -223,7 +224,7 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
                           <span className="text-sm font-bold tabular-nums text-slate-700 dark:text-slate-200">{enrollment.progress.completion_percent}%</span>
                         </div>
                         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 border-t-2 border-ink/10 pt-3 text-xs font-medium text-slate-600 dark:border-sky-300/20 dark:text-slate-300">
-                          <span className="inline-flex items-center gap-1.5"><BookOpen className="size-4 text-brand-700 dark:text-brand-300" />{enrollment.course.lesson_count} درس</span>
+                          <span className="inline-flex items-center gap-1.5"><BookOpen className="size-4 text-brand-700 dark:text-brand-300" />{tCounts("lessons", { count: enrollment.course.lesson_count })}</span>
                           <span className="inline-flex items-center gap-1.5"><CalendarDays className="size-4 text-brand-700 dark:text-brand-300" />حتى {formatExpiry(enrollment.expires_at, locale)}</span>
                         </div>
                       </div>

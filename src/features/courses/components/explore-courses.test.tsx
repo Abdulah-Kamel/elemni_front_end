@@ -3,6 +3,8 @@ import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import ExploreCourses, { type ExploreCourseEntry } from "./explore-courses";
 
+vi.mock("next-intl", () => ({ useTranslations: () => (key: string, values?: { count?: number }) => key === "lessonCount" ? `${values?.count} درس` : key === "durationUnknown" ? "غير محددة" : `${values?.count} دقيقة` }));
+
 vi.mock("next/image", () => ({
   default: () => <span data-testid="mock-image" />,
 }));

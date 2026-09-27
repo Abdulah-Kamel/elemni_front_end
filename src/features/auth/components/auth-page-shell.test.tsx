@@ -1,8 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NextIntlClientProvider } from "next-intl";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import AuthPageShell from "./auth-page-shell";
+
+vi.mock("@/src/components/locale-switcher", () => ({ LocaleSwitcher: () => null }));
 
 describe("AuthPageShell", () => {
   it("renders its provided children for the requested locale", () => {

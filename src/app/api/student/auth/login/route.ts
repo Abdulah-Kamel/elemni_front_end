@@ -5,7 +5,7 @@ import { setSession } from "@/src/lib/student-api/session";
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   if (!body?.email || !body?.password) {
-    return Response.json({ detail: "البريد الإلكتروني وكلمة المرور مطلوبان." }, { status: 400 });
+    return Response.json({ code: "AUTH_FIELDS_REQUIRED" }, { status: 400 });
   }
 
   const result = await backendFetch<LoginDto>("/api/v1/auth/login", {
@@ -24,7 +24,7 @@ export async function POST(request: Request) {
       body: JSON.stringify({ refresh_token: result.data.refresh_token }),
     });
     return Response.json(
-      { detail: "هذا الدخول مخصص لحسابات الطلاب." },
+      { code: "STUDENT_ACCOUNT_REQUIRED" },
       { status: 403 },
     );
   }

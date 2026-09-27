@@ -10,6 +10,7 @@ import { notifyStudentSessionChanged } from "@/src/lib/student-api/session-event
 import { useCurrentStudent } from "@/src/features/student/hooks/use-student-queries";
 import { useTranslations } from "next-intl";
 import logoMark from "@/src/assets/logo-icon.png";
+import { LocaleSwitcher } from "@/src/components/locale-switcher";
 
 interface NavbarProps {
   onOpenAuth: (mode: "signin" | "signup") => void;
@@ -114,6 +115,7 @@ export default function Navbar({ onSearchChange, searchQuery, isDarkMode, onTogg
           </div>
 
           <nav aria-label={tNav("mainNavigation")} className="hidden items-center gap-1 lg:flex">
+            <LocaleSwitcher className="mx-2" />
             {navItems.map((item) => (
               <a
                 key={item.hash}
@@ -264,6 +266,7 @@ export default function Navbar({ onSearchChange, searchQuery, isDarkMode, onTogg
           </div>}
 
           <nav aria-label={tNav("mobileNavigation")} className="grid grid-cols-2 gap-2 border-b border-slate-100 pb-3 dark:border-slate-800">
+            <div className="col-span-2 flex justify-end"><LocaleSwitcher /></div>
             {navItems.map(({ hash, key, icon: Icon }) => (
               <a
                 key={hash}

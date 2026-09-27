@@ -25,6 +25,7 @@ import type {
   SubjectDto,
 } from "@/src/lib/student-api/contract";
 import { isStudentUnauthorized } from "@/src/lib/student-api/client";
+import { useTranslations } from "next-intl";
 import {
   useCurrentStudent,
   useMyCourses,
@@ -52,15 +53,16 @@ const COURSES_PER_PAGE = 6;
 
 const popSpring = { type: "spring", stiffness: 260, damping: 22 } as const;
 
-function formatDuration(minutes: number | null) {
-  if (!minutes) return "غير محددة";
-  if (minutes < 60) return `${minutes} دقيقة`;
+function formatDuration(minutes: number | null, t: ReturnType<typeof useTranslations<"courseCounts">>) {
+  if (!minutes) return t("durationUnknown");
+  if (minutes < 60) return t("minuteCount", { count: minutes });
   const hours = Math.floor(minutes / 60);
   const remainder = minutes % 60;
-  return remainder ? `${hours} س ${remainder} د` : `${hours} ساعات`;
+  return remainder ? `${t("hourCount", { count: hours })} ${t("minuteCount", { count: remainder })}` : t("hourCount", { count: hours });
 }
 
 function CourseCard({ entry, enrolled, index, locale }: { entry: ExploreCourseEntry; enrolled: boolean; index: number; locale: string }) {
+  const tCounts = useTranslations("courseCounts");
   const { course, teacher } = entry;
   const href = enrolled
     ? `/my-courses/${course.id}`
@@ -90,8 +92,8 @@ function CourseCard({ entry, enrolled, index, locale }: { entry: ExploreCourseEn
           <p className="mt-3 line-clamp-2 text-xs leading-5 font-medium text-muted dark:text-slate-400">{course.description || `${course.lesson_count} درس في ${course.subject_name || "هذا التخصص"}.`}</p>
 
           <div className="mt-4 flex flex-wrap gap-4 border-t-2 border-ink/10 pt-4 text-xs font-black text-muted dark:border-white/10 dark:text-slate-400">
-            <span className="inline-flex items-center gap-1.5"><BookOpen className="size-4 text-brand-600 dark:text-brand-300" />{course.lesson_count} درس</span>
-            <span className="inline-flex items-center gap-1.5"><Clock3 className="size-4 text-brand-600 dark:text-brand-300" />{formatDuration(course.total_duration_minutes)}</span>
+            <span className="inline-flex items-center gap-1.5"><BookOpen className="size-4 text-brand-600 dark:text-brand-300" />{tCounts("lessonCount", { count: course.lesson_count })}</span>
+            <span className="inline-flex items-center gap-1.5"><Clock3 className="size-4 text-brand-600 dark:text-brand-300" />{formatDuration(course.total_duration_minutes, tCounts)}</span>
           </div>
 
           <div className="mt-auto pt-5">
@@ -299,7 +301,7 @@ export default function ExploreCourses({
               <section id="all-courses" className="scroll-mt-24" aria-labelledby="all-courses-heading">
                 <div className="mb-5 flex items-center justify-between gap-4"><h2 id="all-courses-heading" className="text-3xl font-black tracking-tight text-ink dark:text-slate-50"><MarkerHighlight color="sky" variant={1}>كل الكورسات</MarkerHighlight></h2><span className="sticker-badge bg-surface px-3 py-1 text-xs font-black text-muted dark:text-slate-300">{filteredCourses.length} كورس</span></div>
                 <AnimatePresence mode="wait" initial={false}>{visibleCourses.length ? <m.div key={`results-${visibleCourseIdsKey}`} className="grid gap-5 md:grid-cols-2 xl:grid-cols-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>{visibleCourses.map((entry, index) => <CourseCard key={entry.course.id} entry={entry} enrolled={enrolledCourseIds.includes(entry.course.id)} index={index} locale={locale} />)}</m.div> : <m.div key="empty-courses" className="sticker-tile flex min-h-64 flex-col items-center justify-center px-4 text-center" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={popSpring}><Search className="mb-4 size-9 text-muted" /><h3 className="text-lg font-black text-ink dark:text-slate-50"><MarkerHighlight color="pink" variant={3}>لا توجد كورسات مطابقة</MarkerHighlight></h3><p className="mt-2 text-sm font-medium text-muted dark:text-slate-400">جرّب تغيير البحث أو اختيار تصنيف آخر.</p>{hasCourseFilters && <button type="button" onClick={resetCourseFilters} className="mt-4 cursor-pointer text-sm font-black text-brand-700 hover:underline dark:text-brand-300">مسح الفلاتر</button>}</m.div>}</AnimatePresence>
-                {totalCoursePages > 1 && <nav className="mt-8 flex items-center justify-center gap-2" aria-label="صفحات الكورسات"><button type="button" onClick={() => setCoursePage((current) => Math.max(1, current - 1))} disabled={coursePage === 1} aria-label="الصفحة السابقة" className="sticker-btn-outline flex size-11 items-center justify-center disabled:cursor-not-allowed disabled:opacity-40"><ChevronRight className="size-4" /></button>{Array.from({ length: totalCoursePages }, (_, index) => index + 1).map((item) => <button key={item} type="button" onClick={() => setCoursePage(item)} aria-current={coursePage === item ? "page" : undefined} className={`size-11 rounded-full border-2 text-sm font-black transition ${coursePage === item ? "border-ink bg-brand-600 text-white shadow-[2px_2px_0_0_var(--color-ink)] dark:border-brand-300" : "sticker-btn-outline"}`}>{item}</button>)}<button type="button" onClick={() => setCoursePage((current) => Math.min(totalCoursePages, current + 1))} disabled={coursePage === totalCoursePages} aria-label="الصفحة التالية" className="sticker-btn-outline flex size-11 items-center justify-center disabled:cursor-not-allowed disabled:opacity-40"><ChevronLeft className="size-4" /></button></nav>}
+                {totalCoursePages > 1 && <nav className="mt-8 flex items-center justify-center gap-2" aria-label="صفحات الكورسات"><button type="button" onClick={() => setCoursePage((current) => Math.max(1, current - 1))} disabled={coursePage === 1} aria-label="الصفحة السابقة" className="sticker-btn-outline flex size-11 items-center justify-center disabled:cursor-not-allowed disabled:opacity-40"><ChevronRight className="size-4 ltr:-scale-x-100" /></button>{Array.from({ length: totalCoursePages }, (_, index) => index + 1).map((item) => <button key={item} type="button" onClick={() => setCoursePage(item)} aria-current={coursePage === item ? "page" : undefined} className={`size-11 rounded-full border-2 text-sm font-black transition ${coursePage === item ? "border-ink bg-brand-600 text-white shadow-[2px_2px_0_0_var(--color-ink)] dark:border-brand-300" : "sticker-btn-outline"}`}>{item}</button>)}<button type="button" onClick={() => setCoursePage((current) => Math.min(totalCoursePages, current + 1))} disabled={coursePage === totalCoursePages} aria-label="الصفحة التالية" className="sticker-btn-outline flex size-11 items-center justify-center disabled:cursor-not-allowed disabled:opacity-40"><ChevronLeft className="size-4 ltr:-scale-x-100" /></button></nav>}
               </section>
               </m.div>
         </AnimatePresence>

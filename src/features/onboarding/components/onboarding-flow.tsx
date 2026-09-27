@@ -131,7 +131,7 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
 
   return (
     <MotionProvider>
-      <div dir="rtl" className="student-portal-shell min-h-screen px-4 py-7 font-readex text-ink sm:px-6 sm:py-10 dark:text-slate-100">
+      <div className="student-portal-shell min-h-screen px-4 py-7 font-readex text-ink sm:px-6 sm:py-10 dark:text-slate-100">
         <div className="mx-auto flex min-h-[calc(100vh-3.5rem)] max-w-3xl flex-col">
           <m.header
             className="mb-7 flex items-center justify-between border-b-2 border-ink pb-5 dark:border-brand-300"
@@ -182,7 +182,7 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
                       <p className="flex items-center gap-3 py-3"><span className="sticker-badge flex size-8 items-center justify-center bg-brand-100 text-brand-700 dark:bg-slate-800 dark:text-brand-300"><Target className="size-4" /></span>تجربة مذاكرة منظمة</p>
                     </div>
                     <div className="mx-auto flex max-w-lg flex-col gap-3">
-                      <m.button onClick={() => goTo("grade")} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={popSpring} className="sticker-btn flex h-13 cursor-pointer items-center justify-center gap-2 py-3.5 font-black">ابدأ الآن<ArrowLeft className="size-4" /></m.button>
+                      <m.button onClick={() => goTo("grade")} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={popSpring} className="sticker-btn flex h-13 cursor-pointer items-center justify-center gap-2 py-3.5 font-black">ابدأ الآن<ArrowLeft className="size-4 ltr:-scale-x-100" /></m.button>
                       <button onClick={skip} className="h-11 cursor-pointer rounded-xl text-sm font-bold text-brand-700 transition hover:underline dark:text-brand-300">تخطي الآن</button>
                     </div>
                   </div>
@@ -207,8 +207,8 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
                     </div>
                     {!grades.length && <p className="sticker-tile border-amber-500 bg-amber-50 p-4 text-center text-sm font-black text-amber-800">لا توجد صفوف دراسية متاحة حالياً.</p>}
                     <div className="mt-7 flex items-center justify-between border-t-2 border-ink/10 pt-5 dark:border-white/10">
-                      <button onClick={() => goTo("welcome")} className="flex cursor-pointer items-center gap-1.5 text-sm font-bold text-muted transition hover:text-brand-700 dark:text-slate-400"><ArrowRight className="size-4" />العودة</button>
-                      <button disabled={!gradeId} onClick={() => goTo("stream")} className="sticker-btn flex h-12 cursor-pointer items-center gap-2 px-8 font-black disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none">التالي<ArrowLeft className="size-4" /></button>
+                      <button onClick={() => goTo("welcome")} className="flex cursor-pointer items-center gap-1.5 text-sm font-bold text-muted transition hover:text-brand-700 dark:text-slate-400"><ArrowRight className="size-4 ltr:-scale-x-100" />العودة</button>
+                      <button disabled={!gradeId} onClick={() => goTo("stream")} className="sticker-btn flex h-12 cursor-pointer items-center gap-2 px-8 font-black disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none">التالي<ArrowLeft className="size-4 ltr:-scale-x-100" /></button>
                     </div>
                   </div>
                 )}
@@ -233,8 +233,8 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
                       </div>
                       {!streams.length && <p className="sticker-tile border-amber-500 bg-amber-50 p-4 text-center text-sm font-black text-amber-800">لا توجد شعب دراسية متاحة حالياً.</p>}
                       <div className="mt-7 flex items-center justify-between border-t-2 border-ink/10 pt-5 dark:border-white/10">
-                        <button onClick={() => goTo("grade")} className="flex cursor-pointer items-center gap-1.5 text-sm font-bold text-muted transition hover:text-brand-700 dark:text-slate-400"><ArrowRight className="size-4" />العودة</button>
-                        <button disabled={!streamId} onClick={continueToSubjects} className="sticker-btn flex h-12 cursor-pointer items-center gap-2 px-8 font-black disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none">التالي<ArrowLeft className="size-4" /></button>
+                        <button onClick={() => goTo("grade")} className="flex cursor-pointer items-center gap-1.5 text-sm font-bold text-muted transition hover:text-brand-700 dark:text-slate-400"><ArrowRight className="size-4 ltr:-scale-x-100" />العودة</button>
+                        <button disabled={!streamId} onClick={continueToSubjects} className="sticker-btn flex h-12 cursor-pointer items-center gap-2 px-8 font-black disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none">التالي<ArrowLeft className="size-4 ltr:-scale-x-100" /></button>
                       </div>
                     </div>
                   </div>
@@ -259,8 +259,8 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
                     </div>
                     {!relevantSubjects.length && <p className="sticker-tile border-amber-500 bg-amber-50 p-4 text-center text-sm font-black text-amber-800">لم نجد مواد مرتبطة بهذه الاختيارات حالياً. ارجع واختر شعبة أخرى.</p>}
                     <div className="mt-7 flex flex-col gap-3 border-t-2 border-ink/10 pt-5 dark:border-white/10">
-                      <m.button disabled={!subjectIds.length || saving} onClick={() => void finish()} whileTap={!subjectIds.length || saving ? undefined : { scale: 0.98 }} className="sticker-btn flex h-13 w-full cursor-pointer items-center justify-center gap-2 py-3.5 font-black disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none">{saving ? <><LoaderCircle className="size-5 animate-spin" />جاري التجهيز...</> : <>ابدأ رحلتي<ArrowLeft className="size-4" /></>}</m.button>
-                      <button onClick={() => goTo("stream")} className="flex h-10 cursor-pointer items-center justify-center gap-1.5 text-sm font-bold text-muted transition hover:text-brand-700 dark:text-slate-400"><ArrowRight className="size-4" />العودة</button>
+                      <m.button disabled={!subjectIds.length || saving} onClick={() => void finish()} whileTap={!subjectIds.length || saving ? undefined : { scale: 0.98 }} className="sticker-btn flex h-13 w-full cursor-pointer items-center justify-center gap-2 py-3.5 font-black disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none">{saving ? <><LoaderCircle className="size-5 animate-spin" />جاري التجهيز...</> : <>ابدأ رحلتي<ArrowLeft className="size-4 ltr:-scale-x-100" /></>}</m.button>
+                      <button onClick={() => goTo("stream")} className="flex h-10 cursor-pointer items-center justify-center gap-1.5 text-sm font-bold text-muted transition hover:text-brand-700 dark:text-slate-400"><ArrowRight className="size-4 ltr:-scale-x-100" />العودة</button>
                     </div>
                   </div>
                 )}

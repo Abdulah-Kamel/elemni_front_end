@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import CourseDetail from "@/src/features/courses/components/course-detail";
 import type { StudentCourseDetailDto } from "@/src/lib/student-api/contract";
 import {
@@ -10,7 +10,11 @@ import {
   getStreams,
 } from "@/src/lib/student-api/public";
 
-export const metadata = { title: "تفاصيل الكورس | علمني" };
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "pageMetadata" });
+  return { title: t("courseDetailPage") };
+}
 
 export default async function CourseDetailPage({
   params,

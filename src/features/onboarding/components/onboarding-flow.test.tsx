@@ -25,7 +25,7 @@ describe("OnboardingFlow", () => {
   it("uses the sticker world tokens on the welcome step", () => {
     render(<OnboardingFlow grades={[]} streams={[]} subjects={[]} />);
 
-    const shell = screen.getByText("أهلاً بيك في علمني").closest("[dir='rtl']");
+    const shell = screen.getByText("أهلاً بيك في علمني").closest(".student-portal-shell");
     const primaryCta = screen.getByRole("button", { name: /ابدأ الآن/i });
     const skipButton = screen.getByRole("button", { name: /تخطي الآن/i });
     const title = screen.getByRole("heading", { name: "أهلاً بيك في علمني" });

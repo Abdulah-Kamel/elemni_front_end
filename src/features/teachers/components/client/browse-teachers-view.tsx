@@ -87,12 +87,12 @@ function BrowseTeachersView({
   };
 
   return (
-    <div dir="rtl" className="min-h-screen bg-page text-ink">
+    <div className="min-h-screen bg-page text-ink">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
           <Link href="/" className="inline-flex items-center gap-1 text-sm font-bold text-primary hover:underline mb-4">
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4 ltr:-scale-x-100" />
             <span>العودة للرئيسية</span>
           </Link>
           <h1 className="text-3xl sm:text-4xl font-black text-ink font-readex"><MarkerHighlight color="yellow" variant={1}>جميع المدرسين</MarkerHighlight></h1>
@@ -236,7 +236,7 @@ function BrowseTeachersView({
               disabled={page === 1}
               className={cn("px-4 py-2 rounded-xl font-bold text-sm transition-all", page === 1 ? "bg-slate-100 text-slate-400 cursor-not-allowed" : "bg-slate-100 hover:bg-primary-light text-ink hover:text-primary")}
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-4 h-4 ltr:-scale-x-100" />
             </button>
 
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
@@ -252,7 +252,7 @@ function BrowseTeachersView({
               disabled={page === totalPages}
               className={cn("px-4 py-2 rounded-xl font-bold text-sm transition-all", page === totalPages ? "bg-slate-100 text-slate-400 cursor-not-allowed" : "bg-slate-100 hover:bg-primary-light text-ink hover:text-primary")}
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-4 h-4 ltr:-scale-x-100" />
             </button>
           </div>
         )}

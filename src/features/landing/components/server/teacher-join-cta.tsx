@@ -58,7 +58,7 @@ export default function TeacherJoinCTA({ href }: TeacherJoinCTAProps) {
             <div className="pt-4 flex items-center justify-start">
               <a href={href}
                 className="w-full sm:w-auto py-3.5 px-8 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-base rounded-2xl shadow-lg shadow-amber-400/20 transition-all cursor-pointer flex items-center justify-center gap-3 group">
-                <ArrowLeft className="w-5 h-5 text-slate-950 group-hover:-translate-x-1 transition-transform" />
+                <ArrowLeft className="w-5 h-5 text-slate-950 group-hover:-translate-x-1 transition-transform ltr:-scale-x-100" />
                 <span>انضم إلينا كمعلم</span>
                 <UserPlus className="w-5 h-5 text-slate-950" />
               </a>

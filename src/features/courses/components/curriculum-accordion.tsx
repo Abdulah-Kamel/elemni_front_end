@@ -107,7 +107,7 @@ function LessonRow({
           </span>
         </span>
         <ChevronLeft
-          className={`size-4 shrink-0 text-[#8BA0B1] transition-transform motion-reduce:transition-none ${expanded ? "-rotate-90" : ""}`}
+          className={`size-4 shrink-0 text-[#8BA0B1] transition-transform motion-reduce:transition-none ltr:rotate-180 ${expanded ? "-rotate-90" : ""}`}
           aria-hidden="true"
         />
       </button>

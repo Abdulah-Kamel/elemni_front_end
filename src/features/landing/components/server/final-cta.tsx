@@ -41,7 +41,7 @@ export default function FinalCta() {
                   className="inline-flex min-h-12 items-center gap-2.5 rounded-2xl bg-primary px-8 py-3.5 text-base font-black text-white shadow-xl shadow-primary/20 transition-all hover:-translate-y-0.5 hover:bg-primary-hover active:scale-[0.98] cursor-pointer"
                 >
                   <span>ابدأ تجربة المنصة مجاناً</span>
-                  <ArrowLeft className="w-5 h-5 stroke-[2.5]" />
+                  <ArrowLeft className="w-5 h-5 stroke-[2.5] ltr:-scale-x-100" />
                 </a>
               </div>
 

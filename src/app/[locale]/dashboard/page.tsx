@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import StudentDashboard from "@/src/features/dashboard/components/student-dashboard";
 import {
   getGrades,
@@ -7,7 +7,11 @@ import {
 } from "@/src/lib/student-api/public";
 import { getAccessToken } from "@/src/lib/student-api/session";
 
-export const metadata = { title: "الرئيسية | بوابة الطالب | علمني" };
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "pageMetadata" });
+  return { title: t("dashboardPage") };
+}
 export const dynamic = "force-dynamic";
 
 export default async function StudentDashboardPage({

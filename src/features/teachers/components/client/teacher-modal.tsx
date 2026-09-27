@@ -112,7 +112,7 @@ export default function TeacherModal({ teacher, onClose, onBook }: TeacherModalP
           <Link href={`/ar/teachers/${teacher.id}`}
             className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline">
             <span>عرض الملف الشخصي الكامل</span>
-            <ArrowLeft className="w-3 h-3" />
+            <ArrowLeft className="w-3 h-3 ltr:-scale-x-100" />
           </Link>
         </div>
 

@@ -17,7 +17,7 @@ import CourseCover from "@/src/features/courses/components/course-cover-placehol
 import { formatDate } from "@/src/lib/format/date";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 import { Link, useRouter } from "@/src/i18n/navigation";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { AnimatePresence, m } from "motion/react";
 import type { EnrollmentDto } from "@/src/lib/student-api/contract";
 import {
@@ -36,15 +36,15 @@ type CourseSort = "recent" | "expiring" | "title";
 const popSpring = { type: "spring", stiffness: 260, damping: 22 } as const;
 
 
-function formatDuration(minutes: number | null) {
-  if (!minutes) return "غير محددة";
-  if (minutes < 60) return `${minutes} دقيقة`;
+function formatDuration(minutes: number | null, t: ReturnType<typeof useTranslations<"courseDetail">>) {
+  if (!minutes) return t("durationUnknown");
+  if (minutes < 60) return t("minutes", { count: minutes });
   const hours = Math.floor(minutes / 60);
   const remainder = minutes % 60;
-  return remainder ? `${hours} س ${remainder} د` : `${hours} ساعات`;
+  return remainder ? `${t("hours", { count: hours })} ${t("minutes", { count: remainder })}` : t("hours", { count: hours });
 }
 
-function CourseCard({ enrollment, index, locale }: { enrollment: EnrollmentDto; index: number; locale: string }) {
+function CourseCard({ enrollment, index, locale, tCounts }: { enrollment: EnrollmentDto; index: number; locale: string; tCounts: ReturnType<typeof useTranslations<"courseDetail">> }) {
   const { course } = enrollment;
 
   return (
@@ -87,8 +87,8 @@ function CourseCard({ enrollment, index, locale }: { enrollment: EnrollmentDto; 
           </div>
 
           <div className="mt-auto flex flex-wrap gap-x-5 gap-y-2 border-t-2 border-ink/10 pt-4 text-xs font-black text-muted dark:border-white/10 dark:text-slate-400">
-            <span className="inline-flex items-center gap-1.5"><BookOpen className="size-4 text-brand-600 dark:text-brand-300" />{course.lesson_count} درس</span>
-            <span className="inline-flex items-center gap-1.5"><Clock3 className="size-4 text-brand-600 dark:text-brand-300" />{formatDuration(course.total_duration_minutes)}</span>
+            <span className="inline-flex items-center gap-1.5"><BookOpen className="size-4 text-brand-600 dark:text-brand-300" />{tCounts("lessons", { count: course.lesson_count })}</span>
+            <span className="inline-flex items-center gap-1.5"><Clock3 className="size-4 text-brand-600 dark:text-brand-300" />{formatDuration(course.total_duration_minutes, tCounts)}</span>
             <span className="inline-flex items-center gap-1.5"><CalendarClock className="size-4 text-brand-600 dark:text-brand-300" />متاح حتى {formatDate(enrollment.expires_at, locale, "long")}</span>
           </div>
 
@@ -100,6 +100,7 @@ function CourseCard({ enrollment, index, locale }: { enrollment: EnrollmentDto; 
 
 export default function MyCourses() {
   const locale = useLocale();
+  const tCounts = useTranslations("courseDetail");
   const router = useRouter();
   const coursesQuery = useMyCourses();
   const userQuery = useCurrentStudent();
@@ -190,7 +191,7 @@ export default function MyCourses() {
               {[
                 { label: "كورسات نشطة", value: enrollments.length, icon: GraduationCap, format: undefined as ((n: number) => string) | undefined },
                 { label: "إجمالي الدروس", value: totalLessons, icon: BookOpen, format: undefined as ((n: number) => string) | undefined },
-                { label: "مدة المحتوى", value: totalMinutes, icon: Clock3, format: (n: number) => formatDuration(n || null) },
+                { label: "مدة المحتوى", value: totalMinutes, icon: Clock3, format: (n: number) => formatDuration(n || null, tCounts) },
               ].map(({ label, value, icon: Icon, format }) => (
                 <div key={label} className="flex flex-1 items-center gap-4 py-4 sm:justify-center sm:py-5">
                   <span className="sticker-badge flex size-11 shrink-0 items-center justify-center bg-brand-100 text-brand-700 dark:bg-slate-800 dark:text-brand-300"><Icon className="size-5" /></span>
@@ -255,7 +256,7 @@ export default function MyCourses() {
               {visibleCourses.length ? (
                 <m.div key={`results-${visibleEnrollmentIdsKey}`} className="grid grid-cols-1 items-stretch gap-5 md:grid-cols-2 xl:grid-cols-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
                   {visibleCourses.map((enrollment, index) => (
-                    <CourseCard key={enrollment.id} enrollment={enrollment} index={index} locale={locale} />
+                    <CourseCard key={enrollment.id} enrollment={enrollment} index={index} locale={locale} tCounts={tCounts} />
                   ))}
                 </m.div>
               ) : enrollments.length ? (
@@ -278,7 +279,7 @@ export default function MyCourses() {
                     </MarkerHighlight>
                   </h2>
                   <p className="mt-2 max-w-md text-sm leading-6 font-medium text-muted dark:text-slate-400">استكشف المدرسين واختر الكورس المناسب لسنتك وشعبتك.</p>
-                  <Link href="/explore" className="sticker-btn mt-6 inline-flex h-12 items-center gap-2 px-7 text-sm font-black">استكشف الكورسات<ArrowLeft className="size-4" /></Link>
+                  <Link href="/explore" className="sticker-btn mt-6 inline-flex h-12 items-center gap-2 px-7 text-sm font-black">استكشف الكورسات<ArrowLeft className="size-4 ltr:-scale-x-100" /></Link>
                 </m.div>
               )}
             </AnimatePresence>

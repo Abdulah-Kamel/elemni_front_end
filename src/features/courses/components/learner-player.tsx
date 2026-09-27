@@ -110,7 +110,7 @@ export default function LearnerPlayer({
               disabled={!canGoPrevious}
               className="inline-flex min-h-10 cursor-pointer items-center gap-1.5 rounded-xl border border-[#E4E2DC] bg-white px-3 py-2 text-xs font-semibold text-[#15181E] transition hover:bg-[#F4F3EF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A5FB4] disabled:cursor-not-allowed disabled:text-[#8B9099] disabled:hover:bg-white"
             >
-              <ChevronRight className="size-4" aria-hidden="true" />
+              <ChevronRight className="size-4 ltr:hidden" aria-hidden="true" /><ChevronLeft className="size-4 rtl:hidden" aria-hidden="true" />
               {t("previousItem")}
             </button>
             <button
@@ -120,7 +120,7 @@ export default function LearnerPlayer({
               className="inline-flex min-h-10 cursor-pointer items-center gap-1.5 rounded-xl border border-[#E4E2DC] bg-white px-3 py-2 text-xs font-semibold text-[#15181E] transition hover:bg-[#F4F3EF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A5FB4] disabled:cursor-not-allowed disabled:text-[#8B9099] disabled:hover:bg-white"
             >
               {t("nextItem")}
-              <ChevronLeft className="size-4" aria-hidden="true" />
+              <ChevronLeft className="size-4 ltr:hidden" aria-hidden="true" /><ChevronRight className="size-4 rtl:hidden" aria-hidden="true" />
             </button>
             {!isDocument && (
               <button

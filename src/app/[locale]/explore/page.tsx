@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import ExploreCourses, {
   type ExploreCourseEntry,
 } from "@/src/features/courses/components/explore-courses";
@@ -12,8 +12,13 @@ import {
 } from "@/src/lib/student-api/public";
 import { getAccessToken } from "@/src/lib/student-api/session";
 
-export const metadata = { title: "استكشف الكورسات | بوابة الطالب | علمني" };
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "pageMetadata" });
+  return { title: t("exploreTitle") };
+}
 
 export default async function ExploreCoursesPage({
   params,

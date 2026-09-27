@@ -66,7 +66,7 @@ export default function Features() {
 
                   {index < steps.length - 1 && (
                     <div className="hidden md:flex absolute top-25.5 -start-6 lg:-start-8 z-20 w-8 h-8 rounded-full bg-white dark:bg-slate-800 border border-sky-200 dark:border-slate-700 items-center justify-center text-primary shadow-xs">
-                      <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
+                      <ChevronLeft className="w-5 h-5 stroke-[2.5] ltr:-scale-x-100" />
                     </div>
                   )}
                 </div>

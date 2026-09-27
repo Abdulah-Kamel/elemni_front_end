@@ -187,7 +187,7 @@ export default function AuthModal({ isOpen, initialMode, onClose, onSuccess }: A
             ) : (
               <span className="flex items-center gap-2">
                 {mode === "signup" ? "تأكيد ودخول المنصة" : "تسجيل الدخول"}
-                <ArrowLeft className="w-4 h-4" />
+                <ArrowLeft className="w-4 h-4 ltr:-scale-x-100" />
               </span>
             )}
           </button>

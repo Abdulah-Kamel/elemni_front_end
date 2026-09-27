@@ -28,9 +28,10 @@ const initialFilters: LandingCourseFilters = {
 
 function formatDuration(minutes: number | null, t: ReturnType<typeof useTranslations<"studentLanding.courses">>) {
   if (!minutes) return null;
-  return minutes < 60
-    ? t("minutes", { count: minutes })
-    : t("hours", { count: Math.round(minutes / 60) });
+  if (minutes < 60) return t("minutes", { count: minutes });
+  const hours = Math.floor(minutes / 60);
+  const remainder = minutes % 60;
+  return remainder ? `${t("hours", { count: hours })} ${t("minutes", { count: remainder })}` : t("hours", { count: hours });
 }
 
 

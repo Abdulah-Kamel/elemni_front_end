@@ -139,7 +139,7 @@ export default function InteractiveQuiz({ onExploreTeachers }: InteractiveQuizPr
                     className="px-6 py-3 bg-primary hover:bg-primary-hover text-white font-bold text-sm rounded-xl shadow-md transition-all cursor-pointer flex items-center gap-2"
                   >
                     <span>{currentQuestionIndex + 1 < QUIZ_QUESTIONS.length ? "السؤال التالي" : "إنهاء الاختبار"}</span>
-                    <ArrowLeft className="w-4 h-4" />
+                    <ArrowLeft className="w-4 h-4 ltr:-scale-x-100" />
                   </button>
                 )}
               </div>

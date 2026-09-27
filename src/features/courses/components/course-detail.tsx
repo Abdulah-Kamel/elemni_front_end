@@ -319,7 +319,7 @@ export default function CourseDetail({
                 href={backHref}
                 className="sticker-btn-outline inline-flex items-center gap-2 px-4 py-2 text-sm font-black text-ink dark:text-slate-200"
               >
-                <ArrowLeft className="size-4" aria-hidden="true" />
+                <ArrowLeft className="size-4 ltr:-scale-x-100" aria-hidden="true" />
                 {backLabel}
               </Link>
             </m.div>
@@ -362,7 +362,7 @@ export default function CourseDetail({
                       href={backHref}
                       className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#E4E2DC] bg-white px-4 text-sm font-semibold text-[#15181E] transition hover:bg-[#F4F3EF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A5FB4]"
                     >
-                      <ArrowLeft className="size-4" aria-hidden="true" />
+                      <ArrowLeft className="size-4 ltr:-scale-x-100" aria-hidden="true" />
                       {backLabel}
                     </Link>
                   </m.div>

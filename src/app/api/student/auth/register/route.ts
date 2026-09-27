@@ -5,7 +5,7 @@ import { setSession } from "@/src/lib/student-api/session";
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   if (!body?.email || !body?.password || !body?.name || !body?.phone_number) {
-    return Response.json({ detail: "جميع بيانات إنشاء الحساب مطلوبة." }, { status: 400 });
+    return Response.json({ code: "REGISTRATION_FIELDS_REQUIRED" }, { status: 400 });
   }
 
   const registered = await backendFetch<UserDto>("/api/v1/auth/register", {

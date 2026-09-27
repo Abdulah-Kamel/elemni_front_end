@@ -39,9 +39,7 @@ describe("POST /api/student/payments/checkout", () => {
       const response = await postCheckout(body);
 
       expect(response.status).toBe(400);
-      await expect(response.json()).resolves.toMatchObject({
-        detail: expect.any(String),
-      });
+      await expect(response.json()).resolves.toEqual({ code: "INVALID_COURSE_ID" });
       expect(mocks.authenticatedBackendFetch).not.toHaveBeenCalled();
     },
   );
@@ -87,9 +85,7 @@ describe("POST /api/student/payments/checkout", () => {
     const response = await postCheckout({ course_id: 12 });
 
     expect(response.status).toBe(502);
-    await expect(response.json()).resolves.toMatchObject({
-      detail: expect.any(String),
-    });
+    await expect(response.json()).resolves.toEqual({ code: "CHECKOUT_UNAVAILABLE" });
   });
 
   it("rejects an unsafe backend redirect URL with 502", async () => {
@@ -102,9 +98,7 @@ describe("POST /api/student/payments/checkout", () => {
     const response = await postCheckout({ course_id: 12 });
 
     expect(response.status).toBe(502);
-    await expect(response.json()).resolves.toMatchObject({
-      detail: expect.any(String),
-    });
+    await expect(response.json()).resolves.toEqual({ code: "CHECKOUT_UNAVAILABLE" });
   });
 
   it("forwards backend checkout errors with their status", async () => {

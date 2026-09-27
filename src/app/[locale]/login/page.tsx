@@ -1,10 +1,14 @@
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { getAccessToken } from "@/src/lib/student-api/session";
 import AuthPageShell from "@/src/features/auth/components/auth-page-shell";
 import StudentAuthForm from "@/src/features/auth/components/student-auth-form";
 
-export const metadata = { title: "تسجيل الدخول | علمني" };
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "pageMetadata" });
+  return { title: t("loginPage") };
+}
 export const dynamic = "force-dynamic";
 
 export default async function LoginPage({
