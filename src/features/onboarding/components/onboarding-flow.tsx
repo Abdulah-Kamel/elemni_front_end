@@ -82,7 +82,8 @@ function SelectIndicator({ selected }: { selected: boolean }) {
       className={`flex size-7 shrink-0 items-center justify-center rounded-full border-2 ${selected ? "border-ink bg-brand-600 text-white shadow-[2px_2px_0_0_var(--color-ink)] dark:border-brand-300" : "border-ink/30 text-transparent dark:border-slate-600"}`}
       initial={false}
       animate={{ scale: selected ? [1, 1.25, 1] : 1 }}
-      transition={popSpring}
+      // Springs only support two keyframes; the three-step pop needs a tween.
+      transition={{ type: "tween", duration: 0.3, ease: "easeOut" }}
     >
       <Check className="size-4" strokeWidth={3} />
     </m.span>
