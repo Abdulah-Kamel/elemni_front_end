@@ -6,8 +6,7 @@ import { getAccessToken } from "@/src/lib/student-api/session";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "pageMetadata" });
-  return { title: t("onboardingPage") };
+  return { title: (await getTranslations({ locale, namespace: "onboarding" }))("meta") };
 }
 export const dynamic = "force-dynamic";
 
