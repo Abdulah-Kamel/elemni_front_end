@@ -2,8 +2,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   authenticatedBackendFetch: vi.fn(),
-  backendErrorResponse: vi.fn((error: { status: number; message: string }) =>
-    Response.json({ detail: error.message }, { status: error.status }),
+  backendErrorResponse: vi.fn((error: { status: number; code: string; detail?: string }) =>
+    Response.json({ code: error.code, ...(error.detail ? { detail: error.detail } : {}) }, { status: error.status }),
   ),
 }));
 
@@ -59,10 +59,10 @@ describe("PUT /api/student/my-courses/[courseId]/progress", () => {
     );
   });
 
-  it("returns the backend error message", async () => {
+  it("returns a stable backend error code", async () => {
     mocks.authenticatedBackendFetch.mockResolvedValue({
       ok: false,
-      error: { status: 403, message: "لا يمكنك تحديث تقدم هذا الكورس." },
+      error: { status: 403, code: "COURSE_PROGRESS_FORBIDDEN" },
     });
 
     const response = await PUT(
@@ -76,7 +76,7 @@ describe("PUT /api/student/my-courses/[courseId]/progress", () => {
     expect(response.status).toBe(403);
     expect(mocks.backendErrorResponse).toHaveBeenCalledWith({
       status: 403,
-      message: "لا يمكنك تحديث تقدم هذا الكورس.",
+      code: "COURSE_PROGRESS_FORBIDDEN",
     });
   });
 });

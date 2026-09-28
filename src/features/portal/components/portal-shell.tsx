@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { useState, useSyncExternalStore, type ReactNode } from "react";
 import {
-  Bell,
   Compass,
   GraduationCap,
   Home,
@@ -11,6 +10,8 @@ import {
   Search,
   UsersRound,
   LogOut,
+  Moon,
+  Sun,
   Menu,
   PanelLeftClose,
   PanelLeftOpen,
@@ -24,6 +25,8 @@ import { cn } from "@/src/lib/cn";
 import { notifyStudentSessionChanged } from "@/src/lib/student-api/session-events";
 import type { UserDto } from "@/src/lib/student-api/contract";
 import logo from "@/src/assets/logo-icon.png";
+import { LocaleSwitcher } from "@/src/components/locale-switcher";
+import { useDarkMode } from "@/src/lib/use-dark-mode";
 import "../styles/portal-shell.css";
 import "../styles/sticker.css";
 
@@ -84,13 +87,13 @@ const enabledNav = [
 const shellSpring = { type: "spring", stiffness: 320, damping: 28 } as const;
 
 function StudentIdentity({ user, collapsed = false }: { user: UserDto | null; collapsed?: boolean }) {
-  const locale = useLocale();
+  const tPortal = useTranslations("studentPortal");
   const initials = user?.name
     .split(" ")
     .filter(Boolean)
     .slice(0, 2)
     .map((part) => part[0])
-    .join("") || (locale === "ar" ? "ع" : "E");
+    .join("") || tPortal("fallbackInitial");
 
   return (
     <div className="flex items-center gap-2.5">
@@ -223,6 +226,8 @@ export default function StudentPortalShell({ children, user, active = "dashboard
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const sidebarCollapsed = useStudentSidebarCollapsed();
+  const [isDarkMode, setIsDarkMode] = useDarkMode();
+  const themeLabel = isDarkMode ? tNav("lightMode") : tNav("darkMode");
 
   const logout = async () => {
     await fetch("/api/student/auth/logout", { method: "POST" }).catch(() => null);
@@ -246,6 +251,7 @@ export default function StudentPortalShell({ children, user, active = "dashboard
         <header className="student-portal-header fixed top-0 z-30 flex h-[72px] items-center gap-3 border-b border-slate-200 bg-white px-4 md:px-8 dark:border-slate-700 dark:bg-[#0A1826]">
           <button onClick={() => setMobileOpen(true)} aria-label={tPortal("openMenu")} className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-lg text-slate-700 hover:bg-slate-100 md:hidden dark:text-slate-200 dark:hover:bg-slate-800"><Menu className="size-5" /></button>
           {title && <p title={title} className="hidden max-w-64 truncate text-sm font-bold text-slate-900 lg:block dark:text-slate-100">{title}</p>}
+          <LocaleSwitcher className="shrink-0" />
           <form action={locale === "ar" ? "/explore" : `/${locale}/explore`} method="get" role="search" className="flex min-w-0 flex-1 items-center">
             <label className="sr-only" htmlFor="portal-course-search">{tPortal("searchCourses")}</label>
             <div className="flex h-11 w-full max-w-[440px] items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 text-slate-500 focus-within:border-brand-600 focus-within:ring-2 focus-within:ring-brand-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:focus-within:ring-sky-900">
@@ -253,7 +259,11 @@ export default function StudentPortalShell({ children, user, active = "dashboard
               <input id="portal-course-search" type="search" name="q" placeholder={tNav("searchPlaceholder")} className="min-w-0 flex-1 bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-500 dark:text-white dark:placeholder:text-slate-400" />
             </div>
           </form>
-          <Link href={active === "dashboard" ? "#upcoming" : "/dashboard#upcoming"} aria-label={tPortal("upcomingLabel")} className="flex size-10 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"><Bell className="size-5" /></Link>
+          {/* Icons swap via the `dark` class so server and client markup match before the saved theme is read. */}
+          <button type="button" onClick={() => setIsDarkMode((current) => !current)} aria-label={themeLabel} title={themeLabel} aria-pressed={isDarkMode} suppressHydrationWarning className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 dark:border-slate-700 dark:bg-slate-900 dark:text-sky-300 dark:hover:bg-slate-800">
+            <Sun className="size-5 text-amber-500 dark:hidden" aria-hidden="true" />
+            <Moon className="hidden size-5 dark:block" aria-hidden="true" />
+          </button>
         </header>
 
         {mobileOpen && (

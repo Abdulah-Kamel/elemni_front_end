@@ -25,7 +25,10 @@ const privateQueryDefaults = {
 export function useCurrentStudent(enabled = true) {
   return useQuery({
     queryKey: studentQueryKeys.me(),
-    queryFn: () => studentApiFetch<UserDto>("/api/student/auth/me"),
+    queryFn: async () => {
+      const result = await studentApiFetch<UserDto | { user: null }>("/api/student/auth/me");
+      return "user" in result ? null : result;
+    },
     enabled,
     ...privateQueryDefaults,
   });

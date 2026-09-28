@@ -9,6 +9,7 @@ const mocks = vi.hoisted(() => ({
   getPublicTeacherCourse: vi.fn(),
   getAccessToken: vi.fn(),
   setRequestLocale: vi.fn(),
+  getTranslations: vi.fn(async () => (key: string) => key === "teacherFallback" ? "مدرس علمني" : key),
 }));
 
 vi.mock("next/navigation", () => ({
@@ -17,6 +18,7 @@ vi.mock("next/navigation", () => ({
 
 vi.mock("next-intl/server", () => ({
   setRequestLocale: mocks.setRequestLocale,
+  getTranslations: mocks.getTranslations,
 }));
 
 vi.mock("@/src/features/courses/components/course-detail", () => ({

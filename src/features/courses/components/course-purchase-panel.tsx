@@ -2,6 +2,8 @@
 
 import { CheckCircle2, LockKeyhole, ShieldCheck, TicketPercent } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
+import { formatMoney } from "@/src/lib/format/money";
+import { formatDate } from "@/src/lib/format/date";
 import CouponInput from "./coupon-input";
 import type { CouponValidation } from "@/src/lib/coupons/coupons";
 import type {
@@ -9,18 +11,11 @@ import type {
   PublicCourseDto,
 } from "@/src/lib/student-api/contract";
 
-function formatPrice(value: string | number, locale: string) {
-  return new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(Number(value));
-}
 
 function formatExpiry(value: string, locale: string) {
-  return new Intl.DateTimeFormat(locale === "ar" ? "ar-EG" : "en-US", {
-    dateStyle: "long",
-  }).format(new Date(value));
+  return formatDate(value, locale, "long");
 }
+
 
 export default function CoursePurchasePanel({
   course,
@@ -55,8 +50,7 @@ export default function CoursePurchasePanel({
         <div>
           <p className="text-xs font-black text-muted dark:text-slate-400">{t("checkoutPrice")}</p>
           <p className="sticker-numeral mt-1 text-4xl font-black tracking-tight text-ink dark:text-slate-50">
-            {formatPrice(enrollment?.course_price ?? course.price, locale)}
-            <span className="ms-1 text-sm font-black text-muted dark:text-slate-400">{t("currency")}</span>
+            {formatMoney(enrollment?.course_price ?? course.price, locale)}
           </p>
         </div>
         {enrolled ? (
@@ -77,9 +71,9 @@ export default function CoursePurchasePanel({
           <CouponInput applied={couponApplied} error={couponError} onApply={onCouponApply} onRemove={onCouponRemove} disabled={loading} />
           {couponApplied?.ok && (
             <div className="mt-3 space-y-1 text-sm font-bold tabular-nums">
-              <p className="flex justify-between text-muted"><span>{t("couponOriginal")}</span><span className="line-through">{formatPrice(couponApplied.originalPrice, locale)}</span></p>
-              <p className="flex justify-between text-emerald-700 dark:text-emerald-300"><span className="inline-flex items-center gap-1.5"><TicketPercent className="size-4" aria-hidden="true" />{t("couponDiscount", { code: couponApplied.coupon!.code })}</span><span>-{formatPrice(couponApplied.discount, locale)}</span></p>
-              <p className="flex items-baseline justify-between text-ink dark:text-slate-50"><span className="text-sm font-black">{t("couponTotal")}</span><span className="sticker-numeral text-2xl font-black tracking-tight">{formatPrice(couponApplied.finalPrice, locale)}</span></p>
+              <p className="flex justify-between text-muted"><span>{t("couponOriginal")}</span><span className="line-through">{formatMoney(couponApplied.originalPrice, locale)}</span></p>
+              <p className="flex justify-between text-emerald-700 dark:text-emerald-300"><span className="inline-flex items-center gap-1.5"><TicketPercent className="size-4" aria-hidden="true" />{t("couponDiscount", { code: couponApplied.coupon!.code })}</span><span>-{formatMoney(couponApplied.discount, locale)}</span></p>
+              <p className="flex items-baseline justify-between text-ink dark:text-slate-50"><span className="text-sm font-black">{t("couponTotal")}</span><span className="sticker-numeral text-2xl font-black tracking-tight">{formatMoney(couponApplied.finalPrice, locale)}</span></p>
             </div>
           )}
         </div>

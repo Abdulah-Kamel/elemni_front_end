@@ -8,6 +8,7 @@ import { cn } from "@/src/lib/cn";
 import { Reveal } from "@/src/components/ui/reveal";
 import { AnimatePresence, m } from "motion/react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import type { GradeDto, StreamDto } from "@/src/lib/student-api/contract";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 import { ModernSelect } from "@/src/components/ui/modern-select";
@@ -21,30 +22,31 @@ interface TeacherGridProps {
 }
 
 export default function TeacherGrid({ teachers, grades, streams, searchQuery, loadError = false }: TeacherGridProps) {
+  const t = useTranslations("teacherBrowse");
   const [selectedGrade, setSelectedGrade] = useState("all");
   const [selectedStream, setSelectedStream] = useState("all");
   const [internalSearch, setInternalSearch] = useState("");
 
   const gradeOptions = grades.length ? [
-    { value: "all", label: "جميع الصفوف الدراسية" },
+    { value: "all", label: t("allGrades") },
     ...grades.map((grade) => ({ value: String(grade.id), label: grade.name })),
   ] : [
-    { value: "all", label: "جميع الصفوف الدراسية" },
-    { value: "sec3", label: "الصف الثالث الثانوي" },
-    { value: "sec2", label: "الصف الثاني الثانوي" },
-    { value: "sec1", label: "الصف الأول الثانوي" },
+    { value: "all", label: t("allGrades") },
+    { value: "sec3", label: t("grade3") },
+    { value: "sec2", label: t("grade2") },
+    { value: "sec1", label: t("grade1") },
   ];
 
   const streamOptions = streams.length ? [
-    { value: "all", label: "جميع الشعب والتخصصات" },
+    { value: "all", label: t("allStreams") },
     ...streams.map((stream) => ({ value: String(stream.id), label: stream.name })),
   ] : [
-    { value: "all", label: "جميع الشعب والتخصصات" },
-    { value: "general", label: "عام" },
-    { value: "science", label: "علمي علوم" },
-    { value: "math", label: "علمي رياضة" },
-    { value: "humanities", label: "أدبي / مواد أدبية" },
-    { value: "languages", label: "اللغات واللغويات" },
+    { value: "all", label: t("allStreams") },
+    { value: "general", label: t("general") },
+    { value: "science", label: t("science") },
+    { value: "math", label: t("math") },
+    { value: "humanities", label: t("humanities") },
+    { value: "languages", label: t("languages") },
   ];
 
   const filteredTeachers = useMemo(() => {
@@ -95,13 +97,13 @@ export default function TeacherGrid({ teachers, grades, streams, searchQuery, lo
         <Reveal>
           <div className="text-center flex flex-col items-center space-y-3 max-w-3xl mx-auto mb-10">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight font-readex block">
-              اختر{" "}
+              {t("chooseLead")} {" "}
               <MarkerHighlight color="sky" variant={1}>
-                المدرسين
+                {t("chooseTitle")}
               </MarkerHighlight>
             </h2>
             <p className="text-base sm:text-lg text-slate-700 dark:text-slate-300 leading-relaxed pt-1">
-              تصفح معلمي المنصة، واستكشف الكورسات المتاحة لكل معلم، وشاهد نماذج الشرح بالفيديو للبدء فوراً.
+              {t("directoryDescription")}
             </p>
           </div>
         </Reveal>
@@ -110,14 +112,14 @@ export default function TeacherGrid({ teachers, grades, streams, searchQuery, lo
           <div className="bg-white dark:bg-slate-800 rounded-3xl p-4 sm:p-6 shadow-md border border-slate-200/80 dark:border-slate-700 max-w-4xl mx-auto mb-12 space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
               <ModernSelect
-                label="الصف الدراسي"
+                label={t("gradeLabel")}
                 options={gradeOptions}
                 value={selectedGrade}
                 onChange={setSelectedGrade}
                 icon={BookOpen}
               />
               <ModernSelect
-                label="الشعبة / التخصص"
+                label={t("streamLabel")}
                 options={streamOptions}
                 value={selectedStream}
                 onChange={setSelectedStream}
@@ -125,14 +127,14 @@ export default function TeacherGrid({ teachers, grades, streams, searchQuery, lo
               />
               <div className="relative text-start font-readex">
                 <label className="mb-1.5 block text-xs font-bold text-slate-500 dark:text-slate-400">
-                  البحث باسم المعلم أو المادة
+                  {t("searchLabel")}
                 </label>
                 <div className="relative">
                   <input
                     type="text"
                     value={internalSearch}
                     onChange={(e) => setInternalSearch(e.target.value)}
-                    placeholder="ابحث هنا..."
+                    placeholder={t("searchPlaceholder")}
                     className="w-full rounded-2xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-900/80 py-3 pe-10 ps-10 text-sm font-bold text-[#0F172A] dark:text-white placeholder-slate-400 transition-all focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary font-readex backdrop-blur-sm"
                   />
                   <Search className="absolute inset-s-3 top-1/2 size-4 -translate-y-1/2 text-slate-400 stroke-[2.2]" />
@@ -149,8 +151,8 @@ export default function TeacherGrid({ teachers, grades, streams, searchQuery, lo
             </div>
             {(selectedGrade !== "all" || selectedStream !== "all" || internalSearch) && (
               <div className="pt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs font-readex">
-                <span className="text-slate-500 dark:text-slate-400">نتائج البحث: <strong className="text-primary">{filteredTeachers.length}</strong> معلم</span>
-                <button onClick={() => { setSelectedGrade("all"); setSelectedStream("all"); setInternalSearch(""); }} className="text-primary hover:underline font-bold cursor-pointer">إعادة ضبط الفلاتر</button>
+                <span className="text-slate-500 dark:text-slate-400">{t("resultCount", { count: filteredTeachers.length })}</span>
+                <button onClick={() => { setSelectedGrade("all"); setSelectedStream("all"); setInternalSearch(""); }} className="text-primary hover:underline font-bold cursor-pointer">{t("resetAll")}</button>
               </div>
             )}
           </div>
@@ -159,7 +161,7 @@ export default function TeacherGrid({ teachers, grades, streams, searchQuery, lo
         {loadError && (
           <div className="mx-auto mb-8 flex max-w-3xl items-center gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-bold text-amber-900 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-200">
             <CircleAlert className="size-5 shrink-0" />
-            <span>تعذر تحميل المدرسين من الخادم. تحقق من اتصال خدمة الـ API ثم أعد المحاولة.</span>
+            <span>{t("loadError")}</span>
           </div>
         )}
 
@@ -214,7 +216,7 @@ export default function TeacherGrid({ teachers, grades, streams, searchQuery, lo
                             ))}
                             {remainingCount > 0 && (
                               <span className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 bg-slate-200/80 dark:bg-slate-600/80 px-2 py-0.5 rounded-full">
-                                +{remainingCount} صفوف أخرى
+                                {t("moreGrades", { count: remainingCount })}
                               </span>
                             )}
                           </div>
@@ -227,7 +229,7 @@ export default function TeacherGrid({ teachers, grades, streams, searchQuery, lo
                         <div className="pt-3 border-t border-sky-200/50 dark:border-slate-700/80 shrink-0">
                           <div className="w-full py-2.5 px-4 bg-primary group-hover:bg-primary-hover text-white font-bold text-xs sm:text-sm rounded-xl shadow-md shadow-primary/20 group-hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
                             <BookOpen className="w-4 h-4" />
-                            <span>عرض الكورسات</span>
+                            <span>{t("viewCourses")}</span>
                           </div>
                         </div>
                       </Link>
@@ -240,8 +242,8 @@ export default function TeacherGrid({ teachers, grades, streams, searchQuery, lo
               <div className="mt-10 text-center">
                 <Link href="/teachers"
                   className="px-8 py-3.5 bg-primary hover:bg-primary-hover active:scale-95 text-white font-extrabold text-sm rounded-2xl shadow-lg shadow-primary/25 transition-all inline-flex items-center gap-2 font-readex">
-                  <span>عرض جميع المدرسين</span>
-                  <ArrowLeft className="w-4 h-4" />
+                  <span>{t("allTeachers")}</span>
+                  <ArrowLeft className="w-4 h-4 ltr:-scale-x-100" />
                 </Link>
               </div>
             </Reveal>
@@ -250,12 +252,12 @@ export default function TeacherGrid({ teachers, grades, streams, searchQuery, lo
           <div className="text-center py-12 bg-white rounded-3xl border border-slate-200/80 max-w-lg mx-auto space-y-3">
             <Search className="w-10 h-10 text-slate-300 mx-auto" />
             <h3 className="text-lg font-bold text-[#0F172A]">
-              {teachers.length ? "لم نجد معلمين يطابقون بحثك" : "لا يوجد مدرسون منشورون حالياً"}
+              {teachers.length ? t("emptyTitle") : t("noPublishedTeachers")}
             </h3>
             <p className="text-xs text-slate-500">
-              {teachers.length ? "جرب البحث بكلمات أخرى أو اختر صف دراسي مختلف." : "سيظهر المدرسون هنا بعد إضافتهم وتفعيل حساباتهم من لوحة الإدارة."}
+              {teachers.length ? t("emptyDescription") : t("noPublishedDescription")}
             </p>
-            {teachers.length > 0 && <button onClick={() => { setSelectedGrade("all"); setSelectedStream("all"); setInternalSearch(""); }} className="mt-2 text-xs font-bold text-primary hover:underline cursor-pointer">إعادة ضبط جميع الفلاتر</button>}
+            {teachers.length > 0 && <button onClick={() => { setSelectedGrade("all"); setSelectedStream("all"); setInternalSearch(""); }} className="mt-2 text-xs font-bold text-primary hover:underline cursor-pointer">{t("resetAll")}</button>}
           </div>
         )}
       </div>

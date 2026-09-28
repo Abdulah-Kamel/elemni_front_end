@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import { cleanup, render, screen } from "@testing-library/react";
+import { NextIntlClientProvider } from "next-intl";
+import arMessages from "@/src/messages/ar.json";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import ExploreCourses, { type ExploreCourseEntry } from "./explore-courses";
 
@@ -86,6 +88,7 @@ describe("ExploreCourses", () => {
 
   it("removes recommended courses while keeping the full course list", () => {
     render(
+      <NextIntlClientProvider locale="ar" messages={arMessages}>
       <ExploreCourses
         catalog={catalog}
         teachers={[]}
@@ -93,7 +96,9 @@ describe("ExploreCourses", () => {
         streams={[]}
         subjects={[]}
         loadError={false}
-      />,
+        locale="ar"
+      />
+      </NextIntlClientProvider>,
     );
 
     expect(screen.queryByRole("heading", { name: "مناسب لك" })).not.toBeInTheDocument();
@@ -103,6 +108,7 @@ describe("ExploreCourses", () => {
 
   it("keeps non-enrolled course cards inside the student dashboard shell", () => {
     render(
+      <NextIntlClientProvider locale="ar" messages={arMessages}>
       <ExploreCourses
         catalog={catalog}
         teachers={[]}
@@ -110,7 +116,9 @@ describe("ExploreCourses", () => {
         streams={[]}
         subjects={[]}
         loadError={false}
-      />,
+        locale="ar"
+      />
+      </NextIntlClientProvider>,
     );
 
     const cardLink = screen.getByRole("link", { name: "عرض كورس كورس الرياضيات" });

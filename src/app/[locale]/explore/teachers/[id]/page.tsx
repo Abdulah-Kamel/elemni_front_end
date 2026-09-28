@@ -1,5 +1,5 @@
 import { redirect, notFound } from "next/navigation";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import DashboardTeacherProfile from "@/src/features/teachers/components/client/dashboard-teacher-profile";
 import { toTeacher } from "@/src/lib/student-api/adapters";
 import type { UserDto } from "@/src/lib/student-api/contract";
@@ -15,6 +15,7 @@ export default async function PortalTeacherProfilePage({
 }) {
   const { locale, id } = await params;
   setRequestLocale(locale);
+  const tTeacher = await getTranslations({ locale, namespace: "studentTeacherData" });
   if (!(await getAccessToken())) {
     redirect(locale === "ar" ? `/login?next=/explore/teachers/${id}` : `/${locale}/login?next=/${locale}/explore/teachers/${id}`);
   }
@@ -37,9 +38,9 @@ export default async function PortalTeacherProfilePage({
       ? teachersResult.data.find((teacher) => teacher.slug === id)
       : undefined;
     if (!teacherData && teacherResult.error.status === 404) notFound();
-    if (!teacherData) throw new Error(teacherResult.error.message);
+    if (!teacherData) throw new Error(teacherResult.error.detail ?? teacherResult.error.code);
   }
 
-  const teacher = toTeacher(teacherData, coursesResult.ok ? coursesResult.data : []);
+  const teacher = toTeacher(teacherData, coursesResult.ok ? coursesResult.data : [], (key, values) => tTeacher(key, values), locale);
   return <DashboardTeacherProfile teacher={teacher} user={userResult.data} />;
 }

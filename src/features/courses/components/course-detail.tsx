@@ -18,7 +18,7 @@ import type {
 } from "@/src/lib/student-api/contract";
 import { isCheckoutRedirectDto, resolveCheckoutRedirect } from "@/src/lib/student-api/checkout";
 import { resolveAssetUrl } from "@/src/lib/asset-url";
-import {
+import { StudentApiError,
   getStudentErrorMessage,
   isStudentUnauthorized,
 } from "@/src/lib/student-api/client";
@@ -63,6 +63,7 @@ export default function CourseDetail({
   initialDetail?: StudentCourseDetailDto;
 }) {
   const t = useTranslations("courseDetail");
+  const tApi = useTranslations("apiErrors");
   const locale = useLocale();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -99,7 +100,8 @@ export default function CourseDetail({
     isStudentUnauthorized(courseQuery.error) ||
     (isAuthenticated && isStudentUnauthorized(userQuery.error));
   const loading = courseQuery.isPending || (isAuthenticated && userQuery.isPending);
-  const error = getStudentErrorMessage(courseQuery.error, t("loadError"));
+  const error = getStudentErrorMessage(courseQuery.error, tApi("generic"), (key) => tApi(key));
+  const courseNotFound = courseQuery.error instanceof StudentApiError && courseQuery.error.status === 404;
 
   useEffect(() => {
     if (unauthorized) router.replace("/login");
@@ -264,7 +266,10 @@ export default function CourseDetail({
     }
     if (!response?.ok) {
       const body = await response?.json().catch(() => null);
-      setCheckoutError(typeof body?.detail === "string" ? body.detail : t("checkoutError"));
+      const codeMessage = body?.code === "CHECKOUT_UNAVAILABLE" ? tApi("checkoutUnavailable")
+        : body?.code === "STUDENT_ACCOUNT_REQUIRED" ? tApi("studentAccountRequired")
+          : undefined;
+      setCheckoutError(codeMessage ?? (typeof body?.detail === "string" ? body.detail : tApi("checkoutUnavailable")));
       setCheckoutLoading(false);
       return;
     }
@@ -288,12 +293,13 @@ export default function CourseDetail({
         <div className="mx-auto flex min-h-[70vh] max-w-xl items-center px-4">
           <div role="alert" className="sticker-tile w-full border-red-600 bg-red-50 p-6 text-center text-sm font-black text-red-700 dark:border-red-400 dark:bg-red-500/10 dark:text-red-300">
             <CircleAlert className="mx-auto mb-3 size-8" aria-hidden="true" />
-            <p>{error || t("notFound")}</p>
+            <p>{courseNotFound ? t("courseNotFoundTitle") : error || t("notFound")}</p>
             <div className="mt-5 flex justify-center gap-4">
-              <button type="button" onClick={loadCourse} className="inline-flex cursor-pointer items-center gap-2 font-black text-brand-700 hover:underline dark:text-brand-300">
+              {!courseNotFound && <button type="button" onClick={loadCourse} className="inline-flex cursor-pointer items-center gap-2 font-black text-brand-700 hover:underline dark:text-brand-300">
                 <RotateCcw className="size-4" aria-hidden="true" />
                 {t("retry")}
-              </button>
+              </button>}
+              {courseNotFound && <Link href="/explore" className="inline-flex items-center gap-2 font-bold text-brand-700 hover:underline dark:text-brand-300">{t("courseNotFoundExplore")}</Link>}
               <Link href={backHref} className="inline-flex items-center gap-2 font-bold text-muted hover:underline dark:text-slate-400">
                 {backLabel}
               </Link>
@@ -317,7 +323,7 @@ export default function CourseDetail({
                 href={backHref}
                 className="sticker-btn-outline inline-flex items-center gap-2 px-4 py-2 text-sm font-black text-ink dark:text-slate-200"
               >
-                <ArrowLeft className="size-4" aria-hidden="true" />
+                <ArrowLeft className="size-4 ltr:-scale-x-100" aria-hidden="true" />
                 {backLabel}
               </Link>
             </m.div>
@@ -360,7 +366,7 @@ export default function CourseDetail({
                       href={backHref}
                       className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[#E4E2DC] bg-white px-4 text-sm font-semibold text-[#15181E] transition hover:bg-[#F4F3EF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A5FB4]"
                     >
-                      <ArrowLeft className="size-4" aria-hidden="true" />
+                      <ArrowLeft className="size-4 ltr:-scale-x-100" aria-hidden="true" />
                       {backLabel}
                     </Link>
                   </m.div>

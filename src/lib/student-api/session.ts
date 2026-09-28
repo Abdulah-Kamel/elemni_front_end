@@ -42,7 +42,7 @@ export async function authenticatedBackendFetch<T>(
 ): Promise<BackendResult<T>> {
   const accessToken = await getAccessToken();
   if (!accessToken) {
-    return { ok: false, error: { status: 401, message: "يرجى تسجيل الدخول أولاً." } };
+    return { ok: false, error: { status: 401, code: "SESSION_REQUIRED" } };
   }
 
   const request = (token: string) =>
@@ -81,7 +81,7 @@ export async function authenticatedBackendFetch<T>(
   const refreshed = await refreshPromise;
   if (!refreshed) {
     await clearSession();
-    return { ok: false, error: { status: 401, message: "انتهت الجلسة. سجل الدخول مرة أخرى." } };
+    return { ok: false, error: { status: 401, code: "SESSION_EXPIRED" } };
   }
 
   result = await request(refreshed.access_token);

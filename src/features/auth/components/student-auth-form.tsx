@@ -13,18 +13,11 @@ import {
   UserRound,
 } from "lucide-react";
 import { Link, useRouter } from "@/src/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { notifyStudentSessionChanged } from "@/src/lib/student-api/session-events";
 import AuthCard from "./auth-card";
 
 type AuthMode = "login" | "register";
-
-function errorMessage(status: number, detail?: string) {
-  if (status === 401) return "البريد الإلكتروني أو كلمة المرور غير صحيحة.";
-  if (status === 403) return "هذا الحساب غير متاح حالياً.";
-  if (status === 409) return "يوجد حساب مسجل بهذا البريد الإلكتروني بالفعل.";
-  if (status === 422) return "راجع البيانات المدخلة وحاول مرة أخرى.";
-  return detail || "تعذر الاتصال بالخادم. حاول مرة أخرى.";
-}
 
 function Field({
   id,
@@ -60,6 +53,7 @@ const ltrInputClass =
 
 export default function StudentAuthForm({ mode, returnTo }: { mode: AuthMode; returnTo?: string }) {
   const router = useRouter();
+  const t = useTranslations("studentAuth");
   const isRegister = mode === "register";
   const [isHydrated, setIsHydrated] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -81,7 +75,7 @@ export default function StudentAuthForm({ mode, returnTo }: { mode: AuthMode; re
     const password = String(form.get("password") ?? "");
     const passwordConfirmation = String(form.get("password_confirmation") ?? "");
     if (isRegister && password !== passwordConfirmation) {
-      setError("كلمتا المرور غير متطابقتين.");
+      setError(t("errorPasswordMismatch"));
       return;
     }
 
@@ -108,7 +102,9 @@ export default function StudentAuthForm({ mode, returnTo }: { mode: AuthMode; re
 
     if (!response?.ok) {
       const body = await response?.json().catch(() => null);
-      setError(errorMessage(response?.status ?? 503, body?.detail));
+      const status = response?.status ?? 503;
+      const code = body?.code as string | undefined;
+      setError(code === "STUDENT_ACCOUNT_REQUIRED" ? t("errorStudentOnly") : code === "AUTH_FIELDS_REQUIRED" || code === "REGISTRATION_FIELDS_REQUIRED" ? t("errorRequired") : status === 401 ? t("errorInvalidCredentials") : status === 403 ? t("errorUnavailable") : status === 409 ? t("errorAlreadyRegistered") : status === 422 ? t("errorInvalidData") : body?.detail || t("errorGeneric"));
       setSubmitting(false);
       return;
     }
@@ -122,18 +118,18 @@ export default function StudentAuthForm({ mode, returnTo }: { mode: AuthMode; re
       <AuthCard>
         <div className="mb-7 text-center">
           <h1 className="text-2xl font-black leading-9 text-[#1B1B24] dark:text-white">
-            {isRegister ? "إنشاء حساب جديد" : "أهلاً بيك من تاني"}
+            {isRegister ? t("registerTitle") : t("loginTitle")}
           </h1>
           <p className="mt-1.5 text-sm leading-6 text-[#777587] dark:text-slate-400">
             {isRegister
-              ? "ابدأ رحلتك التعليمية في أقل من دقيقة"
-              : "سجّل دخولك وكمّل مذاكرتك من حيث توقفت"}
+              ? t("registerSubtitle")
+              : t("loginSubtitle")}
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {isRegister && (
-            <Field id="name" label="الاسم بالكامل" icon={UserRound}>
+            <Field id="name" label={t("name")} icon={UserRound}>
               <input
                 id="name"
                 name="name"
@@ -141,13 +137,13 @@ export default function StudentAuthForm({ mode, returnTo }: { mode: AuthMode; re
                 autoComplete="name"
                 required
                 maxLength={100}
-                placeholder="اكتب اسمك بالكامل"
+                placeholder={t("namePlaceholder")}
                 className={inputClass}
               />
             </Field>
           )}
 
-          <Field id="email" label="البريد الإلكتروني" icon={Mail}>
+          <Field id="email" label={t("email")} icon={Mail}>
             <input
               id="email"
               name="email"
@@ -161,7 +157,7 @@ export default function StudentAuthForm({ mode, returnTo }: { mode: AuthMode; re
           </Field>
 
           {isRegister && (
-            <Field id="phone_number" label="رقم الموبايل" icon={Phone}>
+            <Field id="phone_number" label={t("phone")} icon={Phone}>
               <input
                 id="phone_number"
                 name="phone_number"
@@ -180,9 +176,9 @@ export default function StudentAuthForm({ mode, returnTo }: { mode: AuthMode; re
 
           <Field
             id="password"
-            label="كلمة المرور"
+            label={t("password")}
             icon={LockKeyhole}
-            hint={isRegister ? "8 أحرف على الأقل" : undefined}
+            hint={isRegister ? t("passwordHint") : undefined}
           >
             <input
               id="password"
@@ -196,7 +192,7 @@ export default function StudentAuthForm({ mode, returnTo }: { mode: AuthMode; re
             <button
               type="button"
               onClick={() => setShowPassword((current) => !current)}
-              aria-label={showPassword ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"}
+              aria-label={showPassword ? t("hidePassword") : t("showPassword")}
               className="absolute start-2.5 top-1/2 flex size-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-[#777587] hover:bg-primary-light hover:text-primary dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-sky-300"
             >
               {showPassword ? <EyeOff className="size-4.5" /> : <Eye className="size-4.5" />}
@@ -204,7 +200,7 @@ export default function StudentAuthForm({ mode, returnTo }: { mode: AuthMode; re
           </Field>
 
           {isRegister && (
-            <Field id="password_confirmation" label="تأكيد كلمة المرور" icon={LockKeyhole}>
+            <Field id="password_confirmation" label={t("confirmPassword")} icon={LockKeyhole}>
               <input
                 id="password_confirmation"
                 name="password_confirmation"
@@ -217,7 +213,7 @@ export default function StudentAuthForm({ mode, returnTo }: { mode: AuthMode; re
               <button
                 type="button"
                 onClick={() => setShowConfirmation((current) => !current)}
-                aria-label={showConfirmation ? "إخفاء تأكيد كلمة المرور" : "إظهار تأكيد كلمة المرور"}
+                aria-label={showConfirmation ? t("hidePassword") : t("showPassword")}
                 className="absolute start-2.5 top-1/2 flex size-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-[#777587] hover:bg-primary-light hover:text-primary dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-sky-300"
               >
                 {showConfirmation ? <EyeOff className="size-4.5" /> : <Eye className="size-4.5" />}
@@ -228,7 +224,7 @@ export default function StudentAuthForm({ mode, returnTo }: { mode: AuthMode; re
           {!isRegister && (
             <div className="text-start">
               <Link href="/forgot-password" className="text-sm font-bold text-primary hover:underline">
-                نسيت كلمة المرور؟
+                {t("forgotPassword")}
               </Link>
             </div>
           )}
@@ -246,27 +242,27 @@ export default function StudentAuthForm({ mode, returnTo }: { mode: AuthMode; re
             className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary text-base font-bold text-white transition hover:bg-primary-hover disabled:cursor-wait disabled:opacity-70"
           >
             {submitting ? (
-              <><LoaderCircle className="size-5 animate-spin" /> جاري المتابعة...</>
+              <><LoaderCircle className="size-5 animate-spin" /> {t("submitting")}</>
             ) : (
-              <>{isRegister ? "إنشاء الحساب" : "تسجيل الدخول"}<ArrowLeft className="size-4.5" /></>
+              <>{isRegister ? t("registerAction") : t("loginAction")}<ArrowLeft className="size-4.5 ltr:-scale-x-100" /></>
             )}
           </button>
         </form>
 
         {isRegister && (
           <p className="mt-5 text-center text-xs leading-5 text-[#777587] dark:text-slate-400">
-            بإنشاء حساب، أنت توافق على الشروط وسياسة الخصوصية.
+            {t("terms")}
           </p>
         )}
       </AuthCard>
 
       <p className="mt-6 text-center text-sm text-[#464555] dark:text-slate-400">
-        {isRegister ? "عندك حساب بالفعل؟ " : "مش عندك حساب؟ "}
+        {isRegister ? t("hasAccount") : t("noAccount")}
         <Link
           href={isRegister ? "/login" : "/register"}
           className="font-bold text-primary hover:underline"
         >
-          {isRegister ? "تسجيل الدخول" : "إنشاء حساب جديد"}
+          {isRegister ? t("loginAction") : t("createAccount")}
         </Link>
       </p>
     </div>

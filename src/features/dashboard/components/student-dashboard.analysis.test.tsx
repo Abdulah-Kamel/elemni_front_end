@@ -2,6 +2,7 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import StudentDashboard from "./student-dashboard";
+import arMessages from "@/src/messages/ar.json";
 
 const { courseItems } = vi.hoisted(() => ({ courseItems: [] as Record<string, unknown>[] }));
 
@@ -43,7 +44,7 @@ describe("StudentDashboard analysis surface", () => {
 
   it("does not render discovery recommendations or exploration actions", () => {
     render(
-      <NextIntlClientProvider locale="ar" messages={{}}>
+      <NextIntlClientProvider locale="ar" messages={arMessages}>
         <StudentDashboard
           grades={[]}
           streams={[]}
@@ -77,7 +78,7 @@ describe("StudentDashboard analysis surface", () => {
     });
 
     render(
-      <NextIntlClientProvider locale="ar" messages={{}}>
+      <NextIntlClientProvider locale="ar" messages={arMessages}>
         <StudentDashboard grades={[]} streams={[]} />
       </NextIntlClientProvider>,
     );
@@ -107,7 +108,7 @@ describe("StudentDashboard analysis surface", () => {
     );
 
     render(
-      <NextIntlClientProvider locale="ar" messages={{}}>
+      <NextIntlClientProvider locale="ar" messages={arMessages}>
         <StudentDashboard grades={[]} streams={[]} />
       </NextIntlClientProvider>,
     );

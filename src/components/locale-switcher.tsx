@@ -1,18 +1,20 @@
 "use client";
 
 import { useLocale } from "next-intl";
+import { useSearchParams } from "next/navigation";
 import { usePathname, useRouter } from "@/src/i18n/navigation";
 import { cn } from "@/src/lib/cn";
 
 export function LocaleSwitcher({ className }: { className?: string }) {
   const locale = useLocale();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const router = useRouter();
   const isAr = locale === "ar";
 
   const change = (next: string) => {
     if (next === locale) return;
-    router.replace(pathname, { locale: next, scroll: false });
+    router.replace({ pathname, query: Object.fromEntries(searchParams.entries()) }, { locale: next, scroll: false });
   };
 
   return (

@@ -2,6 +2,8 @@ import { cleanup, fireEvent, render, screen, within } from "@testing-library/rea
 import { NextIntlClientProvider } from "next-intl";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import StudentPortalShell from "@/src/features/portal/components/portal-shell";
+import arMessages from "@/src/messages/ar.json";
+import enMessages from "@/src/messages/en.json";
 
 vi.mock("next/navigation", async (importOriginal) => ({
   ...(await importOriginal<typeof import("next/navigation")>()),
@@ -9,51 +11,8 @@ vi.mock("next/navigation", async (importOriginal) => ({
   usePathname: () => "/dashboard",
 }));
 
-const arabicMessages = {
-  brand: { name: "علمني", tagline: "منصة التعليم الذكي" },
-  studentLanding: {
-    nav: {
-      dashboard: "لوحتي",
-      myCourses: "كورساتي",
-      courses: "الدروس",
-      logout: "تسجيل الخروج",
-      searchPlaceholder: "ابحث عن كورس...",
-    },
-  },
-  studentPortal: {
-    sidebarLabel: "بوابة الطالب",
-    collapseSidebar: "تصغير القائمة الجانبية",
-    expandSidebar: "توسيع القائمة الجانبية",
-    openMenu: "فتح قائمة بوابة الطالب",
-    closeMenu: "إغلاق القائمة",
-    searchCourses: "البحث عن كورس",
-    upcomingLabel: "المواعيد",
-    mobileNavigation: "التنقل للموبايل",
-  },
-};
-
-const englishMessages = {
-  brand: { name: "Elemni", tagline: "Smart learning platform" },
-  studentLanding: {
-    nav: {
-      dashboard: "My dashboard",
-      myCourses: "My courses",
-      courses: "Courses",
-      logout: "Log out",
-      searchPlaceholder: "Search for a course...",
-    },
-  },
-  studentPortal: {
-    sidebarLabel: "Student portal",
-    collapseSidebar: "Collapse sidebar",
-    expandSidebar: "Expand sidebar",
-    openMenu: "Open student portal menu",
-    closeMenu: "Close menu",
-    searchCourses: "Search courses",
-    upcomingLabel: "Upcoming",
-    mobileNavigation: "Mobile navigation",
-  },
-};
+const arabicMessages = arMessages;
+const englishMessages = enMessages;
 
 describe("StudentPortalShell", () => {
   afterEach(() => {
@@ -91,7 +50,7 @@ describe("StudentPortalShell", () => {
       "true",
     );
     expect(window.localStorage.getItem("student-sidebar-collapsed")).toBe("true");
-    const dashboardLink = within(within(screen.getByRole("complementary")).getByRole("navigation", { name: "بوابة الطالب" })).getByRole("link", { name: "لوحتي" });
+    const dashboardLink = within(within(screen.getByRole("complementary")).getByRole("navigation", { name: "بوابة الطالب" })).getByRole("link", { name: arMessages.studentLanding.nav.dashboard });
     expect(dashboardLink).toHaveClass(
       "mx-auto",
       "size-12",
@@ -143,7 +102,7 @@ describe("StudentPortalShell", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "تصغير القائمة الجانبية" }));
 
-    const dashboardLabel = within(screen.getByRole("complementary")).getByText("لوحتي");
+    const dashboardLabel = within(screen.getByRole("complementary")).getByText(arMessages.studentLanding.nav.dashboard);
     expect(dashboardLabel).toHaveClass("sr-only");
     expect(dashboardLabel).not.toHaveClass("relative");
   });

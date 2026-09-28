@@ -5,6 +5,8 @@ import Footer from "@/src/features/landing/components/server/footer";
 import { SUPPORT_PHONE, SUPPORT_PHONE_HREF } from "@/src/features/contact/contact-details";
 import LegalChrome from "@/src/features/legal/components/legal-chrome";
 
+export const revalidate = 300;
+
 type ContactPageProps = {
   params: Promise<{ locale: string }>;
 };

@@ -107,7 +107,7 @@ function LessonRow({
           </span>
         </span>
         <ChevronLeft
-          className={`size-4 shrink-0 text-[#8BA0B1] transition-transform motion-reduce:transition-none ${expanded ? "-rotate-90" : ""}`}
+          className={`size-4 shrink-0 text-[#8BA0B1] transition-transform motion-reduce:transition-none ltr:rotate-180 ${expanded ? "-rotate-90" : ""}`}
           aria-hidden="true"
         />
       </button>
@@ -202,7 +202,7 @@ function ItemRow({
             <span className="text-xs text-[#6B7E8F]">{itemMeta}</span>
           </span>
           {completed ? (
-            <span className={`shrink-0 rounded-full px-2 py-1 text-[11px] font-bold ${variant === "sidebar" ? "bg-[#E6F4EC] text-[#16784A]" : "bg-emerald-50 text-emerald-700"}`}>تم</span>
+            <span className={`shrink-0 rounded-full px-2 py-1 text-[11px] font-bold ${variant === "sidebar" ? "bg-[#E6F4EC] text-[#16784A]" : "bg-emerald-50 text-emerald-700"}`}>{t("completedStatus")}</span>
           ) : (
             <span className={`shrink-0 rounded-full px-2 py-1 text-[11px] font-bold ${variant === "sidebar" ? "bg-[#E6F4EC] text-[#16784A]" : "bg-[#E8F6FE] text-[#087443]"}`}>{t("available")}</span>
           )}
@@ -248,7 +248,7 @@ function ItemRow({
           <span className="text-xs text-[#6B7E8F]">{itemMeta}</span>
         </span>
         {completed ? (
-          <span className={`shrink-0 rounded-full px-2 py-1 text-[11px] font-bold ${variant === "sidebar" ? "bg-[#E6F4EC] text-[#16784A]" : "bg-emerald-50 text-emerald-700"}`}>تم</span>
+          <span className={`shrink-0 rounded-full px-2 py-1 text-[11px] font-bold ${variant === "sidebar" ? "bg-[#E6F4EC] text-[#16784A]" : "bg-emerald-50 text-emerald-700"}`}>{t("completedStatus")}</span>
         ) : (
           <Play className={`size-4 shrink-0 fill-current ${accentClass}`} aria-hidden="true" />
         )}
@@ -269,7 +269,7 @@ function ItemRow({
           <strong className={`block truncate text-sm ${inkClass}`}>{item.title}</strong>
           <span className="text-xs text-[#6B7E8F]">{itemMeta}</span>
         </span>
-        {completed ? <span className={`shrink-0 rounded-full px-2 py-1 text-[11px] font-bold ${variant === "sidebar" ? "bg-[#E6F4EC] text-[#16784A]" : "bg-emerald-50 text-emerald-700"}`}>تم</span> : <ArrowLeft className="size-4 shrink-0 text-[#6B7E8F]" aria-hidden="true" />}
+        {completed ? <span className={`shrink-0 rounded-full px-2 py-1 text-[11px] font-bold ${variant === "sidebar" ? "bg-[#E6F4EC] text-[#16784A]" : "bg-emerald-50 text-emerald-700"}`}>{t("completedStatus")}</span> : <ArrowLeft className="size-4 shrink-0 text-[#6B7E8F]" aria-hidden="true" />}
       </button>
     );
   }

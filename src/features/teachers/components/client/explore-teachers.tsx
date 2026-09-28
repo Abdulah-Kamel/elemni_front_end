@@ -86,9 +86,9 @@ function TeacherCard({
         >
           {t("exploreTeacherViewProfile")}
           {locale === "ar" ? (
-            <ChevronLeft className="size-3.5" aria-hidden="true" />
+            <ChevronLeft className="size-3.5 ltr:-scale-x-100" aria-hidden="true" />
           ) : (
-            <ChevronRight className="size-3.5" aria-hidden="true" />
+            <ChevronRight className="size-3.5 ltr:-scale-x-100" aria-hidden="true" />
           )}
         </Link>
       </div>
@@ -301,7 +301,7 @@ export default function ExploreTeachers({
             {totalPages > 1 && (
               <nav className="mt-8 flex items-center justify-center gap-2" aria-label={t("exploreTeachersPageNavigation")}>
                 <button type="button" onClick={() => setPage((current) => Math.max(1, current - 1))} disabled={page === 1} aria-label={t("exploreTeachersPreviousPage")} className="sticker-btn-outline flex size-11 items-center justify-center disabled:cursor-not-allowed disabled:opacity-40">
-                  <ChevronRight className="size-4" aria-hidden="true" />
+                  <ChevronRight className="size-4 ltr:-scale-x-100" aria-hidden="true" />
                 </button>
                 {Array.from({ length: totalPages }, (_, index) => index + 1).map((item) => (
                   <button key={item} type="button" onClick={() => setPage(item)} aria-current={page === item ? "page" : undefined} className={`size-11 rounded-full border-2 text-sm font-black transition ${page === item ? "border-ink bg-brand-600 text-white shadow-[2px_2px_0_0_var(--color-ink)] dark:border-brand-300" : "sticker-btn-outline"}`}>
@@ -309,7 +309,7 @@ export default function ExploreTeachers({
                   </button>
                 ))}
                 <button type="button" onClick={() => setPage((current) => Math.min(totalPages, current + 1))} disabled={page === totalPages} aria-label={t("exploreTeachersNextPage")} className="sticker-btn-outline flex size-11 items-center justify-center disabled:cursor-not-allowed disabled:opacity-40">
-                  <ChevronLeft className="size-4" aria-hidden="true" />
+                  <ChevronLeft className="size-4 ltr:-scale-x-100" aria-hidden="true" />
                 </button>
               </nav>
             )}

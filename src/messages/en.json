@@ -38,14 +38,14 @@
     "exploreTeacherViewProfile": "View profile",
     "exploreTeachersPageNavigation": "Teacher pages",
     "exploreTeachersPreviousPage": "Previous page",
-    "exploreTeachersNextPage": "Next page"
+    "exploreTeachersNextPage": "Next page",
+    "fallbackInitial": "E"
   },
   "nav": {
     "home": "Home",
     "features": "Features",
     "pricing": "Pricing",
     "faq": "FAQ",
-    "stories": "Success stories",
     "login": "Log in",
     "cta": "Start free",
     "menu": "Menu"
@@ -59,7 +59,6 @@
     "searchWord": "WhatsApp",
     "mock": {
       "greeting": "Good evening, Ahmed Mahmoud",
-      "earningsPill": "EGP 42,300 this month",
       "uploadTitle": "Upload a new lesson",
       "uploadHint": "Drag your video here",
       "subjectLabel": "Subject",
@@ -70,20 +69,6 @@
       "streamValue": "Science",
       "progressTitle": "Electromagnetic induction lesson",
       "progressStatus": "Uploading 60%"
-    }
-  },
-  "stats": {
-    "earnings": {
-      "label": "EGP earned by teachers",
-      "suffix": "M"
-    },
-    "students": {
-      "label": "monthly active students",
-      "suffix": ""
-    },
-    "teachers": {
-      "label": "teachers trust us",
-      "suffix": "+"
     }
   },
   "features": {
@@ -184,27 +169,9 @@
     "url": "elemni.com/dashboard"
   },
   "payments": {
-    "heading": "You teach. We collect the money.",
-    "subtitle": "Collecting your earnings is easier than ever. Multiple payment methods for every student, and instant transfer to your bank or wallet.",
-    "methodsTitle": "Payment methods for everyone",
-    "calcTitle": "Simple math, guaranteed profit",
-    "calcCourseLabel": "Course price",
-    "calcCourseValue": "EGP 250",
-    "calcStudentsLabel": "Students",
-    "calcStudentsValue": "500",
-    "calcResultLabel": "Your net profit (monthly)",
-    "calcResultValue": "EGP 125,000",
-    "cardsTitle": "Student top-up cards",
-    "cardsBadge": "Exclusive",
-    "cardsDesc": "Print top-up cards with unique codes and hand them out at centers or bookshops so students without an e-wallet can pay easily.",
-    "note": "Instant transfer to your bank or wallet with no delay.",
-    "methods": {
-      "instapay": "InstaPay",
-      "fawry": "Fawry",
-      "vodafone": "Vodafone Cash",
-      "meeza": "Meeza",
-      "card": "Visa / Mastercard"
-    }
+    "heading": "Payments through Kashier",
+    "subtitle": "Student subscriptions are paid through Kashier hosted checkout.",
+    "checkoutDescription": "Secure online payment through Kashier"
   },
   "comparison": {
     "heading": "Why not just WhatsApp?",
@@ -257,7 +224,7 @@
         "desc": "Your lessons end up on Telegram and your effort goes to waste."
       },
       "2": {
-        "title": "Chasing Vodafone Cash payments",
+        "title": "Manually tracking payments",
         "desc": "Checking messages and manual transfers eats all your time."
       },
       "3": {
@@ -287,41 +254,6 @@
     "subtitle": "The easiest platform to use — built to save your time.",
     "cta": "Start your free trial now"
   },
-  "migration": {
-    "1": {
-      "title": "Send us your student list and videos"
-    },
-    "2": {
-      "title": "We upload and organize everything"
-    },
-    "3": {
-      "title": "Your platform is live within 48 hours"
-    },
-    "heading": "Already have students? We'll move them with you.",
-    "cta": "Talk to our team",
-    "note": "Free for any teacher with more than 50 students."
-  },
-  "testimonials": {
-    "1": {
-      "quote": "Payment was so easy for students, and the top-up cards saved us a huge amount of time and effort.",
-      "name": "Mr. Ahmed Kamal",
-      "role": "Physics teacher – Alexandria",
-      "result": "50% sales growth"
-    },
-    "2": {
-      "quote": "Video protection was my biggest obstacle; with Elemni I upload my content 100% reassured.",
-      "name": "Ms. Mona El-Sayed",
-      "role": "Biology teacher – Giza",
-      "result": "Full content protection"
-    },
-    "3": {
-      "quote": "A powerful, easy platform. I reached many students fast and the support is excellent.",
-      "name": "Mr. Mahmoud Hassan",
-      "role": "Arabic teacher – Cairo",
-      "result": "340+ students in one term"
-    },
-    "heading": "What our success partners say"
-  },
   "pricing": {
     "heading": "Pricing built around your platform",
     "cta": "Contact us",
@@ -333,15 +265,13 @@
     "q1": "Does my content stay mine?",
     "a1": "Absolutely. Your content stays 100% yours. We only provide the platform and tools to protect and sell it safely. We claim no rights over your videos or materials.",
     "q2": "How do students pay?",
-    "a2": "Students pay however suits them — InstaPay, Fawry, Vodafone Cash, Visa, or top-up cards — and the lesson activates instantly.",
+    "a2": "Payment is processed through Kashier hosted checkout.",
     "q3": "Can the videos be leaked?",
     "a3": "Your videos are HLS-encrypted with a per-student watermark, and we block any screen-recording attempt.",
     "q4": "Do I need technical skills?",
-    "a4": "Not at all. If you can send a video on WhatsApp, you can use Elemni — and our team helps you set up.",
+    "a4": "Payment is processed through Kashier. Check the checkout page for available options.",
     "q5": "How much does it cost?",
-    "a5": "We're still finalising our plans. Talk to us and we'll put together an offer that fits your student numbers and your content.",
-    "q6": "Can I migrate my current students?",
-    "a6": "Yes — our team migrates your students and videos within 48 hours, free if you have more than 50 students."
+    "a5": "We're still finalising our plans. Talk to us and we'll put together an offer that fits your student numbers and your content."
   },
   "finalCta": {
     "heading": "Your first lecture is 10 minutes away",
@@ -373,10 +303,8 @@
       "ctaSecondary": "Browse teachers",
       "ctaSignup": "Sign up free",
       "ctaSignin": "Sign in",
-      "proofValue": "180,000+ students",
-      "proofLabel": "Studying with us right now",
       "nowPlayingTitle": "Physics lesson",
-      "nowPlayingLabel": "Now playing"
+      "nowPlayingLabel": "Recorded video lesson"
     },
     "nav": {
       "features": "Features",
@@ -420,12 +348,13 @@
       "teacher": "By {name}",
       "teacherFallback": "Elemni instructor",
       "courseFallbackDescription": "Organised content to help you study with confidence.",
-      "lessons": "{count} lessons",
-      "minutes": "{count} minutes",
-      "hours": "{count} hours",
+      "lessons": "{count, plural, =0 {No lessons} one {# lesson} other {# lessons}}",
+      "minutes": "{count, plural, one {# minute} other {# minutes}}",
+      "hours": "{count, plural, one {# hour} other {# hours}}",
       "free": "Free",
       "currency": "EGP",
-      "details": "View details"
+      "details": "View details",
+      "titleLead": "Choose"
     },
     "footer": {
       "copyright": "© 2026 Elemni Egypt. All rights reserved."
@@ -449,7 +378,7 @@
       },
       "payments": {
         "title": "Easy & secure payment",
-        "desc": "InstaPay, Vodafone Cash, Fawry, Visa — every way you need."
+        "desc": "Secure online payment through Kashier."
       },
       "exams": {
         "title": "Quizzes & reviews",
@@ -465,8 +394,6 @@
       }
     },
     "steps": {
-      "heading": "How to start learning? Just 3 steps",
-      "subtitle": "The easiest way to study — built to get you learning fast.",
       "1": {
         "title": "Browse lessons",
         "desc": "Find your lesson by subject and grade."
@@ -479,44 +406,25 @@
         "title": "Watch & learn",
         "desc": "Watch lessons any time, anywhere."
       },
+      "heading": "How to start learning? Just 3 steps",
+      "subtitle": "The easiest way to study — built to get you learning fast.",
       "cta": "Start free now"
-    },
-    "testimonials": {
-      "heading": "Students like you — their success started here",
-      "1": {
-        "quote": "After starting with Elemni, my physics grade completely changed. The explanations are simple and payment is easy.",
-        "name": "Ahmed Khaled",
-        "role": "High school student — Cairo",
-        "result": "30% grade improvement"
-      },
-      "2": {
-        "quote": "I used to pay so much for private tutoring. Now I study for much less.",
-        "name": "Mariam Ali",
-        "role": "High school student — Giza",
-        "result": "Saved 60% on tutoring costs"
-      },
-      "3": {
-        "quote": "A simple, organised platform. I love that I can rewatch lessons anytime.",
-        "name": "Youssef Omar",
-        "role": "High school student — Alexandria",
-        "result": "Consistent study habits"
-      }
     },
     "faq": {
       "heading": "Frequently asked questions",
       "subtitle": "Everything you need to know to start learning.",
       "q1": "How can I pay?",
-      "a1": "You can pay via InstaPay, Vodafone Cash, Fawry, or Visa/Mastercard. All methods are available.",
+      "a1": "Payment is processed through Kashier hosted checkout.",
       "q2": "Can I watch from my phone?",
       "a2": "Absolutely. The platform works on any phone, tablet, or laptop.",
       "q3": "Are there free lessons?",
-      "a3": "Free lessons are always available so you can try the platform. Then subscribe to what suits you.",
+      "a3": "Check the course page for content available before subscribing.",
       "q4": "What if I don't have a bank account?",
-      "a4": "You don't need one. Pay in cash via Fawry or use top-up cards.",
+      "a4": "Payment is processed through Kashier. Check the checkout page for available options.",
       "q5": "Can I download lessons?",
       "a5": "Lessons are available for online viewing only to protect content, but you can rewatch anytime.",
       "q6": "How do I access my purchased lessons?",
-      "a6": "All purchased lessons are in your personal library — accessible anytime."
+      "a6": "Your enrolled course is available in My courses during the 30-day subscription."
     },
     "comparison": {
       "heading": "Why Elemni over anything else?",
@@ -608,10 +516,22 @@
     "bento": {
       "heading": "Why study on Elemni?",
       "subtitle": "We've provided all the tools you need to focus on studying and achieve your goals.",
-      "card1": { "title": "Fast & easy payment", "body": "Pay the way that works for you — Vodafone Cash, Fawry, or InstaPay." },
-      "card2": { "title": "Full HD video quality", "body": "Watch your lessons in high quality and clear audio, and replay them anytime." },
-      "card3": { "title": "Auto quizzes & reviews", "body": "Test yourself after every lesson and see your results instantly to find your weak spots." },
-      "card4": { "title": "Smart subject organisation", "body": "Content organised by subject, grade, and track — find any lesson in seconds." }
+      "card1": {
+        "title": "Fast & easy payment",
+        "body": "Secure online payment through Kashier."
+      },
+      "card2": {
+        "title": "Recorded video lessons",
+        "body": "Watch recorded lessons and use course files."
+      },
+      "card3": {
+        "title": "Course tests",
+        "body": "Use the tests available in course content."
+      },
+      "card4": {
+        "title": "Smart subject organisation",
+        "body": "Content organised by subject, grade, and track — find any lesson in seconds."
+      }
     },
     "mobile": {
       "headingLine1": "Study from your phone",
@@ -662,14 +582,14 @@
     "lessonItemPosition": "Item {current} of {total}",
     "previousItem": "Previous",
     "nextItem": "Next",
-    "lessons": "{count} lessons",
-    "minutes": "{count} minutes",
-    "hours": "{count} hours",
+    "lessons": "{count, plural, =0 {No lessons} one {# lesson} other {# lessons}}",
+    "minutes": "{count, plural, one {# minute} other {# minutes}}",
+    "hours": "{count, plural, one {# hour} other {# hours}}",
     "currency": "EGP",
     "durationUnknown": "Duration not specified",
     "exams": "{count} exams",
     "chapters": "{count} sections",
-    "chapterLessons": "{count} lessons",
+    "chapterLessons": "{count, plural, =0 {No lessons} one {# lesson} other {# lessons}}",
     "publishedContent": "Published content",
     "courseOverview": "Course overview",
     "coursePlan": "Course plan",
@@ -738,7 +658,13 @@
       "discussions": "Discussions",
       "progress": "Progress",
       "comingSoon": "Coming soon"
-    }
+    },
+    "courseNotFoundTitle": "Course not found.",
+    "courseNotFoundExplore": "Explore courses",
+    "documentSupportNote": "If the file does not load, open it directly or contact support.",
+    "contactSupport": "Contact support",
+    "videoLoadError": "The video could not be loaded.",
+    "completedStatus": "Done"
   },
   "teachers": {
     "meta": {
@@ -828,25 +754,35 @@
     "callAction": "Call support",
     "form": {
       "title": "Send us a message",
-      "description": "This form is ready for support requests. We will connect it to the support API soon.",
+      "description": "Send your question to our support team.",
       "jump": "Send a message",
       "name": "Your Name",
       "namePlaceholder": "Enter your name",
       "email": "Email Address",
       "emailPlaceholder": "Enter your email",
+      "contactByEmailOrPhone": "Provide an email address or phone number.",
+      "phone": "Phone number",
+      "phonePlaceholder": "Enter your phone number",
       "message": "Message",
       "messagePlaceholder": "How can we help you?",
       "submit": "Send Message",
       "sending": "Sending...",
-      "success": "Message saved locally for now. API delivery will be added soon.",
-      "error": "Something went wrong. Please try again later."
+      "success": "Your message was sent successfully.",
+      "error": "We could not send your message. Please try again.",
+      "notConfigured": "The message form is temporarily unavailable. Call us at {phone} or use WhatsApp.",
+      "callSupport": "Call support",
+      "whatsappSupport": "Contact us on WhatsApp"
     }
   },
   "paymentResult": {
     "eyebrow": "Payment result",
     "metaTitle": "Payment result | Student portal | Elemni",
     "title": {
-      "completed": "Payment successful",
+      "completed": "Checking your enrollment",
+      "confirmed": "Enrollment confirmed",
+      "confirming": "Confirming your payment...",
+      "notFound": "We are confirming your payment",
+      "notLoggedIn": "Sign in to check your enrollment",
       "failed": "Payment could not be completed",
       "pending": "Payment is under review",
       "cancelled": "Payment was cancelled",
@@ -854,7 +790,11 @@
       "unknown": "Payment result is unclear"
     },
     "description": {
-      "completed": "Your enrollment is confirmed. You can open the course and continue learning now.",
+      "completed": "We are checking your active enrollment.",
+      "confirmed": "Your enrollment is active. You can open the course and continue learning.",
+      "confirming": "Please wait while we check your courses.",
+      "notFound": "Payment confirmation can take a minute. Refresh this page or check My courses.",
+      "notLoggedIn": "Sign in to check whether your course enrollment is active.",
       "failed": "No amount was charged. You can try again or choose another payment method.",
       "pending": "We received your request and the payment is under review. We will update your enrollment once confirmed.",
       "cancelled": "The payment was cancelled before completion. You can go back and pick the course again.",
@@ -867,13 +807,590 @@
     "amountLabel": "Amount",
     "cardLabel": "Card",
     "referenceLabel": "Reference",
+    "supportReferenceLabel": "Order reference for support",
+    "refresh": "Refresh status",
     "testModeBadge": "Test mode",
     "testModeNote": "This is a test transaction with no real charge.",
     "actions": {
       "openCourse": "Open course",
       "myCourses": "View my courses",
+      "login": "Sign in",
       "dashboard": "Back to dashboard",
       "explore": "Explore courses"
     }
+  },
+  "studentDashboard": {
+    "upcomingTitle": "Access ending soon",
+    "allMyCourses": "All my courses",
+    "endsIn": "Ends {relative}",
+    "ui": {
+      "loading": "Preparing your dashboard...",
+      "retry": "Try again",
+      "greeting": "Hi, {name}",
+      "intro": "Track your course progress and subscription end dates.",
+      "resume": "Continue learning",
+      "startFirst": "Start the first lesson",
+      "progress": "You are {percent}% through this course",
+      "progressLabel": "{percent}% complete",
+      "progressLabelCard": "{percent}% complete",
+      "courseDetails": "Course details",
+      "availableUntil": "Available until {date}",
+      "journeyTitle": "Start your learning journey",
+      "journeyDescription": "Your courses and progress will appear here after you subscribe to a course.",
+      "courses": "My courses",
+      "viewAll": "View all",
+      "filterCourses": "Filter courses",
+      "filterAll": "All ({count})",
+      "filterInProgress": "In progress ({count})",
+      "filterCompleted": "Completed ({count})",
+      "openCourse": "Open course {title}",
+      "until": "Until {date}",
+      "noCoursesInFilter": "There are no courses in this category.",
+      "studySummary": "Study summary",
+      "registeredCourses": "Enrolled courses",
+      "completedCourses": "Completed courses",
+      "availableLessons": "Available lessons",
+      "contentHours": "Course hours",
+      "noUpcoming": "No subscriptions are ending soon.",
+      "studentFallback": "Student",
+      "startLearning": "Start learning"
+    }
+  },
+  "studentAuth": {
+    "errorInvalidCredentials": "The email or password is incorrect.",
+    "errorUnavailable": "This account is currently unavailable.",
+    "errorAlreadyRegistered": "An account with this email already exists.",
+    "errorInvalidData": "Check your information and try again.",
+    "errorGeneric": "Could not connect to the server. Please try again.",
+    "errorPasswordMismatch": "The passwords do not match.",
+    "registerTitle": "Create an account",
+    "loginTitle": "Welcome back",
+    "registerSubtitle": "Start your learning journey in less than a minute",
+    "loginSubtitle": "Sign in and pick up where you left off",
+    "name": "Full name",
+    "namePlaceholder": "Enter your full name",
+    "email": "Email address",
+    "phone": "Mobile number",
+    "password": "Password",
+    "passwordHint": "At least 8 characters",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "confirmPassword": "Confirm password",
+    "forgotPassword": "Forgot password?",
+    "submitting": "Continuing...",
+    "registerAction": "Create account",
+    "loginAction": "Sign in",
+    "terms": "By creating an account, you agree to the Terms and Privacy Policy.",
+    "hasAccount": "Already have an account? ",
+    "noAccount": "Don’t have an account? ",
+    "createAccount": "Create an account",
+    "errorRequired": "Please complete the required fields.",
+    "errorStudentOnly": "This sign-in is for student accounts only.",
+    "errorCourseNotFound": "We could not find this course.",
+    "errorInvalidCourseId": "This course ID is invalid."
+  },
+  "courseCounts": {
+    "durationUnknown": "Not specified",
+    "lessonCount": "{count, plural, =0 {No lessons} one {# lesson} other {# lessons}}",
+    "hourCount": "{count, plural, one {# hour} other {# hours}}",
+    "minuteCount": "{count, plural, one {# minute} other {# minutes}}"
+  },
+  "pageMetadata": {
+    "homeTitle": "Elemni | Smart Learning Platform",
+    "homeDescription": "Elemni is your gateway to learning with teachers and published courses.",
+    "exploreTitle": "Explore Courses | Student Portal | Elemni",
+    "loginPage": "Sign In | Elemni",
+    "registerPage": "Create Account | Elemni",
+    "forgotPasswordPage": "Reset Password | Elemni",
+    "resetPasswordPage": "Set a New Password | Elemni",
+    "dashboardPage": "Dashboard | Student Portal | Elemni",
+    "myCoursesPage": "Courses | Student Portal | Elemni",
+    "courseDetailPage": "Course Details | Elemni",
+    "myCourseDetailPage": "Course Details | Student Portal | Elemni",
+    "onboardingPage": "Set Up Your Learning Experience | Elemni",
+    "exploreTeachersTitle": "Explore Teachers | Student Portal | Elemni"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The requested link is unavailable or may have moved.",
+    "home": "Back to home"
+  },
+  "apiErrors": {
+    "serviceUnavailable": "The service is currently unavailable.",
+    "requestFailed": "We could not complete your request.",
+    "sessionRequired": "Please sign in first.",
+    "sessionExpired": "Your session has expired. Please sign in again.",
+    "courseNotFound": "We could not find this course.",
+    "invalidCourseId": "This course ID is invalid.",
+    "checkoutUnavailable": "Checkout is currently unavailable.",
+    "studentAccountRequired": "This sign-in is for student accounts only.",
+    "generic": "Something went wrong. Please try again."
+  },
+  "myCoursesPage": {
+    "ui": {
+      "loading": "Loading your courses...",
+      "retry": "Try again",
+      "openCourse": "Open course {title}",
+      "courseFallback": "Course",
+      "active": "Active subscription",
+      "lessonFallback": "{count, plural, one {# lesson available in your subscription} other {# lessons available in your subscription}}",
+      "progress": "Course progress",
+      "availableUntil": "Available until {date}",
+      "title": "My Courses",
+      "intro": "All your active subscriptions and learning content in one place.",
+      "exploreNew": "Explore new courses",
+      "summary": "Course summary",
+      "activeCourses": "Active courses",
+      "totalLessons": "Total lessons",
+      "duration": "Content duration",
+      "filters": "Filter courses",
+      "searchLabel": "Search your courses",
+      "searchPlaceholder": "Search by course or subject...",
+      "subjectFilter": "Filter by subject",
+      "allSubjects": "All subjects",
+      "sort": "Sort courses",
+      "sortRecent": "Recently subscribed",
+      "sortExpiring": "Expiring soon",
+      "sortTitle": "By name",
+      "currentCourses": "Your current courses",
+      "resultCount": "{visible} of {total}",
+      "noMatches": "No matching results",
+      "tryDifferent": "Try a different search or show all subjects.",
+      "resetFilters": "Clear filters",
+      "noActive": "No active subscriptions",
+      "emptyDescription": "Explore teachers and choose a course for your grade and track.",
+      "exploreCourses": "Explore courses"
+    }
+  },
+  "landingWhiteboard": {
+    "step1Title": "Create an account",
+    "step1Content": "Sign up free with your phone in under a minute and get started.",
+    "step1Highlight1": "under a minute",
+    "step1Highlight2": "free",
+    "step2Title": "Choose a teacher and course",
+    "step2Content": "Browse expert teachers and choose the right course for your subject.",
+    "step2Highlight1": "expert teachers",
+    "step2Highlight2": "the right course",
+    "step3Title": "Start learning from your course",
+    "step3Content": "Watch recorded video lessons and use the available files and quizzes.",
+    "step3Highlight1": "recorded video lessons",
+    "step3Highlight2": "quizzes",
+    "feature1Title": "Understand more",
+    "feature1Content": "Choose from published courses and learn from their recorded content.",
+    "feature1Highlight1": "interactive lessons",
+    "feature1Highlight2": "expert teachers",
+    "feature2Title": "Practice often",
+    "feature2Content": "Regular exams and comprehensive question banks help lessons stick.",
+    "feature2Highlight1": "question banks",
+    "feature2Highlight2": "remember what you learn",
+    "feature3Title": "Excel with confidence",
+    "feature3Content": "Performance reports and ongoing support all the way to exam day.",
+    "feature3Highlight1": "performance reports",
+    "feature3Highlight2": "exam day",
+    "headingLead": "How to get started",
+    "headingMiddle": "and excel",
+    "headingBrand": "with",
+    "headingQuestion": "Elemni?",
+    "descriptionLead": "A few simple, structured steps take you from",
+    "descriptionMiddle": "the beginning to the top",
+    "descriptionTail": "Drag connected notes along their threads to organize your learning journey!",
+    "dragLead": "Drag or touch any",
+    "dragNote": "note",
+    "dragTail": "to move it around the board",
+    "boardLabel": "Interactive board 📌",
+    "listLabel": "Show the list 📝",
+    "stepLabel": "Step {number}"
+  },
+  "studentOnboarding": {
+    "stepProgress": "Step {step} of 3",
+    "brandTagline": "A learning platform for high school students",
+    "studyImageAlt": "A student planning their studies",
+    "welcomeTitle": "Welcome to Elemni",
+    "welcomeHeading": "Let’s set up your learning experience",
+    "welcomeDescription": "Answer a few quick questions so we can show you the right teachers and courses.",
+    "benefitTeachers": "Teachers suited to your level",
+    "benefitCourses": "Courses for your school year",
+    "benefitStudy": "A structured study experience",
+    "start": "Get started",
+    "skip": "Skip for now",
+    "gradeQuestion": "What year are you in?",
+    "gradeDescription": "Choose your school year to see suitable courses and teachers.",
+    "noGrades": "No school grades are available right now.",
+    "back": "Back",
+    "next": "Next",
+    "streamQuestion": "Choose your track",
+    "streamDescription": "So we can show you suitable subjects and courses",
+    "streamNote": "Content and teachers suited to this track",
+    "noStreams": "No study tracks are available right now.",
+    "subjectsTitle": "Your subjects are ready",
+    "subjectsDescription": "We selected suitable subjects based on your choices. You can change them now.",
+    "noSubjects": "We could not find subjects for these choices. Go back and choose another track.",
+    "saving": "Getting things ready...",
+    "beginJourney": "Start my journey",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "help": "Help"
+  },
+  "passwordRecovery": {
+    "forgotTitle": "Reset your password",
+    "forgotDescription": "Enter your email and we’ll send you a secure link to create a new password.",
+    "checkEmail": "Check your email",
+    "sentDescription": "If that email is registered, you’ll receive a reset link in a few minutes.",
+    "backToLogin": "Back to sign in",
+    "email": "Email address",
+    "sending": "Sending...",
+    "sendLink": "Send reset link",
+    "genericForgotError": "We could not send the reset link. Please try again.",
+    "resetMismatch": "The passwords do not match.",
+    "resetInvalid": "This reset link is invalid or has expired.",
+    "genericResetError": "We could not change your password. Please try again.",
+    "updated": "Password updated",
+    "updatedDescription": "You can now sign in with your new password.",
+    "login": "Sign in",
+    "newPassword": "New password",
+    "passwordHint": "Choose a strong password with at least 8 characters.",
+    "incompleteLink": "The reset link is incomplete.",
+    "newPasswordLabel": "New password",
+    "confirmPassword": "Confirm password",
+    "hidePassword": "Hide password",
+    "showPassword": "Show password",
+    "saving": "Saving...",
+    "savePassword": "Save password",
+    "emailRequired": "An email address is required."
+  },
+  "courseExplore": {
+    "courseAria": "View course {title}",
+    "enrolled": "In your courses",
+    "courseFallback": "Course",
+    "courseDescriptionFallback": "{count, plural, one {# lesson in {subject}} other {# lessons in {subject}}}.",
+    "title": "Explore courses",
+    "description": "Find the right course for your school level.",
+    "hideFilters": "Hide filters",
+    "showFilters": "Show filters and search",
+    "filterSearch": "Search and filters",
+    "search": "Search",
+    "searchLabel": "Search for a course, teacher, or subject",
+    "searchPlaceholder": "Search by subject, teacher, or course...",
+    "suggestions": "Suggestions:",
+    "courseFilters": "Course filters",
+    "grade": "School grade",
+    "allGrades": "All grades",
+    "stream": "Track",
+    "allStreams": "All tracks",
+    "teacher": "Teacher",
+    "allTeachers": "All teachers",
+    "sort": "Sort courses",
+    "sortNewest": "Newest",
+    "sortPriceLow": "Price: low to high",
+    "sortPriceHigh": "Price: high to low",
+    "courseSubjects": "Course subjects",
+    "allSubjects": "All subjects",
+    "resetFilters": "Clear filters",
+    "loadError": "Some catalog data could not be loaded. Available results are shown below.",
+    "allCourses": "All courses",
+    "courseCount": "{count, plural, =0 {No courses} one {# course} other {# courses}}",
+    "noCourses": "No matching courses",
+    "noCoursesDescription": "Try changing your search or choosing a different category.",
+    "pages": "Course pages",
+    "previous": "Previous page",
+    "next": "Next page"
+  },
+  "studentTeacherData": {
+    "teacherFallback": "Elemni teacher",
+    "variedSubjects": "Various subjects",
+    "allGrades": "All grades",
+    "durationUnknown": "Duration not specified",
+    "minutes": "{count, plural, one {# minute} other {# minutes}}",
+    "hours": "{count, plural, one {# hour} other {# hours}}",
+    "and": " and ",
+    "noBio": "No bio has been added yet."
+  },
+  "globalLoading": {
+    "journey": "Getting your learning journey ready",
+    "loading": "Loading..."
+  },
+  "teacherProfileShell": {
+    "welcomeToast": "Welcome, {name}!"
+  },
+  "landingQuizData": {
+    "subject1": "Physics",
+    "q1": "In an AC circuit with an inductor of inductance (L) and a capacitor of capacitance (C), when is the circuit in resonance?",
+    "q1o1": "When inductive reactance equals capacitive reactance (XL = XC)",
+    "q1o2": "When the phase angle between voltage and current is 90 degrees",
+    "q1o3": "When resistance is at its highest",
+    "q1o4": "When no current flows through the circuit",
+    "q1e": "Resonance occurs in AC circuits when inductive reactance (XL) equals capacitive reactance (XC). The impedance (Z) is then at its minimum, equal to the resistance (R), and current is at its maximum.",
+    "subject2": "Mathematics",
+    "q2": "What is the slope of the tangent to y = x³ - 3x at the point (2, 2)?",
+    "q2o1": "3",
+    "q2o2": "9",
+    "q2o3": "6",
+    "q2o4": "12",
+    "q2e": "The slope is the first derivative: y′ = 3x² - 3. At x = 2: y′ = 3(2)² - 3 = 12 - 3 = 9.",
+    "subject3": "Arabic",
+    "q3": "What is the grammatical role of the word “taliban” in a sentence meaning “Thirty students attended today”?",
+    "q3o1": "Direct object in the accusative case",
+    "q3o2": "Accusative specification (tamyiz)",
+    "q3o3": "Circumstantial accusative",
+    "q3o4": "Genitive complement",
+    "q3e": "Arabic numbers from 11 to 99 take a singular accusative specification (tamyiz), so “taliban” is in the accusative case."
+  },
+  "landingQuiz": {
+    "badge": "Interactive platform demo",
+    "title": "Test your knowledge",
+    "description": "Try a short sample quiz and see how Elemni checks answers and explains solutions.",
+    "subject": "Subject: {value}",
+    "question": "Question {current} of {total}",
+    "score": "Score: {score}",
+    "explanationTitle": "💡 Explanation:",
+    "confirm": "Check answer",
+    "next": "Next question",
+    "finish": "Finish quiz",
+    "complete": "Excellent! You completed the quiz 🎉",
+    "correctAnswers": "You got {score} out of {total} answers correct",
+    "summary": "Try the sample quiz to explore answer feedback and explanations.",
+    "cta": "Join expert teachers and solve more questions",
+    "restart": "Try again"
+  },
+  "landingFaqData": {
+    "q1": "How do I sign up and subscribe to teachers’ courses?",
+    "a1": "Create an account, browse the teachers, and choose a course to subscribe to.",
+    "q2": "What content is included in a course?",
+    "a2": "Published courses include recorded video lessons, files, and quizzes. Subscribers can access the course for 30 days.",
+    "q3": "How do teachers’ course subscriptions work?",
+    "a3": "Each teacher offers courses with their own subjects, curricula, and prices. Subscribe only to the course you need with your preferred teacher; no bundle subscription is required.",
+    "q4": "How can I pay?",
+    "a4": "Payments are processed securely online through Kashier."
+  },
+  "landingFaq": {
+    "heading": "Frequently asked questions",
+    "subtitle": "Information about registration, courses, and subscriptions on Elemni.",
+    "otherQuestion": "Have another question?",
+    "supportDescription": "Contact our support team on WhatsApp.",
+    "supportCta": "Contact support"
+  },
+  "teacherBrowse": {
+    "allGrades": "All grades",
+    "grade3": "12th grade",
+    "grade2": "11th grade",
+    "grade1": "10th grade",
+    "allStreams": "All tracks and specializations",
+    "general": "General",
+    "science": "Science",
+    "math": "Mathematics",
+    "humanities": "Humanities",
+    "languages": "Languages",
+    "home": "Back to home",
+    "title": "All teachers",
+    "subtitle": "Browse all teachers on the platform",
+    "gradeLabel": "Grade",
+    "streamLabel": "Track / specialization",
+    "searchLabel": "Search by teacher or subject",
+    "searchPlaceholder": "Search for a teacher...",
+    "loadError": "Could not load teachers. Please refresh the page in a moment.",
+    "results": "Showing {shown} of {total} teachers",
+    "reset": "Reset",
+    "moreGrades": "+{count} {count, plural, one {more grade} other {more grades}}",
+    "viewCourses": "View courses",
+    "emptyTitle": "No teachers match your search",
+    "emptyDescription": "Try different keywords or choose another grade.",
+    "resetAll": "Reset all filters",
+    "chooseLead": "Choose your",
+    "chooseTitle": "teachers",
+    "directoryDescription": "Browse our teachers, explore each teacher’s available courses, and watch video previews to get started.",
+    "resultCount": "{count, plural, =0 {No teachers found} one {Search results: # teacher} other {Search results: # teachers}}",
+    "allTeachers": "View all teachers",
+    "noPublishedTeachers": "No teachers have been published yet",
+    "noPublishedDescription": "Teachers will appear here once they are added and their accounts are activated."
+  },
+  "landingVideoModal": {
+    "title": "A quick tour: how does Elemni work?",
+    "videoTitle": "Tour of Elemni",
+    "description": "Explore published courses and the recorded video lessons, files, and quizzes they include."
+  },
+  "landingWhatsapp": {
+    "label": "Chat with us on WhatsApp",
+    "ariaLabel": "Contact us on WhatsApp"
+  },
+  "landingHero": {
+    "titleFirst": "The right teacher.",
+    "titleSecond": "A clearer plan.",
+    "titleThird": "A better result is closer.",
+    "descriptionStart": "Recorded video lessons, files, and quizzes, plus",
+    "progress": "progress tracking",
+    "descriptionEnd": "to help you study with confidence from your first lesson to exam day.",
+    "signup": "Get started for free",
+    "watchTour": "See how the platform works",
+    "benefitCourses": "Courses from different teachers",
+    "benefitTeachers": "Specialized teachers",
+    "benefitQuizzes": "Quizzes included in courses",
+    "studentImageAlt": "Illustration of a high school student studying in her room on Elemni",
+    "studentImageDarkAlt": "Illustration of a high school student studying in her room on Elemni in dark mode"
+  },
+  "landingComparison": {
+    "titleLead": "Why Elemni?",
+    "titleTail": "",
+    "description": "Compare Elemni with traditional ways of studying.",
+    "feature": "Feature",
+    "brand": "Elemni",
+    "youtube": "YouTube",
+    "tutor": "Private tutoring",
+    "books": "Books",
+    "price": "Affordable price",
+    "quality": "Content quality",
+    "organize": "Study organization",
+    "mobile": "Watch on mobile",
+    "repeat": "Watch again",
+    "partial": "Partial"
+  },
+  "landingFeatures": {
+    "eyebrow": "Your journey to success with Elemni",
+    "title": "How do you start your path to success?",
+    "description": "Simple, proven steps take you from deep understanding to outstanding results.",
+    "stepNumber": "Step {number}",
+    "step1Title": "Understand deeply",
+    "step1Description": "Recorded video lessons, files, and quizzes in every course.",
+    "step2Title": "Practice often",
+    "step2Description": "Regular exams and question banks help concepts stick.",
+    "step3Title": "Excel with confidence",
+    "step3Description": "Performance reports and ongoing support through exam day."
+  },
+  "landingSubjectGrid": {
+    "titleLead": "Explore",
+    "title": "Available subjects",
+    "descriptionLead": "Choose a subject and begin your learning journey with",
+    "descriptionHighlight": "top courses",
+    "gradeCount": "{count, plural, =0 {No grades} one {# grade} other {# grades}}"
+  },
+  "landingFinalCta": {
+    "titleLead": "Get ready to excel —",
+    "titleHighlight": "get started today",
+    "descriptionLead": "Choose a course and start learning with a teacher from our",
+    "descriptionHighlight": "top educators",
+    "cta": "Try the platform for free",
+    "noSignupFee": "No signup fees",
+    "videoLessons": "Recorded video lessons",
+    "stickerOne": "Your plan is clear ✨",
+    "stickerTwo": "Video lessons, files, and quizzes",
+    "groupImageAlt": "Illustration of students studying together on Elemni",
+    "groupImageDarkAlt": "Illustration of students studying together on Elemni in dark mode"
+  },
+  "landingTeacherJoin": {
+    "imageAlt": "Outstanding teacher",
+    "titleLead": "Join a community of leading teachers on",
+    "titleHighlight": "Elemni",
+    "description": "Help shape the future of digital education and share your content with thousands of students.",
+    "benefitReach": "Reach thousands of students",
+    "benefitProtection": "Full protection for your content and lessons",
+    "benefitTools": "Easy tools to manage courses",
+    "cta": "Join us as a teacher"
+  },
+  "teacherProfile": {
+    "allTeachers": "All teachers",
+    "copied": "Link copied!",
+    "share": "Share",
+    "trustedTeacher": "Trusted teacher",
+    "verifiedTeacher": "Verified teacher",
+    "experience": "{count, plural, =0 {No years of experience} one {# year of experience} other {# years of experience}}",
+    "availableCourses": "{count, plural, =0 {No courses available} one {# course available} other {# courses available}}",
+    "about": "About the teacher",
+    "aboutHeading": "Experience that helps you understand, not memorize",
+    "publishedCourses": "Published courses",
+    "online": "Online",
+    "teachingLocation": "Teaching location",
+    "browseLessons": "Browse lessons and subscriptions",
+    "coursesHeading": "Available courses",
+    "sessions": "{count, plural, =0 {No lessons} one {# lesson} other {# lessons}}",
+    "quizzesAndNotes": "Quizzes and study notes",
+    "monthlyPrice": "EGP / month",
+    "processing": "Redirecting",
+    "courseContent": "Course content",
+    "subscribe": "Subscribe now",
+    "noCourseContent": "The teacher has not added course content yet."
+  },
+  "teacherModal": {
+    "watchIntro": "Watch an introduction",
+    "videoTitle": "Teacher introduction video",
+    "sessions": "{count, plural, =0 {No sessions} one {# session} other {# sessions}}",
+    "currency": "EGP",
+    "subscribe": "Subscribe",
+    "noCourses": "No courses are available right now.",
+    "viewFullProfile": "View full profile"
+  },
+  "landingBento": {
+    "titleLead": "Why",
+    "titleHighlight": "Elemni?",
+    "descriptionLead": "An integrated platform with everything you need",
+    "descriptionHighlight": "to excel",
+    "card1Title": "Your subscription",
+    "securePayment": "Secure online payment through Kashier",
+    "accessDays": "Access for 30 days",
+    "card2Title": "Course content",
+    "card2Description": "Recorded video lessons, files, and quizzes in one course.",
+    "card3Title": "Choose what suits you",
+    "card3Description": "Browse courses and choose the right teacher and course for you.",
+    "card4Title": "Track your progress",
+    "progress": "Your course progress",
+    "completedLessons": "Lessons you have completed",
+    "resumeLearning": "Continue learning"
+  },
+  "landingFeaturedLessons": {
+    "titleLead": "Start with the latest",
+    "titleHighlight": "courses on Elemni",
+    "description": "Published courses from our teachers’ libraries on Elemni.",
+    "courseFallback": "A course by {teacher}"
+  },
+  "landingAuthModal": {
+    "requiredError": "Please enter all required information.",
+    "genericError": "Could not connect to the server. Please try again.",
+    "studentFallback": "Student",
+    "signupTitle": "Create a student account",
+    "signinTitle": "Sign in to Elemni",
+    "signupDescription": "Create your account, then choose a teacher and course.",
+    "signinDescription": "Welcome back! Enter your account details to continue.",
+    "signupTab": "Create account",
+    "signinTab": "Sign in",
+    "nameLabel": "Student full name",
+    "namePlaceholder": "Enter your full name...",
+    "emailLabel": "Email address",
+    "phoneLabel": "Mobile number (or WhatsApp)",
+    "passwordLabel": "Password",
+    "loading": "Connecting...",
+    "signupSubmit": "Confirm and enter",
+    "signinSubmit": "Sign in",
+    "legalNotice": "By continuing, you agree to Elemni’s Terms of Use and Privacy Policy."
+  },
+  "landingMobileApp": {
+    "titleLead": "Download the",
+    "titleHighlight": "Elemni app",
+    "titleTail": "and study anywhere",
+    "description": "Browse your courses from any device. Watch recorded video lessons and use the available files and quizzes.",
+    "benefitLessons": "Recorded video lessons in every course",
+    "benefitFiles": "Files included in course content",
+    "benefitQuizzes": "Quizzes included in course content",
+    "benefitProgress": "Track your progress and scores",
+    "availableOn": "Available on",
+    "scoreSticker": "Top score: 100/100",
+    "gradeSticker": "High school",
+    "streakSticker": "12-day streak",
+    "rankSticker": "Top of the class",
+    "appSticker": "Student app",
+    "avatarInitial": "A",
+    "welcome": "Hello, Ahmed",
+    "grade": "12th grade",
+    "active": "Active",
+    "recordedLesson": "Recorded lesson",
+    "physics": "Physics",
+    "lessonTitle": "Electricity laws explained",
+    "teacherName": "Dr. Mohamed Abdel Maboud",
+    "watch": "Watch",
+    "courseTitle": "Applied mathematics course",
+    "examTitle": "Comprehensive chemistry exam",
+    "examTime": "Tomorrow at 6:00 PM",
+    "reminder": "Reminder",
+    "home": "Home",
+    "lessons": "Lessons",
+    "exams": "Exams",
+    "account": "Account"
   }
 }

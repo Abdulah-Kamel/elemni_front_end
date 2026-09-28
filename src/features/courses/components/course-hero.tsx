@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 import { BookOpen, CalendarDays, Clock3, PlayCircle } from "lucide-react";
+import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/src/i18n/navigation";
-import ImageWithFallback from "@/src/components/ui/image-with-fallback";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
-import lessonFallback from "@/src/assets/images/student-redesign/lesson-study-skills.webp";
+import CourseCover from "./course-cover-placeholder";
+import { formatDate } from "@/src/lib/format/date";
 import { cn } from "@/src/lib/cn";
 import type {
   PublicCourseDto,
@@ -35,7 +36,8 @@ function TeacherAvatar({
   image: string | null;
   tone?: "brand" | "dark";
 }) {
-  if (image) {
+  const [imageFailed, setImageFailed] = useState(false);
+  if (image && !imageFailed) {
     return (
       <Image
         src={image}
@@ -43,6 +45,7 @@ function TeacherAvatar({
         width={48}
         height={48}
         className="size-12 rounded-full border border-white/20 object-cover"
+        onError={() => setImageFailed(true)}
       />
     );
   }
@@ -75,9 +78,7 @@ export default function CourseHero({
   const t = useTranslations("courseDetail");
   const locale = useLocale();
   const lesson = variant === "lesson";
-  const date = new Intl.DateTimeFormat(locale === "ar" ? "ar-EG" : "en-US", {
-    dateStyle: "medium",
-  }).format(new Date(course.created_at));
+  const date = formatDate(course.created_at, locale, "short");
   const metaIconClass = lesson ? "text-[#0A5FB4]" : "text-[#7DD3FC]";
 
   if (lesson) {
@@ -280,15 +281,7 @@ export default function CourseHero({
               : "bg-[#142B40]",
           )}
         >
-          <ImageWithFallback
-            src={course.img}
-            fallbackSrc={lessonFallback}
-            alt={course.title}
-            fill
-            priority
-            sizes="(min-width: 1024px) 36vw, 100vw"
-            className="object-cover"
-          />
+          <CourseCover src={course.img} subject={course.subject_name} alt={course.title} priority sizes="(min-width: 1024px) 36vw, 100vw" className="object-cover" />
           <div className="pointer-events-none absolute inset-0 bg-[#07131F]/20" />
         </div>
       </div>

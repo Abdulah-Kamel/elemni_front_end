@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import logoMark from "@/src/assets/logo-icon.png";
 
 interface VideoModalProps {
@@ -10,6 +11,7 @@ interface VideoModalProps {
 }
 
 export default function VideoModal({ isOpen, onClose }: VideoModalProps) {
+  const t = useTranslations("landingVideoModal");
   if (!isOpen) return null;
 
   return (
@@ -26,21 +28,21 @@ export default function VideoModal({ isOpen, onClose }: VideoModalProps) {
           <span className="size-7 shrink-0 rounded-md bg-white p-0.5 ring-1 ring-slate-200">
             <Image src={logoMark} alt="" width={28} height={28} className="size-full object-contain" />
           </span>
-          <h3 className="text-lg font-black text-[#0F172A] font-readex">جولة توضيحية: كيف تعمل منصة علمني؟</h3>
+          <h3 className="text-lg font-black text-[#0F172A] font-readex">{t("title")}</h3>
         </div>
 
         <div className="relative aspect-video rounded-2xl overflow-hidden bg-slate-900 shadow-inner">
           <iframe
             className="w-full h-full"
             src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
-            title="جولة في منصة علمني"
+            title={t("videoTitle")}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
           />
         </div>
 
         <p className="text-xs text-slate-500 mt-3 text-center">
-          تعرف في دقيقتين على كيفية دخول الحصص المباشرة، التفاعل مع الأستاذ، وحل بنوك الأسئلة الذكية.
+          {t("description")}
         </p>
       </div>
     </div>

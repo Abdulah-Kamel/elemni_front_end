@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState, type ReactNode } from "react";
+import { Fragment, useState, type ReactNode } from "react";
 import type {
   GradeDto,
   PublicCourseDto,
@@ -54,7 +54,6 @@ export default function LandingInteractiveShell({
   return (
     <MotionProvider>
       <div
-        dir="rtl"
         className="landing-shell min-h-screen bg-[#F8FAFC] text-[#0F172A] antialiased selection:bg-[#0284C7] selection:text-white dark:bg-[#0B132B] dark:text-[#F8FAFC]"
       >
         <LandingRevealController />
@@ -81,8 +80,8 @@ export default function LandingInteractiveShell({
             onSearchChange={setSearchQuery}
             loadError={coursesLoadError}
           />
-          {afterCourses}
-          {afterQuiz}
+          <Fragment key="after-courses">{afterCourses}</Fragment>
+          <Fragment key="after-quiz">{afterQuiz}</Fragment>
         </main>
 
         {footer}

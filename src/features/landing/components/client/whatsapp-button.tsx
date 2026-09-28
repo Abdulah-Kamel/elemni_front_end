@@ -1,17 +1,21 @@
-export default function WhatsAppButton() {
+import { WHATSAPP_URL } from "@/src/features/contact/contact-details";
+import { getTranslations } from "next-intl/server";
+
+export default async function WhatsAppButton() {
+  const t = await getTranslations("landingWhatsapp");
   return (
     <div className="group pointer-events-auto fixed bottom-6 start-6 z-50 flex items-center gap-3 dir-rtl">
       <div className="pointer-events-none hidden translate-x-2 items-center gap-2 rounded-xl border border-slate-700 bg-[#0F172A] px-3.5 py-2 text-xs font-bold text-white opacity-0 shadow-xl transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 sm:flex">
         <span className="size-2 rounded-full bg-[#25D366]" />
-        <span>تحدث معنا عبر الواتساب 24/7</span>
+        <span>{t("label")}</span>
       </div>
 
       <a
-        href="https://wa.me/201000000000?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%20%D9%85%D9%86%D8%B5%D8%A9%20%D8%B9%D9%84%D9%85%D9%86%D9%8A%D9%8F%D8%8C%20%D8%A3%D8%B1%D8%BA%D8%A8%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D9%81%D8%B3%D8%A7%D8%B1%20%D8%B9%D9%86%20%D8%A7%D9%84%D8%AD%D8%B5%D8%B5%20%D9%88%D8%A7%D9%84%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%D8%A7%D8%AA"
+        href={WHATSAPP_URL}
         target="_blank"
         rel="noopener noreferrer"
         className="relative group w-14 h-14 bg-[#25D366] hover:bg-[#20ba5a] text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all cursor-pointer"
-        aria-label="تواصل معنا عبر الواتساب"
+        aria-label={t("ariaLabel")}
       >
         <span className="pointer-events-none absolute inset-0 rounded-full border border-white/30" />
         <svg className="w-8 h-8 fill-current relative z-10" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

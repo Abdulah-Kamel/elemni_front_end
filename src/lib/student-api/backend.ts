@@ -4,7 +4,8 @@ import { env } from "@/src/env";
 
 export interface BackendError {
   status: number;
-  message: string;
+  code: string;
+  detail?: string;
 }
 
 export type BackendResult<T> =
@@ -32,10 +33,8 @@ export async function backendFetch<T>(
         ok: false,
         error: {
           status: response.status,
-          message:
-            typeof body?.detail === "string"
-              ? body.detail
-              : "تعذر إتمام الطلب حالياً.",
+          code: typeof body?.code === "string" ? body.code : `BACKEND_ERROR_${response.status}`,
+          ...(typeof body?.detail === "string" ? { detail: body.detail } : {}),
         },
       };
     }
@@ -52,14 +51,15 @@ export async function backendFetch<T>(
   } catch {
     return {
       ok: false,
-      error: { status: 503, message: "خدمة المنصة غير متاحة حالياً." },
+      error: { status: 503, code: "SERVICE_UNAVAILABLE" },
     };
   }
 }
 
 export function backendErrorResponse(error: BackendError) {
+  const status = error.status >= 400 && error.status <= 599 ? error.status : 502;
   return Response.json(
-    { detail: error.message },
-    { status: error.status >= 400 && error.status <= 599 ? error.status : 502 },
+    { code: error.code || `BACKEND_ERROR_${status}`, ...(error.detail ? { detail: error.detail } : {}) },
+    { status },
   );
 }

@@ -1,10 +1,14 @@
 import { notFound, redirect } from "next/navigation";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import CourseDetail from "@/src/features/courses/components/course-detail";
 import { getGrades, getStreams } from "@/src/lib/student-api/public";
 import { getAccessToken } from "@/src/lib/student-api/session";
 
-export const metadata = { title: "تفاصيل الكورس | بوابة الطالب | علمني" };
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "pageMetadata" });
+  return { title: t("myCourseDetailPage") };
+}
 
 export default async function MyCourseDetailPage({
   params,

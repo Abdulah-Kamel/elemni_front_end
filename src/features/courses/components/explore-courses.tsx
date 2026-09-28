@@ -13,7 +13,8 @@ import {
   UserRound,
 } from "lucide-react";
 import { Link, useRouter } from "@/src/i18n/navigation";
-import ImageWithFallback from "@/src/components/ui/image-with-fallback";
+import CourseCover from "./course-cover-placeholder";
+import { formatMoney } from "@/src/lib/format/money";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 import { AnimatePresence, m } from "motion/react";
 import type {
@@ -24,11 +25,11 @@ import type {
   SubjectDto,
 } from "@/src/lib/student-api/contract";
 import { isStudentUnauthorized } from "@/src/lib/student-api/client";
+import { useTranslations } from "next-intl";
 import {
   useCurrentStudent,
   useMyCourses,
 } from "@/src/features/student/hooks/use-student-queries";
-import lessonFallback from "@/src/assets/images/student-redesign/lesson-study-skills.webp";
 import StudentAppShell from "@/src/features/portal/components/portal-shell";
 
 export interface ExploreCourseEntry {
@@ -52,19 +53,16 @@ const COURSES_PER_PAGE = 6;
 
 const popSpring = { type: "spring", stiffness: 260, damping: 22 } as const;
 
-function formatDuration(minutes: number | null) {
-  if (!minutes) return "غير محددة";
-  if (minutes < 60) return `${minutes} دقيقة`;
+function formatDuration(minutes: number | null, t: ReturnType<typeof useTranslations<"courseCounts">>) {
+  if (!minutes) return t("durationUnknown");
+  if (minutes < 60) return t("minuteCount", { count: minutes });
   const hours = Math.floor(minutes / 60);
   const remainder = minutes % 60;
-  return remainder ? `${hours} س ${remainder} د` : `${hours} ساعات`;
+  return remainder ? `${t("hourCount", { count: hours })} ${t("minuteCount", { count: remainder })}` : t("hourCount", { count: hours });
 }
 
-function formatPrice(value: string | number) {
-  return new Intl.NumberFormat("ar-EG", { maximumFractionDigits: 2 }).format(Number(value));
-}
-
-function CourseCard({ entry, enrolled, index }: { entry: ExploreCourseEntry; enrolled: boolean; index: number }) {
+function CourseCard({ entry, enrolled, index, locale, t }: { entry: ExploreCourseEntry; enrolled: boolean; index: number; locale: string; t: ReturnType<typeof useTranslations<"courseExplore">> }) {
+  const tCounts = useTranslations("courseCounts");
   const { course, teacher } = entry;
   const href = enrolled
     ? `/my-courses/${course.id}`
@@ -81,25 +79,25 @@ function CourseCard({ entry, enrolled, index }: { entry: ExploreCourseEntry; enr
       whileTap={{ scale: 0.99 }}
     >
       <article className="sticker-tile group relative flex h-full flex-col overflow-hidden p-4">
-        <Link href={href} aria-label={`عرض كورس ${course.title}`} className="absolute inset-0 z-20 rounded-[1.25rem] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-inset" />
+        <Link href={href} aria-label={t("courseAria", { title: course.title })} className="absolute inset-0 z-20 rounded-[1.25rem] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-inset" />
         <div className="relative h-40 overflow-hidden rounded-xl border-2 border-ink bg-brand-100 dark:border-brand-300 dark:bg-slate-800">
-          <ImageWithFallback src={course.img} fallbackSrc={lessonFallback} alt={course.title} fill sizes="(max-width: 767px) 100vw, 33vw" className="object-cover" />
-          {enrolled && <span className="sticker-badge absolute end-2 top-2 bg-emerald-100 px-2.5 py-1 text-[11px] font-black text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300">ضمن كورساتك</span>}
+          <CourseCover src={course.img} subject={course.subject_name} alt={course.title} sizes="(max-width: 767px) 100vw, 33vw" className="object-cover" />
+          {enrolled && <span className="sticker-badge absolute end-2 top-2 bg-emerald-100 px-2.5 py-1 text-[11px] font-black text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300">{t("enrolled")}</span>}
         </div>
 
         <div className="mt-4 flex flex-1 flex-col">
-          <span className="sticker-badge w-fit -rotate-1 bg-amber-300 px-2.5 py-1 text-xs font-black text-ink">{course.subject_name || "كورس تعليمي"}</span>
+          <span className="sticker-badge w-fit -rotate-1 bg-amber-300 px-2.5 py-1 text-xs font-black text-ink">{course.subject_name || t("courseFallback")}</span>
           <h3 className="mt-3 line-clamp-2 min-h-14 text-lg font-black leading-7 text-ink dark:text-slate-50">{course.title}</h3>
           <Link href={`/explore/teachers/${teacher.slug}`} className="relative z-30 mt-1 inline-flex w-fit items-center gap-1.5 text-xs font-bold text-muted hover:text-brand-700 dark:text-slate-400"><UserRound className="size-3.5" />{teacher.name}</Link>
-          <p className="mt-3 line-clamp-2 text-xs leading-5 font-medium text-muted dark:text-slate-400">{course.description || `${course.lesson_count} درس في ${course.subject_name || "هذا التخصص"}.`}</p>
+          <p className="mt-3 line-clamp-2 text-xs leading-5 font-medium text-muted dark:text-slate-400">{course.description || t("courseDescriptionFallback", { count: course.lesson_count, subject: course.subject_name || t("courseFallback") })}</p>
 
           <div className="mt-4 flex flex-wrap gap-4 border-t-2 border-ink/10 pt-4 text-xs font-black text-muted dark:border-white/10 dark:text-slate-400">
-            <span className="inline-flex items-center gap-1.5"><BookOpen className="size-4 text-brand-600 dark:text-brand-300" />{course.lesson_count} درس</span>
-            <span className="inline-flex items-center gap-1.5"><Clock3 className="size-4 text-brand-600 dark:text-brand-300" />{formatDuration(course.total_duration_minutes)}</span>
+            <span className="inline-flex items-center gap-1.5"><BookOpen className="size-4 text-brand-600 dark:text-brand-300" />{tCounts("lessonCount", { count: course.lesson_count })}</span>
+            <span className="inline-flex items-center gap-1.5"><Clock3 className="size-4 text-brand-600 dark:text-brand-300" />{formatDuration(course.total_duration_minutes, tCounts)}</span>
           </div>
 
           <div className="mt-auto pt-5">
-            <span><strong className="sticker-numeral block text-2xl font-black text-ink dark:text-slate-50">{formatPrice(course.price)}</strong><span className="text-[11px] font-black text-muted dark:text-slate-400">ج.م</span></span>
+            <span><strong className="sticker-numeral block text-2xl font-black text-ink dark:text-slate-50">{formatMoney(course.price, locale)}</strong></span>
           </div>
         </div>
       </article>
@@ -114,6 +112,7 @@ export default function ExploreCourses({
   streams,
   subjects,
   loadError,
+  locale,
 }: {
   catalog: ExploreCourseEntry[];
   teachers: PublicTeacherDto[];
@@ -121,8 +120,10 @@ export default function ExploreCourses({
   streams: StreamDto[];
   subjects: SubjectDto[];
   loadError: boolean;
+  locale: string;
 }) {
   const router = useRouter();
+  const t = useTranslations("courseExplore");
   const searchParams = useSearchParams();
   const [profile, setProfile] = useState<OnboardingDraft | null>(null);
   const userQuery = useCurrentStudent();
@@ -243,8 +244,8 @@ export default function ExploreCourses({
           transition={popSpring}
         >
           <div>
-            <h1 className="flex items-center gap-3 text-4xl font-black tracking-tight text-ink sm:text-5xl dark:text-slate-50"><Search className="size-8 text-brand-600 dark:text-brand-300 sm:size-10" /><MarkerHighlight color="yellow" variant={1}>استكشف الكورسات</MarkerHighlight></h1>
-            <p className="mt-3 max-w-[65ch] text-sm leading-7 font-medium text-muted dark:text-slate-400">ابحث عن الكورس المناسب لمرحلتك الدراسية.</p>
+            <h1 className="flex items-center gap-3 text-4xl font-black tracking-tight text-ink sm:text-5xl dark:text-slate-50"><Search className="size-8 text-brand-600 dark:text-brand-300 sm:size-10" /><MarkerHighlight color="yellow" variant={1}>{t("title")}</MarkerHighlight></h1>
+            <p className="mt-3 max-w-[65ch] text-sm leading-7 font-medium text-muted dark:text-slate-400">{t("description")}</p>
           </div>
           {(profileGrade || profileStream) && <span className="sticker-badge inline-flex w-fit rotate-1 items-center gap-2 bg-amber-300 px-4 py-2 text-xs font-black text-ink"><span className="size-2 rounded-full bg-ink" />{[profileGrade?.name, profileStream?.name].filter(Boolean).join(" - ")}</span>}
         </m.header>
@@ -260,48 +261,48 @@ export default function ExploreCourses({
             className="sticker-btn-outline inline-flex h-12 cursor-pointer items-center gap-2 px-6 text-sm font-black text-ink dark:text-slate-200"
           >
             <SlidersHorizontal className="size-4" />
-            {showFilters ? "إخفاء الفلاتر" : "عرض الفلاتر والبحث"}
+            {showFilters ? t("hideFilters") : t("showFilters")}
           </m.button>
         </div>
 
         <div className="mt-6 grid items-start gap-6 lg:grid-cols-[17.5rem_minmax(0,1fr)]">
           <m.aside
             id="explore-filters"
-            aria-label="البحث والفلاتر"
+            aria-label={t("filterSearch")}
             className={`sticker-tile p-4 sm:p-5 lg:sticky lg:top-24 ${showFilters ? "block" : "hidden"} lg:block`}
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ ...popSpring, delay: 0.15 }}
           >
-            <section aria-label="البحث">
+            <section aria-label={t("search")}>
           <label className="relative block">
-            <span className="sr-only">ابحث عن كورس أو مدرس أو مادة</span>
+            <span className="sr-only">{t("searchLabel")}</span>
             <Search className="pointer-events-none absolute end-4 top-1/2 size-5 -translate-y-1/2 text-muted" />
-            <input value={search} onChange={(event) => { setSearch(event.target.value); setCoursePage(1); }} placeholder="ابحث عن مادة أو مدرس أو كورس..." className="h-14 w-full rounded-full border-2 border-ink bg-surface pe-12 ps-5 text-sm font-medium text-ink outline-none transition placeholder:text-muted focus:border-brand-600 sm:text-base dark:border-brand-300 dark:bg-transparent dark:text-slate-100" />
+            <input value={search} onChange={(event) => { setSearch(event.target.value); setCoursePage(1); }} placeholder={t("searchPlaceholder")} className="h-14 w-full rounded-full border-2 border-ink bg-surface pe-12 ps-5 text-sm font-medium text-ink outline-none transition placeholder:text-muted focus:border-brand-600 sm:text-base dark:border-brand-300 dark:bg-transparent dark:text-slate-100" />
           </label>
-          {!!suggestedSearches.length && <div className="mt-3 flex flex-wrap items-center gap-2 text-xs font-medium text-muted dark:text-slate-400"><span>مقترحات:</span>{suggestedSearches.map((item) => <button key={item} type="button" onClick={() => { setSearch(item); setCoursePage(1); }} className="sticker-badge cursor-pointer bg-surface px-3 py-1 font-black text-ink hover:bg-brand-100 dark:text-slate-200">{item}</button>)}</div>}
+          {!!suggestedSearches.length && <div className="mt-3 flex flex-wrap items-center gap-2 text-xs font-medium text-muted dark:text-slate-400"><span>{t("suggestions")}</span>{suggestedSearches.map((item) => <button key={item} type="button" onClick={() => { setSearch(item); setCoursePage(1); }} className="sticker-badge cursor-pointer bg-surface px-3 py-1 font-black text-ink hover:bg-brand-100 dark:text-slate-200">{item}</button>)}</div>}
             </section>
-              <section className="mt-5" aria-label="فلاتر الكورسات">
+              <section className="mt-5" aria-label={t("courseFilters")}>
                 <div className="grid gap-3">
-                  <label><span className="sr-only">الصف الدراسي</span><select value={courseGrade} onChange={(event) => changeCourseFilter(setCourseGrade, event.target.value)} className="h-12 w-full cursor-pointer rounded-full border-2 border-ink bg-surface px-4 text-sm font-black text-ink outline-none focus:border-brand-600 dark:border-brand-300 dark:bg-transparent dark:text-slate-100"><option value="all">كل الصفوف</option>{grades.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
-                  <label><span className="sr-only">الشعبة</span><select value={courseStream} onChange={(event) => changeCourseFilter(setCourseStream, event.target.value)} className="h-12 w-full cursor-pointer rounded-full border-2 border-ink bg-surface px-4 text-sm font-black text-ink outline-none focus:border-brand-600 dark:border-brand-300 dark:bg-transparent dark:text-slate-100"><option value="all">كل الشعب</option>{streams.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
-                  <label><span className="sr-only">المدرس</span><select value={selectedCourseTeacher} onChange={(event) => changeCourseFilter(setSelectedCourseTeacher, event.target.value)} className="h-12 w-full cursor-pointer rounded-full border-2 border-ink bg-surface px-4 text-sm font-black text-ink outline-none focus:border-brand-600 dark:border-brand-300 dark:bg-transparent dark:text-slate-100"><option value="all">كل المدرسين</option>{teachers.map((item) => <option key={item.slug} value={item.slug}>{item.name}</option>)}</select></label>
-                  <label className="relative"><span className="sr-only">ترتيب الكورسات</span><SlidersHorizontal className="pointer-events-none absolute end-4 top-1/2 size-4 -translate-y-1/2 text-muted" /><select value={courseSort} onChange={(event) => { setCourseSort(event.target.value as CatalogSort); setCoursePage(1); }} className="h-12 w-full cursor-pointer appearance-none rounded-full border-2 border-ink bg-surface pe-10 ps-4 text-sm font-black text-ink outline-none focus:border-brand-600 dark:border-brand-300 dark:bg-transparent dark:text-slate-100"><option value="newest">الأحدث</option><option value="price-low">السعر: الأقل أولاً</option><option value="price-high">السعر: الأعلى أولاً</option></select></label>
+                  <label><span className="sr-only">{t("grade")}</span><select value={courseGrade} onChange={(event) => changeCourseFilter(setCourseGrade, event.target.value)} className="h-12 w-full cursor-pointer rounded-full border-2 border-ink bg-surface px-4 text-sm font-black text-ink outline-none focus:border-brand-600 dark:border-brand-300 dark:bg-transparent dark:text-slate-100"><option value="all">{t("allGrades")}</option>{grades.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
+                  <label><span className="sr-only">{t("stream")}</span><select value={courseStream} onChange={(event) => changeCourseFilter(setCourseStream, event.target.value)} className="h-12 w-full cursor-pointer rounded-full border-2 border-ink bg-surface px-4 text-sm font-black text-ink outline-none focus:border-brand-600 dark:border-brand-300 dark:bg-transparent dark:text-slate-100"><option value="all">{t("allStreams")}</option>{streams.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
+                  <label><span className="sr-only">{t("teacher")}</span><select value={selectedCourseTeacher} onChange={(event) => changeCourseFilter(setSelectedCourseTeacher, event.target.value)} className="h-12 w-full cursor-pointer rounded-full border-2 border-ink bg-surface px-4 text-sm font-black text-ink outline-none focus:border-brand-600 dark:border-brand-300 dark:bg-transparent dark:text-slate-100"><option value="all">{t("allTeachers")}</option>{teachers.map((item) => <option key={item.slug} value={item.slug}>{item.name}</option>)}</select></label>
+                  <label className="relative"><span className="sr-only">{t("sort")}</span><SlidersHorizontal className="pointer-events-none absolute end-4 top-1/2 size-4 -translate-y-1/2 text-muted" /><select value={courseSort} onChange={(event) => { setCourseSort(event.target.value as CatalogSort); setCoursePage(1); }} className="h-12 w-full cursor-pointer appearance-none rounded-full border-2 border-ink bg-surface pe-10 ps-4 text-sm font-black text-ink outline-none focus:border-brand-600 dark:border-brand-300 dark:bg-transparent dark:text-slate-100"><option value="newest">{t("sortNewest")}</option><option value="price-low">{t("sortPriceLow")}</option><option value="price-high">{t("sortPriceHigh")}</option></select></label>
                 </div>
-                {!!subjects.length && <div className="mt-4 flex flex-wrap gap-2" aria-label="مواد الكورسات"><button type="button" onClick={() => changeCourseFilter(setCourseSubject, "all")} className={`h-10 shrink-0 rounded-full border-2 px-4 text-xs font-black transition ${courseSubject === "all" ? "border-ink bg-ink text-white dark:border-brand-300 dark:bg-brand-600" : "sticker-badge bg-surface text-ink hover:bg-brand-100 dark:text-slate-200"}`}>كل المواد</button>{subjects.map((item) => <button key={item.id} type="button" onClick={() => changeCourseFilter(setCourseSubject, item.name)} className={`h-10 shrink-0 rounded-full border-2 px-4 text-xs font-black transition ${courseSubject === item.name ? "border-ink bg-ink text-white dark:border-brand-300 dark:bg-brand-600" : "sticker-badge bg-surface text-ink hover:bg-brand-100 dark:text-slate-200"}`}>{item.name}</button>)}</div>}
-                {hasCourseFilters && <button type="button" onClick={resetCourseFilters} className="mt-4 cursor-pointer text-sm font-black text-brand-700 hover:underline dark:text-brand-300">مسح الفلاتر</button>}
+                {!!subjects.length && <div className="mt-4 flex flex-wrap gap-2" aria-label={t("courseSubjects")}><button type="button" onClick={() => changeCourseFilter(setCourseSubject, "all")} className={`h-10 shrink-0 rounded-full border-2 px-4 text-xs font-black transition ${courseSubject === "all" ? "border-ink bg-ink text-white dark:border-brand-300 dark:bg-brand-600" : "sticker-badge bg-surface text-ink hover:bg-brand-100 dark:text-slate-200"}`}>{t("allSubjects")}</button>{subjects.map((item) => <button key={item.id} type="button" onClick={() => changeCourseFilter(setCourseSubject, item.name)} className={`h-10 shrink-0 rounded-full border-2 px-4 text-xs font-black transition ${courseSubject === item.name ? "border-ink bg-ink text-white dark:border-brand-300 dark:bg-brand-600" : "sticker-badge bg-surface text-ink hover:bg-brand-100 dark:text-slate-200"}`}>{item.name}</button>)}</div>}
+                {hasCourseFilters && <button type="button" onClick={resetCourseFilters} className="mt-4 cursor-pointer text-sm font-black text-brand-700 hover:underline dark:text-brand-300">{t("resetFilters")}</button>}
               </section>
           </m.aside>
 
           <div className="min-w-0">
-            {loadError && <div role="alert" className="sticker-tile flex items-center gap-3 border-amber-500 bg-amber-50 px-4 py-3 text-sm font-black text-amber-900 dark:bg-amber-500/10 dark:text-amber-300"><CircleAlert className="size-5 shrink-0" />تعذر تحميل بعض بيانات الكتالوج. النتائج المتاحة معروضة أدناه.</div>}
+            {loadError && <div role="alert" className="sticker-tile flex items-center gap-3 border-amber-500 bg-amber-50 px-4 py-3 text-sm font-black text-amber-900 dark:bg-amber-500/10 dark:text-amber-300"><CircleAlert className="size-5 shrink-0" />{t("loadError")}</div>}
 
             <AnimatePresence mode="wait" initial={false}>
               <m.div key="courses" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: 0.2 }}>
               <section id="all-courses" className="scroll-mt-24" aria-labelledby="all-courses-heading">
-                <div className="mb-5 flex items-center justify-between gap-4"><h2 id="all-courses-heading" className="text-3xl font-black tracking-tight text-ink dark:text-slate-50"><MarkerHighlight color="sky" variant={1}>كل الكورسات</MarkerHighlight></h2><span className="sticker-badge bg-surface px-3 py-1 text-xs font-black text-muted dark:text-slate-300">{filteredCourses.length} كورس</span></div>
-                <AnimatePresence mode="wait" initial={false}>{visibleCourses.length ? <m.div key={`results-${visibleCourseIdsKey}`} className="grid gap-5 md:grid-cols-2 xl:grid-cols-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>{visibleCourses.map((entry, index) => <CourseCard key={entry.course.id} entry={entry} enrolled={enrolledCourseIds.includes(entry.course.id)} index={index} />)}</m.div> : <m.div key="empty-courses" className="sticker-tile flex min-h-64 flex-col items-center justify-center px-4 text-center" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={popSpring}><Search className="mb-4 size-9 text-muted" /><h3 className="text-lg font-black text-ink dark:text-slate-50"><MarkerHighlight color="pink" variant={3}>لا توجد كورسات مطابقة</MarkerHighlight></h3><p className="mt-2 text-sm font-medium text-muted dark:text-slate-400">جرّب تغيير البحث أو اختيار تصنيف آخر.</p>{hasCourseFilters && <button type="button" onClick={resetCourseFilters} className="mt-4 cursor-pointer text-sm font-black text-brand-700 hover:underline dark:text-brand-300">مسح الفلاتر</button>}</m.div>}</AnimatePresence>
-                {totalCoursePages > 1 && <nav className="mt-8 flex items-center justify-center gap-2" aria-label="صفحات الكورسات"><button type="button" onClick={() => setCoursePage((current) => Math.max(1, current - 1))} disabled={coursePage === 1} aria-label="الصفحة السابقة" className="sticker-btn-outline flex size-11 items-center justify-center disabled:cursor-not-allowed disabled:opacity-40"><ChevronRight className="size-4" /></button>{Array.from({ length: totalCoursePages }, (_, index) => index + 1).map((item) => <button key={item} type="button" onClick={() => setCoursePage(item)} aria-current={coursePage === item ? "page" : undefined} className={`size-11 rounded-full border-2 text-sm font-black transition ${coursePage === item ? "border-ink bg-brand-600 text-white shadow-[2px_2px_0_0_var(--color-ink)] dark:border-brand-300" : "sticker-btn-outline"}`}>{item}</button>)}<button type="button" onClick={() => setCoursePage((current) => Math.min(totalCoursePages, current + 1))} disabled={coursePage === totalCoursePages} aria-label="الصفحة التالية" className="sticker-btn-outline flex size-11 items-center justify-center disabled:cursor-not-allowed disabled:opacity-40"><ChevronLeft className="size-4" /></button></nav>}
+                <div className="mb-5 flex items-center justify-between gap-4"><h2 id="all-courses-heading" className="text-3xl font-black tracking-tight text-ink dark:text-slate-50"><MarkerHighlight color="sky" variant={1}>{t("allCourses")}</MarkerHighlight></h2><span className="sticker-badge bg-surface px-3 py-1 text-xs font-black text-muted dark:text-slate-300">{t("courseCount", { count: filteredCourses.length })}</span></div>
+                <AnimatePresence mode="wait" initial={false}>{visibleCourses.length ? <m.div key={`results-${visibleCourseIdsKey}`} className="grid gap-5 md:grid-cols-2 xl:grid-cols-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>{visibleCourses.map((entry, index) => <CourseCard key={entry.course.id} entry={entry} enrolled={enrolledCourseIds.includes(entry.course.id)} index={index} locale={locale} t={t} />)}</m.div> : <m.div key="empty-courses" className="sticker-tile flex min-h-64 flex-col items-center justify-center px-4 text-center" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={popSpring}><Search className="mb-4 size-9 text-muted" /><h3 className="text-lg font-black text-ink dark:text-slate-50"><MarkerHighlight color="pink" variant={3}>{t("noCourses")}</MarkerHighlight></h3><p className="mt-2 text-sm font-medium text-muted dark:text-slate-400">{t("noCoursesDescription")}</p>{hasCourseFilters && <button type="button" onClick={resetCourseFilters} className="mt-4 cursor-pointer text-sm font-black text-brand-700 hover:underline dark:text-brand-300">{t("resetFilters")}</button>}</m.div>}</AnimatePresence>
+                {totalCoursePages > 1 && <nav className="mt-8 flex items-center justify-center gap-2" aria-label={t("pages")}><button type="button" onClick={() => setCoursePage((current) => Math.max(1, current - 1))} disabled={coursePage === 1} aria-label={t("previous")} className="sticker-btn-outline flex size-11 items-center justify-center disabled:cursor-not-allowed disabled:opacity-40"><ChevronRight className="size-4 ltr:-scale-x-100" /></button>{Array.from({ length: totalCoursePages }, (_, index) => index + 1).map((item) => <button key={item} type="button" onClick={() => setCoursePage(item)} aria-current={coursePage === item ? "page" : undefined} className={`size-11 rounded-full border-2 text-sm font-black transition ${coursePage === item ? "border-ink bg-brand-600 text-white shadow-[2px_2px_0_0_var(--color-ink)] dark:border-brand-300" : "sticker-btn-outline"}`}>{item}</button>)}<button type="button" onClick={() => setCoursePage((current) => Math.min(totalCoursePages, current + 1))} disabled={coursePage === totalCoursePages} aria-label={t("next")} className="sticker-btn-outline flex size-11 items-center justify-center disabled:cursor-not-allowed disabled:opacity-40"><ChevronLeft className="size-4 ltr:-scale-x-100" /></button></nav>}
               </section>
               </m.div>
         </AnimatePresence>

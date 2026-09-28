@@ -7,22 +7,25 @@ import type {
   PublicTeacherDto,
 } from "./contract";
 
+type TeacherDataKey = "teacherFallback" | "variedSubjects" | "allGrades" | "durationUnknown" | "minutes" | "hours" | "and" | "noBio";
+type TranslateTeacherData = (key: TeacherDataKey, values?: { count?: number }) => string;
+
 function subjectCategory(teacher: PublicTeacherDto | PublicTeacherDetailDto) {
   return teacher.subjects[0]?.slug ?? "general";
 }
 
-export function toTeacherSummary(teacher: PublicTeacherDto): TeacherSummary {
+export function toTeacherSummary(teacher: PublicTeacherDto, t: TranslateTeacherData, locale: string): TeacherSummary {
   const subjects = teacher.subjects.map((subject) => subject.name);
   const grades = teacher.grades.map((grade) => grade.name);
   return {
     id: teacher.slug,
     name: teacher.name,
-    title: subjects.join("، ") || "مدرس على منصة علمني",
-    subject: subjects[0] ?? "مواد متنوعة",
+    title: new Intl.ListFormat(locale).format(subjects) || t("teacherFallback"),
+    subject: subjects[0] ?? t("variedSubjects"),
     subjects,
     category: subjectCategory(teacher),
     grade: teacher.grades[0] ? String(teacher.grades[0].id) : "all",
-    gradeLabel: grades[0] ?? "كل الصفوف",
+    gradeLabel: grades[0] ?? t("allGrades"),
     gradesList: grades,
     gradeIds: teacher.grades.map((grade) => String(grade.id)),
     streamIds: [...new Set(teacher.subjects.flatMap((subject) => subject.streams.map((stream) => String(stream.id))))],
@@ -31,21 +34,21 @@ export function toTeacherSummary(teacher: PublicTeacherDto): TeacherSummary {
   };
 }
 
-function formatDuration(minutes: number | null) {
-  if (!minutes) return "المدة غير محددة";
-  if (minutes < 60) return `${minutes} دقيقة`;
+function formatDuration(minutes: number | null, t: TranslateTeacherData) {
+  if (!minutes) return t("durationUnknown");
+  if (minutes < 60) return t("minutes", { count: minutes });
   const hours = Math.floor(minutes / 60);
   const rest = minutes % 60;
-  return rest ? `${hours} ساعة و${rest} دقيقة` : `${hours} ساعة`;
+  return rest ? `${t("hours", { count: hours })}${t("and")}${t("minutes", { count: rest })}` : t("hours", { count: hours });
 }
 
-export function toCourse(course: PublicCourseDto): Course {
+export function toCourse(course: PublicCourseDto, t: TranslateTeacherData): Course {
   return {
     id: String(course.id),
     title: course.title,
     description: course.description ?? "",
     price: Number(course.price),
-    duration: formatDuration(course.total_duration_minutes),
+    duration: formatDuration(course.total_duration_minutes, t),
     sessionsCount: course.lesson_count,
     image: resolveAssetUrl(course.img, teacherFallback.src),
     isSubscribed: course.is_subscribed,
@@ -77,19 +80,21 @@ export function toCourse(course: PublicCourseDto): Course {
 export function toTeacher(
   teacher: PublicTeacherDetailDto | PublicTeacherDto,
   courses: PublicCourseDto[],
+  t: TranslateTeacherData,
+  locale: string,
 ): Teacher {
   const subjects = teacher.subjects.map((subject) => subject.name);
   const grades = teacher.grades.map((grade) => grade.name);
-  const normalizedCourses = courses.map(toCourse);
+  const normalizedCourses = courses.map((course) => toCourse(course, t));
   return {
     id: teacher.slug,
     name: teacher.name,
-    title: subjects.join("، ") || "مدرس على منصة علمني",
-    subject: subjects[0] ?? "مواد متنوعة",
+    title: new Intl.ListFormat(locale).format(subjects) || t("teacherFallback"),
+    subject: subjects[0] ?? t("variedSubjects"),
     subjects,
     category: subjectCategory(teacher),
     grade: teacher.grades[0] ? String(teacher.grades[0].id) : "all",
-    gradeLabel: grades[0] ?? "كل الصفوف",
+    gradeLabel: grades[0] ?? t("allGrades"),
     gradesList: grades,
     gradeIds: teacher.grades.map((grade) => String(grade.id)),
     streamIds: [...new Set(teacher.subjects.flatMap((subject) => subject.streams.map((stream) => String(stream.id))))],
@@ -99,7 +104,7 @@ export function toTeacher(
     pricePerSession: normalizedCourses.length
       ? Math.min(...normalizedCourses.map((course) => course.price))
       : 0,
-    bio: teacher.description ?? "لا توجد نبذة مضافة حتى الآن.",
+    bio: teacher.description ?? t("noBio"),
     specialties: subjects,
     schedule: [],
     courses: normalizedCourses,

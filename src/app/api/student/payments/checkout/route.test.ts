@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
-  backendErrorResponse: vi.fn((error: { status: number; message: string }) =>
-    Response.json({ detail: error.message }, { status: error.status }),
+  backendErrorResponse: vi.fn((error: { status: number; code: string; detail?: string }) =>
+    Response.json({ code: error.code, ...(error.detail ? { detail: error.detail } : {}) }, { status: error.status }),
   ),
   authenticatedBackendFetch: vi.fn(),
 }));
@@ -39,9 +39,7 @@ describe("POST /api/student/payments/checkout", () => {
       const response = await postCheckout(body);
 
       expect(response.status).toBe(400);
-      await expect(response.json()).resolves.toMatchObject({
-        detail: expect.any(String),
-      });
+      await expect(response.json()).resolves.toEqual({ code: "INVALID_COURSE_ID" });
       expect(mocks.authenticatedBackendFetch).not.toHaveBeenCalled();
     },
   );
@@ -87,9 +85,7 @@ describe("POST /api/student/payments/checkout", () => {
     const response = await postCheckout({ course_id: 12 });
 
     expect(response.status).toBe(502);
-    await expect(response.json()).resolves.toMatchObject({
-      detail: expect.any(String),
-    });
+    await expect(response.json()).resolves.toEqual({ code: "CHECKOUT_UNAVAILABLE" });
   });
 
   it("rejects an unsafe backend redirect URL with 502", async () => {
@@ -102,22 +98,20 @@ describe("POST /api/student/payments/checkout", () => {
     const response = await postCheckout({ course_id: 12 });
 
     expect(response.status).toBe(502);
-    await expect(response.json()).resolves.toMatchObject({
-      detail: expect.any(String),
-    });
+    await expect(response.json()).resolves.toEqual({ code: "CHECKOUT_UNAVAILABLE" });
   });
 
   it("forwards backend checkout errors with their status", async () => {
     mocks.authenticatedBackendFetch.mockResolvedValue({
       ok: false,
-      error: { status: 409, message: "Already enrolled" },
+      error: { status: 409, code: "ALREADY_ENROLLED" },
     });
 
     const response = await postCheckout({ course_id: 12 });
 
     expect(mocks.backendErrorResponse).toHaveBeenCalledWith({
       status: 409,
-      message: "Already enrolled",
+      code: "ALREADY_ENROLLED",
     });
     expect(response.status).toBe(409);
   });

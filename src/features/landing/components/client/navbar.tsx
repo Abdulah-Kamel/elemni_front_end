@@ -10,6 +10,7 @@ import { notifyStudentSessionChanged } from "@/src/lib/student-api/session-event
 import { useCurrentStudent } from "@/src/features/student/hooks/use-student-queries";
 import { useTranslations } from "next-intl";
 import logoMark from "@/src/assets/logo-icon.png";
+import { LocaleSwitcher } from "@/src/components/locale-switcher";
 
 interface NavbarProps {
   onOpenAuth: (mode: "signin" | "signup") => void;
@@ -95,6 +96,8 @@ export default function Navbar({ onSearchChange, searchQuery, isDarkMode, onTogg
                   : "bg-sky-100/90 border-sky-200 text-slate-900"
               )}
               title={isDarkMode ? tNav("lightMode") : tNav("darkMode")}
+              aria-label={isDarkMode ? tNav("lightMode") : tNav("darkMode")}
+              aria-pressed={isDarkMode}
             >
               <div className={cn(
                 "w-5 h-5 rounded-full flex items-center justify-center transition-all",
@@ -112,6 +115,7 @@ export default function Navbar({ onSearchChange, searchQuery, isDarkMode, onTogg
           </div>
 
           <nav aria-label={tNav("mainNavigation")} className="hidden items-center gap-1 lg:flex">
+            <LocaleSwitcher className="mx-2" />
             {navItems.map((item) => (
               <a
                 key={item.hash}
@@ -237,6 +241,8 @@ export default function Navbar({ onSearchChange, searchQuery, isDarkMode, onTogg
             <button
               type="button"
               onClick={onToggleDarkMode}
+              aria-label={isDarkMode ? tNav("lightMode") : tNav("darkMode")}
+              aria-pressed={isDarkMode}
               className={cn(
                 "flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer",
                 isDarkMode ? "bg-slate-800 text-sky-400 border border-slate-700" : "bg-sky-50 text-slate-900 border border-sky-100"
@@ -260,6 +266,7 @@ export default function Navbar({ onSearchChange, searchQuery, isDarkMode, onTogg
           </div>}
 
           <nav aria-label={tNav("mobileNavigation")} className="grid grid-cols-2 gap-2 border-b border-slate-100 pb-3 dark:border-slate-800">
+            <div className="col-span-2 flex justify-end"><LocaleSwitcher /></div>
             {navItems.map(({ hash, key, icon: Icon }) => (
               <a
                 key={hash}

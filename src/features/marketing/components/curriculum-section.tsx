@@ -66,7 +66,7 @@ export default async function CurriculumSection() {
                 />
                 <span className="absolute end-3 top-3 inline-flex items-center gap-1 rounded-full bg-black/50 px-2 py-1 text-xs text-white">
                   <Clock className="size-3" />
-                  {isAr ? lesson.duration : lesson.durationEn}
+                  {new Intl.NumberFormat(isAr ? "ar-EG" : "en-US", { minimumIntegerDigits: 2 }).format(Math.floor(lesson.durationSeconds / 60))}:{new Intl.NumberFormat(isAr ? "ar-EG" : "en-US", { minimumIntegerDigits: 2 }).format(lesson.durationSeconds % 60)}
                 </span>
               </div>
               <div className="mt-4 space-y-2">
@@ -82,7 +82,7 @@ export default async function CurriculumSection() {
                 <p className="text-sm font-semibold text-brand-700">
                   {"priceKey" in lesson
                     ? t("free")
-                    : t("price", { n: isAr ? lesson.price : lesson.priceEn })}
+                    : t("price", { n: new Intl.NumberFormat(isAr ? "ar-EG" : "en-US").format(lesson.price) })}
                 </p>
               </div>
             </div>

@@ -9,34 +9,23 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-export const STATS = [
-  { key: "earnings", value: 12 },
-  { key: "students", value: 180000 },
-  { key: "teachers", value: 3000 },
-] as const;
-
 export const LESSONS = [
   {
     key: "light",
     priceKey: "free",
-    duration: "١٥:٠٠",
-    durationEn: "15:00",
+    durationSeconds: 900,
     image: "/placeholders/lesson-light.svg",
   },
   {
     key: "current",
-    price: "٥٠",
-    priceEn: "50",
-    duration: "٣٨:١٥",
-    durationEn: "38:15",
+    price: 50,
+    durationSeconds: 2295,
     image: "/placeholders/lesson-current.svg",
   },
   {
     key: "ohm",
-    price: "٩٠",
-    priceEn: "90",
-    duration: "٤٤:٢٠",
-    durationEn: "44:20",
+    price: 90,
+    durationSeconds: 2660,
     image: "/placeholders/lesson-ohm.svg",
   },
 ] as const;
@@ -48,12 +37,6 @@ export const FEATURE_ICONS = [
   { key: "mobile", icon: Smartphone as LucideIcon, tint: "blue" },
   { key: "payments", icon: Banknote as LucideIcon, tint: "orange" },
   { key: "reports", icon: LineChart as LucideIcon, tint: "violet" },
-] as const;
-
-export const TESTIMONIALS = [
-  { key: "1", avatar: "/placeholders/avatar-1.svg" },
-  { key: "2", avatar: "/placeholders/avatar-2.svg" },
-  { key: "3", avatar: "/placeholders/avatar-3.svg" },
 ] as const;
 
 export const STEPS = [
@@ -94,12 +77,6 @@ export const STUDENT_STEPS = [
   { num: 1, circleClass: "bg-accent-500" },
   { num: 2, circleClass: "bg-brand-600" },
   { num: 3, circleClass: "bg-success-500" },
-] as const;
-
-export const STUDENT_TESTIMONIALS = [
-  { key: "1", avatar: "/placeholders/avatar-1.svg" },
-  { key: "2", avatar: "/placeholders/avatar-2.svg" },
-  { key: "3", avatar: "/placeholders/avatar-3.svg" },
 ] as const;
 
 export const STUDENT_TEACHERS: {

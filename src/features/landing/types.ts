@@ -31,16 +31,16 @@ export interface Testimonial {
 
 export interface FAQItem {
   id: string;
-  question: string;
-  answer: string;
+  questionKey: string;
+  answerKey: string;
   category: string;
 }
 
 export interface QuizQuestion {
   id: number;
-  subject: string;
-  question: string;
-  options: string[];
+  subjectKey: string;
+  questionKey: string;
+  optionKeys: string[];
   correctAnswer: number;
-  explanation: string;
+  explanationKey: string;
 }

@@ -5,12 +5,15 @@ import { QUIZ_QUESTIONS } from "../../data/mock-data";
 import { HelpCircle, CheckCircle, XCircle, RotateCcw, Award, ArrowLeft } from "lucide-react";
 import { cn } from "@/src/lib/cn";
 import { Reveal } from "@/src/components/ui/reveal";
+import { useTranslations } from "next-intl";
 
 interface InteractiveQuizProps {
   onExploreTeachers: () => void;
 }
 
 export default function InteractiveQuiz({ onExploreTeachers }: InteractiveQuizProps) {
+  const t = useTranslations("landingQuiz");
+  const tData = useTranslations("landingQuizData");
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
@@ -57,11 +60,11 @@ export default function InteractiveQuiz({ onExploreTeachers }: InteractiveQuizPr
           <div className="text-center space-y-3 mb-10">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary-light text-primary font-bold text-xs sm:text-sm">
               <HelpCircle className="w-4 h-4" />
-              <span>تجربة تفاعلية حية على المنصة</span>
+              <span>{t("badge")}</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-black text-[#0F172A] font-readex">اختبر مستواك الآن</h2>
+            <h2 className="text-3xl sm:text-4xl font-black text-[#0F172A] font-readex">{t("title")}</h2>
             <p className="text-sm sm:text-base text-[#334155]">
-              جرب نموذجاً مصغراً لااختبارات منصة علمني واكتشف أسلوب التصحيح الذكي والتفسير الفوري للحلول.
+              {t("description")}
             </p>
           </div>
         </Reveal>
@@ -72,20 +75,21 @@ export default function InteractiveQuiz({ onExploreTeachers }: InteractiveQuizPr
             <div>
               <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
                 <div className="flex items-center gap-2">
-                  <span className="bg-primary-light text-primary font-extrabold text-xs px-3 py-1 rounded-full">مادة: {currentQ.subject}</span>
-                  <span className="text-xs font-bold text-slate-500">السؤال {currentQuestionIndex + 1} من {QUIZ_QUESTIONS.length}</span>
+                  <span className="bg-primary-light text-primary font-extrabold text-xs px-3 py-1 rounded-full">{t("subject", { value: tData(currentQ.subjectKey as never) })}</span>
+                  <span className="text-xs font-bold text-slate-500">{t("question", { current: currentQuestionIndex + 1, total: QUIZ_QUESTIONS.length })}</span>
                 </div>
-                <div className="text-xs font-bold text-primary">النقاط: {score}</div>
+                <div className="text-xs font-bold text-primary">{t("score", { score })}</div>
               </div>
 
               <div className="w-full bg-slate-100 h-2 rounded-full mb-6 overflow-hidden">
                 <div className="bg-primary h-full transition-all duration-300" style={{ width: `${((currentQuestionIndex + 1) / QUIZ_QUESTIONS.length) * 100}%` }} />
               </div>
 
-              <h3 className="text-lg sm:text-xl font-black text-[#0F172A] leading-relaxed mb-6 text-end font-readex">{currentQ.question}</h3>
+              <h3 className="text-lg sm:text-xl font-black text-[#0F172A] leading-relaxed mb-6 text-end font-readex">{tData(currentQ.questionKey as never)}</h3>
 
               <div className="space-y-3 mb-6">
-                {currentQ.options.map((option, idx) => {
+                {currentQ.optionKeys.map((optionKey, idx) => {
+                  const option = tData(optionKey as never);
                   let buttonStyle = "bg-[#F8FAFC] border-slate-200 text-[#0F172A] hover:bg-slate-100";
                   if (isAnswered) {
                     if (idx === currentQ.correctAnswer) {
@@ -116,8 +120,8 @@ export default function InteractiveQuiz({ onExploreTeachers }: InteractiveQuizPr
 
               {isAnswered && (
                 <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 mb-6 text-end text-xs leading-relaxed text-[#334155]">
-                  <span className="font-extrabold text-primary block mb-1">💡 الشرح والتوضيح العلمي:</span>
-                  <p>{currentQ.explanation}</p>
+                  <span className="font-extrabold text-primary block mb-1">{t("explanationTitle")}</span>
+                  <p>{tData(currentQ.explanationKey as never)}</p>
                 </div>
               )}
 
@@ -131,15 +135,15 @@ export default function InteractiveQuiz({ onExploreTeachers }: InteractiveQuizPr
                       selectedOption !== null ? "bg-primary hover:bg-primary-hover shadow-md cursor-pointer" : "bg-slate-300 cursor-not-allowed"
                     )}
                   >
-                    تأكيد الإجابة
+                    {t("confirm")}
                   </button>
                 ) : (
                   <button
                     onClick={handleNextQuestion}
                     className="px-6 py-3 bg-primary hover:bg-primary-hover text-white font-bold text-sm rounded-xl shadow-md transition-all cursor-pointer flex items-center gap-2"
                   >
-                    <span>{currentQuestionIndex + 1 < QUIZ_QUESTIONS.length ? "السؤال التالي" : "إنهاء الاختبار"}</span>
-                    <ArrowLeft className="w-4 h-4" />
+                    <span>{currentQuestionIndex + 1 < QUIZ_QUESTIONS.length ? t("next") : t("finish")}</span>
+                    <ArrowLeft className="w-4 h-4 ltr:-scale-x-100" />
                   </button>
                 )}
               </div>
@@ -150,19 +154,19 @@ export default function InteractiveQuiz({ onExploreTeachers }: InteractiveQuizPr
                 <Award className="w-10 h-10" />
               </div>
               <div className="space-y-2">
-                <h3 className="text-2xl font-black text-[#0F172A]">ممتاز! أكملت التقييم بنجاح 🎉</h3>
-                <p className="text-base font-bold text-primary">حصلت على {score} من {QUIZ_QUESTIONS.length} إجابات صحيحة</p>
+                <h3 className="text-2xl font-black text-[#0F172A]">{t("complete")}</h3>
+                <p className="text-base font-bold text-primary">{t("correctAnswers", { score, total: QUIZ_QUESTIONS.length })}</p>
                 <p className="text-xs text-slate-600 max-w-md mx-auto">
-                  هذا النموذج المصغر هو مجرد زاوية بسيطة من بنك الأسئلة الشامل على منصة علمني والذي يحتوي على أكثر من 50,000 سؤال محلول بالفيديو!
+                  {t("summary")}
                 </p>
               </div>
               <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
                 <button onClick={onExploreTeachers} className="px-6 py-3 bg-primary hover:bg-primary-hover text-white font-bold text-sm rounded-xl shadow-md transition-all cursor-pointer">
-                  انضم لأفضل المعلمين وحل المزيد
+                  {t("cta")}
                 </button>
                 <button onClick={handleRestart} className="px-5 py-3 bg-slate-100 text-slate-800 font-bold text-sm rounded-xl hover:bg-slate-200 transition-all cursor-pointer flex items-center gap-2">
                   <RotateCcw className="w-4 h-4" />
-                  <span>إعادة الاختبار</span>
+                  <span>{t("restart")}</span>
                 </button>
               </div>
             </div>

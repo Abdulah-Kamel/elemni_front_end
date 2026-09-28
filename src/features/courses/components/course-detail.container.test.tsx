@@ -627,7 +627,7 @@ describe("CourseDetail production experience", () => {
     );
 
     expect(await screen.findByRole("button", { name: "Enroll in this course" })).toBeInTheDocument();
-    expect(screen.getByText("EGP")).toBeInTheDocument();
+    expect(screen.getByText(/EGP\s+250/)).toBeInTheDocument();
   });
 
   describe("checkout redirect handling", () => {

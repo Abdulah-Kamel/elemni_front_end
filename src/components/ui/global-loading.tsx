@@ -1,5 +1,6 @@
 import Image from "next/image";
 import logoMark from "@/src/assets/logo-icon.png";
+import { useTranslations } from "next-intl";
 
 interface GlobalLoadingProps {
   message?: string;
@@ -7,15 +8,17 @@ interface GlobalLoadingProps {
 }
 
 export function GlobalLoading({
-  message = "نجهز لك رحلتك التعليمية",
+  message,
   variant = "screen",
 }: GlobalLoadingProps = {}) {
+  const t = useTranslations("globalLoading");
+  const resolvedMessage = message ?? t("journey");
   return (
     <div
       className={`global-loading${variant === "content" ? " global-loading--content" : ""}`}
       role="status"
       aria-live="polite"
-      aria-label={message}
+      aria-label={resolvedMessage}
     >
       <div className="global-loading__mark" aria-hidden="true">
         <span className="global-loading__orbit">
@@ -30,10 +33,10 @@ export function GlobalLoading({
 
       <div className="global-loading__copy">
         <strong>علمني</strong>
-        <span>{message}</span>
+        <span>{resolvedMessage}</span>
       </div>
 
-      <span className="sr-only">جاري التحميل...</span>
+      <span className="sr-only">{t("loading")}</span>
     </div>
   );
 }
