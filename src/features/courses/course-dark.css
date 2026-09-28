@@ -1,0 +1,63 @@
+/* Dark mode for the course pages (course detail, enrolled player, curriculum).
+   These components use a light "paper" palette written as arbitrary hex
+   classes; rather than annotate every class list, remap the palette under
+   .dark inside the .course-paper root (set in course-detail.tsx). Generated
+   from the palette classes the course components use; dark navy surfaces,
+   overlays and white-on-dark text are intentionally left alone. */
+.dark .course-paper .text-\[\#15181E\] { color: var(--color-ink); }
+.dark .course-paper .bg-white { background-color: var(--color-surface); }
+.dark .course-paper .border-\[\#E4E2DC\] { border-color: var(--color-border); }
+.dark .course-paper .text-\[\#6B7E8F\] { color: var(--color-muted); }
+.dark .course-paper .text-\[\#5F6573\] { color: #c3cad4; }
+.dark .course-paper .focus-visible\:ring-\[\#0A5FB4\]:focus-visible { --tw-ring-color: #38bdf8; }
+.dark .course-paper .bg-\[\#F4F3EF\] { background-color: var(--color-page); }
+.dark .course-paper .text-\[\#0A5FB4\] { color: #7dd3fc; }
+.dark .course-paper .focus-visible\:ring-\[\#0284C7\]:focus-visible { --tw-ring-color: #38bdf8; }
+.dark .course-paper .text-\[\#16784A\] { color: #4ade80; }
+.dark .course-paper .hover\:bg-\[\#F4F3EF\]:hover { background-color: var(--color-page); }
+.dark .course-paper .text-\[\#4A505C\] { color: #c3cad4; }
+.dark .course-paper .border-\[\#D8E3EC\] { border-color: var(--color-border); }
+.dark .course-paper .bg-\[\#E8F1FB\] { background-color: rgb(56 189 248 / 0.10); }
+.dark .course-paper .bg-\[\#C6D9E5\] { background-color: var(--color-surface-subtle); }
+.dark .course-paper .text-\[\#8BA0B1\] { color: var(--color-muted); }
+.dark .course-paper .text-\[\#0284C7\] { color: #7dd3fc; }
+.dark .course-paper .hover\:bg-\[\#FAF9F5\]:hover { background-color: var(--color-surface-muted); }
+.dark .course-paper .bg-\[\#ECEAE4\] { background-color: var(--color-surface-subtle); }
+.dark .course-paper .bg-\[\#EAF2F7\] { background-color: var(--color-surface-muted); }
+.dark .course-paper .bg-\[\#E6F4EC\] { background-color: rgb(74 222 128 / 0.10); }
+.dark .course-paper .text-\[\#087443\] { color: #4ade80; }
+.dark .course-paper .border-\[\#E4ECF2\] { border-color: var(--color-border); }
+.dark .course-paper .bg-\[\#E8F6FE\] { background-color: rgb(56 189 248 / 0.10); }
+.dark .course-paper .text-\[\#6B4E00\] { color: #fcd34d; }
+.dark .course-paper .text-\[\#536A7C\] { color: #b9c1cc; }
+.dark .course-paper .text-\[\#0F2638\] { color: var(--color-ink); }
+.dark .course-paper .text-\[\#075985\] { color: #7dd3fc; }
+.dark .course-paper .hover\:bg-white:hover { background-color: var(--color-surface); }
+.dark .course-paper .disabled\:text-\[\#8B9099\]:disabled { color: #7a8494; }
+.dark .course-paper .disabled\:hover\:bg-white:disabled:hover { background-color: var(--color-surface); }
+.dark .course-paper .border-\[\#F0DDA0\] { border-color: rgb(251 191 36 / 0.35); }
+.dark .course-paper .border-\[\#0284C7\] { border-color: #38bdf8; }
+.dark .course-paper .bg-\[\#FFF4D6\] { background-color: rgb(251 191 36 / 0.12); }
+.dark .course-paper .bg-\[\#FAF9F5\] { background-color: var(--color-surface-muted); }
+.dark .course-paper .text-\[\#B42318\] { color: #fca5a5; }
+.dark .course-paper .text-\[\#9AB4C5\] { color: var(--color-muted); }
+.dark .course-paper .text-\[\#365469\] { color: #c3cad4; }
+.dark .course-paper .text-\[\#1C3345\] { color: var(--color-ink); }
+.dark .course-paper .text-\[\#0F172A\] { color: var(--color-ink); }
+.dark .course-paper .hover\:text-\[\#0F2638\]:hover { color: var(--color-ink); }
+.dark .course-paper .hover\:border-\[\#0284C7\]:hover { border-color: #38bdf8; }
+.dark .course-paper .hover\:bg-\[\#F4FAFD\]:hover { background-color: rgb(56 189 248 / 0.08); }
+.dark .course-paper .hover\:bg-\[\#EDF6FB\]:hover { background-color: rgb(56 189 248 / 0.08); }
+.dark .course-paper .border-\[\#DCE7EF\] { border-color: var(--color-border); }
+.dark .course-paper .border-\[\#D8E0E9\] { border-color: var(--color-border); }
+.dark .course-paper .border-\[\#B7CDDC\] { border-color: var(--color-line); }
+.dark .course-paper .border-\[\#0A5FB4\] { border-color: #38bdf8; }
+.dark .course-paper .bg-\[\#FFF2F2\] { background-color: rgb(248 113 113 / 0.10); }
+.dark .course-paper .bg-\[\#FBFDFF\] { background-color: var(--color-surface-muted); }
+.dark .course-paper .bg-\[\#F8FBFD\] { background-color: var(--color-surface-muted); }
+.dark .course-paper .bg-\[\#F8FAFC\] { background-color: var(--color-surface-muted); }
+.dark .course-paper .bg-\[\#F0F8FC\] { background-color: rgb(56 189 248 / 0.08); }
+.dark .course-paper .bg-\[\#DDF2FC\] { background-color: rgb(56 189 248 / 0.12); }
+.dark .course-paper .bg-\[\#DDEAF2\] { background-color: var(--color-surface-subtle); }
+.dark .course-paper .bg-\[\#D8E3EC\] { background-color: var(--color-surface-subtle); }
+.dark .course-paper .bg-\[\#BFE8FF\] { background-color: rgb(56 189 248 / 0.20); }

@@ -38,6 +38,7 @@ import CoursePurchasePanel from "./course-purchase-panel";
 import CurriculumAccordion from "./curriculum-accordion";
 import LearnerPlayer from "./learner-player";
 import LearnerCurriculumSidebar from "./learner-curriculum-sidebar";
+import "../course-dark.css";
 import CourseDetailSkeleton from "./course-detail-skeleton";
 import PublicCourseDetailShell from "./public-course-detail-shell";
 
@@ -293,7 +294,7 @@ export default function CourseDetail({
   };
 
   const pageContent = (
-    <div className={cn(!publicMode && enrolled && "min-h-[calc(100vh-4rem)] bg-[#F4F3EF] dark:bg-surface-muted")}>
+    <div className={cn("course-paper", !publicMode && enrolled && "min-h-[calc(100vh-4rem)] bg-[#F4F3EF] dark:bg-page")}>
       {loading ? (
         <CourseDetailSkeleton label={t("loadingCourse")} />
       ) : error || !detail || !course ? (

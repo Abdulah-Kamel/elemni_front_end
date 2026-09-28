@@ -79,7 +79,7 @@ export default function LearnerPlayer({
           key={iframeAttempt}
           src={assetUrl}
           title={`${activeContent.lesson.title} - ${activeContent.item.title}`}
-          className={isDocument ? "h-[min(75dvh,56rem)] w-full border-0 bg-white" : "size-full border-0"}
+          className={isDocument ? "h-[min(75dvh,56rem)] w-full border-0 bg-white" : "size-full border-0 [color-scheme:light]"}
           allow={isDocument ? undefined : "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"}
           allowFullScreen={!isDocument}
           loading="lazy"

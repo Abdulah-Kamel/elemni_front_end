@@ -33,7 +33,7 @@ export default function VideoModal({ isOpen, onClose }: VideoModalProps) {
 
         <div className="relative aspect-video rounded-2xl overflow-hidden bg-slate-900 shadow-inner">
           <iframe
-            className="w-full h-full"
+            className="w-full h-full [color-scheme:light]"
             src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
             title={t("videoTitle")}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
