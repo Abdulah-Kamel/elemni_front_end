@@ -210,6 +210,17 @@
   }
 }
 
+/* Native <select> option lists are drawn by the browser and can stay light
+   even under color-scheme: dark; give them the charcoal surface explicitly. */
+.dark select {
+  color-scheme: dark;
+}
+.dark select option,
+.dark select optgroup {
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+}
+
 /* The brand primary (#0284C7) is too dim as text on charcoal; links, icons and
    accents written as text-primary brighten to sky-400 in dark mode. */
 .dark .text-primary {
