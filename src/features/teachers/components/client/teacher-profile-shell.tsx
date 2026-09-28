@@ -1,8 +1,9 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import dynamic from "next/dynamic";
 import { useState } from "react";
-import { useTranslations } from "next-intl";
 import { useRouter } from "@/src/i18n/navigation";
 import type { Teacher } from "../../types";
 import Navbar from "@/src/features/landing/components/client/navbar";
@@ -26,11 +27,11 @@ export default function TeacherProfileShell({
   teacher: Teacher;
   locale: string;
 }) {
+  const t = useTranslations("teacherDirectory.profile");
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<"signin" | "signup">("signup");
   const [isDarkMode, setIsDarkMode] = useDarkMode();
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const t = useTranslations("teacherProfileShell");
   const router = useRouter();
 
   const openAuth = (mode: "signin" | "signup") => {
@@ -67,7 +68,7 @@ export default function TeacherProfileShell({
           initialMode={authMode}
           onClose={() => setAuthModalOpen(false)}
           onSuccess={(name) => {
-            setToastMessage(t("welcomeToast", { name }));
+            setToastMessage(t("welcome", { name }));
             router.refresh();
           }}
         />

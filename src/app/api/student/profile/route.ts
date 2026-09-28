@@ -3,7 +3,7 @@ import { authenticatedBackendFetch, getAccessToken } from "@/src/lib/student-api
 
 /** Saves the student's grade, stream and subjects on the backend. */
 export async function PUT(request: Request) {
-  if (!(await getAccessToken())) return Response.json({ detail: "سجّل الدخول أولاً." }, { status: 401 });
+  if (!(await getAccessToken())) return Response.json({ code: "SESSION_REQUIRED" }, { status: 401 });
   const body = await request.json().catch(() => null);
   const gradeId = Number(body?.grade_id);
   const streamId = Number(body?.stream_id);
@@ -14,7 +14,7 @@ export async function PUT(request: Request) {
     !Array.isArray(subjectIds) || subjectIds.length > 50 ||
     !subjectIds.every((id) => Number.isInteger(id) && id > 0)
   ) {
-    return Response.json({ detail: "بيانات الملف الدراسي غير صالحة." }, { status: 400 });
+    return Response.json({ code: "REQUEST_FAILED" }, { status: 400 });
   }
   const result = await authenticatedBackendFetch<unknown>("/api/v1/students/me/profile", {
     method: "PUT",

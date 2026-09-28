@@ -13,7 +13,7 @@ import {
 import { GlobalLoading } from "@/src/components/ui/global-loading";
 import CourseCover from "@/src/features/courses/components/course-cover-placeholder";
 import { formatDate, formatRelativeDays } from "@/src/lib/format/date";
-import { getCourseArtwork } from "@/src/features/courses/subject-art";
+import { getSubjectArt } from "@/src/features/courses/subject-art";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 import { m } from "motion/react";
 import { Link, useRouter } from "@/src/i18n/navigation";
@@ -218,7 +218,7 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
               {visibleEnrollments.length ? (
                 <div className="grid gap-4 sm:grid-cols-2">
                   {visibleEnrollments.slice(0, 4).map((enrollment) => {
-                    const { tone } = getCourseArtwork(enrollment.course.subject_name);
+                    const { tone } = getSubjectArt(enrollment.course.subject_name);
                     return (
                     <Link key={enrollment.id} href={`/my-courses/${enrollment.course.id}`} aria-label={tUi("openCourse", { title: enrollment.course.title })} className="sticker-tile group overflow-hidden border-2 border-ink bg-white transition hover:-translate-y-0.5 hover:shadow-[7px_7px_0_0_var(--color-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 dark:border-sky-300 dark:bg-slate-900 dark:hover:shadow-[7px_7px_0_0_#020617]">
                       <div className={`relative h-20 border-b-2 border-ink sm:h-28 dark:border-sky-300 ${tone}`}>

@@ -16,22 +16,13 @@ vi.mock("@/src/i18n/navigation", () => ({
 const teacher: Teacher = {
   id: "ahmad-ali",
   name: "أحمد علي",
-  title: "مدرس رياضيات للمرحلة الثانوية",
-  subject: "الرياضيات",
   subjects: ["الرياضيات", "تفاضل"],
-  category: "math",
-  grade: "3",
-  gradeLabel: "الصف الثالث الثانوي",
-  gradesList: ["الصف الثاني الثانوي", "الصف الثالث الثانوي"],
+  grades: ["الصف الثاني الثانوي", "الصف الثالث الثانوي"],
   gradeIds: ["2", "3"],
   streamIds: ["1"],
   avatar: "https://cdn.elemni.test/teacher.jpg",
-  studentCount: 0,
   experienceYears: 12,
-  pricePerSession: 250,
   bio: "أشرح المادة بطريقة عملية مع تدريبات متدرجة.",
-  specialties: ["الرياضيات", "تفاضل"],
-  schedule: [],
   location: "أونلاين",
   courses: [
     {
@@ -39,7 +30,7 @@ const teacher: Teacher = {
       title: "كورس التفاضل",
       description: "شرح مبسط للتفاضل من البداية للنهاية.",
       price: 250,
-      duration: "3 ساعات",
+      durationMinutes: 180,
       sessionsCount: 12,
       image: "https://cdn.elemni.test/cover.jpg",
       isSubscribed: true,
@@ -138,7 +129,7 @@ describe("TeacherProfileView production experience", () => {
     });
     renderProfile({ ...teacher, courses: [{ ...teacher.courses[0], isSubscribed: false }] });
 
-    fireEvent.click(screen.getByRole("button", { name: arMessages.teacherProfile.subscribe }));
+    fireEvent.click(screen.getByRole("button", { name: "اشترك الآن" }));
 
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith(
@@ -166,7 +157,7 @@ describe("TeacherProfileView production experience", () => {
       "en",
     );
 
-    fireEvent.click(screen.getByRole("button", { name: enMessages.teacherProfile.subscribe }));
+    fireEvent.click(screen.getByRole("button", { name: "Subscribe" }));
 
     await waitFor(() => expect(assignMock).toHaveBeenCalledTimes(1));
     expect(assignMock).toHaveBeenCalledWith("/en/my-courses");

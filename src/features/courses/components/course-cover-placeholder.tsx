@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { resolveAssetUrl } from "@/src/lib/asset-url";
-import { getCourseArtwork } from "../subject-art";
+import { getSubjectArt } from "../subject-art";
 
 export default function CourseCover({
   src, subject, alt, sizes, className = "", priority = false,
@@ -12,7 +12,7 @@ export default function CourseCover({
 }) {
   const resolvedSrc = resolveAssetUrl(src, "");
   const [failed, setFailed] = useState(false);
-  const { Icon, tone } = getCourseArtwork(subject);
+  const { Icon, tone } = getSubjectArt(subject);
   return resolvedSrc && !failed ? (
     <Image src={resolvedSrc} alt={alt} fill sizes={sizes} priority={priority} className={className} onError={() => setFailed(true)} />
   ) : (

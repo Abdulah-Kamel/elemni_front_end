@@ -16,6 +16,8 @@ import { GlobalLoading } from "@/src/components/ui/global-loading";
 import CourseCover from "@/src/features/courses/components/course-cover-placeholder";
 import { formatDate } from "@/src/lib/format/date";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
+import { Pagination } from "@/src/components/ui/pagination";
+import { clampPage, pageCount } from "@/src/components/ui/pagination-range";
 import { Link, useRouter } from "@/src/i18n/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { AnimatePresence, m } from "motion/react";
@@ -33,6 +35,7 @@ import StudyCounter from "./study-counter";
 
 type CourseSort = "recent" | "expiring" | "title";
 
+const COURSES_PER_PAGE = 9;
 const popSpring = { type: "spring", stiffness: 260, damping: 22 } as const;
 
 
@@ -120,6 +123,7 @@ export default function MyCourses() {
   const [search, setSearch] = useState("");
   const [subject, setSubject] = useState("all");
   const [sort, setSort] = useState<CourseSort>("recent");
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     if (unauthorized) router.replace("/login");
@@ -144,7 +148,10 @@ export default function MyCourses() {
       return new Date(second.purchased_at).getTime() - new Date(first.purchased_at).getTime();
     });
 
-  const visibleEnrollmentIdsKey = visibleCourses.map(({ id }) => id).join("-");
+  const totalPages = pageCount(visibleCourses.length, COURSES_PER_PAGE);
+  const currentPage = clampPage(page, totalPages);
+  const pageCourses = visibleCourses.slice((currentPage - 1) * COURSES_PER_PAGE, currentPage * COURSES_PER_PAGE);
+  const visibleEnrollmentIdsKey = pageCourses.map(({ id }) => id).join("-");
 
   const totalLessons = enrollments.reduce((sum, item) => sum + item.course.lesson_count, 0);
   const totalMinutes = enrollments.reduce((sum, item) => sum + (item.course.total_duration_minutes ?? 0), 0);
@@ -219,13 +226,13 @@ export default function MyCourses() {
                 <label className="relative block">
                   <span className="sr-only">{tUi("searchLabel")}</span>
                   <Search className="pointer-events-none absolute end-3 top-1/2 size-5 -translate-y-1/2 text-muted" />
-                  <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={tUi("searchPlaceholder")} className="h-12 w-full rounded-full border-2 border-ink bg-surface pe-11 ps-4 text-sm font-medium text-ink outline-none transition placeholder:text-muted focus:border-brand-600 dark:border-brand-300 dark:bg-transparent dark:text-slate-100" />
+                  <input value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} placeholder={tUi("searchPlaceholder")} className="h-12 w-full rounded-full border-2 border-ink bg-surface pe-11 ps-4 text-sm font-medium text-ink outline-none transition placeholder:text-muted focus:border-brand-600 dark:border-brand-300 dark:bg-transparent dark:text-slate-100" />
                 </label>
 
                 <label className="relative block">
                   <span className="sr-only">{tUi("subjectFilter")}</span>
                   <SlidersHorizontal className="pointer-events-none absolute end-3 top-1/2 size-4 -translate-y-1/2 text-muted" />
-                  <select value={subject} onChange={(event) => setSubject(event.target.value)} className="h-12 w-full cursor-pointer appearance-none rounded-full border-2 border-ink bg-surface pe-10 ps-4 text-sm font-black text-ink outline-none transition focus:border-brand-600 dark:border-brand-300 dark:bg-transparent dark:text-slate-100">
+                  <select value={subject} onChange={(event) => { setSubject(event.target.value); setPage(1); }} className="h-12 w-full cursor-pointer appearance-none rounded-full border-2 border-ink bg-surface pe-10 ps-4 text-sm font-black text-ink outline-none transition focus:border-brand-600 dark:border-brand-300 dark:bg-transparent dark:text-slate-100">
                     <option value="all">{tUi("allSubjects")}</option>
                     {subjects.map((item) => <option key={item} value={item}>{item}</option>)}
                   </select>
@@ -233,7 +240,7 @@ export default function MyCourses() {
 
                 <label>
                   <span className="sr-only">{tUi("sort")}</span>
-                  <select value={sort} onChange={(event) => setSort(event.target.value as CourseSort)} className="h-12 w-full cursor-pointer rounded-full border-2 border-ink bg-surface px-4 text-sm font-black text-ink outline-none transition focus:border-brand-600 dark:border-brand-300 dark:bg-transparent dark:text-slate-100">
+                  <select value={sort} onChange={(event) => { setSort(event.target.value as CourseSort); setPage(1); }} className="h-12 w-full cursor-pointer rounded-full border-2 border-ink bg-surface px-4 text-sm font-black text-ink outline-none transition focus:border-brand-600 dark:border-brand-300 dark:bg-transparent dark:text-slate-100">
                     <option value="recent">{tUi("sortRecent")}</option>
                     <option value="expiring">{tUi("sortExpiring")}</option>
                     <option value="title">{tUi("sortTitle")}</option>
@@ -246,7 +253,7 @@ export default function MyCourses() {
           <m.section className="mt-8" aria-labelledby="courses-heading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
             {!!enrollments.length && (
               <div className="mb-4 flex items-center justify-between gap-4">
-                <h2 id="courses-heading" className="text-2xl font-black tracking-tight text-ink dark:text-slate-50">
+                <h2 id="courses-heading" className="scroll-mt-24 text-2xl font-black tracking-tight text-ink dark:text-slate-50">
                   <MarkerHighlight color="sky" variant={1}>
                     {tUi("currentCourses")}
                   </MarkerHighlight>
@@ -258,7 +265,7 @@ export default function MyCourses() {
             <AnimatePresence mode="wait" initial={false}>
               {visibleCourses.length ? (
                 <m.div key={`results-${visibleEnrollmentIdsKey}`} className="grid grid-cols-1 items-stretch gap-5 md:grid-cols-2 xl:grid-cols-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
-                  {visibleCourses.map((enrollment, index) => (
+                  {pageCourses.map((enrollment, index) => (
                     <CourseCard key={enrollment.id} enrollment={enrollment} index={index} locale={locale} tCounts={tCounts} tUi={tUi} />
                   ))}
                 </m.div>
@@ -271,7 +278,7 @@ export default function MyCourses() {
                     </MarkerHighlight>
                   </h2>
                   <p className="mt-2 text-sm font-medium text-muted dark:text-slate-400">{tUi("tryDifferent")}</p>
-                  {hasFilters && <button type="button" onClick={() => { setSearch(""); setSubject("all"); }} className="mt-4 cursor-pointer text-sm font-black text-brand-700 hover:underline dark:text-brand-300">{tUi("resetFilters")}</button>}
+                  {hasFilters && <button type="button" onClick={() => { setSearch(""); setSubject("all"); setPage(1); }} className="mt-4 cursor-pointer text-sm font-black text-brand-700 hover:underline dark:text-brand-300">{tUi("resetFilters")}</button>}
                 </m.div>
               ) : (
                 <m.div key="empty" className="sticker-tile flex min-h-80 flex-col items-center justify-center px-4 text-center" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={popSpring}>
@@ -286,6 +293,7 @@ export default function MyCourses() {
                 </m.div>
               )}
             </AnimatePresence>
+            <Pagination page={currentPage} totalPages={totalPages} onPageChange={setPage} scrollTargetId="courses-heading" />
           </m.section>
         </div>
       )}

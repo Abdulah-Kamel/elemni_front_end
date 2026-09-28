@@ -8,7 +8,7 @@ export async function POST(request: Request) {
   const courseId = Number(body?.course_id);
   const code = typeof body?.code === "string" ? body.code.trim().toUpperCase().slice(0, 20) : "";
   if (!Number.isInteger(courseId) || courseId <= 0 || !/^[A-Z0-9_-]{3,20}$/.test(code)) {
-    return Response.json({ detail: "بيانات الكوبون غير صالحة." }, { status: 400 });
+    return Response.json({ code: "REQUEST_FAILED" }, { status: 400 });
   }
   const result = await authenticatedBackendFetch<CouponQuoteDto>("/api/v1/coupons/validate", {
     method: "POST",
