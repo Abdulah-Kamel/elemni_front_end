@@ -29,7 +29,7 @@ export default async function Features() {
   ];
 
   return (
-    <section id="features" className="py-20 bg-white dark:bg-[#0B132B] relative overflow-hidden">
+    <section id="features" className="py-20 bg-white dark:bg-page relative overflow-hidden">
       <div className="absolute top-1/2 start-1/2 ltr:-translate-x-1/2 rtl:translate-x-1/2 -translate-y-1/2 w-125 h-125 bg-sky-100/60 dark:bg-sky-950/20 rounded-full blur-3xl pointer-events-none z-0" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">

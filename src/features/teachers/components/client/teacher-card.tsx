@@ -49,7 +49,7 @@ export function TeacherCard({ teacher, index }: { teacher: TeacherCardData; inde
           name={teacher.name}
           src={teacher.avatar}
           sizes="96px"
-          className="size-20 rounded-[1.25rem] shadow-[3px_3px_0_0_var(--color-ink)] transition-transform duration-300 group-hover:-rotate-3 motion-reduce:group-hover:rotate-0 sm:size-24 dark:shadow-[3px_3px_0_0_#020617]"
+          className="size-20 rounded-[1.25rem] shadow-[3px_3px_0_0_var(--color-ink)] transition-transform duration-300 group-hover:-rotate-3 motion-reduce:group-hover:rotate-0 sm:size-24 dark:shadow-[3px_3px_0_0_var(--color-sticker-shadow)]"
           initialsClassName="text-2xl sm:text-3xl"
         />
         <div className="min-w-0 flex-1 pt-0.5">

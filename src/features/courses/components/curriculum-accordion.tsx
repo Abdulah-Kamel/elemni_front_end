@@ -339,7 +339,7 @@ export default function CurriculumAccordion({
               onClick={() => onChapterToggle(chapter.id)}
               aria-expanded={expanded}
               aria-controls={`chapter-content-${chapter.id}-${chapterIndex}`}
-              className={`flex w-full cursor-pointer items-center text-start transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-600 ${variant === "sidebar" ? "min-h-14 gap-3 px-3 py-3" : "min-h-16 gap-4 px-4 py-4 sm:px-5"} ${expanded && variant !== "sidebar" ? "border-b-2 border-ink bg-brand-50 dark:border-brand-300 dark:bg-slate-800" : ""} ${expanded && variant === "sidebar" ? "bg-[#E8F1FB]" : ""} ${!expanded && variant !== "sidebar" ? "hover:bg-brand-50/60 dark:hover:bg-slate-800/60" : ""} ${!expanded && variant === "sidebar" ? "hover:bg-[#FAF9F5]" : ""}`}
+              className={`flex w-full cursor-pointer items-center text-start transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-600 ${variant === "sidebar" ? "min-h-14 gap-3 px-3 py-3" : "min-h-16 gap-4 px-4 py-4 sm:px-5"} ${expanded && variant !== "sidebar" ? "border-b-2 border-ink bg-brand-50 dark:border-line dark:bg-slate-800" : ""} ${expanded && variant === "sidebar" ? "bg-[#E8F1FB]" : ""} ${!expanded && variant !== "sidebar" ? "hover:bg-brand-50/60 dark:hover:bg-slate-800/60" : ""} ${!expanded && variant === "sidebar" ? "hover:bg-[#FAF9F5]" : ""}`}
             >
               <span className="flex min-w-0 flex-1 items-center gap-2">
                 <h3
@@ -349,7 +349,7 @@ export default function CurriculumAccordion({
                   {chapter.title || t("coursePlan")}
                 </h3>
                 <m.span
-                  className={`flex size-8 shrink-0 items-center justify-center rounded-full border-2 ${expanded ? "border-ink bg-ink text-white dark:border-brand-300 dark:bg-brand-600" : "border-ink/20 text-muted dark:border-slate-600 dark:text-slate-400"}`}
+                  className={`flex size-8 shrink-0 items-center justify-center rounded-full border-2 ${expanded ? "border-ink bg-ink text-white dark:border-line dark:bg-brand-600" : "border-ink/20 text-muted dark:border-slate-600 dark:text-slate-400"}`}
                   initial={false}
                   animate={{ rotate: expanded ? 180 : 0 }}
                   transition={{ type: "spring", stiffness: 320, damping: 22 }}

@@ -182,7 +182,7 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
                       <span className="shrink-0 text-xs font-bold tabular-nums">{primary.progress.completion_percent}%</span>
                     </div>
                     <div className="mt-5 flex flex-wrap items-center gap-3">
-                      <Link href={`/my-courses/${primary.course.id}`} className="sticker-badge inline-flex h-11 items-center gap-2 rounded-xl border-2 border-ink bg-amber-400 px-5 text-sm font-extrabold text-ink shadow-[3px_3px_0_0_var(--color-ink)] transition hover:-translate-y-0.5 hover:bg-amber-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white dark:border-sky-200 dark:shadow-[3px_3px_0_0_#020617]">
+                      <Link href={`/my-courses/${primary.course.id}`} className="sticker-badge inline-flex h-11 items-center gap-2 rounded-xl border-2 border-ink bg-amber-400 px-5 text-sm font-extrabold text-ink shadow-[3px_3px_0_0_var(--color-ink)] transition hover:-translate-y-0.5 hover:bg-amber-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white dark:border-sky-200 dark:shadow-[3px_3px_0_0_var(--color-sticker-shadow)]">
                         {primary.progress.completion_percent ? tUi("resume") : tUi("startLearning")}<ArrowLeft className="size-4 ltr:-scale-x-100" />
                       </Link>
                       <Link href={`/my-courses/${primary.course.id}`} className="inline-flex h-11 items-center rounded-lg border border-white/40 px-4 text-sm font-bold text-white transition hover:bg-white/10">{tUi("courseDetails")}</Link>
@@ -192,7 +192,7 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
                 </div>
               </section>
             ) : (
-              <section className="sticker-tile order-2 border-2 border-ink bg-white p-7 text-center dark:border-sky-300 dark:bg-slate-900 lg:col-start-1">
+              <section className="sticker-tile order-2 border-2 border-ink bg-white p-7 text-center dark:border-line dark:bg-slate-900 lg:col-start-1">
                 <Rocket className="mx-auto size-10 text-brand-700 dark:text-brand-300" />
                 <h2 className="mt-3 text-2xl font-black text-slate-900 dark:text-white">{tUi("journeyTitle")}</h2>
                 <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">{tUi("journeyDescription")}</p>
@@ -220,15 +220,15 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
                   {visibleEnrollments.slice(0, 4).map((enrollment) => {
                     const { tone } = getSubjectArt(enrollment.course.subject_name);
                     return (
-                    <Link key={enrollment.id} href={`/my-courses/${enrollment.course.id}`} aria-label={tUi("openCourse", { title: enrollment.course.title })} className="sticker-tile group overflow-hidden border-2 border-ink bg-white transition hover:-translate-y-0.5 hover:shadow-[7px_7px_0_0_var(--color-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 dark:border-sky-300 dark:bg-slate-900 dark:hover:shadow-[7px_7px_0_0_#020617]">
-                      <div className={`relative h-20 border-b-2 border-ink sm:h-28 dark:border-sky-300 ${tone}`}>
+                    <Link key={enrollment.id} href={`/my-courses/${enrollment.course.id}`} aria-label={tUi("openCourse", { title: enrollment.course.title })} className="sticker-tile group overflow-hidden border-2 border-ink bg-white transition hover:-translate-y-0.5 hover:shadow-[7px_7px_0_0_var(--color-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 dark:border-line dark:bg-slate-900 dark:hover:shadow-[7px_7px_0_0_var(--color-sticker-shadow)]">
+                      <div className={`relative h-20 border-b-2 border-ink sm:h-28 dark:border-line ${tone}`}>
                         <CourseCover src={enrollment.course.img} subject={enrollment.course.subject_name} alt={enrollment.course.title} sizes="(max-width: 639px) 100vw, 50vw" className="object-cover" />
                         {enrollment.course.subject_name && <span className="sticker-badge absolute end-3 top-3 -rotate-2 bg-amber-300 px-2.5 py-1 text-[11px] font-extrabold text-ink dark:bg-amber-300 dark:text-ink">{enrollment.course.subject_name}</span>}
                       </div>
                       <div className="p-4">
                         <h3 className="line-clamp-2 min-h-12 text-lg font-extrabold leading-6 text-slate-900 group-hover:text-brand-700 dark:text-white dark:group-hover:text-brand-300">{enrollment.course.title}</h3>
                         <div className="mt-3 flex items-center gap-3">
-                          <div className="h-3 flex-1 overflow-hidden rounded-full border-2 border-ink bg-slate-100 dark:border-sky-300 dark:bg-slate-700" role="progressbar" aria-label={tUi("progressLabelCard", { percent: enrollment.progress.completion_percent })} aria-valuenow={enrollment.progress.completion_percent} aria-valuemin={0} aria-valuemax={100}>
+                          <div className="h-3 flex-1 overflow-hidden rounded-full border-2 border-ink bg-slate-100 dark:border-line dark:bg-slate-700" role="progressbar" aria-label={tUi("progressLabelCard", { percent: enrollment.progress.completion_percent })} aria-valuenow={enrollment.progress.completion_percent} aria-valuemin={0} aria-valuemax={100}>
                             <div className={`h-full rounded-full ${enrollment.progress.completion_percent === 100 ? "bg-emerald-600" : "bg-brand-600"}`} style={{ width: `${enrollment.progress.completion_percent}%` }} />
                           </div>
                           <span className="text-sm font-bold tabular-nums text-slate-700 dark:text-slate-200">{enrollment.progress.completion_percent}%</span>
@@ -243,7 +243,7 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
                   })}
                 </div>
               ) : (
-                <div className="sticker-tile border-2 border-ink bg-white px-5 py-10 text-center dark:border-sky-300 dark:bg-slate-900">
+                <div className="sticker-tile border-2 border-ink bg-white px-5 py-10 text-center dark:border-line dark:bg-slate-900">
                   <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">{tUi("noCoursesInFilter")}</p>
                 </div>
               )}
@@ -255,14 +255,14 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
                 { value: summary.lessons, label: tUi("availableLessons"), icon: BookOpen },
                 { value: Math.round(summary.minutes / 60), label: tUi("contentHours"), icon: Clock3 },
               ].map(({ value, label, icon: Icon, complete }) => (
-                <div key={label} className="sticker-tile min-h-[92px] rounded-xl border-2 border-ink bg-white p-4 dark:border-sky-300 dark:bg-slate-900">
+                <div key={label} className="sticker-tile min-h-[92px] rounded-xl border-2 border-ink bg-white p-4 dark:border-line dark:bg-slate-900">
                   <span className="flex items-center justify-between gap-2 text-xs font-medium text-slate-600 dark:text-slate-300"><span>{label}</span><Icon className="size-4 text-slate-400 dark:text-slate-500" aria-hidden="true" /></span>
                   <StudyCounter value={value} className={`mt-2 block text-2xl font-extrabold tabular-nums ${complete ? "text-emerald-700 dark:text-emerald-400" : "text-slate-900 dark:text-white"}`} />
                 </div>
               ))}
             </section>
 
-            {expiringSoon.length > 0 && <section id="upcoming" aria-labelledby="upcoming-heading" className="sticker-tile order-5 scroll-mt-24 border-2 border-ink bg-white p-5 dark:border-sky-300 dark:bg-slate-900 lg:col-start-2 lg:row-start-3 lg:self-start">
+            {expiringSoon.length > 0 && <section id="upcoming" aria-labelledby="upcoming-heading" className="sticker-tile order-5 scroll-mt-24 border-2 border-ink bg-white p-5 dark:border-line dark:bg-slate-900 lg:col-start-2 lg:row-start-3 lg:self-start">
               <div className="mb-4 flex items-center justify-between gap-2">
                 <h2 id="upcoming-heading" className="text-lg font-extrabold text-slate-900 dark:text-white">{dashboardT("upcomingTitle")}</h2>
                 <Link href="/my-courses" className="text-xs font-semibold text-brand-700 hover:underline dark:text-brand-300">{dashboardT("allMyCourses")}</Link>

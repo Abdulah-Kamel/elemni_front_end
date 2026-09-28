@@ -9,12 +9,12 @@ interface MarkerHighlightProps {
 }
 
 const colorMap = {
-  yellow: "bg-amber-300/85 dark:bg-amber-400/70 text-slate-950",
-  sky: "bg-sky-300/85 dark:bg-sky-400/70 text-slate-950",
-  pink: "bg-pink-300/85 dark:bg-pink-400/70 text-slate-950",
-  purple: "bg-purple-300/85 dark:bg-purple-400/70 text-slate-950",
-  emerald: "bg-emerald-300/85 dark:bg-emerald-400/70 text-slate-950",
-  orange: "bg-orange-300/85 dark:bg-orange-400/70 text-slate-950",
+  yellow: "bg-amber-300/85 dark:bg-amber-400/30 text-slate-950",
+  sky: "bg-sky-300/85 dark:bg-sky-400/30 text-slate-950",
+  pink: "bg-pink-300/85 dark:bg-pink-400/30 text-slate-950",
+  purple: "bg-purple-300/85 dark:bg-purple-400/30 text-slate-950",
+  emerald: "bg-emerald-300/85 dark:bg-emerald-400/30 text-slate-950",
+  orange: "bg-orange-300/85 dark:bg-orange-400/30 text-slate-950",
 };
 
 const organicShapes = {

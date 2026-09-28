@@ -152,7 +152,7 @@ export default function TeacherProfileView({ teacher, onRequireAuth, teacherList
           transition={popSpring}
         >
           {/* Cover banner: graph-paper blue with the teacher's subjects doodled across it. */}
-          <div className="relative h-40 overflow-hidden border-b-2 border-ink bg-brand-600 sm:h-52 dark:border-brand-300 dark:bg-brand-900">
+          <div className="relative h-40 overflow-hidden border-b-2 border-ink bg-brand-600 sm:h-52 dark:border-line dark:bg-brand-900">
             <div
               aria-hidden="true"
               className="absolute inset-0 opacity-25 [background-image:linear-gradient(to_right,white_1px,transparent_1px),linear-gradient(to_bottom,white_1px,transparent_1px)] [background-size:28px_28px]"
@@ -198,7 +198,7 @@ export default function TeacherProfileView({ teacher, onRequireAuth, teacherList
                 src={teacher.avatar}
                 sizes="(max-width: 767px) 128px, 160px"
                 priority
-                className="size-32 rounded-[1.75rem] bg-brand-50 shadow-[5px_5px_0_0_var(--color-ink)] sm:size-40 dark:shadow-[5px_5px_0_0_#020617]"
+                className="size-32 rounded-[1.75rem] bg-brand-50 shadow-[5px_5px_0_0_var(--color-ink)] sm:size-40 dark:shadow-[5px_5px_0_0_var(--color-sticker-shadow)]"
                 initialsClassName="text-5xl sm:text-6xl"
               />
             </m.div>
@@ -267,7 +267,7 @@ export default function TeacherProfileView({ teacher, onRequireAuth, teacherList
                     whileHover={{ y: -4 }}
                     className="sticker-tile group flex h-full flex-col overflow-hidden"
                   >
-                    <div className={cn("relative aspect-[16/9] overflow-hidden border-b-2 border-ink dark:border-brand-300", !course.image && art.tone)}>
+                    <div className={cn("relative aspect-[16/9] overflow-hidden border-b-2 border-ink dark:border-line", !course.image && art.tone)}>
                       {course.image ? (
                         <Image
                           src={course.image}

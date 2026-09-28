@@ -39,11 +39,17 @@ components should rely on solid brand colors, borders, and shadows.
 
 ### Dark mode
 
-Dark mode is a supported theme, not a page-specific experiment. The shared dark
-palette uses page `#0B132B`, surface `#0F172A`, muted surface `#162033`, ink
-`#F8FAFC`, muted text `#94A3B8`, and border `#1E293B`. Use pale/bright sky blue
-for accents and `#020617` for hard sticker shadows. Every new shared component
-must remain legible in both themes.
+Dark mode is a supported theme, not a page-specific experiment. It is neutral
+charcoal, shared with the dashboard: page `#0C0F14`, surface `#151A21`, muted
+surface `#1C222B`, subtle surface `#232A34`, ink `#E8ECF1`, muted text `#9AA4B2`,
+border `#262D37`. Depth comes from these lightness steps, not from hue or glow.
+Sky blue is reserved for actions, selection, links and focus; never use it for
+outlines. The Tailwind slate ramp is remapped under `.dark` in `globals.css`, so
+`dark:*-slate-*` utilities follow the same palette. Sticker outlines use the
+`line` token (`dark:border-line`) and hard shadows use `--color-sticker-shadow`;
+both are ink in light mode and quiet charcoal in dark mode. Marker highlights
+drop to a soft tint in dark mode so light text stays readable on them. Every new
+shared component must remain legible in both themes.
 
 ## Typography
 
@@ -81,8 +87,8 @@ The portal's sticker components are the reference for the notebook material:
   subtle and do not rotate text that needs to be scanned quickly.
 - Inputs and dense utility surfaces can use quieter borders and smaller radii
   when that improves usability. Do not force every page into a sticker card.
-- In dark mode, use sky borders and a deep ink shadow so the same forms remain
-  distinct against navy surfaces.
+- In dark mode, sticker outlines switch to the charcoal `line` token and the
+  shadow to `--color-sticker-shadow`; never use bright sky outlines.
 
 ## Motion and interaction
 

@@ -45,6 +45,9 @@
   --color-foreground: #0f172a;
   --color-muted-foreground: #64748b;
   --color-border: #e2e8f0;
+  /* Sticker material: outline and hard-shadow colors (ink in light, charcoal in dark). */
+  --color-line: #0f172a;
+  --color-sticker-shadow: #0f172a;
 
   --radius-card: 1.5rem;
 
@@ -131,17 +134,34 @@
     color: var(--color-ink);
     -webkit-font-smoothing: antialiased;
   }
+  /* Neutral charcoal dark theme: depth comes from lightness steps (page <
+     surface < surface-muted), not hue. Sky blue is reserved for actions,
+     selection and focus. The slate ramp is remapped so every dark: slate
+     utility follows the same palette. */
   .dark {
     color-scheme: dark;
-    --color-page: #0b132b;
-    --color-ink: #f8fafc;
-    --color-muted: #94a3b8;
-    --color-surface: #0f172a;
-    --color-surface-muted: #162033;
-    --color-surface-subtle: #1e293b;
-    --color-foreground: #f8fafc;
-    --color-muted-foreground: #94a3b8;
-    --color-border: #1e293b;
+    --color-page: #0c0f14;
+    --color-ink: #e8ecf1;
+    --color-muted: #9aa4b2;
+    --color-surface: #151a21;
+    --color-surface-muted: #1c222b;
+    --color-surface-subtle: #232a34;
+    --color-foreground: #e8ecf1;
+    --color-muted-foreground: #9aa4b2;
+    --color-border: #262d37;
+    --color-line: #353d49;
+    --color-sticker-shadow: #05070a;
+    --color-slate-50: #f3f5f8;
+    --color-slate-100: #e8ecf1;
+    --color-slate-200: #d5dbe3;
+    --color-slate-300: #b9c1cc;
+    --color-slate-400: #9aa4b2;
+    --color-slate-500: #7a8494;
+    --color-slate-600: #535c6a;
+    --color-slate-700: #353d49;
+    --color-slate-800: #232a34;
+    --color-slate-900: #151a21;
+    --color-slate-950: #0c0f14;
   }
 }
 
@@ -192,19 +212,19 @@
 
 /* Dark mode fallbacks for hardcoded light-mode colors (e.g., auth pages) */
 .dark .text-\[\#1B1B24\] {
-  color: #f8fafc !important;
+  color: var(--color-ink) !important;
 }
 .dark .text-\[\#464555\] {
-  color: #cbd5e1 !important;
+  color: #c3cad4 !important;
 }
 .dark .text-\[\#777587\] {
-  color: #94a3b8 !important;
+  color: var(--color-muted) !important;
 }
 .dark .border-\[\#E2E0EF\] {
-  border-color: #334155 !important;
+  border-color: var(--color-border) !important;
 }
 .dark .placeholder\:text-\[\#A6A3B5\]::placeholder {
-  color: #64748b !important;
+  color: #7a8494 !important;
 }
 
 .global-loading {
@@ -232,12 +252,12 @@
 }
 
 .dark .global-loading {
-  background-color: #0b132b;
-  color: #f8fafc;
+  background-color: var(--color-page);
+  color: var(--color-ink);
 }
 
 .dark .global-loading::before {
-  background: radial-gradient(circle, rgb(14 165 233 / 14%) 0%, rgb(11 19 43 / 0%) 68%);
+  background: radial-gradient(circle, rgb(56 189 248 / 9%) 0%, rgb(12 15 20 / 0%) 68%);
 }
 
 .global-loading--content {
@@ -340,13 +360,13 @@
 }
 
 .dark .global-loading__dot {
-  border-color: #0b132b;
+  border-color: var(--color-page);
   box-shadow: 0 4px 12px rgb(2 132 199 / 35%);
 }
 
 .dark .global-loading__icon {
-  background-color: #0f172a;
-  border-color: rgb(30 58 95 / 80%);
+  background-color: var(--color-surface);
+  border-color: var(--color-line);
   color: #38bdf8;
   box-shadow: 0 20px 45px -20px rgb(2 132 199 / 30%);
 }

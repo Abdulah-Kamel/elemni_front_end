@@ -13,7 +13,7 @@ export default async function SubjectGrid({ subjects }: { subjects: SubjectDto[]
   if (!subjects.length) return null;
 
   return (
-    <Section id="subjects" className="bg-white dark:bg-[#0B132B]">
+    <Section id="subjects" className="bg-white dark:bg-page">
       <Reveal>
         <h2 className="mb-3 text-center text-3xl font-black text-[#0F172A] md:text-4xl font-readex">
           {t("titleLead")} {" "}

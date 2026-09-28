@@ -20,8 +20,8 @@
     to bottom,
     transparent 0,
     transparent 1.6875rem,
-    color-mix(in srgb, #7dd3fc 6%, transparent) 1.6875rem,
-    color-mix(in srgb, #7dd3fc 6%, transparent) 1.75rem
+    color-mix(in srgb, var(--color-ink) 4%, transparent) 1.6875rem,
+    color-mix(in srgb, var(--color-ink) 4%, transparent) 1.75rem
   );
 }
 
@@ -49,8 +49,8 @@
 }
 
 :where(.dark .sticker-tile) {
-  border-color: #38bdf8;
-  box-shadow: 5px 5px 0 0 #020617;
+  border-color: var(--color-line);
+  box-shadow: 5px 5px 0 0 var(--color-sticker-shadow);
 }
 
 /* Primary sticker button: blue fill, ink border, hard shadow, press physics. */
@@ -73,12 +73,12 @@
 }
 
 .dark .sticker-btn {
-  border-color: #e0f2fe;
-  box-shadow: 3px 3px 0 0 #020617;
+  border-color: var(--color-brand-500);
+  box-shadow: 3px 3px 0 0 var(--color-sticker-shadow);
 }
 
 .dark .sticker-btn:active {
-  box-shadow: 1px 1px 0 0 #020617;
+  box-shadow: 1px 1px 0 0 var(--color-sticker-shadow);
 }
 
 /* Outline sticker button for secondary actions. */
@@ -97,10 +97,10 @@
 }
 
 .dark .sticker-btn-outline {
-  border-color: #38bdf8;
-  background-color: transparent;
-  color: #e0f2fe;
-  box-shadow: 3px 3px 0 0 #020617;
+  border-color: var(--color-line);
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  box-shadow: 3px 3px 0 0 var(--color-sticker-shadow);
 }
 
 /* Rotated sticker badge. Rotation is static composition, not motion. */
@@ -111,8 +111,8 @@
 }
 
 .dark .sticker-badge {
-  border-color: #38bdf8;
-  box-shadow: 2px 2px 0 0 #020617;
+  border-color: var(--color-line);
+  box-shadow: 2px 2px 0 0 var(--color-sticker-shadow);
 }
 
 /* Giant display numerals: tabular figures for measurement, never costume. */

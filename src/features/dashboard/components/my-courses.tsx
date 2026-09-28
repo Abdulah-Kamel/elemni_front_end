@@ -61,7 +61,7 @@ function CourseCard({ enrollment, index, locale, tCounts, tUi }: { enrollment: E
       whileTap={{ scale: 0.99 }}
     >
       <Link href={`/my-courses/${course.id}`} aria-label={tUi("openCourse", { title: course.title })} className="sticker-tile group flex h-full flex-col overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2">
-        <div className="relative aspect-video shrink-0 overflow-hidden border-b-2 border-ink bg-brand-100 dark:border-brand-300 dark:bg-slate-800">
+        <div className="relative aspect-video shrink-0 overflow-hidden border-b-2 border-ink bg-brand-100 dark:border-line dark:bg-slate-800">
           <CourseCover src={course.img} subject={course.subject_name} alt={course.title} sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 33vw" className="object-cover" />
         </div>
 
@@ -79,7 +79,7 @@ function CourseCard({ enrollment, index, locale, tCounts, tUi }: { enrollment: E
               <span>{tUi("progress")}</span>
               <StudyCounter value={enrollment.progress.completion_percent} format={(n) => `${n}%`} className="sticker-numeral" />
             </div>
-            <div className="h-3 overflow-hidden rounded-full border-2 border-ink bg-brand-100 dark:border-brand-300 dark:bg-slate-800">
+            <div className="h-3 overflow-hidden rounded-full border-2 border-ink bg-brand-100 dark:border-line dark:bg-slate-800">
               <m.div
                 className="h-full rounded-full bg-brand-600"
                 initial={{ width: 0 }}
@@ -226,13 +226,13 @@ export default function MyCourses() {
                 <label className="relative block">
                   <span className="sr-only">{tUi("searchLabel")}</span>
                   <Search className="pointer-events-none absolute end-3 top-1/2 size-5 -translate-y-1/2 text-muted" />
-                  <input value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} placeholder={tUi("searchPlaceholder")} className="h-12 w-full rounded-full border-2 border-ink bg-surface pe-11 ps-4 text-sm font-medium text-ink outline-none transition placeholder:text-muted focus:border-brand-600 dark:border-brand-300 dark:bg-transparent dark:text-slate-100" />
+                  <input value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} placeholder={tUi("searchPlaceholder")} className="h-12 w-full rounded-full border-2 border-ink bg-surface pe-11 ps-4 text-sm font-medium text-ink outline-none transition placeholder:text-muted focus:border-brand-600 dark:border-line dark:bg-transparent dark:text-slate-100" />
                 </label>
 
                 <label className="relative block">
                   <span className="sr-only">{tUi("subjectFilter")}</span>
                   <SlidersHorizontal className="pointer-events-none absolute end-3 top-1/2 size-4 -translate-y-1/2 text-muted" />
-                  <select value={subject} onChange={(event) => { setSubject(event.target.value); setPage(1); }} className="h-12 w-full cursor-pointer appearance-none rounded-full border-2 border-ink bg-surface pe-10 ps-4 text-sm font-black text-ink outline-none transition focus:border-brand-600 dark:border-brand-300 dark:bg-transparent dark:text-slate-100">
+                  <select value={subject} onChange={(event) => { setSubject(event.target.value); setPage(1); }} className="h-12 w-full cursor-pointer appearance-none rounded-full border-2 border-ink bg-surface pe-10 ps-4 text-sm font-black text-ink outline-none transition focus:border-brand-600 dark:border-line dark:bg-transparent dark:text-slate-100">
                     <option value="all">{tUi("allSubjects")}</option>
                     {subjects.map((item) => <option key={item} value={item}>{item}</option>)}
                   </select>
@@ -240,7 +240,7 @@ export default function MyCourses() {
 
                 <label>
                   <span className="sr-only">{tUi("sort")}</span>
-                  <select value={sort} onChange={(event) => { setSort(event.target.value as CourseSort); setPage(1); }} className="h-12 w-full cursor-pointer rounded-full border-2 border-ink bg-surface px-4 text-sm font-black text-ink outline-none transition focus:border-brand-600 dark:border-brand-300 dark:bg-transparent dark:text-slate-100">
+                  <select value={sort} onChange={(event) => { setSort(event.target.value as CourseSort); setPage(1); }} className="h-12 w-full cursor-pointer rounded-full border-2 border-ink bg-surface px-4 text-sm font-black text-ink outline-none transition focus:border-brand-600 dark:border-line dark:bg-transparent dark:text-slate-100">
                     <option value="recent">{tUi("sortRecent")}</option>
                     <option value="expiring">{tUi("sortExpiring")}</option>
                     <option value="title">{tUi("sortTitle")}</option>

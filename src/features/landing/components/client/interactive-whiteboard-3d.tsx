@@ -322,7 +322,7 @@ export default function InteractiveWhiteboard3D() {
     // 1. Scene Setup
     const scene = new THREE.Scene();
     const getBgColor = () =>
-      document.documentElement.classList.contains("dark") ? "#0B132B" : "#FAF8FF";
+      document.documentElement.classList.contains("dark") ? "#0C0F14" : "#FAF8FF";
     scene.background = new THREE.Color(getBgColor());
 
     const themeObserver = new MutationObserver(() => {
@@ -984,7 +984,7 @@ export default function InteractiveWhiteboard3D() {
   }, [notes]);
 
   return (
-    <section className="relative w-full py-12 sm:py-16 bg-[#FAF8FF] dark:bg-[#0B132B] border-y border-violet-tint/60 dark:border-slate-800/80 overflow-hidden">
+    <section className="relative w-full py-12 sm:py-16 bg-[#FAF8FF] dark:bg-page border-y border-violet-tint/60 dark:border-slate-800/80 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Title Header with Imperfect Hand-Drawn Highlighters */}
         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white mb-4 font-readex leading-tight">
@@ -1027,7 +1027,7 @@ export default function InteractiveWhiteboard3D() {
         </div>
 
         {/* Desktop Viewport: 3D Three.js WebGL interactive whiteboard */}
-        <div className="hidden md:block relative w-full h-165 lg:h-185 rounded-3xl border border-violet-tint/80 dark:border-slate-800 shadow-[0_4px_24px_rgba(123,44,191,0.06)] bg-[#FAF8FF] dark:bg-[#0B132B] overflow-hidden">
+        <div className="hidden md:block relative w-full h-165 lg:h-185 rounded-3xl border border-violet-tint/80 dark:border-slate-800 shadow-[0_4px_24px_rgba(123,44,191,0.06)] bg-[#FAF8FF] dark:bg-page overflow-hidden">
           <div
             ref={containerRef}
             className={`w-full h-full touch-none ${isDragging

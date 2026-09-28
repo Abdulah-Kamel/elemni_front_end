@@ -38,7 +38,7 @@ export function TeacherAvatar({
   return (
     <div
       className={cn(
-        "relative grid shrink-0 place-items-center overflow-hidden border-2 border-ink bg-brand-100 text-brand-700 dark:border-brand-300 dark:bg-slate-800 dark:text-brand-300",
+        "relative grid shrink-0 place-items-center overflow-hidden border-2 border-ink bg-brand-100 text-brand-700 dark:border-line dark:bg-slate-800 dark:text-brand-300",
         className,
       )}
     >

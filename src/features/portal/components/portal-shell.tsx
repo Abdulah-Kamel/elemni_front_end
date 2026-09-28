@@ -174,7 +174,7 @@ function SidebarContent({
             aria-expanded={!collapsed}
             title={collapseLabel}
             className={cn(
-              "mt-4 flex h-10 cursor-pointer items-center justify-center rounded-xl border-2 border-ink text-muted transition hover:bg-brand-100 hover:text-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 dark:border-brand-300 dark:text-slate-300 dark:hover:bg-slate-800",
+              "mt-4 flex h-10 cursor-pointer items-center justify-center rounded-xl border-2 border-ink text-muted transition hover:bg-brand-100 hover:text-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 dark:border-line dark:text-slate-300 dark:hover:bg-slate-800",
               collapsed ? "mx-auto w-10" : "mx-4",
             )}
           >
@@ -198,7 +198,7 @@ function SidebarContent({
                 {isActive && (
                   <m.span
                     layoutId="portal-nav-active"
-                    className="absolute inset-0 rounded-2xl border-2 border-ink bg-brand-600 shadow-[3px_3px_0_0_var(--color-ink)] dark:border-brand-300 dark:shadow-[3px_3px_0_0_#020617]"
+                    className="absolute inset-0 rounded-2xl border-2 border-ink bg-brand-600 shadow-[3px_3px_0_0_var(--color-ink)] dark:border-line dark:shadow-[3px_3px_0_0_var(--color-sticker-shadow)]"
                     transition={shellSpring}
                   />
                 )}
@@ -211,7 +211,7 @@ function SidebarContent({
 
       <div className={cn("mt-auto flex flex-col gap-4 border-t-2 border-ink/10 pt-5 dark:border-white/10", collapsed ? "mx-2 items-center" : "mx-4")}>
         <div className={cn("min-w-0", collapsed && "flex justify-center")}><StudentIdentity user={user} collapsed={collapsed} /></div>
-        <m.button onClick={logout} title={tNav("logout")} aria-label={tNav("logout")} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ ...shellSpring, delay: 0.2 }} whileTap={{ x: 2, y: 2 }} className={cn("flex h-11 cursor-pointer items-center gap-2 rounded-2xl border-2 border-ink bg-red-600 text-sm font-black text-white shadow-[3px_3px_0_0_var(--color-ink)] transition hover:bg-red-700 dark:border-brand-300 dark:shadow-[3px_3px_0_0_#020617]", collapsed ? "w-11 justify-center" : "w-full justify-center px-3")}>
+        <m.button onClick={logout} title={tNav("logout")} aria-label={tNav("logout")} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ ...shellSpring, delay: 0.2 }} whileTap={{ x: 2, y: 2 }} className={cn("flex h-11 cursor-pointer items-center gap-2 rounded-2xl border-2 border-ink bg-red-600 text-sm font-black text-white shadow-[3px_3px_0_0_var(--color-ink)] transition hover:bg-red-700 dark:border-line dark:shadow-[3px_3px_0_0_var(--color-sticker-shadow)]", collapsed ? "w-11 justify-center" : "w-full justify-center px-3")}>
           <LogOut className="size-5 shrink-0" /><span className={collapsed ? "sr-only" : undefined}>{tNav("logout")}</span>
         </m.button>
       </div>
@@ -237,8 +237,8 @@ export default function StudentPortalShell({ children, user, active = "dashboard
 
   return (
     <MotionProvider>
-      <div dir={locale === "ar" ? "rtl" : "ltr"} data-sidebar-collapsed={sidebarCollapsed} data-active={active} className={cn("student-portal-shell min-h-screen font-readex text-ink dark:text-slate-100", active === "dashboard" && "bg-[#f3f4f6] dark:bg-[#0A1826]")}>
-        <aside aria-label={tPortal("sidebarLabel")} data-sidebar-collapsed={sidebarCollapsed} className="student-portal-sidebar fixed inset-y-0 z-40 hidden flex-col overflow-hidden border-e border-slate-200 bg-white py-6 md:flex dark:border-slate-700 dark:bg-[#0A1826]">
+      <div dir={locale === "ar" ? "rtl" : "ltr"} data-sidebar-collapsed={sidebarCollapsed} data-active={active} className={cn("student-portal-shell min-h-screen font-readex text-ink dark:text-slate-100", active === "dashboard" && "bg-[#f3f4f6] dark:bg-surface")}>
+        <aside aria-label={tPortal("sidebarLabel")} data-sidebar-collapsed={sidebarCollapsed} className="student-portal-sidebar fixed inset-y-0 z-40 hidden flex-col overflow-hidden border-e border-slate-200 bg-white py-6 md:flex dark:border-slate-700 dark:bg-surface">
           <SidebarContent
             active={active}
             user={user}
@@ -248,7 +248,7 @@ export default function StudentPortalShell({ children, user, active = "dashboard
           />
         </aside>
 
-        <header className="student-portal-header fixed top-0 z-30 flex h-[72px] items-center gap-3 border-b border-slate-200 bg-white px-4 md:px-8 dark:border-slate-700 dark:bg-[#0A1826]">
+        <header className="student-portal-header fixed top-0 z-30 flex h-[72px] items-center gap-3 border-b border-slate-200 bg-white px-4 md:px-8 dark:border-slate-700 dark:bg-surface">
           <button onClick={() => setMobileOpen(true)} aria-label={tPortal("openMenu")} className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-lg text-slate-700 hover:bg-slate-100 md:hidden dark:text-slate-200 dark:hover:bg-slate-800"><Menu className="size-5" /></button>
           {title && <p title={title} className="hidden max-w-64 truncate text-sm font-bold text-slate-900 lg:block dark:text-slate-100">{title}</p>}
           <LocaleSwitcher className="shrink-0" />
@@ -270,18 +270,18 @@ export default function StudentPortalShell({ children, user, active = "dashboard
           <div className="fixed inset-0 z-50 md:hidden">
             <button aria-label={tPortal("closeMenu")} onClick={() => setMobileOpen(false)} className="absolute inset-0 cursor-default bg-slate-950/40" />
             <m.aside
-              className="student-portal-drawer absolute inset-y-0 flex w-[min(82vw,19rem)] flex-col border-e border-slate-200 bg-white py-6 shadow-2xl dark:border-slate-700 dark:bg-[#0A1826]"
+              className="student-portal-drawer absolute inset-y-0 flex w-[min(82vw,19rem)] flex-col border-e border-slate-200 bg-white py-6 shadow-2xl dark:border-slate-700 dark:bg-surface"
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               transition={shellSpring}
             >
-              <button onClick={() => setMobileOpen(false)} aria-label={tPortal("closeMenu")} className="student-portal-drawer-close absolute top-4 flex size-9 cursor-pointer items-center justify-center rounded-xl border-2 border-ink text-muted hover:bg-brand-100 dark:border-brand-300 dark:text-slate-300"><X className="size-5" /></button>
+              <button onClick={() => setMobileOpen(false)} aria-label={tPortal("closeMenu")} className="student-portal-drawer-close absolute top-4 flex size-9 cursor-pointer items-center justify-center rounded-xl border-2 border-ink text-muted hover:bg-brand-100 dark:border-line dark:text-slate-300"><X className="size-5" /></button>
               <SidebarContent active={active} user={user} close={() => setMobileOpen(false)} logout={() => void logout()} />
             </m.aside>
           </div>
         )}
 
-        <nav aria-label={tPortal("mobileNavigation")} className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 border-t border-slate-200 bg-white px-2 pb-[env(safe-area-inset-bottom)] pt-2 md:hidden dark:border-slate-700 dark:bg-[#0A1826]">
+        <nav aria-label={tPortal("mobileNavigation")} className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 border-t border-slate-200 bg-white px-2 pb-[env(safe-area-inset-bottom)] pt-2 md:hidden dark:border-slate-700 dark:bg-surface">
           {[
             { href: "/dashboard", id: "dashboard", icon: Home, label: tNav("dashboard") },
             { href: "/my-courses", id: "courses", icon: GraduationCap, label: tNav("myCourses") },

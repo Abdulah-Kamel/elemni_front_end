@@ -22,7 +22,7 @@ export default function PublicCourseDetailShell({
     <MotionProvider>
       <div
         data-testid="public-course-detail-shell"
-        className="min-h-screen bg-[#F8FAFC] text-[#0F172A] antialiased dark:bg-[#0B132B] dark:text-[#F8FAFC]"
+        className="min-h-screen bg-[#F8FAFC] text-[#0F172A] antialiased dark:bg-page dark:text-ink"
       >
         <Navbar
           onOpenAuth={(mode) => {

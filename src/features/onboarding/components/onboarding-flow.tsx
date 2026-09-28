@@ -100,7 +100,7 @@ function CheckDot({ selected }: { selected: boolean }) {
       aria-hidden="true"
       className={cn(
         "grid size-7 shrink-0 place-items-center rounded-full border-2 transition-colors",
-        selected ? "border-ink bg-white text-brand-700 dark:border-brand-300" : "border-ink/25 text-transparent dark:border-slate-600",
+        selected ? "border-ink bg-white text-brand-700 dark:border-line" : "border-ink/25 text-transparent dark:border-slate-600",
       )}
     >
       <m.span initial={false} animate={{ scale: selected ? 1 : 0.4, opacity: selected ? 1 : 0 }} transition={popSpring}>
@@ -114,7 +114,7 @@ function optionClass(selected: boolean) {
   return cn(
     "relative flex w-full cursor-pointer items-center gap-4 rounded-2xl border-2 p-4 text-start transition-colors outline-none focus-visible:ring-4 focus-visible:ring-brand-600/30 sm:p-5",
     selected
-      ? "border-ink bg-brand-600 text-white shadow-[3px_3px_0_0_var(--color-ink)] dark:border-brand-300 dark:shadow-[3px_3px_0_0_#020617]"
+      ? "border-ink bg-brand-600 text-white shadow-[3px_3px_0_0_var(--color-ink)] dark:border-line dark:shadow-[3px_3px_0_0_var(--color-sticker-shadow)]"
       : "border-ink/15 bg-surface hover:border-ink dark:border-slate-700 dark:bg-slate-900 dark:hover:border-brand-300",
   );
 }
@@ -270,7 +270,7 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
     <MotionProvider>
       <div className="student-portal-shell min-h-screen bg-page px-4 py-6 font-readex text-ink sm:px-6 sm:py-8 dark:text-slate-100">
         <div className="mx-auto flex min-h-[calc(100vh-3rem)] max-w-[64rem] flex-col">
-          <header className="flex items-center justify-between gap-4 border-b-2 border-ink pb-4 dark:border-brand-300">
+          <header className="flex items-center justify-between gap-4 border-b-2 border-ink pb-4 dark:border-line">
             <div className="flex items-center gap-2.5">
               <span className="sticker-badge grid size-11 -rotate-3 place-items-center bg-brand-600">
                 <Image src={logoMark} alt="" width={32} height={32} className="size-8 rounded-lg bg-white p-0.5 object-contain" />
@@ -296,7 +296,7 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
                   const reachable = index < questionIndex && canReach(item);
                   const content = (
                     <>
-                      <span className={cn("grid size-7 shrink-0 place-items-center rounded-full border-2 text-xs font-black tabular-nums", state === "todo" ? "border-ink/20 text-muted dark:border-slate-600" : "border-ink bg-brand-600 text-white dark:border-brand-300")}>
+                      <span className={cn("grid size-7 shrink-0 place-items-center rounded-full border-2 text-xs font-black tabular-nums", state === "todo" ? "border-ink/20 text-muted dark:border-slate-600" : "border-ink bg-brand-600 text-white dark:border-line")}>
                         {state === "done" ? <Check className="size-3.5" strokeWidth={3} aria-hidden="true" /> : index + 1}
                       </span>
                       <span className={cn("truncate text-xs font-black sm:text-sm", state === "todo" ? "text-muted dark:text-slate-500" : "text-ink dark:text-slate-100")}>{t(`steps.${item}`)}</span>
@@ -338,7 +338,7 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
               >
                 {step === "welcome" && (
                   <div className="text-center">
-                    <div className="relative mx-auto mb-7 aspect-[16/7] w-full max-w-[28rem] overflow-hidden rounded-xl border-2 border-ink bg-brand-100 dark:border-brand-300 dark:bg-slate-800">
+                    <div className="relative mx-auto mb-7 aspect-[16/7] w-full max-w-[28rem] overflow-hidden rounded-xl border-2 border-ink bg-brand-100 dark:border-line dark:bg-slate-800">
                       <Image src={studyImage} alt={t("welcome.imageAlt")} fill priority sizes="(max-width: 640px) calc(100vw - 3rem), 448px" className="object-cover" />
                     </div>
                     <h1 className="text-3xl font-black tracking-tight text-brand-700 sm:text-4xl dark:text-brand-300"><MarkerHighlight color="yellow" variant={1}>{t("welcome.title")}</MarkerHighlight></h1>

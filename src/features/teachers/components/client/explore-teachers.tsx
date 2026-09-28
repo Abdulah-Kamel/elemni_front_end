@@ -159,27 +159,27 @@ export default function ExploreTeachers({
                 value={search}
                 onChange={(event) => { setSearch(event.target.value); setPage(1); }}
                 placeholder={t("exploreTeachersSearchPlaceholder")}
-                className="h-12 w-full rounded-full border-2 border-ink bg-surface pe-12 ps-5 text-sm font-medium text-ink outline-none transition placeholder:text-muted focus:border-brand-600 sm:text-base dark:border-brand-300 dark:bg-transparent dark:text-slate-100"
+                className="h-12 w-full rounded-full border-2 border-ink bg-surface pe-12 ps-5 text-sm font-medium text-ink outline-none transition placeholder:text-muted focus:border-brand-600 sm:text-base dark:border-line dark:bg-transparent dark:text-slate-100"
               />
             </label>
             <div className="mt-4 grid gap-3">
               <label>
                 <span className="sr-only">{t("exploreTeachersGradeFilter")}</span>
-                <select value={grade} onChange={(event) => { setGrade(event.target.value); setPage(1); }} className="h-11 w-full cursor-pointer rounded-full border-2 border-ink bg-surface px-4 text-sm font-black text-ink outline-none focus:border-brand-600 dark:border-brand-300 dark:bg-slate-900 dark:text-slate-100">
+                <select value={grade} onChange={(event) => { setGrade(event.target.value); setPage(1); }} className="h-11 w-full cursor-pointer rounded-full border-2 border-ink bg-surface px-4 text-sm font-black text-ink outline-none focus:border-brand-600 dark:border-line dark:bg-slate-900 dark:text-slate-100">
                   <option value="all">{t("exploreTeachersAllGrades")}</option>
                   {grades.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
                 </select>
               </label>
               <label>
                 <span className="sr-only">{t("exploreTeachersSubjectFilter")}</span>
-                <select value={subject} onChange={(event) => { setSubject(event.target.value); setPage(1); }} className="h-11 w-full cursor-pointer rounded-full border-2 border-ink bg-surface px-4 text-sm font-black text-ink outline-none focus:border-brand-600 dark:border-brand-300 dark:bg-slate-900 dark:text-slate-100">
+                <select value={subject} onChange={(event) => { setSubject(event.target.value); setPage(1); }} className="h-11 w-full cursor-pointer rounded-full border-2 border-ink bg-surface px-4 text-sm font-black text-ink outline-none focus:border-brand-600 dark:border-line dark:bg-slate-900 dark:text-slate-100">
                   <option value="all">{t("exploreTeachersAllSubjects")}</option>
                   {subjects.map((item) => <option key={item.id} value={item.name}>{item.name}</option>)}
                 </select>
               </label>
               <label>
                 <span className="sr-only">{t("exploreTeachersSort")}</span>
-                <select value={sort} onChange={(event) => { setSort(event.target.value as TeacherSort); setPage(1); }} className="h-11 w-full cursor-pointer rounded-full border-2 border-ink bg-surface px-4 text-sm font-black text-ink outline-none focus:border-brand-600 dark:border-brand-300 dark:bg-slate-900 dark:text-slate-100">
+                <select value={sort} onChange={(event) => { setSort(event.target.value as TeacherSort); setPage(1); }} className="h-11 w-full cursor-pointer rounded-full border-2 border-ink bg-surface px-4 text-sm font-black text-ink outline-none focus:border-brand-600 dark:border-line dark:bg-slate-900 dark:text-slate-100">
                   <option value="courses">{t("exploreTeachersSortCourses")}</option>
                   <option value="name">{t("exploreTeachersSortName")}</option>
                 </select>

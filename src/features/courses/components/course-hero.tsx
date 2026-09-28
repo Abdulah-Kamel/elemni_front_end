@@ -128,7 +128,7 @@ export default function CourseHero({
         "overflow-hidden",
         lesson
           ? "rounded-[18px] border border-[#E4E2DC] bg-white text-[#15181E] shadow-[0_16px_38px_-30px_rgba(21,24,30,0.35)]"
-          : "rounded-[1.75rem] border-2 border-ink bg-[#0B1726] text-white shadow-[5px_5px_0_0_var(--color-ink)] dark:border-brand-300 dark:shadow-[5px_5px_0_0_#020617]",
+          : "rounded-[1.75rem] border-2 border-ink bg-[#0B1726] text-white shadow-[5px_5px_0_0_var(--color-ink)] dark:border-line dark:shadow-[5px_5px_0_0_var(--color-sticker-shadow)]",
       )}
     >
       <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(18rem,36%)]">

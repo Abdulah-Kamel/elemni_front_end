@@ -104,18 +104,18 @@
 
 /* Dark mode overrides */
 .dark { color-scheme: dark; }
-.dark body { background-color: #0b132b !important; color: #f8fafc !important; }
-.dark .bg-\[\#F8FAFC\] { background-color: #0b132b !important; }
-.dark .bg-white { background-color: #1c2541 !important; color: #f8fafc !important; }
-.dark .bg-slate-50, .dark .bg-slate-100 { background-color: #1e293b !important; }
-.dark .text-\[\#0F172A\], .dark .text-slate-800, .dark .text-slate-900 { color: #f8fafc !important; }
-.dark .text-\[\#334155\], .dark .text-slate-600, .dark .text-slate-700 { color: #cbd5e1 !important; }
-.dark .text-slate-500, .dark .text-slate-400 { color: #94a3b8 !important; }
-.dark .border-slate-100, .dark .border-slate-200, .dark .border-slate-200\/80 { border-color: #334155 !important; }
+.dark body { background-color: var(--color-page) !important; color: var(--color-ink) !important; }
+.dark .bg-\[\#F8FAFC\] { background-color: var(--color-page) !important; }
+.dark .bg-white { background-color: var(--color-surface) !important; color: var(--color-ink) !important; }
+.dark .bg-slate-50, .dark .bg-slate-100 { background-color: var(--color-surface-muted) !important; }
+.dark .text-\[\#0F172A\], .dark .text-slate-800, .dark .text-slate-900 { color: var(--color-ink) !important; }
+.dark .text-\[\#334155\], .dark .text-slate-600, .dark .text-slate-700 { color: #c3cad4 !important; }
+.dark .text-slate-500, .dark .text-slate-400 { color: var(--color-muted) !important; }
+.dark .border-slate-100, .dark .border-slate-200, .dark .border-slate-200\/80 { border-color: var(--color-border) !important; }
 .dark .bg-primary-light { background-color: rgba(2, 132, 199, 0.2) !important; color: #38bdf8 !important; }
-.dark .bg-sky-50, .dark .bg-sky-100 { background-color: #0c2a44 !important; }
+.dark .bg-sky-50, .dark .bg-sky-100 { background-color: #10232f !important; }
 .dark .text-sky-700, .dark .text-sky-300 { color: #7dd3fc !important; }
-.dark .border-sky-100, .dark .border-sky-200 { border-color: #1e3a5f !important; }
-.dark .bg-amber-50 { background-color: #422006 !important; }
-.dark header { background-color: rgba(15, 23, 42, 0.95) !important; border-color: #334155 !important; }
+.dark .border-sky-100, .dark .border-sky-200 { border-color: #1d3a4a !important; }
+.dark .bg-amber-50 { background-color: #2a1d12 !important; }
+.dark header { background-color: rgb(12 15 20 / 0.92) !important; border-color: var(--color-border) !important; }
 .dark .text-primary { color: #38bdf8 !important; }

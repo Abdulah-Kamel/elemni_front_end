@@ -70,7 +70,7 @@ export function Pagination({
                 {token === page && (
                   <m.span
                     layoutId={`pagination-current-${label ?? "list"}`}
-                    className="absolute inset-0 rounded-full border-2 border-ink bg-brand-600 shadow-[2px_2px_0_0_var(--color-ink)] dark:border-brand-300 dark:shadow-[2px_2px_0_0_#020617]"
+                    className="absolute inset-0 rounded-full border-2 border-ink bg-brand-600 shadow-[2px_2px_0_0_var(--color-ink)] dark:border-line dark:shadow-[2px_2px_0_0_var(--color-sticker-shadow)]"
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}

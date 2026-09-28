@@ -54,7 +54,7 @@ export default function LandingInteractiveShell({
   return (
     <MotionProvider>
       <div
-        className="landing-shell min-h-screen bg-[#F8FAFC] text-[#0F172A] antialiased selection:bg-[#0284C7] selection:text-white dark:bg-[#0B132B] dark:text-[#F8FAFC]"
+        className="landing-shell min-h-screen bg-[#F8FAFC] text-[#0F172A] antialiased selection:bg-[#0284C7] selection:text-white dark:bg-page dark:text-ink"
       >
         <LandingRevealController />
 
