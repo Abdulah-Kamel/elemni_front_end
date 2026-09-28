@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { useState, useSyncExternalStore, type ReactNode } from "react";
 import {
-  Bell,
   Compass,
   GraduationCap,
   Home,
@@ -11,6 +10,8 @@ import {
   Search,
   UsersRound,
   LogOut,
+  Moon,
+  Sun,
   Menu,
   PanelLeftClose,
   PanelLeftOpen,
@@ -25,6 +26,7 @@ import { notifyStudentSessionChanged } from "@/src/lib/student-api/session-event
 import type { UserDto } from "@/src/lib/student-api/contract";
 import logo from "@/src/assets/logo-icon.png";
 import { LocaleSwitcher } from "@/src/components/locale-switcher";
+import { useDarkMode } from "@/src/lib/use-dark-mode";
 import "../styles/portal-shell.css";
 import "../styles/sticker.css";
 
@@ -224,6 +226,8 @@ export default function StudentPortalShell({ children, user, active = "dashboard
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const sidebarCollapsed = useStudentSidebarCollapsed();
+  const [isDarkMode, setIsDarkMode] = useDarkMode();
+  const themeLabel = isDarkMode ? tNav("lightMode") : tNav("darkMode");
 
   const logout = async () => {
     await fetch("/api/student/auth/logout", { method: "POST" }).catch(() => null);
@@ -255,7 +259,11 @@ export default function StudentPortalShell({ children, user, active = "dashboard
               <input id="portal-course-search" type="search" name="q" placeholder={tNav("searchPlaceholder")} className="min-w-0 flex-1 bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-500 dark:text-white dark:placeholder:text-slate-400" />
             </div>
           </form>
-          <Link href={active === "dashboard" ? "#upcoming" : "/dashboard#upcoming"} aria-label={tPortal("upcomingLabel")} className="flex size-10 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"><Bell className="size-5" /></Link>
+          {/* Icons swap via the `dark` class so server and client markup match before the saved theme is read. */}
+          <button type="button" onClick={() => setIsDarkMode((current) => !current)} aria-label={themeLabel} title={themeLabel} aria-pressed={isDarkMode} suppressHydrationWarning className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 dark:border-slate-700 dark:bg-slate-900 dark:text-sky-300 dark:hover:bg-slate-800">
+            <Sun className="size-5 text-amber-500 dark:hidden" aria-hidden="true" />
+            <Moon className="hidden size-5 dark:block" aria-hidden="true" />
+          </button>
         </header>
 
         {mobileOpen && (
