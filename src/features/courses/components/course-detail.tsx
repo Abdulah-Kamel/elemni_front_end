@@ -429,8 +429,11 @@ export default function CourseDetail({
             </div>
           ) : (
             <div className="grid items-start gap-8 lg:grid-cols-[minmax(19rem,24rem)_minmax(0,1fr)]">
-              <div className="order-1 min-w-0 space-y-8 lg:order-2">
+              {/* Phones: the column dissolves (display: contents) so the price card sits
+                  between the hero and the curriculum instead of after the whole curriculum. */}
+              <div className="contents lg:order-2 lg:block lg:min-w-0 lg:space-y-8">
                 <m.div
+                  className="order-1 min-w-0"
                   initial={publicMode || reduced ? false : "hidden"}
                   animate="show"
                   variants={portalItemVariants}
@@ -446,7 +449,7 @@ export default function CourseDetail({
 
                 <m.section
                   id="course-content"
-                  className="scroll-mt-24"
+                  className="order-3 min-w-0 scroll-mt-24"
                   aria-labelledby="content-title"
                   initial={publicMode || reduced ? false : "hidden"}
                   animate="show"

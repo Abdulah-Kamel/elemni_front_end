@@ -35,7 +35,7 @@ export function LocaleSwitcher({ className }: { className?: string }) {
         onClick={() => change("ar")}
         aria-pressed={isAr}
         className={cn(
-          "relative z-10 rounded-full px-3 py-1.5 text-xs font-bold motion-safe:transition-colors cursor-pointer",
+          "relative z-10 min-h-10 rounded-full px-3 py-1.5 text-xs font-bold motion-safe:transition-colors cursor-pointer",
           isAr ? "text-white" : "text-muted hover:text-ink",
         )}
       >
@@ -46,7 +46,7 @@ export function LocaleSwitcher({ className }: { className?: string }) {
         onClick={() => change("en")}
         aria-pressed={!isAr}
         className={cn(
-          "relative z-10 rounded-full px-3 py-1.5 text-xs font-bold motion-safe:transition-colors cursor-pointer",
+          "relative z-10 min-h-10 rounded-full px-3 py-1.5 text-xs font-bold motion-safe:transition-colors cursor-pointer",
           !isAr ? "text-white" : "text-muted hover:text-ink",
         )}
       >

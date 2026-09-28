@@ -252,13 +252,15 @@ export default function StudentPortalShell({ children, user, active = "dashboard
           <button onClick={() => setMobileOpen(true)} aria-label={tPortal("openMenu")} className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-lg text-slate-700 hover:bg-slate-100 md:hidden dark:text-slate-200 dark:hover:bg-slate-800"><Menu className="size-5" /></button>
           {title && <p title={title} className="hidden max-w-64 truncate text-sm font-bold text-slate-900 lg:block dark:text-slate-100">{title}</p>}
           <LocaleSwitcher className="shrink-0" />
-          <form action={locale === "ar" ? "/explore" : `/${locale}/explore`} method="get" role="search" className="flex min-w-0 flex-1 items-center">
+          <form action={locale === "ar" ? "/explore" : `/${locale}/explore`} method="get" role="search" className="hidden min-w-0 flex-1 items-center sm:flex">
             <label className="sr-only" htmlFor="portal-course-search">{tPortal("searchCourses")}</label>
             <div className="flex h-11 w-full max-w-[440px] items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 text-slate-500 focus-within:border-brand-600 focus-within:ring-2 focus-within:ring-brand-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:focus-within:ring-sky-900">
               <Search className="size-4 shrink-0" aria-hidden="true" />
               <input id="portal-course-search" type="search" name="q" placeholder={tNav("searchPlaceholder")} className="min-w-0 flex-1 bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-500 dark:text-white dark:placeholder:text-slate-400" />
             </div>
           </form>
+          {/* Phones get a search icon that opens the explore page (which has the full search) instead of a squeezed field. */}
+          <Link href="/explore" aria-label={tPortal("searchCourses")} className="ms-auto flex size-10 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 sm:hidden dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"><Search className="size-5" aria-hidden="true" /></Link>
           {/* Icons swap via the `dark` class so server and client markup match before the saved theme is read. */}
           <button type="button" onClick={() => setIsDarkMode((current) => !current)} aria-label={themeLabel} title={themeLabel} aria-pressed={isDarkMode} suppressHydrationWarning className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 dark:border-slate-700 dark:bg-slate-900 dark:text-sky-300 dark:hover:bg-slate-800">
             <Sun className="size-5 text-amber-500 dark:hidden" aria-hidden="true" />
@@ -294,7 +296,7 @@ export default function StudentPortalShell({ children, user, active = "dashboard
           ))}
         </nav>
 
-        <main className="student-portal-main min-h-screen pt-[72px]">{children}</main>
+        <main className="student-portal-main min-h-screen pb-[calc(4.5rem+env(safe-area-inset-bottom))] pt-[72px] md:pb-0">{children}</main>
       </div>
     </MotionProvider>
   );

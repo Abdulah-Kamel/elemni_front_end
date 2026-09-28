@@ -105,13 +105,13 @@ export default function Navbar({ onSearchChange, searchQuery, isDarkMode, onTogg
             </button>
           </div>
 
-          <nav aria-label={tNav("mainNavigation")} className="hidden items-center gap-1 lg:flex">
+          <nav aria-label={tNav("mainNavigation")} className="hidden items-center gap-1 xl:flex">
             <LocaleSwitcher className="mx-2" />
             {navItems.map((item) => (
               <a
                 key={item.hash}
                 href={`${landingBaseHref}${item.hash}`}
-                className="rounded-lg px-3 py-2 text-xs font-bold text-slate-700 transition-colors hover:bg-sky-50 hover:text-primary dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:text-sky-300"
+                className="whitespace-nowrap rounded-lg px-2.5 py-2 text-xs font-bold text-slate-700 transition-colors hover:bg-sky-50 hover:text-primary dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:text-sky-300"
               >
                 {tNav(item.key)}
               </a>
@@ -120,7 +120,7 @@ export default function Navbar({ onSearchChange, searchQuery, isDarkMode, onTogg
               <Link
                 key={item.href}
                 href={item.href}
-                className="rounded-lg px-3 py-2 text-xs font-bold text-slate-700 transition-colors hover:bg-sky-50 hover:text-primary dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:text-sky-300"
+                className="whitespace-nowrap rounded-lg px-2.5 py-2 text-xs font-bold text-slate-700 transition-colors hover:bg-sky-50 hover:text-primary dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:text-sky-300"
               >
                 {tFooter(item.key)}
               </Link>
@@ -130,7 +130,7 @@ export default function Navbar({ onSearchChange, searchQuery, isDarkMode, onTogg
           <div className="flex items-center gap-3 sm:gap-5">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="sm:hidden p-2 text-slate-700 dark:text-slate-300 hover:text-primary rounded-lg focus:outline-none cursor-pointer"
+              className="xl:hidden p-2 text-slate-700 dark:text-slate-300 hover:text-primary rounded-lg focus:outline-none cursor-pointer"
               aria-label={tNav("menu")}
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -226,7 +226,7 @@ export default function Navbar({ onSearchChange, searchQuery, isDarkMode, onTogg
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: "auto" }}
           exit={{ opacity: 0, height: 0 }}
-          className="mt-3 space-y-3 overflow-hidden border-b border-slate-200 bg-white px-4 pb-6 pt-3 shadow-xl dark:border-slate-800 dark:bg-slate-900 sm:hidden"
+          className="mt-3 space-y-3 overflow-hidden border-b border-slate-200 bg-white px-4 pb-6 pt-3 shadow-xl dark:border-slate-800 dark:bg-slate-900 xl:hidden"
         >
           <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
             <button

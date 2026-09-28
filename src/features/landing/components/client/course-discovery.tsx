@@ -164,7 +164,7 @@ export default function CourseDiscovery({
       )}
 
       {visibleCourses.length > 0 ? (
-        <div className="grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3 [&>*]:min-w-0">
           <AnimatePresence mode="popLayout" initial={false}>
             {visibleCourses.map((course) => {
               const duration = formatDuration(course.total_duration_minutes, t);
