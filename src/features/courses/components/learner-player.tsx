@@ -152,8 +152,8 @@ export default function LearnerPlayer({
         {isDocument && assetUrl && (
           <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs leading-5 text-[#5F6573]">
             <span>{t("documentSupportNote")}</span>
-            <a href={assetUrl} target="_blank" rel="noreferrer" className="font-bold text-[#0A5FB4] underline">{t("openDocument")}</a>
-            <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="font-bold text-[#0A5FB4] underline">{t("contactSupport")}</a>
+            <a href={assetUrl} target="_blank" rel="noreferrer" className="font-bold text-[#0A5FB4] underline dark:text-sky-300">{t("openDocument")}</a>
+            <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="font-bold text-[#0A5FB4] underline dark:text-sky-300">{t("contactSupport")}</a>
           </div>
         )}
       </div>
@@ -221,10 +221,10 @@ function PlayerEmptyState({
           )}
         </svg>
         <div className="absolute inset-x-5 bottom-6 z-10 mx-auto max-w-sm sm:bottom-8">
-          <h2 id="player-empty-title" className={`text-lg font-black sm:text-xl ${isDocument ? "text-[#15181E]" : "text-white"}`}>
+          <h2 id="player-empty-title" className={`text-lg font-black sm:text-xl ${isDocument ? "text-[#15181E] dark:text-ink" : "text-white"}`}>
             {title}
           </h2>
-          <p className={`mt-2 text-sm leading-6 ${isDocument ? "text-[#4A505C]" : "text-slate-300"}`}>
+          <p className={`mt-2 text-sm leading-6 ${isDocument ? "text-[#4A505C] dark:text-slate-300" : "text-slate-300"}`}>
             {description}
           </p>
         </div>

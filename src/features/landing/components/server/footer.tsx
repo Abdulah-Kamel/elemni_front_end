@@ -11,7 +11,7 @@ export default function Footer({ homeHref = "" }: { homeHref?: string }) {
   const landingHref = (hash: string) => `${homeHref}${hash}`;
 
   return (
-    <footer className="border-t border-slate-800 bg-[#0F172A] pb-12 pt-16 text-white">
+    <footer className="border-t border-slate-800 bg-[#0F172A] pb-12 pt-16 text-white dark:border-border dark:bg-surface">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-10 border-b border-slate-800 pb-12 text-start md:grid-cols-2 lg:grid-cols-5">
           <div className="space-y-4 lg:col-span-2">

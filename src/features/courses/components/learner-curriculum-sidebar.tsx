@@ -108,7 +108,7 @@ export default function LearnerCurriculumSidebar({
               <div className="m-4 flex min-h-56 flex-col items-center justify-center rounded-xl border border-dashed border-[#D8E0E9] bg-[#FAF9F5] px-5 text-center">
                 <CircleAlert className="mb-4 size-9 text-[#9AB4C5]" aria-hidden="true" />
                 <h3 className="text-base font-black text-[#15181E]">{t("noContent")}</h3>
-                <p className="mt-2 text-sm leading-6 text-[#5F6573]">
+                <p className="mt-2 text-sm leading-6 text-[#5F6573] dark:text-slate-300">
                   {t("noContentDescription")}
                 </p>
               </div>

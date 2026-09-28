@@ -525,7 +525,7 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
 
           <footer className="flex justify-center gap-6 pb-2 text-xs font-bold text-muted dark:text-slate-500">
             <Link href="/legal" className="min-h-11 content-center hover:text-brand-700 hover:underline">{t("footer.terms")}</Link>
-            <Link href="/contact" className="min-h-11 content-center hover:text-brand-700 hover:underline">{t("footer.help")}</Link>
+            <Link href="/contact" className="min-h-11 content-center hover:text-brand-700 hover:underline dark:hover:text-sky-300">{t("footer.help")}</Link>
           </footer>
         </div>
       </div>

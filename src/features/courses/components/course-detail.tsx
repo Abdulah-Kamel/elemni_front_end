@@ -293,7 +293,7 @@ export default function CourseDetail({
   };
 
   const pageContent = (
-    <div className={cn(!publicMode && enrolled && "min-h-[calc(100vh-4rem)] bg-[#F4F3EF]")}>
+    <div className={cn(!publicMode && enrolled && "min-h-[calc(100vh-4rem)] bg-[#F4F3EF] dark:bg-surface-muted")}>
       {loading ? (
         <CourseDetailSkeleton label={t("loadingCourse")} />
       ) : error || !detail || !course ? (

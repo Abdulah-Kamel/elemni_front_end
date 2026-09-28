@@ -53,7 +53,7 @@ function TeacherAvatar({
   return (
     <span className={cn(
       "flex size-12 items-center justify-center rounded-full text-lg font-semibold",
-      tone === "dark" ? "bg-[#15181E] text-white" : "bg-[#BFE8FF] text-[#075985]",
+      tone === "dark" ? "bg-[#15181E] text-white" : "bg-[#BFE8FF] text-[#075985] dark:bg-sky-400/20 dark:text-sky-300",
     )}>
       {name.slice(0, 1)}
     </span>
@@ -85,36 +85,36 @@ export default function CourseHero({
     return (
       <section
         aria-label={t("courseLabel")}
-        className="rounded-[18px] border border-[#E4E2DC] bg-white p-5 text-[#15181E] shadow-[0_16px_38px_-30px_rgba(21,24,30,0.35)]"
+        className="rounded-[18px] border border-[#E4E2DC] bg-white p-5 text-[#15181E] shadow-[0_16px_38px_-30px_rgba(21,24,30,0.35)] dark:border-border dark:bg-surface dark:text-ink"
       >
         {teacher && (
           <Link
             href={`/explore/teachers/${teacher.slug}`}
-            className="flex items-center gap-3 rounded-xl outline-none transition hover:bg-[#F4F3EF] focus-visible:ring-2 focus-visible:ring-[#0A5FB4] focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+            className="flex items-center gap-3 rounded-xl outline-none transition hover:bg-[#F4F3EF] focus-visible:ring-2 focus-visible:ring-[#0A5FB4] focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:hover:bg-surface-muted dark:focus-visible:ring-sky-400"
           >
             <TeacherAvatar name={teacher.name} image={teacher.img} tone="dark" />
             <span className="min-w-0">
               <span className="block text-xs text-[#5F6573]">{t("teacherRole", { subject: course.subject_name || t("courseLabel") })}</span>
-              <strong className="mt-0.5 block truncate text-sm font-semibold text-[#15181E]">{teacher.name}</strong>
+              <strong className="mt-0.5 block truncate text-sm font-semibold text-[#15181E] dark:text-ink">{teacher.name}</strong>
             </span>
           </Link>
         )}
         <dl className="mt-4 grid grid-cols-2 gap-2.5">
-          <div className="rounded-xl bg-[#F4F3EF] px-3 py-2.5">
-            <dt className="text-xs text-[#5F6573]">{t("totalDuration")}</dt>
-            <dd className="mt-1 text-sm font-semibold text-[#15181E]">{formatDuration(course.total_duration_minutes, t)}</dd>
+          <div className="rounded-xl bg-[#F4F3EF] px-3 py-2.5 dark:bg-surface-muted">
+            <dt className="text-xs text-[#5F6573] dark:text-slate-300">{t("totalDuration")}</dt>
+            <dd className="mt-1 text-sm font-semibold text-[#15181E] dark:text-ink">{formatDuration(course.total_duration_minutes, t)}</dd>
           </div>
-          <div className="rounded-xl bg-[#F4F3EF] px-3 py-2.5">
-            <dt className="text-xs text-[#5F6573]">{t("lessonsLabel")}</dt>
-            <dd className="mt-1 text-sm font-semibold text-[#15181E]">{t("lessons", { count: course.lesson_count })}</dd>
+          <div className="rounded-xl bg-[#F4F3EF] px-3 py-2.5 dark:bg-surface-muted">
+            <dt className="text-xs text-[#5F6573] dark:text-slate-300">{t("lessonsLabel")}</dt>
+            <dd className="mt-1 text-sm font-semibold text-[#15181E] dark:text-ink">{t("lessons", { count: course.lesson_count })}</dd>
           </div>
-          <div className="rounded-xl bg-[#F4F3EF] px-3 py-2.5">
-            <dt className="text-xs text-[#5F6573]">{t("examsLabel")}</dt>
-            <dd className="mt-1 text-sm font-semibold text-[#15181E]">{t("exams", { count: examCount })}</dd>
+          <div className="rounded-xl bg-[#F4F3EF] px-3 py-2.5 dark:bg-surface-muted">
+            <dt className="text-xs text-[#5F6573] dark:text-slate-300">{t("examsLabel")}</dt>
+            <dd className="mt-1 text-sm font-semibold text-[#15181E] dark:text-ink">{t("exams", { count: examCount })}</dd>
           </div>
           <div className="rounded-xl bg-[#F4F3EF] px-3 py-2.5">
             <dt className="text-xs text-[#5F6573]">{t("lastUpdated")}</dt>
-            <dd className="mt-1 text-sm font-semibold text-[#15181E]">{date}</dd>
+            <dd className="mt-1 text-sm font-semibold text-[#15181E] dark:text-ink">{date}</dd>
           </div>
         </dl>
       </section>
@@ -127,8 +127,8 @@ export default function CourseHero({
       className={cn(
         "overflow-hidden",
         lesson
-          ? "rounded-[18px] border border-[#E4E2DC] bg-white text-[#15181E] shadow-[0_16px_38px_-30px_rgba(21,24,30,0.35)]"
-          : "rounded-[1.75rem] border-2 border-ink bg-[#0B1726] text-white shadow-[5px_5px_0_0_var(--color-ink)] dark:border-line dark:shadow-[5px_5px_0_0_var(--color-sticker-shadow)]",
+          ? "rounded-[18px] border border-[#E4E2DC] bg-white text-[#15181E] shadow-[0_16px_38px_-30px_rgba(21,24,30,0.35)] dark:border-border dark:bg-surface dark:text-ink"
+          : "rounded-[1.75rem] border-2 border-ink bg-[#0B1726] text-white shadow-[5px_5px_0_0_var(--color-ink)] dark:border-line dark:bg-surface dark:shadow-[5px_5px_0_0_var(--color-sticker-shadow)]",
       )}
     >
       <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(18rem,36%)]">
@@ -142,7 +142,7 @@ export default function CourseHero({
             <div className="mb-5 flex flex-wrap gap-2 text-xs font-black">
               {course.subject_name &&
                 (lesson ? (
-                  <span className="rounded-full border border-[#F0DDA0] bg-[#FFF4D6] px-3 py-1.5 text-[#6B4E00]">
+                  <span className="rounded-full border border-[#F0DDA0] bg-[#FFF4D6] px-3 py-1.5 text-[#6B4E00] dark:border-amber-400/30 dark:bg-amber-400/10 dark:text-amber-300">
                     {course.subject_name}
                   </span>
                 ) : (
@@ -155,8 +155,8 @@ export default function CourseHero({
                   className={cn(
                     "rounded-full px-3 py-1.5",
                     lesson
-                      ? "border border-[#E4E2DC] bg-white text-[#4A505C]"
-                      : "border border-white/15 bg-white/5 text-[#D6E5F2]",
+                      ? "border border-[#E4E2DC] bg-white text-[#4A505C] dark:border-border dark:bg-surface dark:text-slate-300"
+                      : "border border-white/15 bg-white/5 text-[#D6E5F2] dark:bg-surface",
                   )}
                 >
                   {[gradeName, streamName].filter(Boolean).join(" · ")}
@@ -197,8 +197,8 @@ export default function CourseHero({
                 className={cn(
                   "mt-7 inline-flex w-fit items-center gap-3 rounded-xl outline-none transition focus-visible:ring-2 focus-visible:ring-offset-2",
                   lesson
-                    ? "hover:bg-[#F4F3EF] focus-visible:ring-[#0A5FB4] focus-visible:ring-offset-white"
-                    : "hover:bg-white/5 focus-visible:ring-[#7DD3FC] focus-visible:ring-offset-[#0B1726]",
+                    ? "hover:bg-[#F4F3EF] focus-visible:ring-[#0A5FB4] focus-visible:ring-offset-white dark:hover:bg-surface-muted dark:focus-visible:ring-sky-400"
+                    : "hover:bg-white/5 focus-visible:ring-[#7DD3FC] focus-visible:ring-offset-[#0B1726] dark:hover:bg-surface",
                 )}
               >
                 <TeacherAvatar name={teacher.name} image={teacher.img} />
@@ -206,7 +206,7 @@ export default function CourseHero({
                   <strong
                     className={cn(
                       "block text-sm font-black",
-                      lesson ? "text-[#15181E]" : "text-white",
+                      lesson ? "text-[#15181E] dark:text-ink" : "text-white",
                     )}
                   >
                     {teacher.name}
@@ -214,7 +214,7 @@ export default function CourseHero({
                   <span
                     className={cn(
                       "mt-0.5 block text-xs",
-                      lesson ? "text-[#5F6573]" : "text-[#A9C0D2]",
+                      lesson ? "text-[#5F6573] dark:text-slate-300" : "text-[#A9C0D2] dark:text-slate-400",
                     )}
                   >
                     {t("teacherRole", {
@@ -230,14 +230,14 @@ export default function CourseHero({
             className={cn(
               "mt-8 border-t pt-5 text-xs font-bold",
               lesson
-                ? "grid grid-cols-2 gap-2.5 border-[#E4E2DC] text-[#4A505C] sm:grid-cols-4"
+                ? "grid grid-cols-2 gap-2.5 border-[#E4E2DC] text-[#4A505C] sm:grid-cols-4 dark:border-border dark:text-slate-300"
                 : "grid grid-cols-2 gap-3 border-white/10 text-[#C5D4E2] sm:flex sm:flex-wrap sm:gap-x-7",
             )}
           >
             <span
               className={cn(
                 "inline-flex items-center gap-2",
-                lesson && "rounded-xl bg-[#F4F3EF] px-3 py-2.5 text-[13px] text-[#15181E]",
+                lesson && "rounded-xl bg-[#F4F3EF] px-3 py-2.5 text-[13px] text-[#15181E] dark:bg-surface-muted dark:text-ink",
               )}
             >
               <PlayCircle className={cn("size-4 shrink-0", metaIconClass)} aria-hidden="true" />

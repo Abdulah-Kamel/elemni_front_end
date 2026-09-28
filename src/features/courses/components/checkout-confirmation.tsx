@@ -96,8 +96,8 @@ export default function CheckoutConfirmation({
           <p className="mt-2 text-sm leading-6 text-[#536A7C]">{t("checkoutDescription")}</p>
         </div>
 
-        <div className="mt-6 flex gap-4 rounded-xl border border-[#E4ECF2] bg-[#F8FBFD] p-3">
-          <div className="relative size-20 shrink-0 overflow-hidden rounded-lg bg-[#DDF2FC]">
+        <div className="mt-6 flex gap-4 rounded-xl border border-[#E4ECF2] bg-[#F8FBFD] p-3 dark:border-border dark:bg-surface-muted">
+          <div className="relative size-20 shrink-0 overflow-hidden rounded-lg bg-[#DDF2FC] dark:bg-sky-400/10">
             <CourseCover src={course.img} subject={course.subject_name} alt={course.title} sizes="80px" className="object-cover" />
           </div>
           <div className="min-w-0">
@@ -117,9 +117,9 @@ export default function CheckoutConfirmation({
           </div>
         </div>
 
-        <div className="mt-5 space-y-3 rounded-xl bg-[#F0F8FC] p-4 text-sm text-[#365469]">
+        <div className="mt-5 space-y-3 rounded-xl bg-[#F0F8FC] p-4 text-sm text-[#365469] dark:bg-sky-400/10 dark:text-slate-300">
           <p className="flex items-start gap-2">
-            <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[#0284C7]" aria-hidden="true" />
+            <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[#0284C7] dark:text-sky-300" aria-hidden="true" />
             {t("checkoutAccess")}
           </p>
           <p className="flex items-start gap-2">
