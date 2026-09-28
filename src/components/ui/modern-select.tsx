@@ -188,7 +188,7 @@ export function ModernSelect({
                 )}
               >
                 <span className="truncate">{option.label}</span>
-                {isSelected && <Check className="size-4 shrink-0 stroke-[2.5] text-primary" aria-hidden="true" />}
+                {isSelected && <Check className="size-4 shrink-0 stroke-[2.5] text-primary dark:text-sky-300" aria-hidden="true" />}
               </div>
             );
           })}
@@ -221,13 +221,13 @@ export function ModernSelect({
         )}
       >
         <div className="flex items-center gap-2.5 truncate">
-          {Icon && <Icon className="size-4 shrink-0 stroke-[2.2] text-primary" aria-hidden="true" />}
+          {Icon && <Icon className="size-4 shrink-0 stroke-[2.2] text-primary dark:text-sky-300" aria-hidden="true" />}
           <span id={`${id}-value`} className="truncate">{selectedOption?.label}</span>
         </div>
 
         <ChevronDown
           aria-hidden="true"
-          className={cn("size-4 shrink-0 text-slate-400 transition-transform duration-200", isOpen && "rotate-180 text-primary")}
+          className={cn("size-4 shrink-0 text-slate-400 transition-transform duration-200", isOpen && "rotate-180 text-primary dark:text-sky-300")}
         />
       </button>
 

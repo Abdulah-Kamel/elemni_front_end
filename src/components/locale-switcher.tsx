@@ -20,7 +20,7 @@ export function LocaleSwitcher({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "relative inline-grid w-[88px] grid-cols-2 rounded-full border border-brand-200 bg-white",
+        "relative inline-grid w-[88px] grid-cols-2 rounded-full border border-brand-200 bg-white dark:border-line dark:bg-surface-muted",
         className,
       )}
     >

@@ -210,6 +210,12 @@
   }
 }
 
+/* The brand primary (#0284C7) is too dim as text on charcoal; links, icons and
+   accents written as text-primary brighten to sky-400 in dark mode. */
+.dark .text-primary {
+  color: var(--color-brand-400);
+}
+
 /* Dark mode fallbacks for hardcoded light-mode colors (e.g., auth pages) */
 .dark .text-\[\#1B1B24\] {
   color: var(--color-ink) !important;

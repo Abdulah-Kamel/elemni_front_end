@@ -89,26 +89,17 @@ export default function Navbar({ onSearchChange, searchQuery, isDarkMode, onTogg
             <button
               type="button"
               onClick={onToggleDarkMode}
-              className={cn(
-                "relative flex items-center justify-between w-16 h-8 px-1.5 rounded-full border transition-all cursor-pointer",
-                isDarkMode
-                  ? "bg-slate-800 border-slate-700 text-slate-100"
-                  : "bg-sky-100/90 border-sky-200 text-slate-900"
-              )}
+              // Colors follow the `dark` class (set before paint), so the toggle is
+              // right even before this client component hydrates.
+              className="relative flex h-8 w-16 cursor-pointer items-center justify-between rounded-full border border-sky-200 bg-sky-100/90 px-1.5 text-slate-900 transition-all dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
               title={isDarkMode ? tNav("lightMode") : tNav("darkMode")}
               aria-label={isDarkMode ? tNav("lightMode") : tNav("darkMode")}
               aria-pressed={isDarkMode}
             >
-              <div className={cn(
-                "w-5 h-5 rounded-full flex items-center justify-center transition-all",
-                !isDarkMode ? "bg-white text-amber-500 shadow-md" : "text-slate-400"
-              )}>
+              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-white text-amber-500 shadow-md transition-all dark:bg-transparent dark:text-slate-400 dark:shadow-none">
                 <Sun className="w-3.5 h-3.5 stroke-[2.5]" />
               </div>
-              <div className={cn(
-                "w-5 h-5 rounded-full flex items-center justify-center transition-all",
-                isDarkMode ? "bg-primary text-white shadow-md" : "text-slate-400"
-              )}>
+              <div className="flex h-5 w-5 items-center justify-center rounded-full text-slate-400 transition-all dark:bg-primary dark:text-white dark:shadow-md">
                 <Moon className="w-3.5 h-3.5 stroke-[2.5]" />
               </div>
             </button>
