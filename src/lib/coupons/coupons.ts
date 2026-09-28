@@ -1,6 +1,17 @@
 // src/lib/coupons/coupons.ts
+// Local coupon rules used only by the development demo (see validate.ts).
+// In production the backend validates coupons and computes every price.
 export type CouponType = "percentage" | "fixed";
-export type CouponError = "NOT_FOUND" | "INACTIVE" | "EXPIRED" | "EXHAUSTED";
+export type CouponError =
+  | "NOT_FOUND"
+  | "INACTIVE"
+  | "EXPIRED"
+  | "EXHAUSTED"
+  | "NOT_APPLICABLE"
+  | "ALREADY_USED"
+  | "MIN_PRICE"
+  /** The coupon service is not reachable or not deployed yet. */
+  | "UNAVAILABLE";
 
 export interface Coupon {
   code: string;
@@ -17,7 +28,8 @@ export interface Coupon {
 
 export interface CouponValidation {
   ok: boolean;
-  coupon: Coupon | null;
+  /** Only the code is needed by the UI; the server decides everything else. */
+  coupon: Pick<Coupon, "code"> | null;
   originalPrice: number;
   discount: number;
   finalPrice: number;

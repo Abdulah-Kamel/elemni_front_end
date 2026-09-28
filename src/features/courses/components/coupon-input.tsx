@@ -1,13 +1,15 @@
 // src/features/courses/components/coupon-input.tsx
 "use client";
 import { useState } from "react";
-import { CircleAlert, TicketPercent, X } from "lucide-react";
+import { CircleAlert, LoaderCircle, TicketPercent, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { CouponValidation } from "@/src/lib/coupons/coupons";
 
-export default function CouponInput({ applied, error, onApply, onRemove, disabled }: {
+export default function CouponInput({ applied, error, onApply, onRemove, disabled, checking = false }: {
   applied: CouponValidation | null; error?: string;
   onApply: (code: string) => void; onRemove: () => void; disabled?: boolean;
+  /** True while the server is checking the code. */
+  checking?: boolean;
 }) {
   const t = useTranslations("courseDetail");
   const [code, setCode] = useState("");
@@ -30,15 +32,18 @@ export default function CouponInput({ applied, error, onApply, onRemove, disable
         <input
           value={code}
           onChange={(e) => setCode(e.target.value)}
-          onKeyDown={(e) => { if (e.key === "Enter" && code.trim() && !disabled) onApply(code.trim()); }}
+          onKeyDown={(e) => { if (e.key === "Enter" && code.trim() && !disabled && !checking) onApply(code.trim()); }}
           placeholder={t("couponPlaceholder")}
-          disabled={disabled}
+          disabled={disabled || checking}
           aria-label={t("couponLabel")}
           autoComplete="off"
           spellCheck={false}
           className="h-11 min-w-0 flex-1 rounded-xl border-2 border-dashed border-ink/25 bg-white px-3 font-mono text-sm font-bold uppercase tracking-widest text-ink placeholder:font-sans placeholder:normal-case placeholder:tracking-normal placeholder:text-muted focus:border-solid focus:border-brand-600 focus:outline-none disabled:opacity-50 dark:border-white/20 dark:bg-slate-900 dark:text-slate-50 dark:placeholder:text-slate-500"
         />
-        <button type="button" onClick={() => onApply(code.trim())} disabled={disabled || !code.trim()} className="sticker-btn-outline h-11 shrink-0 cursor-pointer px-4 text-sm font-black disabled:opacity-50 disabled:shadow-none">{t("couponApply")}</button>
+        <button type="button" onClick={() => onApply(code.trim())} disabled={disabled || checking || !code.trim()} aria-busy={checking || undefined} className="sticker-btn-outline inline-flex h-11 shrink-0 cursor-pointer items-center gap-1.5 px-4 text-sm font-black disabled:opacity-50 disabled:shadow-none">
+          {checking && <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />}
+          {checking ? t("couponChecking") : t("couponApply")}
+        </button>
       </div>
       {error && (
         <p role="alert" className="mt-2 flex items-start gap-1.5 text-xs font-bold text-red-600 dark:text-red-400">

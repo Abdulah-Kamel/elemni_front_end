@@ -26,6 +26,7 @@ export default function CoursePurchasePanel({
   onContinue,
   couponApplied,
   couponError,
+  couponChecking = false,
   onCouponApply,
   onCouponRemove,
 }: {
@@ -37,6 +38,7 @@ export default function CoursePurchasePanel({
   onContinue: () => void;
   couponApplied: CouponValidation | null;
   couponError: string;
+  couponChecking?: boolean;
   onCouponApply: (code: string) => void;
   onCouponRemove: () => void;
 }) {
@@ -68,7 +70,7 @@ export default function CoursePurchasePanel({
 
       {!enrolled && (
         <div className="border-b-2 border-ink/10 py-4 dark:border-white/10">
-          <CouponInput applied={couponApplied} error={couponError} onApply={onCouponApply} onRemove={onCouponRemove} disabled={loading} />
+          <CouponInput applied={couponApplied} error={couponError} onApply={onCouponApply} onRemove={onCouponRemove} disabled={loading} checking={couponChecking} />
           {couponApplied?.ok && (
             <div className="mt-3 space-y-1 text-sm font-bold tabular-nums">
               <p className="flex justify-between text-muted"><span>{t("couponOriginal")}</span><span className="line-through">{formatMoney(couponApplied.originalPrice, locale)}</span></p>
