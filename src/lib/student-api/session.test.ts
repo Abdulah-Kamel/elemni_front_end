@@ -5,6 +5,8 @@ const mocks = vi.hoisted(() => ({
   refreshToken: "valid-refresh",
   requestCount: 0,
   refreshCount: 0,
+  refreshFails: false,
+  cookiesReadOnly: false,
 }));
 
 vi.mock("server-only", () => ({}));
@@ -17,10 +19,12 @@ vi.mock("next/headers", () => ({
       return undefined;
     },
     set: (name: string, value: string) => {
+      if (mocks.cookiesReadOnly) throw new Error("Cookies are read-only");
       if (name === "elemni_access") mocks.accessToken = value;
       if (name === "elemni_refresh") mocks.refreshToken = value;
     },
     delete: (name: string) => {
+      if (mocks.cookiesReadOnly) throw new Error("Cookies are read-only");
       if (name === "elemni_access") mocks.accessToken = "";
       if (name === "elemni_refresh") mocks.refreshToken = "";
     },
@@ -32,6 +36,9 @@ vi.mock("./backend", () => ({
     if (path === "/api/v1/auth/refresh") {
       mocks.refreshCount += 1;
       await new Promise((resolve) => setTimeout(resolve, 10));
+      if (mocks.refreshFails) {
+        return { ok: false, error: { status: 401, code: "INVALID_REFRESH" } };
+      }
       return {
         ok: true,
         status: 200,
@@ -48,6 +55,11 @@ vi.mock("./backend", () => ({
     return { ok: false, error: { status: 401, message: "expired" } };
   },
 }));
+
+beforeEach(() => {
+  mocks.refreshFails = false;
+  mocks.cookiesReadOnly = false;
+});
 
 describe("authenticatedBackendFetch", () => {
   beforeEach(() => {
@@ -75,5 +87,88 @@ describe("authenticatedBackendFetch", () => {
       { ok: true, status: 200, data: { ok: true } },
       { ok: true, status: 200, data: { ok: true } },
     ]);
+  });
+});
+
+describe("missing access cookie", () => {
+  beforeEach(() => {
+    mocks.accessToken = "";
+    mocks.refreshToken = "valid-refresh";
+    mocks.refreshCount = 0;
+    mocks.requestCount = 0;
+  });
+
+  it("refreshes before calling the backend", async () => {
+    const { authenticatedBackendFetch } = await import("./session");
+    const result = await authenticatedBackendFetch("/api/v1/my/courses");
+    expect(mocks.refreshCount).toBe(1);
+    expect(mocks.requestCount).toBe(1);
+    expect(result.ok).toBe(true);
+    expect(mocks.accessToken).toBe("fresh-access");
+    expect(mocks.refreshToken).toBe("fresh-refresh");
+  });
+
+  it("returns SESSION_REQUIRED without any call when no refresh cookie exists", async () => {
+    const { authenticatedBackendFetch } = await import("./session");
+    mocks.refreshToken = "";
+    const result = await authenticatedBackendFetch("/api/v1/my/courses");
+    expect(result).toEqual({ ok: false, error: { status: 401, code: "SESSION_REQUIRED" } });
+    expect(mocks.refreshCount).toBe(0);
+    expect(mocks.requestCount).toBe(0);
+  });
+
+  it("deduplicates concurrent refreshes before making authenticated requests", async () => {
+    const { authenticatedBackendFetch } = await import("./session");
+    const results = await Promise.all([
+      authenticatedBackendFetch("/api/v1/one"),
+      authenticatedBackendFetch("/api/v1/two"),
+      authenticatedBackendFetch("/api/v1/three"),
+    ]);
+    expect(mocks.refreshCount).toBe(1);
+    expect(mocks.requestCount).toBe(3);
+    expect(results.every((result) => result.ok)).toBe(true);
+  });
+
+  it("uses the refreshed token when Server Components cannot set cookies", async () => {
+    const { authenticatedBackendFetch } = await import("./session");
+    mocks.cookiesReadOnly = true;
+    const result = await authenticatedBackendFetch("/api/v1/my/courses");
+    expect(result.ok).toBe(true);
+    expect(mocks.refreshCount).toBe(1);
+    expect(mocks.requestCount).toBe(1);
+    expect(mocks.accessToken).toBe("");
+  });
+
+  it("returns SESSION_EXPIRED and clears cookies when refresh fails", async () => {
+    const { authenticatedBackendFetch } = await import("./session");
+    mocks.refreshFails = true;
+    const result = await authenticatedBackendFetch("/api/v1/my/courses");
+    expect(result).toEqual({ ok: false, error: { status: 401, code: "SESSION_EXPIRED" } });
+    expect(mocks.refreshCount).toBe(1);
+    expect(mocks.requestCount).toBe(0);
+    expect(mocks.refreshToken).toBe("");
+  });
+
+  it("returns SESSION_EXPIRED when Server Components cannot clear cookies", async () => {
+    const { authenticatedBackendFetch } = await import("./session");
+    mocks.refreshFails = true;
+    mocks.cookiesReadOnly = true;
+    const result = await authenticatedBackendFetch("/api/v1/my/courses");
+    expect(result).toEqual({ ok: false, error: { status: 401, code: "SESSION_EXPIRED" } });
+    expect(mocks.refreshCount).toBe(1);
+    expect(mocks.requestCount).toBe(0);
+  });
+});
+
+describe("hasStudentSession", () => {
+  it.each([
+    ["a", "", true],
+    ["", "r", true],
+    ["", "", false],
+  ])("access=%s refresh=%s → %s", async (access, refresh, expected) => {
+    const { hasStudentSession } = await import("./session");
+    mocks.accessToken = access;
+    mocks.refreshToken = refresh;
+    await expect(hasStudentSession()).resolves.toBe(expected);
   });
 });

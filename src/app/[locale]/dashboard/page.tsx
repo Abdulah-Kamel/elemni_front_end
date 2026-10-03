@@ -5,7 +5,7 @@ import {
   getGrades,
   getStreams,
 } from "@/src/lib/student-api/public";
-import { getAccessToken } from "@/src/lib/student-api/session";
+import { hasStudentSession } from "@/src/lib/student-api/session";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -21,7 +21,7 @@ export default async function StudentDashboardPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  if (!(await getAccessToken()))
+  if (!(await hasStudentSession()))
     redirect(locale === "ar" ? "/login?next=/dashboard" : `/${locale}/login?next=/${locale}/dashboard`);
 
   const [grades, streams] = await Promise.all([getGrades(), getStreams()]);

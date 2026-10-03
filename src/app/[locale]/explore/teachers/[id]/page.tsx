@@ -3,7 +3,7 @@ import { setRequestLocale } from "next-intl/server";
 import DashboardTeacherProfile from "@/src/features/teachers/components/client/dashboard-teacher-profile";
 import { toTeacher } from "@/src/lib/student-api/adapters";
 import type { UserDto } from "@/src/lib/student-api/contract";
-import { authenticatedBackendFetch, getAccessToken } from "@/src/lib/student-api/session";
+import { authenticatedBackendFetch, hasStudentSession } from "@/src/lib/student-api/session";
 import { getPublicTeacher, getPublicTeacherCourses, getPublicTeachers } from "@/src/lib/student-api/public";
 
 export const dynamic = "force-dynamic";
@@ -15,7 +15,7 @@ export default async function PortalTeacherProfilePage({
 }) {
   const { locale, id } = await params;
   setRequestLocale(locale);
-  if (!(await getAccessToken())) {
+  if (!(await hasStudentSession())) {
     redirect(locale === "ar" ? `/login?next=/explore/teachers/${id}` : `/${locale}/login?next=/${locale}/explore/teachers/${id}`);
   }
 

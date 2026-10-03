@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import ExploreTeachers from "@/src/features/teachers/components/client/explore-teachers";
 import { getGrades, getPublicCourses, getPublicTeachers } from "@/src/lib/student-api/public";
-import { getAccessToken } from "@/src/lib/student-api/session";
+import { hasStudentSession } from "@/src/lib/student-api/session";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +25,7 @@ export default async function ExploreTeachersPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  if (!(await getAccessToken())) {
+  if (!(await hasStudentSession())) {
     redirect(locale === "ar" ? "/login?next=/explore/teachers" : `/${locale}/login?next=/${locale}/explore/teachers`);
   }
 

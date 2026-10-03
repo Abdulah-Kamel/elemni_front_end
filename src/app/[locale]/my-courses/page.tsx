@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import MyCourses from "@/src/features/dashboard/components/my-courses";
-import { getAccessToken } from "@/src/lib/student-api/session";
+import { hasStudentSession } from "@/src/lib/student-api/session";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -16,6 +16,6 @@ export default async function MyCoursesPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  if (!(await getAccessToken())) redirect(locale === "ar" ? "/login?next=/my-courses" : `/${locale}/login?next=/${locale}/my-courses`);
+  if (!(await hasStudentSession())) redirect(locale === "ar" ? "/login?next=/my-courses" : `/${locale}/login?next=/${locale}/my-courses`);
   return <MyCourses />;
 }

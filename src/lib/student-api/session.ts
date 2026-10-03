@@ -36,13 +36,54 @@ export async function getAccessToken() {
   return (await cookies()).get(ACCESS_COOKIE)?.value;
 }
 
+export async function hasStudentSession() {
+  return Boolean((await getAccessToken()) || (await getRefreshToken()));
+}
+
+async function refreshAccessToken(): Promise<TokenDto | null> {
+  const refreshToken = await getRefreshToken();
+  if (!refreshToken) return null;
+
+  const existingRefresh = inFlightRefresh.get(refreshToken);
+  const refreshPromise = existingRefresh ?? (async () => {
+    const response = await backendFetch<TokenDto>("/api/v1/auth/refresh", {
+      method: "POST",
+      body: JSON.stringify({ refresh_token: refreshToken }),
+    });
+    if (!response.ok) return null;
+    try {
+      await setSession(response.data.access_token, response.data.refresh_token);
+    } catch {
+      // Server Components cannot set cookies; the refreshed token still serves this request.
+    }
+    return response.data;
+  })();
+
+  if (!existingRefresh) {
+    inFlightRefresh.set(
+      refreshToken,
+      refreshPromise.finally(() => inFlightRefresh.delete(refreshToken)),
+    );
+  }
+
+  return refreshPromise;
+}
+
 export async function authenticatedBackendFetch<T>(
   path: string,
   init: RequestInit = {},
 ): Promise<BackendResult<T>> {
-  const accessToken = await getAccessToken();
+  let accessToken = await getAccessToken();
   if (!accessToken) {
-    return { ok: false, error: { status: 401, code: "SESSION_REQUIRED" } };
+    if (!(await getRefreshToken())) {
+      return { ok: false, error: { status: 401, code: "SESSION_REQUIRED" } };
+    }
+    const refreshed = await refreshAccessToken();
+    if (!refreshed) {
+      await clearSession().catch(() => undefined);
+      return { ok: false, error: { status: 401, code: "SESSION_EXPIRED" } };
+    }
+    accessToken = refreshed.access_token;
   }
 
   const request = (token: string) =>
@@ -54,31 +95,12 @@ export async function authenticatedBackendFetch<T>(
   let result = await request(accessToken);
   if (result.ok || result.error.status !== 401) return result;
 
-  const refreshToken = await getRefreshToken();
-  if (!refreshToken) {
+  if (!(await getRefreshToken())) {
     await clearSession();
     return result;
   }
 
-  const existingRefresh = inFlightRefresh.get(refreshToken);
-  const refreshPromise = existingRefresh ?? (async () => {
-    const response = await backendFetch<TokenDto>("/api/v1/auth/refresh", {
-      method: "POST",
-      body: JSON.stringify({ refresh_token: refreshToken }),
-    });
-    if (!response.ok) return null;
-    await setSession(response.data.access_token, response.data.refresh_token);
-    return response.data;
-  })();
-
-  if (!existingRefresh) {
-    inFlightRefresh.set(
-      refreshToken,
-      refreshPromise.finally(() => inFlightRefresh.delete(refreshToken)),
-    );
-  }
-
-  const refreshed = await refreshPromise;
+  const refreshed = await refreshAccessToken();
   if (!refreshed) {
     await clearSession();
     return { ok: false, error: { status: 401, code: "SESSION_EXPIRED" } };

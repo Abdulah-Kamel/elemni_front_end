@@ -10,7 +10,7 @@ import {
   getStreams,
   getSubjects,
 } from "@/src/lib/student-api/public";
-import { getAccessToken } from "@/src/lib/student-api/session";
+import { hasStudentSession } from "@/src/lib/student-api/session";
 
 export const dynamic = "force-dynamic";
 
@@ -41,7 +41,7 @@ export default async function ExploreCoursesPage({
     const destination = locale === "ar" ? "/explore/teachers" : `/${locale}/explore/teachers`;
     redirect(`${destination}${nextParams.size ? `?${nextParams.toString()}` : ""}`);
   }
-  if (!(await getAccessToken()))
+  if (!(await hasStudentSession()))
     redirect(locale === "ar" ? "/login?next=/explore" : `/${locale}/login?next=/${locale}/explore`);
 
   const [courses, teachers, grades, streams, subjects] = await Promise.all([
