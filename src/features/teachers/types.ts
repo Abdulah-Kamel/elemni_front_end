@@ -23,7 +23,6 @@ export interface CourseItem {
   hasVideo: boolean;
   hasDocument: boolean;
   hasExam: boolean;
-  videoUrl?: string;
   documentPath?: string;
 }
 

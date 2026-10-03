@@ -21,6 +21,7 @@ export default async function MyCourseDetailPage({
   const { teacher, item } = await searchParams;
   setRequestLocale(locale);
 
+  const parsedItem = item && /^\d+$/.test(item) && Number(item) > 0 ? Number(item) : undefined;
   const nextQuery = new URLSearchParams();
   if (teacher?.trim()) nextQuery.set("teacher", teacher.trim());
   if (item && /^\d+$/.test(item)) nextQuery.set("item", item);
@@ -37,6 +38,7 @@ export default async function MyCourseDetailPage({
   return (
     <CourseDetail
       courseId={parsedCourseId}
+      initialItemId={parsedItem}
       teacherSlug={teacher?.trim() || undefined}
       grades={grades.ok ? grades.data : []}
       streams={streams.ok ? streams.data : []}

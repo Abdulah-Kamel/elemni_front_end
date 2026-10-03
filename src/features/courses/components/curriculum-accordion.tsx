@@ -61,6 +61,7 @@ function LessonRow({
   onPlay,
   onOpen,
   completedItemIds,
+  videoProgressPercent,
 }: {
   lesson: PublicLessonDto;
   enrolled: boolean;
@@ -71,6 +72,7 @@ function LessonRow({
   onPlay: (item: PublicItemDto, lesson: PublicLessonDto) => void;
   onOpen: (item: PublicItemDto, lesson: PublicLessonDto) => void;
   completedItemIds: number[];
+  videoProgressPercent?: ReadonlyMap<number, number>;
 }) {
   const t = useTranslations("courseDetail");
   const reduced = useReducedMotion() === true;
@@ -135,6 +137,7 @@ function LessonRow({
                     variant={variant}
                     active={item.id === activeContentId}
                     completed={completedItemIds.includes(item.id)}
+                    progressPercent={videoProgressPercent?.get(item.id)}
                     onPlay={onPlay}
                     onOpen={onOpen}
                   />
@@ -157,6 +160,7 @@ function ItemRow({
   variant,
   active,
   completed,
+  progressPercent,
   onPlay,
   onOpen,
 }: {
@@ -166,6 +170,7 @@ function ItemRow({
   variant: "default" | "sidebar";
   active: boolean;
   completed: boolean;
+  progressPercent?: number;
   onPlay: (item: PublicItemDto, lesson: PublicLessonDto) => void;
   onOpen: (item: PublicItemDto, lesson: PublicLessonDto) => void;
 }) {
@@ -182,7 +187,7 @@ function ItemRow({
     item.duration_minutes ? formatDuration(item.duration_minutes, t) : null,
   ].filter(Boolean).join(" · ");
 
-  if (enrolled && item.bunny_stream_embed_url && documentUrl) {
+  if (enrolled && item.has_video && documentUrl) {
     return (
       <div
         data-testid={variant === "sidebar" ? `learner-curriculum-item-${item.id}` : undefined}
@@ -200,6 +205,18 @@ function ItemRow({
           <span className="min-w-0 flex-1">
             <strong className={`block truncate text-sm ${inkClass}`}>{item.title}</strong>
             <span className="text-xs text-[#6B7E8F]">{itemMeta}</span>
+            {!completed && progressPercent !== undefined && progressPercent > 0 && progressPercent < 100 && (
+              <span
+                role="progressbar"
+                aria-valuenow={progressPercent}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label={t("videoPlayback.reachedPercent", { percent: progressPercent })}
+                className="mt-1.5 block h-1 overflow-hidden rounded-full bg-[#E4E2DC] dark:bg-slate-700"
+              >
+                <span className="block h-full rounded-full bg-[#0A5FB4] dark:bg-sky-400" style={{ width: `${progressPercent}%` }} />
+              </span>
+            )}
           </span>
           {completed ? (
             <span className={`shrink-0 rounded-full px-2 py-1 text-[11px] font-bold ${variant === "sidebar" ? "bg-[#E6F4EC] text-[#16784A] dark:bg-emerald-400/10 dark:text-emerald-400" : "bg-emerald-50 text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-300"}`}>{t("completedStatus")}</span>
@@ -234,7 +251,7 @@ function ItemRow({
     );
   }
 
-  if (enrolled && item.bunny_stream_embed_url) {
+  if (enrolled && item.has_video) {
     return (
       <button
         type="button"
@@ -246,6 +263,18 @@ function ItemRow({
         <span className="min-w-0 flex-1">
           <strong className={`block truncate text-sm ${inkClass}`}>{item.title}</strong>
           <span className="text-xs text-[#6B7E8F]">{itemMeta}</span>
+          {!completed && progressPercent !== undefined && progressPercent > 0 && progressPercent < 100 && (
+            <span
+              role="progressbar"
+              aria-valuenow={progressPercent}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label={t("videoPlayback.reachedPercent", { percent: progressPercent })}
+              className="mt-1.5 block h-1 overflow-hidden rounded-full bg-[#E4E2DC] dark:bg-slate-700"
+            >
+              <span className="block h-full rounded-full bg-[#0A5FB4] dark:bg-sky-400" style={{ width: `${progressPercent}%` }} />
+            </span>
+          )}
         </span>
         {completed ? (
           <span className={`shrink-0 rounded-full px-2 py-1 text-[11px] font-bold ${variant === "sidebar" ? "bg-[#E6F4EC] text-[#16784A] dark:bg-emerald-400/10 dark:text-emerald-400" : "bg-emerald-50 text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-300"}`}>{t("completedStatus")}</span>
@@ -304,6 +333,7 @@ export default function CurriculumAccordion({
   onPlay,
   onOpen,
   completedItemIds = [],
+  videoProgressPercent,
 }: {
   chapters: PublicChapterDto[];
   enrolled: boolean;
@@ -316,6 +346,7 @@ export default function CurriculumAccordion({
   onPlay: (item: PublicItemDto, lesson: PublicLessonDto) => void;
   onOpen: (item: PublicItemDto, lesson: PublicLessonDto) => void;
   completedItemIds?: number[];
+  videoProgressPercent?: ReadonlyMap<number, number>;
 }) {
   const t = useTranslations("courseDetail");
   const reduced = useReducedMotion() === true;
@@ -388,6 +419,7 @@ export default function CurriculumAccordion({
                       onPlay={onPlay}
                       onOpen={onOpen}
                       completedItemIds={completedItemIds}
+                      videoProgressPercent={videoProgressPercent}
                     />
                   )) : (
                     <p className="px-5 py-5 text-sm text-[#6B7E8F]">{t("noContentDescription")}</p>

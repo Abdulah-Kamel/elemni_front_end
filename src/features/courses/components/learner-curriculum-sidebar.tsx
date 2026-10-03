@@ -21,6 +21,7 @@ export default function LearnerCurriculumSidebar({
   onPlay,
   onOpen,
   completedItemIds,
+  videoProgressPercent,
   theaterMode = false,
   completionPercent = null,
   courseSummary,
@@ -35,6 +36,7 @@ export default function LearnerCurriculumSidebar({
   onPlay: (item: PublicItemDto, lesson: PublicLessonDto) => void;
   onOpen: (item: PublicItemDto, lesson: PublicLessonDto) => void;
   completedItemIds: number[];
+  videoProgressPercent?: ReadonlyMap<number, number>;
   theaterMode?: boolean;
   completionPercent?: number | null;
   courseSummary?: ReactNode;
@@ -103,6 +105,7 @@ export default function LearnerCurriculumSidebar({
                 onPlay={onPlay}
                 onOpen={onOpen}
                 completedItemIds={completedItemIds}
+                videoProgressPercent={videoProgressPercent}
               />
             ) : (
               <div className="m-4 flex min-h-56 flex-col items-center justify-center rounded-xl border border-dashed border-[#D8E0E9] bg-[#FAF9F5] px-5 text-center">

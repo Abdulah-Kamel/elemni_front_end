@@ -44,7 +44,6 @@ export function toCourse(course: PublicCourseDto): Course {
           hasVideo: item.has_video,
           hasDocument: item.has_document,
           hasExam: item.has_exam,
-          videoUrl: item.bunny_stream_embed_url ?? undefined,
           documentPath:
             item.document_path?.startsWith("https://") || item.document_path?.startsWith("http://")
               ? item.document_path

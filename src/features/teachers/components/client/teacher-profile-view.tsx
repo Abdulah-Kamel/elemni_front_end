@@ -381,9 +381,7 @@ export default function TeacherProfileView({ teacher, onRequireAuth, teacherList
                                             {lesson.items.map((item) => (
                                               <span key={item.id} className="inline-flex items-center gap-1.5 text-[11px] font-bold text-muted dark:text-slate-400">
                                                 {item.hasVideo ? <PlayCircle className="size-3.5 text-brand-600" aria-hidden="true" /> : item.hasDocument ? <FileText className="size-3.5 text-emerald-600" aria-hidden="true" /> : <ClipboardList className="size-3.5 text-amber-600" aria-hidden="true" />}
-                                                {item.videoUrl ? (
-                                                  <a href={item.videoUrl} target="_blank" rel="noreferrer" className="text-brand-700 hover:underline dark:text-brand-300">{item.title}</a>
-                                                ) : item.documentPath ? (
+                                                {item.documentPath ? (
                                                   <a href={item.documentPath} target="_blank" rel="noreferrer" className="text-brand-700 hover:underline dark:text-brand-300">{item.title}</a>
                                                 ) : item.title}
                                               </span>

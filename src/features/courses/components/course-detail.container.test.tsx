@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NextIntlClientProvider } from "next-intl";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -30,6 +30,12 @@ vi.mock("./public-course-detail-shell", () => ({
 
 vi.mock("@/src/components/ui/global-loading", () => ({
   GlobalLoading: () => <div>loading</div>,
+}));
+
+vi.mock("@/src/features/courses/video/video-lesson", () => ({
+  default: ({ item, lesson }: { item: { id: number; title: string }; lesson: { title: string } }) => (
+    <div data-testid="video-lesson" data-item-id={item.id} title={`${lesson.title} - ${item.title}`} />
+  ),
 }));
 
 const replaceMock = vi.fn();
@@ -78,8 +84,7 @@ const course: StudentCourseDetailDto["course"] = {
               has_video: true,
               has_document: true,
               has_exam: false,
-              bunny_stream_embed_url:
-                "https://iframe.mediadelivery.net/play/123",
+              bunny_stream_embed_url: null,
               document_path: "https://cdn.elemni.test/lesson.pdf",
               exam_id: null,
             },
@@ -197,7 +202,7 @@ describe("CourseDetail production experience", () => {
 
     expect(
       await screen.findByTitle("مقدمة في النهايات - فيديو الشرح"),
-    ).toHaveAttribute("src", "https://iframe.mediadelivery.net/play/123");
+    ).toHaveAttribute("data-item-id", "101");
     expect(screen.getByLabelText("Portal topbar")).toHaveTextContent(
       "كورس التفاضل",
     );
@@ -753,5 +758,132 @@ describe("CourseDetail production experience", () => {
 
       expect(assignMock).toHaveBeenCalledWith("/en/my-courses");
     });
+  });
+});
+
+describe("CourseDetail video analytics integration", () => {
+  const videoItem = (id: number, title: string, extra: Partial<StudentCourseDetailDto["course"]["chapters"][number]["lessons"][number]["items"][number]> = {}) => ({
+    id, title, order: id, duration_minutes: 10, duration_seconds: 600,
+    has_video: true, has_document: false, has_exam: false,
+    bunny_stream_embed_url: null, document_path: null, exam_id: null, ...extra,
+  });
+
+  function fixtureWith(
+    items: StudentCourseDetailDto["course"]["chapters"][number]["lessons"][number]["items"],
+    progress: Partial<NonNullable<StudentCourseDetailDto["enrollment"]>["progress"]> = {},
+  ): StudentCourseDetailDto {
+    const lesson = { ...course.chapters[0].lessons[0], items };
+    const nextCourse = { ...course, chapters: [{ ...course.chapters[0], lessons: [lesson] }] };
+    const enrollment = detail.enrollment!;
+    return {
+      ...detail,
+      course: nextCourse,
+      enrollment: { ...enrollment, course: nextCourse, progress: { ...enrollment.progress, ...progress } },
+    };
+  }
+
+  function renderWith(fixture: StudentCourseDetailDto, props: { initialItemId?: number } = {}) {
+    fetchMock.mockImplementation((input: string | URL, init?: RequestInit) => {
+      const url = String(input);
+      if (url === "/api/student/my-courses/12/progress" && init?.method === "PUT") {
+        return Promise.resolve({ ok: true, status: 200, json: async () => fixture.enrollment?.progress });
+      }
+      if (url.startsWith("/api/student/my-courses/12")) {
+        return Promise.resolve({ ok: true, status: 200, json: async () => fixture });
+      }
+      if (url === "/api/student/auth/me") {
+        return Promise.resolve({ ok: true, status: 200, json: async () => ({ id: 1, name: "الطالب" }) });
+      }
+      return Promise.resolve({ ok: false, status: 404, json: async () => ({ detail: "not found" }) });
+    });
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
+    render(
+      <NextIntlClientProvider locale="ar" messages={arMessages}>
+        <QueryClientProvider client={queryClient}>
+          <CourseDetail courseId={12} teacherSlug="ahmad-ali" grades={[]} streams={[]} {...props} />
+        </QueryClientProvider>
+      </NextIntlClientProvider>,
+    );
+    return { queryClient };
+  }
+
+  const progressPuts = () =>
+    fetchMock.mock.calls.filter(([url, init]) =>
+      String(url) === "/api/student/my-courses/12/progress" && (init as RequestInit | undefined)?.method === "PUT");
+
+  beforeEach(() => {
+    vi.stubEnv("ASSETS_URL", "https://cdn.elemni.test");
+    fetchMock.mockReset();
+    vi.stubGlobal("fetch", fetchMock);
+  });
+  afterEach(() => {
+    cleanup();
+    vi.unstubAllEnvs();
+  });
+
+  it("treats has_video items as playable even without an embed URL", async () => {
+    renderWith(fixtureWith([videoItem(201, "الدرس أ")], { next_item_id: 201 }));
+    expect(await screen.findByTestId("video-lesson")).toHaveAttribute("data-item-id", "201");
+  });
+
+  it("does not send a progress PUT when opening a video", async () => {
+    renderWith(fixtureWith([videoItem(201, "الدرس أ"), videoItem(202, "الدرس ب")], { next_item_id: 201 }));
+    await screen.findByTestId("video-lesson");
+    fireEvent.click(screen.getByTestId("learner-curriculum-item-202"));
+    await waitFor(() => expect(screen.getByTestId("video-lesson")).toHaveAttribute("data-item-id", "202"));
+    expect(progressPuts()).toHaveLength(0);
+  });
+
+  it("document open on a video item sends no progress PUT", async () => {
+    renderWith(detail);
+    await screen.findByTestId("video-lesson");
+    const item = screen.getByTestId("learner-curriculum-item-101");
+    fireEvent.click(within(item).getByRole("button", { name: "عرض الملف" }));
+    await waitFor(() =>
+      expect(document.querySelector('iframe[src="https://cdn.elemni.test/lesson.pdf"]')).not.toBeNull());
+    expect(progressPuts()).toHaveLength(0);
+  });
+
+  it("marks a document-only item complete on open", async () => {
+    renderWith(detail);
+    await screen.findByTestId("video-lesson");
+    fireEvent.click(screen.getByTestId("learner-curriculum-item-102"));
+    await waitFor(() => expect(progressPuts()).toHaveLength(1));
+    expect((progressPuts()[0][1] as RequestInit).body).toBe(JSON.stringify({ item_id: 102, completed: true }));
+  });
+
+  it("keeps the selected item after progress refetch", async () => {
+    const { queryClient } = renderWith(
+      fixtureWith([videoItem(201, "الدرس أ"), videoItem(202, "الدرس ب")], { next_item_id: 201 }),
+    );
+    expect(await screen.findByTestId("video-lesson")).toHaveAttribute("data-item-id", "201");
+    act(() => {
+      queryClient.setQueriesData<StudentCourseDetailDto>({ queryKey: ["student", "course", 12] }, (current) =>
+        current?.enrollment
+          ? { ...current, enrollment: { ...current.enrollment, progress: { ...current.enrollment.progress, next_item_id: 202 } } }
+          : current);
+    });
+    expect(screen.getByTestId("video-lesson")).toHaveAttribute("data-item-id", "201");
+  });
+
+  it("opens the deep-linked item first", async () => {
+    renderWith(fixtureWith([videoItem(201, "الدرس أ"), videoItem(202, "الدرس ب")], { next_item_id: 201 }), { initialItemId: 202 });
+    expect(await screen.findByTestId("video-lesson")).toHaveAttribute("data-item-id", "202");
+  });
+
+  it("shows a position bar for a partially watched video and counts video completion", async () => {
+    renderWith(fixtureWith([videoItem(201, "الدرس أ"), videoItem(202, "الدرس ب")], {
+      next_item_id: 201,
+      completed_item_ids: [],
+      video_progress: [
+        { item_id: 201, last_position_sec: 290, watched_percent: 48, is_completed: false },
+        { item_id: 202, last_position_sec: 600, watched_percent: 100, is_completed: true },
+      ],
+    }));
+    await screen.findByTestId("video-lesson");
+    expect(within(screen.getByTestId("learner-curriculum-item-201")).getByRole("progressbar"))
+      .toHaveAttribute("aria-valuenow", "48");
+    expect(within(screen.getByTestId("learner-curriculum-item-202")).getByText(arMessages.courseDetail.completedStatus))
+      .toBeInTheDocument();
   });
 });
