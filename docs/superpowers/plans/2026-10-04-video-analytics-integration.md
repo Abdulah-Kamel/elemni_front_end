@@ -67,7 +67,7 @@ Task order: 1 (backend) is independent. Frontend: 2 → 3 → 4 → 5 → 6 → 
 
 ### Task 1: Backend accounting fixes (B1 + B2)
 
-**Model:** `gpt-6-astra`, effort `high` — subtle accounting with concurrency-sensitive code; correctness matters more than speed.
+**Model:** `gpt-6.1-sol`, effort `high` — subtle accounting with concurrency-sensitive code; correctness matters more than speed.
 **Repo:** `elemni` (branch `feat/video-analytics-accounting`).
 
 **Files:**
@@ -2189,7 +2189,7 @@ git commit -m "feat(video): heartbeat controller with queued transitions and ret
 
 ### Task 8: `useVideoSession` hook
 
-**Model:** `gpt-6-astra`, effort `high` — async lifecycle, generation guards, teardown ordering, browser lifecycle events; the riskiest integration unit.
+**Model:** `gpt-6.1-sol`, effort `high` — async lifecycle, generation guards, teardown ordering, browser lifecycle events; the riskiest integration unit.
 
 **Files:**
 - Create: `src/features/courses/video/use-video-session.ts`
@@ -3560,7 +3560,7 @@ git commit -m "test(video): e2e with a fake Bunny player.js receiver"
 
 ### Task 13: Full gates and whole-branch review
 
-**Model:** gates are run by the orchestrator; review by `gpt-6-astra`, effort `high`, `--read-only`.
+**Model:** gates are run by the orchestrator; review by `gpt-6.1-sol`, effort `high`, `--read-only`.
 
 - [ ] **Step 1: Frontend gates** (orchestrator, in `elemni_front_end`): `npm run lint`, `npm run build`, `npm run test`. All must pass.
 - [ ] **Step 2: Backend gate** (orchestrator, in `elemni`): the backend command from Global Constraints. All must pass.
