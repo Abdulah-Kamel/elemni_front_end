@@ -27,6 +27,9 @@ import {
   useCurrentStudent,
   useMyCourses,
 } from "@/src/features/student/hooks/use-student-queries";
+import { useLastWatched } from "@/src/features/student/hooks/use-video-analytics-queries";
+import { formatPlaybackTime } from "@/src/features/courses/video/format-playback-time";
+import { resolveContinueWatching } from "../continue-watching";
 import StudentAppShell from "@/src/features/portal/components/portal-shell";
 import StudyCounter from "./study-counter";
 
@@ -60,6 +63,7 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
   const [courseFilter, setCourseFilter] = useState<"all" | "in-progress" | "completed">("all");
   const userQuery = useCurrentStudent();
   const coursesQuery = useMyCourses();
+  const lastWatchedQuery = useLastWatched();
   const user = userQuery.data ?? null;
   const courses = coursesQuery.data;
   const unauthorized =
@@ -117,6 +121,8 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
       new Date(first.progress.last_opened_at ?? first.purchased_at).getTime(),
   );
   const primary = sortedEnrollments.find((enrollment) => enrollment.progress.completion_percent < 100) ?? sortedEnrollments[0];
+  const continueWatching = resolveContinueWatching(lastWatchedQuery.data, enrollments);
+  const tileEnrollment = continueWatching?.enrollment ?? primary;
   const expiringSoon = currentTime === null ? [] : enrollments.filter((enrollment) => {
     const expiry = new Date(enrollment.expires_at).getTime();
     return expiry >= currentTime && expiry <= currentTime + 14 * 24 * 60 * 60 * 1000;
@@ -159,34 +165,42 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
               ) : null}
             </m.header>
 
-            {primary ? (
+            {tileEnrollment ? (
               <section aria-label={tUi("resume")} className="sticker-tile sticker-tile-brand order-2 overflow-hidden border-2 border-ink lg:col-start-1">
                 <div className="flex min-h-[250px] flex-col sm:flex-row">
                   <div className="relative min-h-40 bg-amber-50 text-amber-700 sm:min-h-0 sm:w-44 lg:w-48">
-                    <CourseCover src={primary.course.img} subject={primary.course.subject_name} alt={primary.course.title} sizes="(max-width: 639px) 100vw, 192px" className="object-cover" />
+                    <CourseCover src={tileEnrollment.course.img} subject={tileEnrollment.course.subject_name} alt={tileEnrollment.course.title} sizes="(max-width: 639px) 100vw, 192px" className="object-cover" />
                   </div>
                   <div className="flex min-w-0 flex-1 flex-col justify-center p-5 sm:p-6 lg:p-7">
                     <div className="flex flex-wrap items-center gap-2 text-sm font-semibold text-white">
-                      <span>{tUi("resume")}</span>
-                      {primary.course.subject_name && <span className="rounded-full bg-white/15 px-2.5 py-1 text-xs">{primary.course.subject_name}</span>}
+                      <span>{continueWatching ? tUi("continueWatching") : tUi("resume")}</span>
+                      {tileEnrollment.course.subject_name && <span className="rounded-full bg-white/15 px-2.5 py-1 text-xs">{tileEnrollment.course.subject_name}</span>}
                     </div>
-                    <h2 className="mt-3 line-clamp-2 text-2xl font-black sm:text-3xl">{primary.course.title}</h2>
-                    <p className="mt-2 text-sm text-white">
-                      {primary.progress.completion_percent === 0 ? tUi("startFirst") : tUi("progress", { percent: primary.progress.completion_percent })}
-                      <span className="mx-2 text-white/60">·</span>{tCounts("lessons", { count: primary.course.lesson_count })}
-                    </p>
+                    <h2 className="mt-3 line-clamp-2 text-2xl font-black sm:text-3xl">{tileEnrollment.course.title}</h2>
+                    {continueWatching ? (
+                      <p className="mt-2 text-sm text-white">
+                        {continueWatching.lastWatched.lesson_title} › {continueWatching.lastWatched.item_title} · {tUi.rich("continueAt", {
+                          time: () => <span dir="ltr" className="tabular-nums">{formatPlaybackTime(continueWatching.lastWatched.last_position_sec)}</span>,
+                        })}
+                      </p>
+                    ) : (
+                      <p className="mt-2 text-sm text-white">
+                        {tileEnrollment.progress.completion_percent === 0 ? tUi("startFirst") : tUi("progress", { percent: tileEnrollment.progress.completion_percent })}
+                        <span className="mx-2 text-white/60">·</span>{tCounts("lessons", { count: tileEnrollment.course.lesson_count })}
+                      </p>
+                    )}
                     <div className="mt-5 flex items-center gap-3">
-                      <div className="h-2 flex-1 overflow-hidden rounded-full bg-white/25" role="progressbar" aria-label={tUi("progressLabel", { percent: primary.progress.completion_percent })} aria-valuenow={primary.progress.completion_percent} aria-valuemin={0} aria-valuemax={100}>
-                        <div className="h-full rounded-full bg-amber-400 transition-[width] duration-700" style={{ width: `${primary.progress.completion_percent}%` }} />
+                      <div className="h-2 flex-1 overflow-hidden rounded-full bg-white/25" role="progressbar" aria-label={continueWatching ? tUi("videoReached", { percent: continueWatching.lastWatched.watched_percent }) : tUi("progressLabel", { percent: tileEnrollment.progress.completion_percent })} aria-valuenow={continueWatching?.lastWatched.watched_percent ?? tileEnrollment.progress.completion_percent} aria-valuemin={0} aria-valuemax={100}>
+                        <div className="h-full rounded-full bg-amber-400 transition-[width] duration-700" style={{ width: `${continueWatching?.lastWatched.watched_percent ?? tileEnrollment.progress.completion_percent}%` }} />
                       </div>
-                      <span className="shrink-0 text-xs font-bold tabular-nums">{primary.progress.completion_percent}%</span>
+                      <span className="shrink-0 text-xs font-bold tabular-nums">{continueWatching?.lastWatched.watched_percent ?? tileEnrollment.progress.completion_percent}%</span>
                     </div>
                     <div className="mt-5 flex flex-wrap items-center gap-3">
-                      <Link href={`/my-courses/${primary.course.id}`} className="sticker-badge inline-flex h-11 items-center gap-2 rounded-xl border-2 border-ink bg-amber-400 px-5 text-sm font-extrabold text-ink shadow-[3px_3px_0_0_var(--color-ink)] transition hover:-translate-y-0.5 hover:bg-amber-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white dark:border-sky-200 dark:shadow-[3px_3px_0_0_var(--color-sticker-shadow)]">
-                        {primary.progress.completion_percent ? tUi("resume") : tUi("startLearning")}<ArrowLeft className="size-4 ltr:-scale-x-100" />
+                      <Link href={continueWatching ? `/my-courses/${continueWatching.lastWatched.course_id}?item=${continueWatching.lastWatched.item_id}` : `/my-courses/${tileEnrollment.course.id}`} className="sticker-badge inline-flex h-11 items-center gap-2 rounded-xl border-2 border-ink bg-amber-400 px-5 text-sm font-extrabold text-ink shadow-[3px_3px_0_0_var(--color-ink)] transition hover:-translate-y-0.5 hover:bg-amber-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white dark:border-sky-200 dark:shadow-[3px_3px_0_0_var(--color-sticker-shadow)]">
+                        {continueWatching || tileEnrollment.progress.completion_percent ? tUi("resume") : tUi("startLearning")}<ArrowLeft className="size-4 ltr:-scale-x-100" />
                       </Link>
-                      <Link href={`/my-courses/${primary.course.id}`} className="inline-flex h-11 items-center rounded-lg border border-white/40 px-4 text-sm font-bold text-white transition hover:bg-white/10">{tUi("courseDetails")}</Link>
-                      <span className="text-xs text-white">{tUi("availableUntil", { date: formatExpiry(primary.expires_at, locale) })}</span>
+                      <Link href={continueWatching ? `/my-courses/${continueWatching.lastWatched.course_id}?item=${continueWatching.lastWatched.item_id}` : `/my-courses/${tileEnrollment.course.id}`} className="inline-flex h-11 items-center rounded-lg border border-white/40 px-4 text-sm font-bold text-white transition hover:bg-white/10">{tUi("courseDetails")}</Link>
+                      <span className="text-xs text-white">{tUi("availableUntil", { date: formatExpiry(tileEnrollment.expires_at, locale) })}</span>
                     </div>
                   </div>
                 </div>
