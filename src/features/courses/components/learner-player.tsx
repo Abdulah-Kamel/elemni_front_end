@@ -4,11 +4,14 @@ import { ChevronLeft, ChevronRight, Download, FileText, Maximize2, Minimize2, Pl
 import { useTranslations } from "next-intl";
 import type { PublicItemDto, PublicLessonDto } from "@/src/lib/student-api/contract";
 import { resolveAssetUrl } from "@/src/lib/asset-url";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import VideoLesson from "../video/video-lesson";
 import { WHATSAPP_URL } from "@/src/features/contact/contact-details";
 
 export default function LearnerPlayer({
   activeContent,
+  courseId,
+  completed,
   itemPosition,
   canGoPrevious,
   canGoNext,
@@ -22,6 +25,8 @@ export default function LearnerPlayer({
     lesson: PublicLessonDto;
     type: "video" | "document";
   } | null;
+  courseId: number;
+  completed: boolean;
   itemPosition: string;
   canGoPrevious: boolean;
   canGoNext: boolean;
@@ -31,8 +36,12 @@ export default function LearnerPlayer({
   onTheaterModeChange: (enabled: boolean) => void;
 }) {
   const t = useTranslations("courseDetail");
-  const [iframeFailed, setIframeFailed] = useState(false);
-  const [iframeAttempt, setIframeAttempt] = useState(0);
+  const [completedFor, setCompletedFor] = useState<number | null>(null);
+  const activeItemId = activeContent?.item.id;
+  const markCompleted = useCallback(() => {
+    if (activeItemId !== undefined) setCompletedFor(activeItemId);
+  }, [activeItemId]);
+  const showCompleted = completed || completedFor === activeItemId;
   if (!activeContent) {
     return (
       <PlayerEmptyState
@@ -42,12 +51,10 @@ export default function LearnerPlayer({
       />
     );
   }
-  const isDocument = activeContent.type === "document";
-  const retryIframe = () => { setIframeFailed(false); setIframeAttempt((attempt) => attempt + 1); };
-  const assetUrl = isDocument
-    ? resolveAssetUrl(activeContent.item.document_path, "")
-    : activeContent.item.bunny_stream_embed_url;
-  if (!assetUrl) {
+  const isVideo = activeContent.type === "video";
+  const isDocument = !isVideo;
+  const assetUrl = isDocument ? resolveAssetUrl(activeContent.item.document_path, "") : undefined;
+  if (isDocument && !assetUrl) {
     return (
       <PlayerEmptyState
         kind={isDocument ? "document" : "video"}
@@ -70,22 +77,24 @@ export default function LearnerPlayer({
             : "aspect-video overflow-hidden rounded-[18px] bg-[#0D1015]"
         }
       >
-        {iframeFailed && !isDocument ? (
-          <div role="alert" className="flex aspect-video flex-col items-center justify-center gap-3 bg-[#0D1015] p-6 text-center text-white">
-            <p>{t("videoLoadError")}</p>
-            <button type="button" onClick={retryIframe} className="rounded-lg bg-[#0A5FB4] px-4 py-2 text-sm font-semibold text-white">{t("retry")}</button>
-          </div>
-        ) : <iframe
-          key={iframeAttempt}
-          src={assetUrl}
-          title={`${activeContent.lesson.title} - ${activeContent.item.title}`}
-          className={isDocument ? "h-[min(75dvh,56rem)] w-full border-0 bg-white" : "size-full border-0 [color-scheme:light]"}
-          allow={isDocument ? undefined : "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"}
-          allowFullScreen={!isDocument}
-          loading="lazy"
-          referrerPolicy="strict-origin-when-cross-origin"
-          onError={() => { if (!isDocument) setIframeFailed(true); }}
-        />}
+        {isVideo ? (
+          <VideoLesson
+            key={activeContent.item.id}
+            item={activeContent.item}
+            lesson={activeContent.lesson}
+            courseId={courseId}
+            completed={completed}
+            onCompleted={markCompleted}
+          />
+        ) : (
+          <iframe
+            src={assetUrl ?? undefined}
+            title={`${activeContent.lesson.title} - ${activeContent.item.title}`}
+            className="h-[min(75dvh,56rem)] w-full border-0 bg-white"
+            loading="lazy"
+            referrerPolicy="strict-origin-when-cross-origin"
+          />
+        )}
       </div>
       <div className="rounded-[18px] border border-[#E4E2DC] bg-white px-5 py-4 text-[#15181E] shadow-[0_16px_38px_-30px_rgba(21,24,30,0.35)] sm:px-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
@@ -102,6 +111,11 @@ export default function LearnerPlayer({
               )}
               {activeContent.lesson.title}
             </p>
+            {showCompleted && (
+              <span className="mt-2 inline-flex rounded-full bg-[#E6F4EC] px-2 py-1 text-[11px] font-bold text-[#16784A] dark:bg-emerald-400/10 dark:text-emerald-400">
+                {t("completedStatus")}
+              </span>
+            )}
           </div>
           <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:w-auto">
             <button

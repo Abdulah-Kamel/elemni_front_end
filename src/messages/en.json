@@ -563,6 +563,25 @@
     "copyright": "© 2026 Elemni. All rights reserved."
   },
   "courseDetail": {
+    "videoPlayback": {
+      "resumeFrom": "Resume from <time></time>",
+      "resume": "Resume",
+      "startWatching": "Start watching",
+      "play": "Play",
+      "completedTitle": "You've completed this video",
+      "watchAgain": "Watch again",
+      "viewsRemaining": "{count, plural, =0 {No more views available} one {# more view available} other {# more views available}}",
+      "watchLimitTitle": "Watch limit reached",
+      "watchLimitBody": "Contact your teacher to request extra views.",
+      "contactSupport": "Contact us on WhatsApp",
+      "processing": "This video is still being processed. Try again in a few minutes.",
+      "unavailable": "This video is unavailable right now. Contact support if this continues.",
+      "notEnrolled": "You no longer have access to this course.",
+      "interruptedTitle": "Playback paused here",
+      "interruptedBody": "This video was opened somewhere else or the connection dropped.",
+      "loadingPlayer": "Loading the player…",
+      "reachedPercent": "Reached {percent}%"
+    },
     "backToCatalog": "Back to courses",
     "backToCourses": "Back to my courses",
     "backToExplore": "Back to explore",

@@ -388,6 +388,8 @@ export default function CourseDetail({
                     transition={{ duration: 0.25 }}
                   >
                     <LearnerPlayer
+                      courseId={courseId}
+                      completed={visibleActiveContent ? (detail.enrollment?.progress.completed_item_ids ?? []).includes(visibleActiveContent.item.id) : false}
                       activeContent={visibleActiveContent}
                       itemPosition={itemPosition}
                       canGoPrevious={visibleActiveIndex > 0}
