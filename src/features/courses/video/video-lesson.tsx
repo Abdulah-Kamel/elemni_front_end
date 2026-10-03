@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useRouter } from "@/src/i18n/navigation";
 import { useVideoProgress } from "@/src/features/student/hooks/use-video-analytics-queries";
 import type { PublicItemDto, PublicLessonDto } from "@/src/lib/student-api/contract";
@@ -24,15 +24,26 @@ export default function VideoLesson({
 }) {
   const tv = useTranslations("courseDetail.videoPlayback");
   const router = useRouter();
+  const redirectedRef = useRef(false);
+  const onUnauthenticated = useCallback(() => {
+    if (redirectedRef.current) return;
+    redirectedRef.current = true;
+    router.replace("/login");
+  }, [router]);
   const { status, embedUrl, isCompleted, lastPositionSec, start, iframeRef } = useVideoSession({
     itemId: item.id,
     courseId,
     durationSec: item.duration_seconds,
     initiallyCompleted: completed,
-    onUnauthenticated: () => router.replace("/login"),
+    onUnauthenticated,
   });
   const showPlayer = embedUrl !== null && (status.kind === "seeking" || status.kind === "playing");
   const progressQuery = useVideoProgress(showPlayer ? null : item.id);
+  const progressErrorKind = progressQuery.isError ? classifyVideoError(progressQuery.error) : null;
+
+  useEffect(() => {
+    if (progressErrorKind === "unauthenticated") onUnauthenticated();
+  }, [progressErrorKind, onUnauthenticated]);
 
   useEffect(() => {
     if (isCompleted) onCompleted();

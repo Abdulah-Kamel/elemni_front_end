@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { act, renderHook } from "@testing-library/react";
+import { act, cleanup, renderHook } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import { StudentApiError } from "@/src/lib/student-api/client";
@@ -19,6 +19,7 @@ const fakeBridge = vi.hoisted(() => ({
   currentTime: 0,
   paused: true,
   setCurrentTime: vi.fn(),
+  getPaused: vi.fn(),
   destroy: vi.fn(),
 }));
 vi.mock("./player-bridge", () => ({
@@ -38,7 +39,7 @@ vi.mock("./player-bridge", () => ({
       },
       setCurrentTime: fakeBridge.setCurrentTime,
       getCurrentTime: async () => fakeBridge.currentTime,
-      getPaused: async () => fakeBridge.paused,
+      getPaused: fakeBridge.getPaused,
       destroy: fakeBridge.destroy,
     };
   }),
@@ -81,9 +82,14 @@ beforeEach(() => {
   fakeBridge.paused = true;
   fakeBridge.setCurrentTime.mockReset();
   fakeBridge.setCurrentTime.mockImplementation((s: number) => { fakeBridge.currentTime = s; });
+  fakeBridge.getPaused.mockReset();
+  fakeBridge.getPaused.mockImplementation(async () => fakeBridge.paused);
   fakeBridge.destroy.mockReset();
 });
-afterEach(() => vi.useRealTimers());
+afterEach(() => {
+  cleanup();
+  vi.useRealTimers();
+});
 
 describe("useVideoSession", () => {
   it("ignores a double start while starting", async () => {
@@ -100,6 +106,80 @@ describe("useVideoSession", () => {
     expect(fakeBridge.setCurrentTime).toHaveBeenCalledWith(30);
     expect(view.result.current.status).toEqual({ kind: "playing" });
     expect(transport.sendHeartbeat).toHaveBeenCalledWith(105, { sequence: 1, position_sec: 30, state: "playing" });
+  });
+
+  it.each(["pause", "ended"])("does not start telemetry after play then %s before ready", async (event) => {
+    const view = setup();
+    transport.requestPlayback.mockResolvedValueOnce(playback());
+    transport.sendHeartbeat.mockResolvedValue(heartbeatOk);
+    await act(async () => view.result.current.start(30));
+    view.attachIframe();
+    act(() => { emit("play"); emit(event); });
+    await act(async () => { fakeBridge.readyResolve?.(); });
+    await act(async () => { await vi.advanceTimersByTimeAsync(600); });
+    expect(view.result.current.status).toEqual({ kind: "playing" });
+    expect(transport.sendHeartbeat).not.toHaveBeenCalled();
+  });
+
+  it("does not create a controller after unmount while getPaused is pending", async () => {
+    const view = setup();
+    let resolvePaused!: (paused: boolean) => void;
+    fakeBridge.getPaused.mockReturnValueOnce(new Promise<boolean>((resolve) => { resolvePaused = resolve; }));
+    transport.requestPlayback.mockResolvedValueOnce(playback());
+    transport.sendHeartbeat.mockResolvedValue(heartbeatOk);
+    await act(async () => view.result.current.start(30));
+    view.attachIframe();
+    act(() => emit("play"));
+    await act(async () => { fakeBridge.readyResolve?.(); });
+    expect(fakeBridge.getPaused).toHaveBeenCalledTimes(1);
+    view.unmount();
+    await act(async () => { await vi.advanceTimersByTimeAsync(10); });
+    expect(transport.endSession).toHaveBeenCalledWith(105, { beacon: false });
+    await act(async () => { resolvePaused(false); });
+    await act(async () => { await vi.advanceTimersByTimeAsync(60_000); });
+    expect(transport.sendHeartbeat).not.toHaveBeenCalled();
+  });
+
+  it("ends a pending playback response after pagehide instead of seeking", async () => {
+    const view = setup();
+    let resolvePlayback!: (data: ReturnType<typeof playback>) => void;
+    transport.requestPlayback.mockReturnValueOnce(new Promise((resolve) => { resolvePlayback = resolve; }));
+    act(() => view.result.current.start(30));
+    act(() => { window.dispatchEvent(new Event("pagehide")); });
+    await act(async () => { resolvePlayback(playback(999)); });
+    expect(transport.endSession).toHaveBeenCalledWith(999);
+    expect(view.result.current.status.kind).not.toBe("seeking");
+    expect(view.result.current.embedUrl).toBeNull();
+  });
+
+  it("interrupts a pending start on bfcache restore", () => {
+    const view = setup();
+    transport.requestPlayback.mockReturnValue(new Promise(() => undefined));
+    act(() => view.result.current.start(30));
+    act(() => {
+      window.dispatchEvent(new Event("pagehide"));
+      window.dispatchEvent(new PageTransitionEvent("pageshow", { persisted: true }));
+    });
+    expect(view.result.current.status).toEqual({ kind: "interrupted", reason: "session-lost" });
+    act(() => view.result.current.start(30));
+    expect(transport.requestPlayback).toHaveBeenCalledTimes(2);
+  });
+
+  it("does not unlock a newer pending start when an old playback response arrives", async () => {
+    const view = setup();
+    let resolveFirst!: (data: ReturnType<typeof playback>) => void;
+    transport.requestPlayback.mockReturnValueOnce(new Promise((resolve) => { resolveFirst = resolve; }));
+    transport.requestPlayback.mockReturnValue(new Promise(() => undefined));
+    act(() => view.result.current.start(30));
+    act(() => {
+      window.dispatchEvent(new Event("pagehide"));
+      window.dispatchEvent(new PageTransitionEvent("pageshow", { persisted: true }));
+      view.result.current.start(30);
+    });
+    await act(async () => { resolveFirst(playback(999)); });
+    act(() => view.result.current.start(30));
+    expect(transport.requestPlayback).toHaveBeenCalledTimes(2);
+    expect(transport.endSession).toHaveBeenCalledWith(999);
   });
 
   it("ends a superseded playback response's session", async () => {

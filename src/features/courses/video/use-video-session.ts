@@ -122,11 +122,11 @@ export function useVideoSession({
     setStatus({ kind: "starting" });
     requestPlayback(itemId, positionSec).then(
       (data) => {
-        startingRef.current = false;
         if (!mountedRef.current || generation !== generationRef.current) {
           void endSession(data.session_id);
           return;
         }
+        startingRef.current = false;
         sessionRef.current = { id: data.session_id, generation, bridge: null, controller: null, ended: false };
         targetRef.current = positionSec;
         positionRef.current = positionSec;
@@ -135,8 +135,8 @@ export function useVideoSession({
         setStatus({ kind: "seeking" });
       },
       (error: unknown) => {
-        startingRef.current = false;
         if (!mountedRef.current || generation !== generationRef.current) return;
+        startingRef.current = false;
         fail(classifyVideoError(error));
       },
     );
@@ -150,8 +150,10 @@ export function useVideoSession({
     session.bridge = bridge;
     let seekConfirmed = false;
     let pendingPlay = false;
+    const isCurrentSession = () => sessionRef.current === session && !session.ended && mountedRef.current;
 
     const ensureController = () => {
+      if (!isCurrentSession()) return null;
       if (session.controller) return session.controller;
       const controller = createHeartbeatController({
         send: (body) => sendHeartbeat(session.id, body),
@@ -186,33 +188,44 @@ export function useVideoSession({
       session.controller?.updatePosition(seconds);
     });
     bridge.on("play", () => {
-      if (seekConfirmed) ensureController().playing();
+      if (seekConfirmed) ensureController()?.playing();
       else pendingPlay = true;
     });
-    bridge.on("pause", () => session.controller?.paused());
-    bridge.on("ended", () => session.controller?.ended());
+    bridge.on("pause", () => {
+      if (session.controller) session.controller.paused();
+      else pendingPlay = false;
+    });
+    bridge.on("ended", () => {
+      if (session.controller) session.controller.ended();
+      else pendingPlay = false;
+    });
     bridge.on("error", () => {
       failSession(session, "player-error");
     });
 
     bridge.ready.then(async () => {
+      if (!isCurrentSession()) return;
       const max = callbacksRef.current.durationSec && callbacksRef.current.durationSec > 0
         ? callbacksRef.current.durationSec
         : Number.POSITIVE_INFINITY;
       const target = Math.min(Math.max(0, targetRef.current), max);
       if (target > 0) {
         bridge.setCurrentTime(target);
-        if (!(await confirmSeek(bridge, target))) {
+        const confirmed = await confirmSeek(bridge, target);
+        if (!isCurrentSession()) return;
+        if (!confirmed) {
           failSession(session, "player-timeout");
           return;
         }
       }
-      if (sessionRef.current !== session) return;
-      positionRef.current = (await bridge.getCurrentTime().catch(() => target));
+      const position = await bridge.getCurrentTime().catch(() => target);
+      if (!isCurrentSession()) return;
+      positionRef.current = position;
       seekConfirmed = true;
       if (mountedRef.current) setStatus({ kind: "playing" });
-      const paused = await bridge.getPaused().catch(() => true);
-      if (pendingPlay || !paused) ensureController().playing();
+      const paused = await bridge.getPaused().catch(() => !pendingPlay);
+      if (!isCurrentSession()) return;
+      if (!paused) ensureController()?.playing();
     }, () => {
       failSession(session, "player-timeout");
     });
@@ -220,10 +233,16 @@ export function useVideoSession({
 
   // pagehide → best-effort beacon; bfcache restore → session is gone.
   useEffect(() => {
-    const onPageHide = () => { void endCurrent({ beacon: true }); };
+    const onPageHide = () => {
+      if (startingRef.current) {
+        generationRef.current += 1;
+        startingRef.current = false;
+      }
+      void endCurrent({ beacon: true });
+    };
     const onPageShow = (event: PageTransitionEvent) => {
       if (event.persisted && mountedRef.current) {
-        setStatus((current) => (current.kind === "playing" || current.kind === "seeking"
+        setStatus((current) => (current.kind === "playing" || current.kind === "seeking" || current.kind === "starting"
           ? { kind: "interrupted", reason: "session-lost" }
           : current));
       }
