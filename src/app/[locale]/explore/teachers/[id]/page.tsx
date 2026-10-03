@@ -3,20 +3,32 @@ import { setRequestLocale } from "next-intl/server";
 import DashboardTeacherProfile from "@/src/features/teachers/components/client/dashboard-teacher-profile";
 import { toTeacher } from "@/src/lib/student-api/adapters";
 import type { UserDto } from "@/src/lib/student-api/contract";
-import { authenticatedBackendFetch, hasStudentSession } from "@/src/lib/student-api/session";
+import { authenticatedBackendFetch, sessionGate } from "@/src/lib/student-api/session";
 import { getPublicTeacher, getPublicTeacherCourses, getPublicTeachers } from "@/src/lib/student-api/public";
 
 export const dynamic = "force-dynamic";
 
 export default async function PortalTeacherProfilePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string; id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { locale, id } = await params;
   setRequestLocale(locale);
-  if (!(await hasStudentSession())) {
+  const gate = await sessionGate();
+  if (gate === "none") {
     redirect(locale === "ar" ? `/login?next=/explore/teachers/${id}` : `/${locale}/login?next=/${locale}/explore/teachers/${id}`);
+  }
+  if (gate === "refresh") {
+    const nextQuery = new URLSearchParams();
+    for (const [key, value] of Object.entries(await searchParams)) {
+      if (Array.isArray(value)) value.forEach((entry) => nextQuery.append(key, entry));
+      else if (value !== undefined) nextQuery.set(key, value);
+    }
+    const nextPath = `${locale === "ar" ? "" : `/${locale}`}/explore/teachers/${id}${nextQuery.size ? `?${nextQuery}` : ""}`;
+    redirect(`/api/student/auth/refresh?next=${encodeURIComponent(nextPath)}`);
   }
 
   const [userResult, teacherResult, coursesResult] = await Promise.all([

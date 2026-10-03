@@ -160,15 +160,16 @@ describe("missing access cookie", () => {
   });
 });
 
-describe("hasStudentSession", () => {
+describe("sessionGate", () => {
   it.each([
-    ["a", "", true],
-    ["", "r", true],
-    ["", "", false],
+    ["a", "", "active"],
+    ["a", "r", "active"],
+    ["", "r", "refresh"],
+    ["", "", "none"],
   ])("access=%s refresh=%s → %s", async (access, refresh, expected) => {
-    const { hasStudentSession } = await import("./session");
+    const { sessionGate } = await import("./session");
     mocks.accessToken = access;
     mocks.refreshToken = refresh;
-    await expect(hasStudentSession()).resolves.toBe(expected);
+    await expect(sessionGate()).resolves.toBe(expected);
   });
 });

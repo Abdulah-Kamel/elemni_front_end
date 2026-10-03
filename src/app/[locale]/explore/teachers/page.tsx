@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import ExploreTeachers from "@/src/features/teachers/components/client/explore-teachers";
 import { getGrades, getPublicCourses, getPublicTeachers } from "@/src/lib/student-api/public";
-import { hasStudentSession } from "@/src/lib/student-api/session";
+import { sessionGate } from "@/src/lib/student-api/session";
 
 export const dynamic = "force-dynamic";
 
@@ -20,13 +20,25 @@ export async function generateMetadata({
 
 export default async function ExploreTeachersPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  if (!(await hasStudentSession())) {
+  const gate = await sessionGate();
+  if (gate === "none") {
     redirect(locale === "ar" ? "/login?next=/explore/teachers" : `/${locale}/login?next=/${locale}/explore/teachers`);
+  }
+  if (gate === "refresh") {
+    const nextQuery = new URLSearchParams();
+    for (const [key, value] of Object.entries(await searchParams)) {
+      if (Array.isArray(value)) value.forEach((entry) => nextQuery.append(key, entry));
+      else if (value !== undefined) nextQuery.set(key, value);
+    }
+    const nextPath = `${locale === "ar" ? "" : `/${locale}`}/explore/teachers${nextQuery.size ? `?${nextQuery}` : ""}`;
+    redirect(`/api/student/auth/refresh?next=${encodeURIComponent(nextPath)}`);
   }
 
   const [teachersResult, gradesResult, coursesResult] = await Promise.all([

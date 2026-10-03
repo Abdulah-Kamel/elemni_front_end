@@ -36,11 +36,12 @@ export async function getAccessToken() {
   return (await cookies()).get(ACCESS_COOKIE)?.value;
 }
 
-export async function hasStudentSession() {
-  return Boolean((await getAccessToken()) || (await getRefreshToken()));
+export async function sessionGate(): Promise<"active" | "refresh" | "none"> {
+  if (await getAccessToken()) return "active";
+  return (await getRefreshToken()) ? "refresh" : "none";
 }
 
-async function refreshAccessToken(): Promise<TokenDto | null> {
+export async function refreshAccessToken(): Promise<TokenDto | null> {
   const refreshToken = await getRefreshToken();
   if (!refreshToken) return null;
 

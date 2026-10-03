@@ -10,7 +10,7 @@ import {
   getStreams,
   getSubjects,
 } from "@/src/lib/student-api/public";
-import { hasStudentSession } from "@/src/lib/student-api/session";
+import { sessionGate } from "@/src/lib/student-api/session";
 
 export const dynamic = "force-dynamic";
 
@@ -41,8 +41,18 @@ export default async function ExploreCoursesPage({
     const destination = locale === "ar" ? "/explore/teachers" : `/${locale}/explore/teachers`;
     redirect(`${destination}${nextParams.size ? `?${nextParams.toString()}` : ""}`);
   }
-  if (!(await hasStudentSession()))
+  const gate = await sessionGate();
+  if (gate === "none")
     redirect(locale === "ar" ? "/login?next=/explore" : `/${locale}/login?next=/${locale}/explore`);
+  if (gate === "refresh") {
+    const nextQuery = new URLSearchParams();
+    for (const [key, value] of Object.entries(query)) {
+      if (Array.isArray(value)) value.forEach((entry) => nextQuery.append(key, entry));
+      else if (value !== undefined) nextQuery.set(key, value);
+    }
+    const nextPath = `${locale === "ar" ? "" : `/${locale}`}/explore${nextQuery.size ? `?${nextQuery}` : ""}`;
+    redirect(`/api/student/auth/refresh?next=${encodeURIComponent(nextPath)}`);
+  }
 
   const [courses, teachers, grades, streams, subjects] = await Promise.all([
     getPublicCourses(),

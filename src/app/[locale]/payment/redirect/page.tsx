@@ -1,9 +1,10 @@
+import { redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import StudentPortalShell from "@/src/features/portal/components/portal-shell";
 import PaymentResultView from "@/src/features/payments/components/payment-result-view";
 import { parsePaymentResult } from "@/src/features/payments/parse-payment-result";
 import type { UserDto } from "@/src/lib/student-api/contract";
-import { authenticatedBackendFetch } from "@/src/lib/student-api/session";
+import { authenticatedBackendFetch, sessionGate } from "@/src/lib/student-api/session";
 
 export const dynamic = "force-dynamic";
 
@@ -39,8 +40,18 @@ export default async function PaymentRedirectPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const query = await searchParams;
+  const gate = await sessionGate();
+  if (gate === "refresh") {
+    const nextQuery = new URLSearchParams();
+    for (const [key, value] of Object.entries(query)) {
+      if (Array.isArray(value)) value.forEach((entry) => nextQuery.append(key, entry));
+      else if (value !== undefined) nextQuery.set(key, value);
+    }
+    const nextPath = `${locale === "ar" ? "" : `/${locale}`}/payment/redirect${nextQuery.size ? `?${nextQuery}` : ""}`;
+    redirect(`/api/student/auth/refresh?next=${encodeURIComponent(nextPath)}`);
+  }
   const result = parsePaymentResult(query ?? {});
-  const user = await getCurrentUserSafe();
+  const user = gate === "active" ? await getCurrentUserSafe() : null;
 
   return (
     <StudentPortalShell user={user} active="courses">
