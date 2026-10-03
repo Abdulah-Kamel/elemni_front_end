@@ -2,13 +2,15 @@ export class StudentApiError extends Error {
   readonly status: number;
   readonly code: string;
   readonly detail?: string;
+  readonly retryAfterSec?: number;
 
-  constructor(status: number, code: string, detail?: string) {
+  constructor(status: number, code: string, detail?: string, retryAfterSec?: number) {
     super(detail ?? code);
     this.name = "StudentApiError";
     this.status = status;
     this.code = code;
     this.detail = detail;
+    this.retryAfterSec = retryAfterSec;
   }
 }
 
@@ -34,10 +36,16 @@ export async function studentApiFetch<T>(
 
   if (!response.ok) {
     const body = await response.json().catch(() => null);
+    // Optional chaining: existing unit tests mock fetch with plain objects that have no headers.
+    const retryAfterHeader = response.headers?.get("Retry-After") ?? null;
+    const retryAfterSec = retryAfterHeader && /^\d+$/.test(retryAfterHeader.trim())
+      ? Number(retryAfterHeader.trim())
+      : undefined;
     throw new StudentApiError(
       response.status,
       typeof body?.code === "string" ? body.code : `BACKEND_ERROR_${response.status}`,
       typeof body?.detail === "string" ? body.detail : undefined,
+      retryAfterSec,
     );
   }
 

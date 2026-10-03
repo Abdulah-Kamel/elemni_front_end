@@ -6,6 +6,7 @@ export interface BackendError {
   status: number;
   code: string;
   detail?: string;
+  retryAfter?: string;
 }
 
 export type BackendResult<T> =
@@ -29,12 +30,14 @@ export async function backendFetch<T>(
 
     if (!response.ok) {
       const body = await response.json().catch(() => ({}));
+      const retryAfter = response.headers.get("Retry-After") ?? undefined;
       return {
         ok: false,
         error: {
           status: response.status,
           code: typeof body?.code === "string" ? body.code : `BACKEND_ERROR_${response.status}`,
           ...(typeof body?.detail === "string" ? { detail: body.detail } : {}),
+          ...(retryAfter ? { retryAfter } : {}),
         },
       };
     }
@@ -60,6 +63,6 @@ export function backendErrorResponse(error: BackendError) {
   const status = error.status >= 400 && error.status <= 599 ? error.status : 502;
   return Response.json(
     { code: error.code || `BACKEND_ERROR_${status}`, ...(error.detail ? { detail: error.detail } : {}) },
-    { status },
+    { status, ...(error.retryAfter ? { headers: { "Retry-After": error.retryAfter } } : {}) },
   );
 }
