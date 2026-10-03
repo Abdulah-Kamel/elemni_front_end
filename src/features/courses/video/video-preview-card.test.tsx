@@ -53,6 +53,14 @@ describe("VideoPreviewCard", () => {
     expect(screen.getByRole("link", { name: "Contact us on WhatsApp" })).toBeInTheDocument();
   });
 
+  it("shows the full watch-limit card after playback is denied", () => {
+    renderCard({ kind: "error", reason: "watch-limit" });
+    expect(screen.getByText("Watch limit reached")).toBeInTheDocument();
+    expect(screen.getByText("Contact your teacher to request extra views.")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Contact us on WhatsApp" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: en.courseDetail.retry })).toBeNull();
+  });
+
   it("offers watch again from zero after completion, with remaining views", () => {
     const { onStart } = renderCard({ kind: "ready", progress: progress({ attempt_status: "completed", completed_attempts: 1, allowance_remaining: 1 }) });
     expect(screen.getByText("1 more view available")).toBeInTheDocument();

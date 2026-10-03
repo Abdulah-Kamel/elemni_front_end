@@ -37,6 +37,17 @@ function Time({ seconds }: { seconds: number }) {
   return <span dir="ltr" className="tabular-nums">{formatPlaybackTime(seconds)}</span>;
 }
 
+function WatchLimitBlock() {
+  const tv = useTranslations("courseDetail.videoPlayback");
+  return (
+    <>
+      <p className="text-lg font-black text-white">{tv("watchLimitTitle")}</p>
+      <p className="max-w-sm text-sm leading-6 text-slate-300">{tv("watchLimitBody")}</p>
+      <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="text-sm font-bold text-sky-300 underline">{tv("contactSupport")}</a>
+    </>
+  );
+}
+
 export default function VideoPreviewCard({
   state,
   onStart,
@@ -52,22 +63,20 @@ export default function VideoPreviewCard({
   let body: ReactNode;
   if (state.kind === "loading") {
     body = <div role="status" aria-label={tv("loadingPlayer")} className="h-11 w-40 animate-pulse rounded-xl bg-white/10" />;
+  } else if (state.kind === "error" && state.reason === "watch-limit") {
+    body = <WatchLimitBlock />;
   } else if (state.kind === "error") {
     const message = state.reason === "processing"
       ? tv("processing")
       : state.reason === "not-enrolled"
         ? tv("notEnrolled")
-        : state.reason === "watch-limit"
-          ? tv("watchLimitTitle")
-          : state.reason === "unavailable" || state.reason === "forbidden"
-            ? tv("unavailable")
-            : t("videoLoadError");
+        : state.reason === "unavailable" || state.reason === "forbidden"
+          ? tv("unavailable")
+          : t("videoLoadError");
     body = (
       <>
         <p role="alert" className="max-w-sm text-sm leading-6 text-slate-200">{message}</p>
-        {state.reason === "watch-limit" ? (
-          <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="text-sm font-bold text-sky-300 underline">{tv("contactSupport")}</a>
-        ) : state.reason !== "not-enrolled" && (
+        {state.reason !== "not-enrolled" && (
           <button type="button" onClick={onRetry} className={primaryButton}>
             <RotateCcw className="size-4" aria-hidden="true" />{t("retry")}
           </button>
@@ -91,13 +100,7 @@ export default function VideoPreviewCard({
       ? <p className="text-xs text-slate-400">{tv("viewsRemaining", { count: remaining })}</p>
       : null;
     if (variant.kind === "watch-limit") {
-      body = (
-        <>
-          <p className="text-lg font-black text-white">{tv("watchLimitTitle")}</p>
-          <p className="max-w-sm text-sm leading-6 text-slate-300">{tv("watchLimitBody")}</p>
-          <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="text-sm font-bold text-sky-300 underline">{tv("contactSupport")}</a>
-        </>
-      );
+      body = <WatchLimitBlock />;
     } else if (variant.kind === "resume") {
       body = (
         <>

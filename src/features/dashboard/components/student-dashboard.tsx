@@ -179,7 +179,7 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
                     <h2 className="mt-3 line-clamp-2 text-2xl font-black sm:text-3xl">{tileEnrollment.course.title}</h2>
                     {continueWatching ? (
                       <p className="mt-2 text-sm text-white">
-                        {continueWatching.lastWatched.lesson_title} › {continueWatching.lastWatched.item_title} · {tUi.rich("continueAt", {
+                        <bdi>{continueWatching.lastWatched.lesson_title}</bdi> › <bdi>{continueWatching.lastWatched.item_title}</bdi> · {tUi.rich("continueAt", {
                           time: () => <span dir="ltr" className="tabular-nums">{formatPlaybackTime(continueWatching.lastWatched.last_position_sec)}</span>,
                         })}
                       </p>

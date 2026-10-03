@@ -74,7 +74,7 @@ export default function LearnerPlayer({
         className={
           isDocument
             ? "overflow-hidden rounded-[18px] border border-[#E4E2DC] bg-[#ECEAE4] p-2 sm:p-4"
-            : "aspect-video overflow-hidden rounded-[18px] bg-[#0D1015]"
+            : "aspect-video overflow-hidden rounded-[18px] bg-[#0D1015] dark:ring-1 dark:ring-white/10"
         }
       >
         {isVideo ? (
@@ -103,19 +103,21 @@ export default function LearnerPlayer({
             <h2 id="player-title" className="mt-1 text-lg font-black text-[#15181E]">
               {activeContent.item.title}
             </h2>
-            <p className="mt-1 inline-flex items-center gap-1.5 text-xs text-[#5F6573]">
-              {isDocument ? (
-                <FileText className="size-3.5 text-[#0A5FB4]" aria-hidden="true" />
-              ) : (
-                <PlayCircle className="size-3.5 text-[#0A5FB4]" aria-hidden="true" />
+            <div className="mt-1 flex flex-wrap items-center gap-2">
+              <p className="inline-flex items-center gap-1.5 text-xs text-[#5F6573]">
+                {isDocument ? (
+                  <FileText className="size-3.5 text-[#0A5FB4]" aria-hidden="true" />
+                ) : (
+                  <PlayCircle className="size-3.5 text-[#0A5FB4]" aria-hidden="true" />
+                )}
+                {activeContent.lesson.title}
+              </p>
+              {showCompleted && (
+                <span className="inline-flex rounded-full bg-[#E6F4EC] px-2 py-1 text-[11px] font-bold text-[#16784A] dark:bg-emerald-400/10 dark:text-emerald-400">
+                  {t("completedStatus")}
+                </span>
               )}
-              {activeContent.lesson.title}
-            </p>
-            {showCompleted && (
-              <span className="mt-2 inline-flex rounded-full bg-[#E6F4EC] px-2 py-1 text-[11px] font-bold text-[#16784A] dark:bg-emerald-400/10 dark:text-emerald-400">
-                {t("completedStatus")}
-              </span>
-            )}
+            </div>
           </div>
           <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:w-auto">
             <button
