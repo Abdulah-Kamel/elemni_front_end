@@ -3,10 +3,10 @@ import { expect, test, type Page } from "@playwright/test";
 const EMBED_ORIGIN = "https://iframe.mediadelivery.net";
 const EMBED_URL = `${EMBED_ORIGIN}/embed/1/fake-guid?token=t&expires=9999999999`;
 
-// Minimal player.js receiver: answers ready, getters, setCurrentTime, and autoplays.
+// Bunny order: ready precedes autoplay; seeks work only after playback starts.
 const FAKE_PLAYER = `<!doctype html><html><body style="margin:0;background:#000">
 <script>
-  let current = 0; let paused = true; const listeners = {};
+  let current = 0; let paused = true; let started = false; const listeners = {};
   const send = (msg) => parent.postMessage(JSON.stringify({ context: "player.js", version: "0.0.11", ...msg }), "*");
   const fire = (event, value) => (listeners[event] || []).forEach((listener) => send({ event, value, listener }));
   window.addEventListener("message", (e) => {
@@ -14,13 +14,20 @@ const FAKE_PLAYER = `<!doctype html><html><body style="margin:0;background:#000"
     if (m.context !== "player.js") return;
     if (m.method === "addEventListener") {
       (listeners[m.value] = listeners[m.value] || []).push(m.listener);
-      if (m.value === "ready") send({ event: "ready", value: {}, listener: m.listener });
+      if (m.value === "ready") {
+        send({ event: "ready", value: {}, listener: m.listener });
+        setTimeout(() => {
+          if (started) return;
+          started = true; paused = false;
+          fire("play"); fire("timeupdate", { seconds: current, duration: 1800 });
+          setInterval(() => { if (!paused) { current += 1; fire("timeupdate", { seconds: current, duration: 1800 }); } }, 1000);
+        }, 100);
+      }
     } else if (m.method === "getCurrentTime") send({ event: "getCurrentTime", value: current, listener: m.listener });
     else if (m.method === "getPaused") send({ event: "getPaused", value: paused, listener: m.listener });
     else if (m.method === "setCurrentTime") {
-      current = m.value; fire("seeked");
-      paused = false; fire("play");
-      setInterval(() => { if (!paused) { current += 1; fire("timeupdate", { seconds: current, duration: 1800 }); } }, 1000);
+      if (!started) return;
+      current = m.value; fire("timeupdate", { seconds: current, duration: 1800 });
     }
   });
 </script></body></html>`;

@@ -14,13 +14,15 @@ export type PreviewVariant =
   | { kind: "completed" }
   | { kind: "start" };
 
-export function resolvePreviewVariant(progress: VideoProgressDto): PreviewVariant {
+export function resolvePreviewVariant(progress: VideoProgressDto, durationSec?: number | null): PreviewVariant {
   if (progress.allowance_remaining === 0 && progress.attempt_status !== "active") return { kind: "watch-limit" };
-  if (progress.attempt_status === "active" && progress.last_position_sec > 0) {
+  const hasResumePoint = progress.last_position_sec > 0
+    && !(durationSec && durationSec > 0 && progress.last_position_sec >= durationSec - 3);
+  if (progress.attempt_status === "active" && hasResumePoint) {
     return { kind: "resume", positionSec: progress.last_position_sec };
   }
   if (progress.completed_attempts > 0) return { kind: "completed" };
-  if (progress.last_position_sec > 0) return { kind: "resume", positionSec: progress.last_position_sec };
+  if (hasResumePoint) return { kind: "resume", positionSec: progress.last_position_sec };
   return { kind: "start" };
 }
 
@@ -52,10 +54,12 @@ export default function VideoPreviewCard({
   state,
   onStart,
   onRetry,
+  durationSec,
 }: {
   state: PreviewCardState;
   onStart: (positionSec: number) => void;
   onRetry: () => void;
+  durationSec?: number | null;
 }) {
   const t = useTranslations("courseDetail");
   const tv = useTranslations("courseDetail.videoPlayback");
@@ -94,7 +98,7 @@ export default function VideoPreviewCard({
       </>
     );
   } else {
-    const variant = resolvePreviewVariant(state.progress);
+    const variant = resolvePreviewVariant(state.progress, durationSec);
     const remaining = state.progress.allowance_remaining;
     const footnote = remaining !== null && variant.kind !== "watch-limit"
       ? <p className="text-xs text-slate-400">{tv("viewsRemaining", { count: remaining })}</p>

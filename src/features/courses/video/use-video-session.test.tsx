@@ -18,6 +18,7 @@ const fakeBridge = vi.hoisted(() => ({
   readyReject: null as null | ((e: Error) => void),
   currentTime: 0,
   paused: true,
+  hasStarted: false,
   setCurrentTime: vi.fn(),
   getPaused: vi.fn(),
   destroy: vi.fn(),
@@ -47,7 +48,22 @@ vi.mock("./player-bridge", () => ({
 
 import { confirmSeek, useVideoSession } from "./use-video-session";
 
-const emit = (event: string, value?: unknown) => fakeBridge.handlers.get(event)?.forEach((cb) => cb(value));
+const emit = (event: string, value?: unknown) => {
+  if (event === "play") {
+    fakeBridge.hasStarted = true;
+    fakeBridge.paused = false;
+  } else if (event === "pause" || event === "ended") {
+    fakeBridge.paused = true;
+  } else if (event === "timeupdate") {
+    const { seconds } = value as { seconds: number };
+    fakeBridge.currentTime = seconds;
+    if (seconds > 0) {
+      fakeBridge.hasStarted = true;
+      fakeBridge.paused = false;
+    }
+  }
+  fakeBridge.handlers.get(event)?.forEach((cb) => cb(value));
+};
 const playback = (sessionId = 105) => ({
   embed_url: "https://iframe.mediadelivery.net/embed/1/abc?token=t&expires=1",
   attempt_id: 10, session_id: sessionId, attempt_status: "active", expires_in: 3600,
@@ -55,11 +71,11 @@ const playback = (sessionId = 105) => ({
 });
 const heartbeatOk = { accepted: true, duplicate: false, completed: false, watched_percent: 10, last_position_sec: 30 };
 
-function setup() {
+function setup(durationSec = 100) {
   const client = new QueryClient();
   const wrapper = ({ children }: { children: ReactNode }) => <QueryClientProvider client={client}>{children}</QueryClientProvider>;
   const onUnauthenticated = vi.fn();
-  const hook = renderHook(() => useVideoSession({ itemId: 42, courseId: 7, durationSec: 100, initiallyCompleted: false, onUnauthenticated }), { wrapper });
+  const hook = renderHook(() => useVideoSession({ itemId: 42, courseId: 7, durationSec, initiallyCompleted: false, onUnauthenticated }), { wrapper });
   const attachIframe = () => act(() => hook.result.current.iframeRef(document.createElement("iframe")));
   return { ...hook, attachIframe, onUnauthenticated };
 }
@@ -69,7 +85,7 @@ async function startAndPlay(view: ReturnType<typeof setup>, position = 30) {
   transport.sendHeartbeat.mockResolvedValue(heartbeatOk);
   await act(async () => view.result.current.start(position));
   view.attachIframe();
-  fakeBridge.paused = false;
+  act(() => emit("play"));
   await act(async () => { fakeBridge.readyResolve?.(); });
   await act(async () => { await vi.advanceTimersByTimeAsync(600); });
 }
@@ -80,11 +96,15 @@ beforeEach(() => {
   transport.endSession.mockResolvedValue(undefined);
   fakeBridge.currentTime = 0;
   fakeBridge.paused = true;
+  fakeBridge.hasStarted = false;
   fakeBridge.setCurrentTime.mockReset();
-  fakeBridge.setCurrentTime.mockImplementation((s: number) => { fakeBridge.currentTime = s; });
+  fakeBridge.setCurrentTime.mockImplementation((s: number) => {
+    if (fakeBridge.hasStarted) fakeBridge.currentTime = s;
+  });
   fakeBridge.getPaused.mockReset();
   fakeBridge.getPaused.mockImplementation(async () => fakeBridge.paused);
   fakeBridge.destroy.mockReset();
+  fakeBridge.destroy.mockImplementation(() => { fakeBridge.handlers.clear(); });
 });
 afterEach(() => {
   cleanup();
@@ -92,6 +112,72 @@ afterEach(() => {
 });
 
 describe("useVideoSession", () => {
+  it.each(["play", "timeupdate"])("waits without a timeout for %s before applying a resume seek", async (event) => {
+    const view = setup();
+    transport.requestPlayback.mockResolvedValueOnce(playback());
+    transport.sendHeartbeat.mockResolvedValue(heartbeatOk);
+    await act(async () => view.result.current.start(30));
+    view.attachIframe();
+    await act(async () => { fakeBridge.readyResolve?.(); });
+    await act(async () => { await vi.advanceTimersByTimeAsync(10_000); });
+    expect(view.result.current.status).toEqual({ kind: "seeking" });
+    expect(fakeBridge.setCurrentTime).not.toHaveBeenCalled();
+    expect(transport.sendHeartbeat).not.toHaveBeenCalled();
+    await act(async () => { emit(event, event === "timeupdate" ? { seconds: 2.6, duration: 100 } : undefined); });
+    await act(async () => { await vi.advanceTimersByTimeAsync(600); });
+    expect(fakeBridge.setCurrentTime).toHaveBeenCalledWith(30);
+    expect(view.result.current.status).toEqual({ kind: "playing" });
+    expect(transport.sendHeartbeat).toHaveBeenCalledWith(105, { sequence: 1, position_sec: 30, state: "playing" });
+  });
+
+  it("seeks after autoplay starts before ready", async () => {
+    const view = setup();
+    await startAndPlay(view, 30);
+    expect(fakeBridge.setCurrentTime).toHaveBeenCalledWith(30);
+    expect(view.result.current.status).toEqual({ kind: "playing" });
+    expect(transport.sendHeartbeat).toHaveBeenCalledWith(105, { sequence: 1, position_sec: 30, state: "playing" });
+  });
+
+  it("seeks on play even while the initial getPaused call is pending", async () => {
+    const view = setup();
+    fakeBridge.getPaused.mockReturnValueOnce(new Promise(() => undefined));
+    transport.requestPlayback.mockResolvedValueOnce(playback());
+    transport.sendHeartbeat.mockResolvedValue(heartbeatOk);
+    await act(async () => view.result.current.start(30));
+    view.attachIframe();
+    await act(async () => { fakeBridge.readyResolve?.(); });
+    await act(async () => { emit("play"); });
+    await act(async () => { await vi.advanceTimersByTimeAsync(600); });
+    expect(fakeBridge.setCurrentTime).toHaveBeenCalledWith(30);
+    expect(view.result.current.status).toEqual({ kind: "playing" });
+    expect(transport.sendHeartbeat).toHaveBeenCalledWith(105, { sequence: 1, position_sec: 30, state: "playing" });
+  });
+
+  it.each([72, 75])("starts from zero instead of resuming at %s seconds in a 75 second video", async (position) => {
+    const view = setup(75);
+    transport.requestPlayback.mockResolvedValueOnce(playback());
+    await act(async () => view.result.current.start(position));
+    view.attachIframe();
+    await act(async () => { fakeBridge.readyResolve?.(); });
+    await act(async () => { await vi.advanceTimersByTimeAsync(6_000); });
+    expect(fakeBridge.setCurrentTime).not.toHaveBeenCalled();
+    expect(view.result.current.status).toEqual({ kind: "playing" });
+  });
+
+  it("ends the playback wait on teardown without seeking or sending telemetry", async () => {
+    const view = setup();
+    transport.requestPlayback.mockResolvedValueOnce(playback());
+    await act(async () => view.result.current.start(30));
+    view.attachIframe();
+    await act(async () => { fakeBridge.readyResolve?.(); });
+    view.unmount();
+    await act(async () => { await vi.advanceTimersByTimeAsync(10); });
+    expect(transport.endSession).toHaveBeenCalledWith(105, { beacon: false });
+    await act(async () => { emit("play"); await vi.advanceTimersByTimeAsync(10_000); });
+    expect(fakeBridge.setCurrentTime).not.toHaveBeenCalled();
+    expect(transport.sendHeartbeat).not.toHaveBeenCalled();
+  });
+
   it("ignores a double start while starting", async () => {
     const view = setup();
     transport.requestPlayback.mockReturnValue(new Promise(() => undefined));
@@ -278,6 +364,7 @@ describe("useVideoSession", () => {
     transport.requestPlayback.mockResolvedValueOnce(playback());
     await act(async () => view.result.current.start(30));
     view.attachIframe();
+    act(() => emit("play"));
     await act(async () => { fakeBridge.readyResolve?.(); });
     await act(async () => { await vi.advanceTimersByTimeAsync(6_000); });
     expect(fakeBridge.setCurrentTime).toHaveBeenCalledWith(30);

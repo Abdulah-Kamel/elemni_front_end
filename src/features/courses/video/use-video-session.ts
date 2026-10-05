@@ -51,6 +51,7 @@ interface ActiveSession {
   bridge: PlayerBridge | null;
   controller: HeartbeatController | null;
   ended: boolean;
+  cancelPlaybackWait?: () => void;
 }
 
 export function useVideoSession({
@@ -95,6 +96,7 @@ export function useVideoSession({
     if (!session || session.ended) return;
     session.ended = true;
     sessionRef.current = null;
+    session.cancelPlaybackWait?.();
     session.bridge?.destroy();
     const controller = session.controller;
     if (controller && !controller.stopped && !beacon) {
@@ -150,6 +152,14 @@ export function useVideoSession({
     session.bridge = bridge;
     let seekConfirmed = false;
     let pendingPlay = false;
+    let playbackStarted = false;
+    let resolvePlaybackStart!: (started: boolean) => void;
+    const playbackStart = new Promise<boolean>((resolve) => { resolvePlaybackStart = resolve; });
+    session.cancelPlaybackWait = () => resolvePlaybackStart(false);
+    const notePlaybackStarted = () => {
+      playbackStarted = true;
+      resolvePlaybackStart(true);
+    };
     const isCurrentSession = () => sessionRef.current === session && !session.ended && mountedRef.current;
 
     const ensureController = () => {
@@ -186,8 +196,10 @@ export function useVideoSession({
     bridge.on("timeupdate", ({ seconds }) => {
       positionRef.current = seconds;
       session.controller?.updatePosition(seconds);
+      if (seconds > 0) notePlaybackStarted();
     });
     bridge.on("play", () => {
+      notePlaybackStarted();
       if (seekConfirmed) ensureController()?.playing();
       else pendingPlay = true;
     });
@@ -208,8 +220,18 @@ export function useVideoSession({
       const max = callbacksRef.current.durationSec && callbacksRef.current.durationSec > 0
         ? callbacksRef.current.durationSec
         : Number.POSITIVE_INFINITY;
-      const target = Math.min(Math.max(0, targetRef.current), max);
+      const clampedTarget = Math.min(Math.max(0, targetRef.current), max);
+      const target = Number.isFinite(max) && clampedTarget >= max - 3 ? 0 : clampedTarget;
       if (target > 0) {
+        // Bunny can report ready before it accepts seeks. Wait for actual playback,
+        // allowing the student to press its play button if autoplay was blocked.
+        if (!playbackStarted && !pendingPlay) {
+          const started = await Promise.race([
+            playbackStart,
+            bridge.getPaused().then((paused) => paused ? playbackStart : true, () => playbackStart),
+          ]);
+          if (!isCurrentSession() || !started) return;
+        }
         bridge.setCurrentTime(target);
         const confirmed = await confirmSeek(bridge, target);
         if (!isCurrentSession()) return;

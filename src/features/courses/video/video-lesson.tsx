@@ -62,7 +62,7 @@ export default function VideoLesson({
           referrerPolicy="strict-origin-when-cross-origin"
         />
         {status.kind === "seeking" && (
-          <div role="status" className="absolute inset-0 flex items-center justify-center bg-[#0D1015]/80 text-sm text-white">
+          <div role="status" className="pointer-events-none absolute inset-0 flex items-center justify-center bg-[#0D1015]/80 text-sm text-white">
             {tv("loadingPlayer")}
           </div>
         )}
@@ -80,6 +80,7 @@ export default function VideoLesson({
   return (
     <VideoPreviewCard
       state={state}
+      durationSec={item.duration_seconds}
       onStart={start}
       // A failed progress load is refetched; any other failure starts a fresh session at the last position.
       onRetry={() => (progressQuery.isError ? void progressQuery.refetch() : start(lastPositionSec))}

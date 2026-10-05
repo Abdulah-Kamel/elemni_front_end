@@ -14,18 +14,29 @@ const progress = (overrides: Partial<VideoProgressDto> = {}): VideoProgressDto =
   last_watched_at: null, completed_at: null, ...overrides,
 });
 
-function renderCard(state: Parameters<typeof VideoPreviewCard>[0]["state"], locale: "en" | "ar" = "en") {
+function renderCard(state: Parameters<typeof VideoPreviewCard>[0]["state"], locale: "en" | "ar" = "en", durationSec?: number) {
   const onStart = vi.fn();
   const onRetry = vi.fn();
   render(
     <NextIntlClientProvider locale={locale} messages={locale === "en" ? en : ar}>
-      <VideoPreviewCard state={state} onStart={onStart} onRetry={onRetry} />
+      <VideoPreviewCard state={state} onStart={onStart} onRetry={onRetry} durationSec={durationSec} />
     </NextIntlClientProvider>,
   );
   return { onStart, onRetry };
 }
 
 describe("resolvePreviewVariant", () => {
+  it.each([
+    [75, 0, { kind: "start" }],
+    [72, 0, { kind: "start" }],
+    [75, 1, { kind: "completed" }],
+    [60, 0, { kind: "resume", positionSec: 60 }],
+    [71, 0, { kind: "resume", positionSec: 71 }],
+  ])("uses duration to resolve position %s with %s completed attempts", (position, completed, expected) => {
+    expect(resolvePreviewVariant(progress({ attempt_status: "active", last_position_sec: position, completed_attempts: completed }), 75))
+      .toEqual(expected);
+  });
+
   it.each([
     [progress({ allowance_remaining: 0, attempt_status: "completed", completed_attempts: 2 }), { kind: "watch-limit" }],
     [progress({ allowance_remaining: 0, attempt_status: "active", last_position_sec: 50 }), { kind: "resume", positionSec: 50 }],
@@ -39,6 +50,13 @@ describe("resolvePreviewVariant", () => {
 });
 
 describe("VideoPreviewCard", () => {
+  it("plays from zero when the saved position is at the end", () => {
+    const { onStart } = renderCard({ kind: "ready", progress: progress({ attempt_status: "active", last_position_sec: 75 }) }, "en", 75);
+    expect(screen.queryByRole("button", { name: "Resume" })).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Play" }));
+    expect(onStart).toHaveBeenCalledWith(0);
+  });
+
   it("resumes from the saved position", () => {
     const { onStart } = renderCard({ kind: "ready", progress: progress({ attempt_status: "active", last_position_sec: 872 }) });
     expect(screen.getByText((_, el) => el?.tagName === "P" && el.textContent === "Resume from 14:32")).toBeInTheDocument();
