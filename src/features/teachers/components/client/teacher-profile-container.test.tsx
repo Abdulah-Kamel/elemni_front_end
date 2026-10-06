@@ -51,7 +51,6 @@ const teacher: Teacher = {
                   hasVideo: true,
                   hasDocument: false,
                   hasExam: false,
-                  videoUrl: "https://iframe.mediadelivery.net/play/123",
                 },
               ],
             },

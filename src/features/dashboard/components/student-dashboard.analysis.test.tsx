@@ -36,6 +36,10 @@ vi.mock("@/src/features/student/hooks/use-student-queries", () => ({
   }),
 }));
 
+vi.mock("@/src/features/student/hooks/use-video-analytics-queries", () => ({
+  useLastWatched: () => ({ data: undefined }),
+}));
+
 describe("StudentDashboard analysis surface", () => {
   afterEach(() => {
     cleanup();

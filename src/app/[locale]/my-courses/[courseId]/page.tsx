@@ -2,7 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import CourseDetail from "@/src/features/courses/components/course-detail";
 import { getGrades, getStreams } from "@/src/lib/student-api/public";
-import { getAccessToken } from "@/src/lib/student-api/session";
+import { sessionGate } from "@/src/lib/student-api/session";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -15,14 +15,24 @@ export default async function MyCourseDetailPage({
   searchParams,
 }: {
   params: Promise<{ locale: string; courseId: string }>;
-  searchParams: Promise<{ teacher?: string }>;
+  searchParams: Promise<{ teacher?: string; item?: string }>;
 }) {
   const { locale, courseId } = await params;
-  const { teacher } = await searchParams;
+  const { teacher, item } = await searchParams;
   setRequestLocale(locale);
 
-  if (!(await getAccessToken())) {
-    redirect(locale === "ar" ? `/login?next=/my-courses/${courseId}` : `/${locale}/login?next=/${locale}/my-courses/${courseId}`);
+  const parsedItem = item && /^\d+$/.test(item) && Number(item) > 0 ? Number(item) : undefined;
+  const nextQuery = new URLSearchParams();
+  if (teacher?.trim()) nextQuery.set("teacher", teacher.trim());
+  if (item && /^\d+$/.test(item)) nextQuery.set("item", item);
+  const suffix = nextQuery.size ? `?${nextQuery}` : "";
+  const nextPath = locale === "ar" ? `/my-courses/${courseId}${suffix}` : `/${locale}/my-courses/${courseId}${suffix}`;
+  const gate = await sessionGate();
+  if (gate === "none") {
+    redirect(`${locale === "ar" ? "" : `/${locale}`}/login?next=${encodeURIComponent(nextPath)}`);
+  }
+  if (gate === "refresh") {
+    redirect(`/api/student/auth/refresh?next=${encodeURIComponent(nextPath)}`);
   }
 
   const parsedCourseId = Number(courseId);
@@ -32,6 +42,7 @@ export default async function MyCourseDetailPage({
   return (
     <CourseDetail
       courseId={parsedCourseId}
+      initialItemId={parsedItem}
       teacherSlug={teacher?.trim() || undefined}
       grades={grades.ok ? grades.data : []}
       streams={streams.ok ? streams.data : []}

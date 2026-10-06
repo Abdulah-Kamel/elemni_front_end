@@ -42,6 +42,8 @@ export interface PublicItemDto {
   title: string;
   order: number;
   duration_minutes: number | null;
+  duration_seconds?: number | null;
+  max_watch_count?: number | null;
   has_video: boolean;
   has_document: boolean;
   has_exam: boolean;
@@ -103,6 +105,7 @@ export interface EnrollmentProgressDto {
   next_item_id: number | null;
   next_lesson_id: number | null;
   last_opened_at: string | null;
+  video_progress?: ItemVideoProgressDto[];
 }
 
 export interface EnrollmentDto {
@@ -149,4 +152,64 @@ export interface LoginDto {
 export interface TokenDto {
   access_token: string;
   refresh_token: string;
+}
+
+export interface ItemVideoProgressDto {
+  item_id: number;
+  last_position_sec: number;
+  watched_percent: number;
+  is_completed: boolean;
+}
+
+export interface PlaybackDto {
+  embed_url: string;
+  attempt_id: number;
+  session_id: number;
+  attempt_status: "active";
+  expires_in: number;
+  allowance_remaining: number | null;
+  allowance_source: "base" | "grant";
+  completed_attempts: number;
+}
+
+export type HeartbeatState = "playing" | "paused" | "ended";
+
+export interface HeartbeatRequestDto {
+  sequence: number;
+  position_sec: number;
+  state: HeartbeatState;
+}
+
+export interface HeartbeatDto {
+  accepted: boolean;
+  duplicate: boolean;
+  completed: boolean;
+  watched_percent: number;
+  last_position_sec: number;
+}
+
+export interface VideoProgressDto {
+  item_id: number;
+  attempt_id: number | null;
+  attempt_status: "active" | "completed" | "expired" | "none";
+  last_position_sec: number;
+  watched_percent: number;
+  completed_attempts: number;
+  allowance_remaining: number | null;
+  allowance_source: "base" | "grant" | null;
+  last_watched_at: string | null;
+  completed_at: string | null;
+}
+
+export interface LastWatchedDto {
+  course_id: number;
+  course_title: string;
+  lesson_id: number;
+  lesson_title: string;
+  item_id: number;
+  item_title: string;
+  last_position_sec: number;
+  watched_percent: number;
+  is_completed: boolean;
+  last_watched_at: string;
 }

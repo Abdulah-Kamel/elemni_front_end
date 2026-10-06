@@ -47,6 +47,8 @@ function absoluteDocumentUrl(path: string | null) {
   return resolveAssetUrl(path, "") || null;
 }
 
+const isPlayable = (item: PublicItemDto) => item.has_video || Boolean(absoluteDocumentUrl(item.document_path));
+
 export default function CourseDetail({
   courseId,
   teacherSlug,
@@ -55,6 +57,7 @@ export default function CourseDetail({
   isAuthenticated = true,
   publicMode = false,
   initialDetail,
+  initialItemId,
 }: {
   courseId: number;
   teacherSlug?: string;
@@ -63,6 +66,7 @@ export default function CourseDetail({
   isAuthenticated?: boolean;
   publicMode?: boolean;
   initialDetail?: StudentCourseDetailDto;
+  initialItemId?: number;
 }) {
   const t = useTranslations("courseDetail");
   const tApi = useTranslations("apiErrors");
@@ -123,7 +127,7 @@ export default function CourseDetail({
     ? chapters.flatMap((chapter) =>
         chapter.lessons.flatMap((lesson) =>
           lesson.items
-            .filter((item) => Boolean(item.bunny_stream_embed_url) || Boolean(absoluteDocumentUrl(item.document_path)))
+            .filter((item) => isPlayable(item))
             .map((item) => ({ item, lesson, chapter })),
         ),
       )
@@ -132,10 +136,11 @@ export default function CourseDetail({
   const resumeItemId = enrolled
     ? detail?.enrollment?.progress.next_item_id ?? detail?.enrollment?.progress.last_item_id
     : null;
-  const resumeLocation = resumeItemId
+  const preferredItemId = enrolled ? initialItemId ?? resumeItemId : null;
+  const resumeLocation = preferredItemId
     ? chapters
         .flatMap((chapter) => chapter.lessons.map((lesson) => ({ chapter, lesson })))
-        .find(({ lesson }) => lesson.items.some((item) => item.id === resumeItemId))
+        .find(({ lesson }) => lesson.items.some((item) => item.id === preferredItemId))
     : null;
   const visibleExpandedChapterId = expandedChapterId === undefined
     ? resumeLocation?.chapter.id ?? firstContentChapter?.id ?? null
@@ -147,16 +152,28 @@ export default function CourseDetail({
     ? chapters
         .flatMap((chapter) => chapter.lessons)
         .flatMap((lesson) => lesson.items.map((item) => ({ item, lesson })))
-        .find(({ item }) => item.id === resumeItemId && (Boolean(item.bunny_stream_embed_url) || Boolean(absoluteDocumentUrl(item.document_path))))
+        .find(({ item }) => item.id === preferredItemId && isPlayable(item))
       ?? chapters
         .flatMap((chapter) => chapter.lessons)
         .flatMap((lesson) => lesson.items.map((item) => ({ item, lesson })))
-        .find(({ item }) => Boolean(item.bunny_stream_embed_url) || Boolean(absoluteDocumentUrl(item.document_path)))
+        .find(({ item }) => isPlayable(item))
       ?? null
     : null;
+  if (enrolled && activeContent === null && firstPlayableContent) {
+    setActiveContent({
+      ...firstPlayableContent,
+      type: firstPlayableContent.item.has_video ? "video" : "document",
+    });
+  }
+  const videoProgress = detail?.enrollment?.progress.video_progress ?? [];
+  const completedItemIds = Array.from(new Set([
+    ...(detail?.enrollment?.progress.completed_item_ids ?? []),
+    ...videoProgress.filter((entry) => entry.is_completed).map((entry) => entry.item_id),
+  ]));
+  const videoProgressPercent = new Map(videoProgress.map((entry) => [entry.item_id, entry.watched_percent]));
   const visibleActiveContent = activeContent ?? (firstPlayableContent ? {
     ...firstPlayableContent,
-    type: firstPlayableContent.item.bunny_stream_embed_url ? "video" as const : "document" as const,
+    type: firstPlayableContent.item.has_video ? "video" as const : "document" as const,
   } : null);
   const visibleActiveIndex = visibleActiveContent
     ? playableItems.findIndex(({ item }) => item.id === visibleActiveContent.item.id)
@@ -176,12 +193,11 @@ export default function CourseDetail({
 
   const playVideo = (item: PublicItemDto, lesson: PublicLessonDto) => {
     setActiveContent({ item, lesson, type: "video" });
-    if (enrolled) progressMutation.mutate({ itemId: item.id });
     window.setTimeout(() => scrollIntoViewById("course-player", { block: "start" }), 0);
   };
 
   const openDocument = (item: PublicItemDto, lesson: PublicLessonDto) => {
-    if (enrolled) progressMutation.mutate({ itemId: item.id });
+    if (enrolled && !item.has_video) progressMutation.mutate({ itemId: item.id });
     setActiveContent({ item, lesson, type: "document" });
     window.setTimeout(() => scrollIntoViewById("course-player", { block: "start" }), 0);
   };
@@ -191,7 +207,7 @@ export default function CourseDetail({
     if (!target) return;
     setExpandedChapterId(target.chapter.id);
     setExpandedLessonId(target.lesson.id);
-    if (target.item.bunny_stream_embed_url) playVideo(target.item, target.lesson);
+    if (target.item.has_video) playVideo(target.item, target.lesson);
     else openDocument(target.item, target.lesson);
   };
 
@@ -217,7 +233,7 @@ export default function CourseDetail({
     if (firstContent && firstContentLesson) {
       setExpandedChapterId(firstContentChapter?.id ?? null);
       setExpandedLessonId(firstContentLesson.id);
-      if (firstContent.bunny_stream_embed_url) playVideo(firstContent, firstContentLesson);
+      if (firstContent.has_video) playVideo(firstContent, firstContentLesson);
       else openDocument(firstContent, firstContentLesson);
       return;
     }
@@ -388,6 +404,8 @@ export default function CourseDetail({
                     transition={{ duration: 0.25 }}
                   >
                     <LearnerPlayer
+                      courseId={courseId}
+                      completed={visibleActiveContent ? completedItemIds.includes(visibleActiveContent.item.id) : false}
                       activeContent={visibleActiveContent}
                       itemPosition={itemPosition}
                       canGoPrevious={visibleActiveIndex > 0}
@@ -412,7 +430,8 @@ export default function CourseDetail({
                 onLessonToggle={handleLessonToggle}
                 onPlay={playVideo}
                 onOpen={openDocument}
-                completedItemIds={detail.enrollment?.progress.completed_item_ids ?? []}
+                completedItemIds={completedItemIds}
+                videoProgressPercent={videoProgressPercent}
                 theaterMode={theaterMode}
                 completionPercent={detail.enrollment?.progress.completion_percent ?? null}
                 courseSummary={
