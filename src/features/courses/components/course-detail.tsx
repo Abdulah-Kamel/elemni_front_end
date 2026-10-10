@@ -242,8 +242,10 @@ export default function CourseDetail({
 
   const openCheckout = () => {
     if (!isAuthenticated) {
-      const returnTo = `${window.location.pathname}${window.location.search}`;
-      router.replace(`/login?next=${encodeURIComponent(returnTo)}`);
+      // The public page doesn't know the session. The student course page
+      // sends guests to login (and back), and signed-in students can buy there.
+      const query = teacherSlug ? `?teacher=${encodeURIComponent(teacherSlug)}` : "";
+      router.push(`/my-courses/${courseId}${query}`);
       return;
     }
     setCheckoutError("");

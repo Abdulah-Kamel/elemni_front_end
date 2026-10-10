@@ -847,7 +847,7 @@
     "ui": {
       "loading": "جاري تجهيز صفحتك...",
       "retry": "إعادة المحاولة",
-      "greeting": "أهلاً يا {name}",
+      "greeting": "أهلاً يا <name></name>",
       "intro": "تابع تقدّم كورساتك ومواعيد انتهاء اشتراكاتك.",
       "resume": "تابع التعلّم",
       "continueWatching": "كمّل المشاهدة",
@@ -881,6 +881,7 @@
     }
   },
   "studentAuth": {
+    "teacherDashboard": "معلّم؟ ادخل على لوحة تحكم المعلم",
     "errorInvalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
     "errorUnavailable": "هذا الحساب غير متاح حالياً.",
     "errorAlreadyRegistered": "يوجد حساب مسجل بهذا البريد الإلكتروني بالفعل.",
@@ -1056,6 +1057,7 @@
     "help": "المساعدة"
   },
   "passwordRecovery": {
+    "teacherDashboard": "معلّم؟ ادخل على لوحة تحكم المعلم",
     "forgotTitle": "استعادة كلمة المرور",
     "forgotDescription": "أدخل بريدك وسنرسل لك رابطاً آمناً لإنشاء كلمة مرور جديدة.",
     "checkEmail": "راجع بريدك الإلكتروني",

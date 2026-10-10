@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 const envSchema = z.object({
+  NEXT_PUBLIC_TEACHER_DASHBOARD_URL: z.string().url().optional().default("https://elemni-dashboard.vercel.app"),
   API_URL: z.string().url().optional().default("http://localhost:8001"),
   ASSETS_URL: z.string().url().optional(),
   CONTACT_EMAIL: z.string().email().optional().default("mero@elemni.com"),

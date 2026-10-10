@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { CheckCircle2, CircleAlert, Eye, EyeOff, LoaderCircle, LockKeyhole, Mail } from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { getTeacherDashboardSignInUrl } from "@/src/lib/teacher-dashboard";
 import AuthCard from "./auth-card";
 
 const inputClass =
@@ -82,6 +83,7 @@ export function ForgotPasswordForm() {
 }
 
 export function ResetPasswordForm({ token }: { token: string }) {
+  const locale = useLocale();
   const t = useTranslations("passwordRecovery");
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -124,6 +126,9 @@ export function ResetPasswordForm({ token }: { token: string }) {
             <h1 className="mt-4 text-2xl font-black text-[#1B1B24] dark:text-white">{t("updated")}</h1>
             <p className="mt-2 text-sm text-[#777587] dark:text-slate-400">{t("updatedDescription")}</p>
             <Link href="/login" className="mt-6 inline-flex h-11 items-center justify-center rounded-xl bg-primary px-6 text-sm font-bold text-white hover:bg-primary-hover">{t("login")}</Link>
+            <a href={getTeacherDashboardSignInUrl(locale)} className="mt-4 block text-sm font-bold text-primary underline hover:no-underline">
+              {t("teacherDashboard")}
+            </a>
           </div>
         ) : (
           <>

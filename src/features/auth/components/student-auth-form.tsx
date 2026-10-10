@@ -13,7 +13,8 @@ import {
   UserRound,
 } from "lucide-react";
 import { Link, useRouter } from "@/src/i18n/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { getTeacherDashboardSignInUrl } from "@/src/lib/teacher-dashboard";
 import { notifyStudentSessionChanged } from "@/src/lib/student-api/session-events";
 import AuthCard from "./auth-card";
 
@@ -52,6 +53,7 @@ const ltrInputClass =
   "h-12 w-full rounded-lg border border-[#E2E0EF] bg-white py-0 pl-11 pr-4 text-left text-sm text-[#1B1B24] outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10 placeholder:text-[#A6A3B5] dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-500";
 
 export default function StudentAuthForm({ mode, returnTo }: { mode: AuthMode; returnTo?: string }) {
+  const locale = useLocale();
   const router = useRouter();
   const t = useTranslations("studentAuth");
   const isRegister = mode === "register";
@@ -60,6 +62,7 @@ export default function StudentAuthForm({ mode, returnTo }: { mode: AuthMode; re
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [studentOnlyError, setStudentOnlyError] = useState(false);
 
   useEffect(() => {
     // Keep the native form disabled until the client submit handler is attached.
@@ -70,6 +73,7 @@ export default function StudentAuthForm({ mode, returnTo }: { mode: AuthMode; re
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError("");
+    setStudentOnlyError(false);
 
     const form = new FormData(event.currentTarget);
     const password = String(form.get("password") ?? "");
@@ -104,6 +108,7 @@ export default function StudentAuthForm({ mode, returnTo }: { mode: AuthMode; re
       const body = await response?.json().catch(() => null);
       const status = response?.status ?? 503;
       const code = body?.code as string | undefined;
+      setStudentOnlyError(code === "STUDENT_ACCOUNT_REQUIRED");
       setError(code === "STUDENT_ACCOUNT_REQUIRED" ? t("errorStudentOnly") : code === "AUTH_FIELDS_REQUIRED" || code === "REGISTRATION_FIELDS_REQUIRED" ? t("errorRequired") : status === 401 ? t("errorInvalidCredentials") : status === 403 ? t("errorUnavailable") : status === 409 ? t("errorAlreadyRegistered") : status === 422 ? t("errorInvalidData") : body?.detail || t("errorGeneric"));
       setSubmitting(false);
       return;
@@ -234,7 +239,14 @@ export default function StudentAuthForm({ mode, returnTo }: { mode: AuthMode; re
           {error && (
             <div role="alert" className="flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm font-bold text-red-700 dark:border-red-900/60 dark:bg-red-950/30 dark:text-red-300">
               <CircleAlert className="mt-0.5 size-4.5 shrink-0" />
-              <span>{error}</span>
+              <div>
+                <span>{error}</span>
+                {!isRegister && studentOnlyError && (
+                  <a href={getTeacherDashboardSignInUrl(locale)} className="mt-2 block text-sm font-bold text-primary underline hover:no-underline">
+                    {t("teacherDashboard")}
+                  </a>
+                )}
+              </div>
             </div>
           )}
 

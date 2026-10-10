@@ -847,7 +847,7 @@
     "ui": {
       "loading": "Preparing your dashboard...",
       "retry": "Try again",
-      "greeting": "Hi, {name}",
+      "greeting": "Hi, <name></name>",
       "intro": "Track your course progress and subscription end dates.",
       "resume": "Continue learning",
       "continueWatching": "Continue watching",
@@ -881,6 +881,7 @@
     }
   },
   "studentAuth": {
+    "teacherDashboard": "Teacher? Sign in to the teacher dashboard",
     "errorInvalidCredentials": "The email or password is incorrect.",
     "errorUnavailable": "This account is currently unavailable.",
     "errorAlreadyRegistered": "An account with this email already exists.",
@@ -1056,6 +1057,7 @@
     "help": "Help"
   },
   "passwordRecovery": {
+    "teacherDashboard": "Teacher? Sign in to the teacher dashboard",
     "forgotTitle": "Reset your password",
     "forgotDescription": "Enter your email and we’ll send you a secure link to create a new password.",
     "checkEmail": "Check your email",
