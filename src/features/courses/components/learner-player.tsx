@@ -2,11 +2,22 @@
 
 import { ChevronLeft, ChevronRight, Download, FileText, Maximize2, Minimize2, PlayCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
+import dynamic from "next/dynamic";
 import type { PublicItemDto, PublicLessonDto } from "@/src/lib/student-api/contract";
 import { resolveAssetUrl } from "@/src/lib/asset-url";
 import { useCallback, useState } from "react";
 import VideoLesson from "../video/video-lesson";
 import { WHATSAPP_URL } from "@/src/features/contact/contact-details";
+
+const PdfViewer = dynamic(() => import("../pdf/pdf-viewer"), {
+  ssr: false,
+  loading: () => <PdfLoadingSkeleton />,
+});
+
+function PdfLoadingSkeleton() {
+  const t = useTranslations("courseDetail.pdfViewer");
+  return <div role="status" className="flex h-[min(75dvh,56rem)] animate-pulse items-center justify-center rounded-xl bg-[#ECEAE4] text-sm text-[#5F6573] dark:bg-slate-900 dark:text-slate-300">{t("loading")}</div>;
+}
 
 export default function LearnerPlayer({
   activeContent,
@@ -73,7 +84,7 @@ export default function LearnerPlayer({
       <div
         className={
           isDocument
-            ? "overflow-hidden rounded-[18px] border border-[#E4E2DC] bg-[#ECEAE4] p-2 sm:p-4"
+            ? "overflow-hidden rounded-[18px] border border-[#E4E2DC] bg-[#ECEAE4] p-2 sm:p-4 dark:border-slate-700 dark:bg-slate-900"
             : "aspect-video overflow-hidden rounded-[18px] bg-[#0D1015] dark:ring-1 dark:ring-white/10"
         }
       >
@@ -87,12 +98,10 @@ export default function LearnerPlayer({
             onCompleted={markCompleted}
           />
         ) : (
-          <iframe
-            src={assetUrl ?? undefined}
+          <PdfViewer
+            url={assetUrl!}
             title={`${activeContent.lesson.title} - ${activeContent.item.title}`}
-            className="h-[min(75dvh,56rem)] w-full border-0 bg-white"
-            loading="lazy"
-            referrerPolicy="strict-origin-when-cross-origin"
+            downloadUrl={assetUrl!}
           />
         )}
       </div>

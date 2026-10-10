@@ -563,6 +563,22 @@
     "copyright": "© ٢٠٢٦ منصة علمني. جميع الحقوق محفوظة."
   },
   "courseDetail": {
+    "pdfViewer": {
+      "toolbar": "أدوات عرض الملف",
+      "pageIndicator": "الصفحة {current} من {total}",
+      "page": "الصفحة {number}",
+      "previousPage": "الصفحة السابقة",
+      "nextPage": "الصفحة التالية",
+      "zoomIn": "تكبير",
+      "zoomOut": "تصغير",
+      "fitWidth": "ملاءمة العرض",
+      "fullscreen": "ملء الشاشة",
+      "download": "تحميل",
+      "loading": "جارٍ تحميل الملف…",
+      "fallbackTitle": "تعذّر عرض الملف هنا",
+      "fallbackBody": "يمكنك فتح الملف في تبويب جديد أو تحميله لقراءته على جهازك.",
+      "openInNewTab": "فتح في تبويب جديد"
+    },
     "videoPlayback": {
       "resumeFrom": "كمّل من <time></time>",
       "resume": "كمّل",

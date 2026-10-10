@@ -38,6 +38,16 @@ vi.mock("@/src/features/courses/video/video-lesson", () => ({
   ),
 }));
 
+// Exercise the real, dynamically loaded PDF viewer; only external PDF fetching
+// is replaced. An unavailable CDN must still leave the file accessible.
+vi.mock("pdfjs-dist", () => ({
+  GlobalWorkerOptions: { workerSrc: "" },
+  getDocument: () => ({
+    promise: Promise.reject(new Error("CDN unavailable")),
+    destroy: vi.fn().mockResolvedValue(undefined),
+  }),
+}));
+
 const replaceMock = vi.fn();
 
 vi.mock("@/src/i18n/navigation", () => ({
@@ -408,8 +418,8 @@ describe("CourseDetail production experience", () => {
 
     fireEvent.click(await screen.findByTestId("learner-curriculum-item-102"));
 
-    const preview = await screen.findByTitle("مقدمة في النهايات - ملخص الدرس");
-    expect(preview).toHaveAttribute("src", "https://cdn.elemni.test/courses/12/lessons/11/items/102.pdf");
+    const preview = await screen.findByRole("region", { name: "مقدمة في النهايات - ملخص الدرس" });
+    expect(await within(preview).findByRole("link", { name: "فتح في تبويب جديد" })).toHaveAttribute("href", "https://cdn.elemni.test/courses/12/lessons/11/items/102.pdf");
     expect(screen.getByRole("link", { name: "تحميل الملف" })).toHaveAttribute(
       "href",
       "https://cdn.elemni.test/courses/12/lessons/11/items/102.pdf",
@@ -467,8 +477,9 @@ describe("CourseDetail production experience", () => {
     fireEvent.click(within(item).getByRole("button", { name: "فتح موارد العنصر" }));
     expect(within(item).getByRole("list", { name: "موارد العنصر" })).toBeInTheDocument();
     fireEvent.click(within(item).getByRole("button", { name: "عرض الملف" }));
-    expect(await screen.findByTitle("مقدمة في النهايات - فيديو الشرح")).toHaveAttribute(
-      "src",
+    const preview = await screen.findByRole("region", { name: "مقدمة في النهايات - فيديو الشرح" });
+    expect(await within(preview).findByRole("link", { name: "فتح في تبويب جديد" })).toHaveAttribute(
+      "href",
       "https://cdn.elemni.test/lesson.pdf",
     );
   });
@@ -839,8 +850,11 @@ describe("CourseDetail video analytics integration", () => {
     await screen.findByTestId("video-lesson");
     const item = screen.getByTestId("learner-curriculum-item-101");
     fireEvent.click(within(item).getByRole("button", { name: "عرض الملف" }));
-    await waitFor(() =>
-      expect(document.querySelector('iframe[src="https://cdn.elemni.test/lesson.pdf"]')).not.toBeNull());
+    const viewer = await screen.findByRole("region", { name: "مقدمة في النهايات - فيديو الشرح" });
+    const open = await within(viewer).findByRole("link", { name: "فتح في تبويب جديد" });
+    expect(open).toHaveAttribute("href", "https://cdn.elemni.test/lesson.pdf");
+    expect(within(viewer).getByRole("link", { name: "تحميل" })).toHaveAttribute("download");
+    expect(screen.getByRole("link", { name: "تحميل الملف" })).toHaveAttribute("href", "https://cdn.elemni.test/lesson.pdf");
     expect(progressPuts()).toHaveLength(0);
   });
 

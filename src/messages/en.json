@@ -563,6 +563,22 @@
     "copyright": "© 2026 Elemni. All rights reserved."
   },
   "courseDetail": {
+    "pdfViewer": {
+      "toolbar": "PDF controls",
+      "pageIndicator": "Page {current} of {total}",
+      "page": "Page {number}",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "fitWidth": "Fit to width",
+      "fullscreen": "Full screen",
+      "download": "Download",
+      "loading": "Loading document…",
+      "fallbackTitle": "We couldn't display this file here",
+      "fallbackBody": "You can open the file in a new tab or download it to read on your device.",
+      "openInNewTab": "Open in new tab"
+    },
     "videoPlayback": {
       "resumeFrom": "Resume from <time></time>",
       "resume": "Resume",
