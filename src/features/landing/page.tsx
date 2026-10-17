@@ -10,7 +10,8 @@ import LandingInteractiveShell from "./components/client/landing-interactive-she
 import SubjectGrid from "./components/server/subject-grid";
 import BentoGrid from "./components/server/bento-grid";
 import Comparison from "./components/server/comparison";
-// import MobileApp from "./components/server/mobile-app";
+import MobileApp from "./components/server/mobile-app";
+import { androidAppUrl } from "@/src/features/mobile-app/app-download-url";
 import DesktopWhiteboard from "./components/client/desktop-whiteboard";
 import FaqSection from "./components/client/faq-section";
 import FinalCta from "./components/server/final-cta";
@@ -43,7 +44,7 @@ export default async function StudentLandingPage() {
           <BentoGrid key="bento" />
           <DesktopWhiteboard key="whiteboard" />
           <Comparison key="comparison" />
-          {/* <MobileApp /> */}
+          <MobileApp key="mobile-app" downloadUrl={androidAppUrl} />
         </>
       }
       afterQuiz={
