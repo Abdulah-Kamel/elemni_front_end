@@ -1406,11 +1406,10 @@
     "titleLead": "Download the",
     "titleHighlight": "Elemni app",
     "titleTail": "and study anywhere",
-    "description": "Browse your courses from any device. Watch recorded video lessons and use the available files and quizzes.",
+    "description": "Browse your courses from your phone. Watch recorded video lessons, use the available files, and pick up where you left off.",
     "benefitLessons": "Recorded video lessons in every course",
     "benefitFiles": "Files included in course content",
-    "benefitQuizzes": "Quizzes included in course content",
-    "benefitProgress": "Track your progress and scores",
+    "benefitProgress": "Track your progress as you go",
     "availableOn": "Available on",
     "scoreSticker": "Top score: 100/100",
     "gradeSticker": "High school",
@@ -1433,7 +1432,9 @@
     "home": "Home",
     "lessons": "Lessons",
     "exams": "Exams",
-    "account": "Account"
+    "account": "Account",
+    "downloadAndroid": "Download the Android app",
+    "androidNote": "Available for Android for now. If your phone asks, allow installing apps from your browser."
   },
   "onboarding": {
     "meta": "Set up your learning | Elemni",
@@ -1568,5 +1569,11 @@
     "next": "Next page",
     "page": "Page {page}",
     "status": "Page {page} of {total}"
+  },
+  "mobileAppPromo": {
+    "title": "Get the Elemni app",
+    "body": "Watch your lessons and track your progress from your phone, anytime.",
+    "download": "Download for Android",
+    "dismiss": "Hide"
   }
 }

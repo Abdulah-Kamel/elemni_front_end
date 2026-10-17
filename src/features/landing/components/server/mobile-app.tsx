@@ -3,9 +3,13 @@
 import { m } from "motion/react";
 import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 import { useTranslations } from "next-intl";
+import { Download } from "lucide-react";
+import "@/src/features/portal/styles/sticker.css";
 
-export default function MobileApp() {
+/** Landing section for the student Android app. Renders nothing until a download link is configured. */
+export default function MobileApp({ downloadUrl }: { downloadUrl: string | null }) {
   const t = useTranslations("landingMobileApp");
+  if (!downloadUrl) return null;
   return (
     <section
       id="mobile"
@@ -18,7 +22,7 @@ export default function MobileApp() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid gap-12 lg:grid-cols-12 items-center">
 
-          {/* Left Column: Text Content & App Store Badges */}
+          {/* Left Column: Text Content & Android Download */}
           <m.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -44,7 +48,6 @@ export default function MobileApp() {
               {[
                 { text: t("benefitLessons"), color: "sky" as const },
                 { text: t("benefitFiles"), color: "purple" as const },
-                { text: t("benefitQuizzes"), color: "pink" as const },
                 { text: t("benefitProgress"), color: "yellow" as const },
               ].map((item, i) => (
                 <div key={i} className="flex items-center gap-3">
@@ -58,27 +61,20 @@ export default function MobileApp() {
               ))}
             </div>
 
-            {/* App Store / Google Play Download Buttons */}
-            <div className="pt-4 flex flex-wrap gap-4 items-center">
-              <button className="group relative inline-flex items-center gap-3.5 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 px-6 py-3.5 rounded-2xl shadow-xl shadow-slate-900/15 transition-all hover:-translate-y-1 active:scale-95 cursor-pointer">
-                <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
-                  <path d="M3.609 1.814L13.792 12 3.61 22.186a2.372 2.372 0 0 1-.61-1.603V3.417c0-.62.228-1.18.609-1.603zm11.6 11.6l2.35 2.35-12.012 6.945 9.662-9.295zm0-2.828L5.547 1.291l12.012 6.945-2.35 2.35zm1.414 1.414l3.196 1.846c.866.501.866 1.314 0 1.815l-3.196 1.846-2.02-2.02 2.02-2.02z" />
+            {/* Android download (no store listing yet: the APK is served directly) */}
+            <div className="space-y-3 pt-4">
+              <a
+                href={downloadUrl}
+                download
+                className="sticker-btn inline-flex min-h-14 items-center gap-3 px-7 text-base font-extrabold"
+              >
+                <svg className="size-6 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85a.637.637 0 0 0-.83.22l-1.88 3.24a11.43 11.43 0 0 0-8.94 0L5.65 5.67a.643.643 0 0 0-.87-.2c-.28.18-.37.54-.22.83L6.4 9.48A10.78 10.78 0 0 0 1 18h22a10.78 10.78 0 0 0-5.4-8.52M7 15.25a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5m10 0a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5" />
                 </svg>
-                <div className="text-start leading-tight">
-                  <div className="text-[10px] uppercase tracking-wider opacity-70 font-medium">{t("availableOn")}</div>
-                  <div className="text-sm font-black">Google Play</div>
-                </div>
-              </button>
-
-              <button className="group relative inline-flex items-center gap-3.5 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 px-6 py-3.5 rounded-2xl shadow-xl shadow-slate-900/15 transition-all hover:-translate-y-1 active:scale-95 cursor-pointer">
-                <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
-                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.85c.66-.8 1.11-1.92.99-3.04-.96.04-2.13.64-2.81 1.44-.6.69-1.13 1.83-0.99 2.93 1.07.08 2.16-.53 2.81-1.33z" />
-                </svg>
-                <div className="text-start leading-tight">
-                  <div className="text-[10px] uppercase tracking-wider opacity-70 font-medium">{t("availableOn")}</div>
-                  <div className="text-sm font-black">App Store</div>
-                </div>
-              </button>
+                {t("downloadAndroid")}
+                <Download className="size-5" aria-hidden="true" />
+              </a>
+              <p className="max-w-md text-xs leading-relaxed text-slate-500 dark:text-slate-400">{t("androidNote")}</p>
             </div>
           </m.div>
 

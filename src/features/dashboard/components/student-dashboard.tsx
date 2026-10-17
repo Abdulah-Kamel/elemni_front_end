@@ -32,6 +32,8 @@ import { formatPlaybackTime } from "@/src/features/courses/video/format-playback
 import { resolveContinueWatching } from "../continue-watching";
 import StudentAppShell from "@/src/features/portal/components/portal-shell";
 import StudyCounter from "./study-counter";
+import GetAppCard from "@/src/features/mobile-app/get-app-card";
+import { androidAppUrl } from "@/src/features/mobile-app/app-download-url";
 
 interface OnboardingDraft {
   grade_id: number;
@@ -275,6 +277,8 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
                 </div>
               ))}
             </section>
+
+            <GetAppCard downloadUrl={androidAppUrl} className="order-3 lg:col-start-2 lg:self-start" />
 
             {expiringSoon.length > 0 && <section id="upcoming" aria-labelledby="upcoming-heading" className="sticker-tile order-5 scroll-mt-24 border-2 border-ink bg-white p-5 dark:border-line dark:bg-slate-900 lg:col-start-2 lg:row-start-3 lg:self-start">
               <div className="mb-4 flex items-center justify-between gap-2">
