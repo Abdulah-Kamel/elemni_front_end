@@ -217,3 +217,10 @@ export interface LastWatchedDto {
   is_completed: boolean;
   last_watched_at: string;
 }
+
+export interface StudentProfileDto {
+  phone_number: string | null;
+  grade_id: number | null;
+  stream_id: number | null;
+  subject_ids: number[];
+}

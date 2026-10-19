@@ -73,10 +73,11 @@ export async function refreshAccessToken(): Promise<TokenDto | null> {
 export async function authenticatedBackendFetch<T>(
   path: string,
   init: RequestInit = {},
+  options: { refreshSession?: boolean } = {},
 ): Promise<BackendResult<T>> {
   let accessToken = await getAccessToken();
   if (!accessToken) {
-    if (!(await getRefreshToken())) {
+    if (options.refreshSession === false || !(await getRefreshToken())) {
       return { ok: false, error: { status: 401, code: "SESSION_REQUIRED" } };
     }
     const refreshed = await refreshAccessToken();
@@ -95,6 +96,9 @@ export async function authenticatedBackendFetch<T>(
 
   let result = await request(accessToken);
   if (result.ok || result.error.status !== 401) return result;
+
+  // Server Components can read cookies, but refreshing or clearing them needs a Route Handler.
+  if (options.refreshSession === false) return result;
 
   if (!(await getRefreshToken())) {
     await clearSession();

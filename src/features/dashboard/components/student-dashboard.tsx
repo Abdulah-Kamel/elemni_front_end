@@ -26,19 +26,17 @@ import {
 import {
   useCurrentStudent,
   useMyCourses,
+  useStudentProfile,
 } from "@/src/features/student/hooks/use-student-queries";
 import { useLastWatched } from "@/src/features/student/hooks/use-video-analytics-queries";
 import { formatPlaybackTime } from "@/src/features/courses/video/format-playback-time";
 import { resolveContinueWatching } from "../continue-watching";
 import StudentAppShell from "@/src/features/portal/components/portal-shell";
 import StudyCounter from "./study-counter";
+import { PhoneReminder } from "./phone-reminder";
+import { readOnboardingDraft, type StudyDraft } from "@/src/features/onboarding/client";
 import GetAppCard from "@/src/features/mobile-app/get-app-card";
 import { androidAppUrl } from "@/src/features/mobile-app/app-download-url";
-
-interface OnboardingDraft {
-  grade_id: number;
-  stream_id: number;
-}
 
 const popSpring = { type: "spring", stiffness: 260, damping: 22 } as const;
 
@@ -59,11 +57,11 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
   const tApi = useTranslations("apiErrors");
   const router = useRouter();
   const tOnboarding = useTranslations("onboarding");
-  const [profileLabel, setProfileLabel] = useState("");
   const [currentTime, setCurrentTime] = useState<number | null>(null);
-  const [profileChecked, setProfileChecked] = useState(false);
+  const [draft, setDraft] = useState<{ profile: StudyDraft | null } | null>(null);
   const [courseFilter, setCourseFilter] = useState<"all" | "in-progress" | "completed">("all");
   const userQuery = useCurrentStudent();
+  const profileQuery = useStudentProfile();
   const coursesQuery = useMyCourses();
   const lastWatchedQuery = useLastWatched();
   const user = userQuery.data ?? null;
@@ -84,22 +82,26 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
 
   useEffect(() => {
     const clockTimer = window.setTimeout(() => setCurrentTime(Date.now()), 0);
-    const timer = window.setTimeout(() => {
-      const rawDraft = localStorage.getItem("elemni-student-onboarding-v1");
-      setProfileChecked(true);
-      if (rawDraft) {
-        try {
-          const draft = JSON.parse(rawDraft) as OnboardingDraft;
-          const grade = grades.find((item) => item.id === draft.grade_id)?.name;
-          const stream = streams.find((item) => item.id === draft.stream_id)?.name;
-          setProfileLabel([grade, stream].filter(Boolean).join(" - "));
-        } catch {
-          localStorage.removeItem("elemni-student-onboarding-v1");
-        }
-      }
-    }, 0);
-    return () => { window.clearTimeout(timer); window.clearTimeout(clockTimer); };
-  }, [grades, streams]);
+    return () => window.clearTimeout(clockTimer);
+  }, []);
+
+  // The backend profile is the source of truth; this student's device draft only
+  // stands in when the profile can't be loaded.
+  const profileFailed = profileQuery.isError;
+  const userId = user?.id;
+  useEffect(() => {
+    if (!profileFailed) return;
+    const timer = window.setTimeout(() => setDraft({ profile: readOnboardingDraft(userId) }), 0);
+    return () => window.clearTimeout(timer);
+  }, [profileFailed, userId]);
+
+  const studyProfile = profileFailed ? draft?.profile ?? null : profileQuery.data ?? null;
+  const profileChecked = profileFailed ? draft !== null : profileQuery.isSuccess;
+  const profileLabel = [
+    grades.find((item) => item.id === studyProfile?.grade_id)?.name,
+    streams.find((item) => item.id === studyProfile?.stream_id)?.name,
+  ].filter(Boolean).join(" - ");
+  const needsPhone = profileQuery.isSuccess && profileQuery.data.phone_number == null;
 
   const loadDashboard = () => {
     void Promise.all([userQuery.refetch(), coursesQuery.refetch()]);
@@ -161,11 +163,13 @@ export default function StudentDashboard({ grades, streams }: { grades: GradeDto
                 </p>
               </div>
               {profileLabel ? (
-                <Link href="/onboarding" className="sticker-badge inline-flex rotate-1 bg-amber-300 px-3 py-2 text-xs font-extrabold text-ink hover:-rotate-1 dark:bg-amber-300 dark:text-ink">{profileLabel}</Link>
+                <Link href="/onboarding?edit=1" className="sticker-badge inline-flex rotate-1 bg-amber-300 px-3 py-2 text-xs font-extrabold text-ink hover:-rotate-1 dark:bg-amber-300 dark:text-ink">{profileLabel}</Link>
               ) : profileChecked ? (
                 <Link href="/onboarding" className="sticker-btn-outline inline-flex min-h-11 items-center px-4 text-xs font-black text-brand-700 dark:text-brand-300">{tOnboarding("dashboardPrompt")}</Link>
               ) : null}
             </m.header>
+
+            {needsPhone && <PhoneReminder className="order-1 lg:col-span-2" />}
 
             {tileEnrollment ? (
               <section aria-label={tUi("resume")} className="sticker-tile sticker-tile-brand order-2 overflow-hidden border-2 border-ink lg:col-start-1">

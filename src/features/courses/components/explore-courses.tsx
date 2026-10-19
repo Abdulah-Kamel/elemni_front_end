@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   BookOpen,
   CircleAlert,
@@ -21,6 +21,7 @@ import type {
   PublicTeacherDto,
   GradeDto,
   StreamDto,
+  StudentProfileDto,
   SubjectDto,
 } from "@/src/lib/student-api/contract";
 import { isStudentUnauthorized } from "@/src/lib/student-api/client";
@@ -28,7 +29,9 @@ import { useTranslations } from "next-intl";
 import {
   useCurrentStudent,
   useMyCourses,
+  useStudentProfile,
 } from "@/src/features/student/hooks/use-student-queries";
+import { readOnboardingDraft } from "@/src/features/onboarding/client";
 import StudentAppShell from "@/src/features/portal/components/portal-shell";
 
 export interface ExploreCourseEntry {
@@ -42,10 +45,8 @@ export interface ExploreCourseEntry {
   };
 }
 
-interface OnboardingDraft {
-  grade_id: number;
-  stream_id: number;
-}
+/** Subject filter value for "all the subjects in my study profile". */
+const PROFILE_SUBJECTS = "profile";
 
 type CatalogSort = "newest" | "price-low" | "price-high";
 const COURSES_PER_PAGE = 6;
@@ -124,8 +125,16 @@ export default function ExploreCourses({
   const router = useRouter();
   const t = useTranslations("courseExplore");
   const searchParams = useSearchParams();
-  const [profile, setProfile] = useState<OnboardingDraft | null>(null);
+  // Filters given in the URL win over the study profile's defaults.
+  const [initialUrlFilters] = useState(() => ({
+    grade: searchParams.has("grade"),
+    stream: searchParams.has("stream"),
+    subject: searchParams.has("subject"),
+  }));
+  const [profile, setProfile] = useState<Pick<StudentProfileDto, "grade_id" | "stream_id" | "subject_ids"> | null>(null);
+  const appliedProfileDefaults = useRef(false);
   const userQuery = useCurrentStudent();
+  const profileQuery = useStudentProfile();
   const coursesQuery = useMyCourses();
   const user = userQuery.data ?? null;
   const enrolledCourseIds = coursesQuery.data?.items.map((item) => item.course_id) ?? [];
@@ -180,20 +189,44 @@ export default function ExploreCourses({
     if (unauthorized) router.replace("/login");
   }, [router, unauthorized]);
 
+  // The backend profile is the source of truth; this student's device draft only
+  // stands in when the profile can't be loaded. Its grade, stream and subjects
+  // become the default filters once.
+  const userId = user?.id;
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      const rawDraft = localStorage.getItem("elemni-student-onboarding-v1");
-      if (!rawDraft) return;
-      try {
-        setProfile(JSON.parse(rawDraft) as OnboardingDraft);
-      } catch {
-        localStorage.removeItem("elemni-student-onboarding-v1");
+      const nextProfile = profileQuery.isError ? readOnboardingDraft(userId) : profileQuery.data;
+      setProfile(nextProfile ?? null);
+      if (!nextProfile || appliedProfileDefaults.current) return;
+      appliedProfileDefaults.current = true;
+      let appliedDefaults = false;
+      if (!initialUrlFilters.grade && nextProfile.grade_id != null) {
+        setCourseGrade(String(nextProfile.grade_id));
+        appliedDefaults = true;
       }
+      if (!initialUrlFilters.stream && nextProfile.stream_id != null) {
+        setCourseStream(String(nextProfile.stream_id));
+        appliedDefaults = true;
+      }
+      if (!initialUrlFilters.subject) {
+        if (nextProfile.subject_ids.length > 1) {
+          setCourseSubject(PROFILE_SUBJECTS);
+          appliedDefaults = true;
+        } else if (nextProfile.subject_ids.length === 1) {
+          const subject = subjects.find((item) => item.id === nextProfile.subject_ids[0]);
+          if (subject) {
+            setCourseSubject(subject.name);
+            appliedDefaults = true;
+          }
+        }
+      }
+      if (appliedDefaults) setCoursePage(1);
     }, 0);
     return () => window.clearTimeout(timer);
-  }, []);
+  }, [profileQuery.data, profileQuery.isError, initialUrlFilters, subjects, userId]);
 
   const changeCourseFilter = (setter: (value: string) => void, value: string) => {
+    appliedProfileDefaults.current = true;
     setter(value);
     setCoursePage(1);
   };
@@ -206,7 +239,9 @@ export default function ExploreCourses({
         (!normalizedSearch || haystack.includes(normalizedSearch)) &&
         (courseGrade === "all" || course.grade_id === Number(courseGrade)) &&
         (courseStream === "all" || course.stream_id === Number(courseStream)) &&
-        (courseSubject === "all" || course.subject_name === courseSubject) &&
+        (courseSubject === "all" || (courseSubject === PROFILE_SUBJECTS
+          ? subjects.some((subject) => profile?.subject_ids.includes(subject.id) && subject.name === course.subject_name)
+          : course.subject_name === courseSubject)) &&
         (selectedCourseTeacher === "all" || courseTeacher.slug === selectedCourseTeacher)
       );
     })
@@ -225,6 +260,7 @@ export default function ExploreCourses({
   const suggestedSearches = Array.from(new Set(catalog.map(({ course }) => course.subject_name).filter((value): value is string => Boolean(value)))).slice(0, 3);
 
   const resetCourseFilters = () => {
+    appliedProfileDefaults.current = true;
     setSearch("");
     setCourseGrade("all");
     setCourseStream("all");
@@ -288,7 +324,7 @@ export default function ExploreCourses({
                   <label><span className="sr-only">{t("teacher")}</span><select value={selectedCourseTeacher} onChange={(event) => changeCourseFilter(setSelectedCourseTeacher, event.target.value)} className="h-12 w-full cursor-pointer rounded-full border-2 border-ink bg-surface px-4 text-sm font-black text-ink outline-none focus:border-brand-600 dark:border-line dark:bg-transparent dark:text-slate-100"><option value="all">{t("allTeachers")}</option>{teachers.map((item) => <option key={item.slug} value={item.slug}>{item.name}</option>)}</select></label>
                   <label className="relative"><span className="sr-only">{t("sort")}</span><SlidersHorizontal className="pointer-events-none absolute end-4 top-1/2 size-4 -translate-y-1/2 text-muted" /><select value={courseSort} onChange={(event) => { setCourseSort(event.target.value as CatalogSort); setCoursePage(1); }} className="h-12 w-full cursor-pointer appearance-none rounded-full border-2 border-ink bg-surface pe-10 ps-4 text-sm font-black text-ink outline-none focus:border-brand-600 dark:border-line dark:bg-transparent dark:text-slate-100"><option value="newest">{t("sortNewest")}</option><option value="price-low">{t("sortPriceLow")}</option><option value="price-high">{t("sortPriceHigh")}</option></select></label>
                 </div>
-                {!!subjects.length && <div className="mt-4 flex flex-wrap gap-2" aria-label={t("courseSubjects")}><button type="button" onClick={() => changeCourseFilter(setCourseSubject, "all")} className={`h-10 shrink-0 rounded-full border-2 px-4 text-xs font-black transition ${courseSubject === "all" ? "border-ink bg-ink text-white dark:border-line dark:bg-brand-600" : "sticker-badge bg-surface text-ink hover:bg-brand-100 dark:text-slate-200"}`}>{t("allSubjects")}</button>{subjects.map((item) => <button key={item.id} type="button" onClick={() => changeCourseFilter(setCourseSubject, item.name)} className={`h-10 shrink-0 rounded-full border-2 px-4 text-xs font-black transition ${courseSubject === item.name ? "border-ink bg-ink text-white dark:border-line dark:bg-brand-600" : "sticker-badge bg-surface text-ink hover:bg-brand-100 dark:text-slate-200"}`}>{item.name}</button>)}</div>}
+                {!!subjects.length && <div className="mt-4 flex flex-wrap gap-2" aria-label={t("courseSubjects")}><button type="button" onClick={() => changeCourseFilter(setCourseSubject, "all")} className={`h-10 shrink-0 rounded-full border-2 px-4 text-xs font-black transition ${courseSubject === "all" ? "border-ink bg-ink text-white dark:border-line dark:bg-brand-600" : "sticker-badge bg-surface text-ink hover:bg-brand-100 dark:text-slate-200"}`}>{t("allSubjects")}</button>{profile && profile.subject_ids.length > 1 && <button type="button" onClick={() => changeCourseFilter(setCourseSubject, PROFILE_SUBJECTS)} className={`h-10 shrink-0 rounded-full border-2 px-4 text-xs font-black transition ${courseSubject === PROFILE_SUBJECTS ? "border-ink bg-ink text-white dark:border-line dark:bg-brand-600" : "sticker-badge bg-surface text-ink hover:bg-brand-100 dark:text-slate-200"}`}>{t("profileSubjects")}</button>}{subjects.map((item) => <button key={item.id} type="button" onClick={() => changeCourseFilter(setCourseSubject, item.name)} className={`h-10 shrink-0 rounded-full border-2 px-4 text-xs font-black transition ${courseSubject === item.name ? "border-ink bg-ink text-white dark:border-line dark:bg-brand-600" : "sticker-badge bg-surface text-ink hover:bg-brand-100 dark:text-slate-200"}`}>{item.name}</button>)}</div>}
                 {hasCourseFilters && <button type="button" onClick={resetCourseFilters} className="mt-4 cursor-pointer text-sm font-black text-brand-700 hover:underline dark:text-brand-300">{t("resetFilters")}</button>}
               </section>
           </m.aside>

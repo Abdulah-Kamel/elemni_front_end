@@ -904,6 +904,17 @@
       "noUpcoming": "No subscriptions are ending soon.",
       "studentFallback": "Student",
       "startLearning": "Start learning"
+    },
+    "phoneReminder": {
+      "title": "Add your mobile number",
+      "body": "So we can reach you about your courses and help when you need it.",
+      "label": "Mobile number",
+      "placeholder": "01000000000",
+      "save": "Save number",
+      "saving": "Saving…",
+      "dismiss": "Hide for now",
+      "invalid": "Enter 10–20 characters using digits, spaces or +.",
+      "error": "We couldn't save your number. Please try again."
     }
   },
   "studentAuth": {
@@ -1137,6 +1148,7 @@
     "sortPriceHigh": "Price: high to low",
     "courseSubjects": "Course subjects",
     "allSubjects": "All subjects",
+    "profileSubjects": "My subjects",
     "resetFilters": "Clear filters",
     "loadError": "Some catalog data could not be loaded. Available results are shown below.",
     "allCourses": "All courses",
@@ -1454,15 +1466,24 @@
     "skip": "Skip for now",
     "steps": {
       "label": "Account setup steps",
+      "phone": "Phone",
       "grade": "Grade",
       "stream": "Stream",
       "subjects": "Subjects",
       "progress": "Step {current} of {total}"
     },
+    "phone": {
+      "title": "How can we reach you?",
+      "body": "Add your mobile number so we can help you along the way. You can skip this and add it later.",
+      "label": "Mobile number",
+      "placeholder": "01000000000",
+      "hint": "10–20 characters: digits, spaces or +.",
+      "skip": "Skip this step"
+    },
     "welcome": {
       "title": "Welcome to Elemni",
       "subtitle": "Let's set things up in under a minute",
-      "body": "Three quick questions so we can show teachers and courses for your grade and stream.",
+      "body": "{count} quick questions so we can show teachers and courses for your grade and stream.",
       "perk1": "Teachers matched to your level",
       "perk2": "Courses for your grade",
       "perk3": "Organised study in one place",
@@ -1491,6 +1512,7 @@
     },
     "card": {
       "title": "Your study card",
+      "phone": "Mobile",
       "grade": "Grade",
       "stream": "Stream",
       "subjects": "Subjects",
@@ -1507,7 +1529,6 @@
     "done": {
       "title": "You're all set!",
       "body": "We've lined up teachers and courses for {profile}.",
-      "local": "Your choices are saved on this device.",
       "dashboard": "Go to dashboard",
       "explore": "Browse courses for your grade"
     },

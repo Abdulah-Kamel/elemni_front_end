@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-query";
 import { useEffect, useState, type ReactNode } from "react";
 import type { StudentSessionChange } from "@/src/lib/student-api/session-events";
+import { clearOnboardingDraft } from "@/src/features/onboarding/client";
 import { studentQueryKeys } from "@/src/features/student/query-keys";
 
 function createStudentQueryClient() {
@@ -35,6 +36,7 @@ export default function StudentQueryProvider({
       const change = (event as CustomEvent<StudentSessionChange>).detail;
 
       if (change === "logout") {
+        clearOnboardingDraft();
         queryClient.removeQueries({ queryKey: studentQueryKeys.all });
         return;
       }
