@@ -5,12 +5,15 @@ import type {
   EnrollmentProgressDto,
   MyCoursesDto,
   StudentCourseDetailDto,
+  StudentProfileDto,
   UserDto,
 } from "@/src/lib/student-api/contract";
 import {
   isStudentUnauthorized,
+  StudentApiError,
   studentApiFetch,
 } from "@/src/lib/student-api/client";
+import { clearOnboardingDraft, uploadDraftIfProfileEmpty } from "@/src/features/onboarding/client";
 import { studentQueryKeys } from "../query-keys";
 
 const privateQueryDefaults = {
@@ -22,14 +25,50 @@ const privateQueryDefaults = {
     !isStudentUnauthorized(error) && failureCount < 1,
 };
 
+async function fetchCurrentStudent() {
+  const result = await studentApiFetch<UserDto | { user: null }>("/api/student/auth/me");
+  return "user" in result ? null : result;
+}
+
 export function useCurrentStudent(enabled = true) {
   return useQuery({
     queryKey: studentQueryKeys.me(),
-    queryFn: async () => {
-      const result = await studentApiFetch<UserDto | { user: null }>("/api/student/auth/me");
-      return "user" in result ? null : result;
-    },
+    queryFn: fetchCurrentStudent,
     enabled,
+    ...privateQueryDefaults,
+  });
+}
+
+/**
+ * The study profile and phone number saved on the backend. When the profile is
+ * still empty, this student's device draft (from a save that failed earlier) is
+ * uploaded first.
+ */
+export function useStudentProfile() {
+  const queryClient = useQueryClient();
+  return useQuery({
+    queryKey: studentQueryKeys.profile(),
+    queryFn: async () => {
+      const profile = await studentApiFetch<StudentProfileDto>("/api/student/profile");
+      if (profile.grade_id != null) return profile;
+      let user: UserDto | null;
+      try {
+        user = await queryClient.fetchQuery({
+          queryKey: studentQueryKeys.me(),
+          queryFn: fetchCurrentStudent,
+          staleTime: privateQueryDefaults.staleTime,
+        });
+      } catch {
+        return profile;
+      }
+      try {
+        return await uploadDraftIfProfileEmpty(profile, user?.id);
+      } catch (error) {
+        // The backend refused the draft (e.g. a subject no longer exists): drop it.
+        if (error instanceof StudentApiError && error.status >= 400 && error.status < 500 && error.status !== 401) clearOnboardingDraft();
+        return profile;
+      }
+    },
     ...privateQueryDefaults,
   });
 }

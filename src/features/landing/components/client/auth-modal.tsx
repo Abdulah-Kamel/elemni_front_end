@@ -1,12 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { X, User, Phone, Lock, ArrowLeft, LoaderCircle, Mail, CircleAlert } from "lucide-react";
+import { GoogleSignInButton } from "@/src/features/auth/components/google-sign-in-button";
+import { studentApiFetch } from "@/src/lib/student-api/client";
+import type { UserDto } from "@/src/lib/student-api/contract";
 import { cn } from "@/src/lib/cn";
 import { notifyStudentSessionChanged } from "@/src/lib/student-api/session-events";
 import logoMark from "@/src/assets/logo-icon.png";
-import { useTranslations } from "next-intl";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -17,6 +20,7 @@ interface AuthModalProps {
 
 export default function AuthModal({ isOpen, initialMode, onClose, onSuccess }: AuthModalProps) {
   const t = useTranslations("landingAuthModal");
+  const tGoogle = useTranslations("auth.google");
   const [mode, setMode] = useState<"signin" | "signup">(initialMode);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -101,6 +105,15 @@ export default function AuthModal({ isOpen, initialMode, onClose, onSuccess }: A
             {t("signinTab")}
           </button>
         </div>
+
+        <GoogleSignInButton onSignedIn={() => {
+          onClose();
+          void studentApiFetch<UserDto>("/api/student/auth/me")
+            .then(
+              (user) => onSuccess(user.name),
+              () => onSuccess(tGoogle("studentName")),
+            );
+        }} />
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {mode === "signup" && (

@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { getAccessToken } from "@/src/lib/student-api/session";
+import { safeReturnTo } from "@/src/lib/safe-return-to";
 import AuthPageShell from "@/src/features/auth/components/auth-page-shell";
 import StudentAuthForm from "@/src/features/auth/components/student-auth-form";
 
@@ -15,7 +16,7 @@ export default async function RegisterPage({ params, searchParams }: { params: P
   const { locale } = await params;
   const { next } = await searchParams;
   setRequestLocale(locale);
-  const returnTo = next && next.startsWith("/") && !next.startsWith("//") ? next : undefined;
+  const returnTo = safeReturnTo(next);
   if (await getAccessToken()) redirect(locale === "ar" ? returnTo || "/dashboard" : returnTo || `/${locale}/dashboard`);
   return <AuthPageShell locale={locale}><StudentAuthForm mode="register" returnTo={returnTo} /></AuthPageShell>;
 }

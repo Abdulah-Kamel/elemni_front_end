@@ -69,6 +69,16 @@ describe("authenticatedBackendFetch", () => {
     mocks.refreshCount = 0;
   });
 
+  it.each(["valid-refresh", ""])("does not mutate cookies in read-only server rendering with refresh=%s", async (refreshToken) => {
+    const { authenticatedBackendFetch } = await import("./session");
+    mocks.refreshToken = refreshToken;
+    const result = await authenticatedBackendFetch("/api/v1/auth/me", {}, { refreshSession: false });
+    expect(result).toEqual({ ok: false, error: { status: 401, message: "expired" } });
+    expect(mocks.refreshCount).toBe(0);
+    expect(mocks.accessToken).toBe("expired-access");
+    expect(mocks.refreshToken).toBe(refreshToken);
+  });
+
   it("deduplicates concurrent refreshes for an expired access token", async () => {
     const { authenticatedBackendFetch } = await import("./session");
 

@@ -17,10 +17,12 @@ import {
   LoaderCircle,
   Microscope,
   PartyPopper,
+  Smartphone,
   Sparkles,
   Target,
   UserRoundCheck,
 } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, m } from "motion/react";
 import { useLocale, useTranslations } from "next-intl";
 import logoMark from "@/src/assets/logo-icon.png";
@@ -29,13 +31,16 @@ import { MarkerHighlight } from "@/src/components/ui/marker-highlight";
 import { MotionProvider } from "@/src/components/ui/motion-provider";
 import { Link, useRouter } from "@/src/i18n/navigation";
 import { cn } from "@/src/lib/cn";
-import type { GradeDto, StreamDto, SubjectDto } from "@/src/lib/student-api/contract";
-import { readOnboardingDraft, saveStudentOnboarding, type SaveOutcome } from "../client";
+import type { GradeDto, StreamDto, StudentProfileDto, SubjectDto } from "@/src/lib/student-api/contract";
+import { studentQueryKeys } from "@/src/features/student/query-keys";
+import { PHONE_PATTERN, readOnboardingDraft, saveStudentOnboarding } from "../client";
 import "@/src/features/portal/styles/sticker.css";
 
-type Step = "welcome" | "grade" | "stream" | "subjects" | "done";
-const QUESTION_STEPS = ["grade", "stream", "subjects"] as const;
-type QuestionStep = (typeof QUESTION_STEPS)[number];
+type QuestionStep = "phone" | "grade" | "stream" | "subjects";
+type Step = "welcome" | QuestionStep | "done";
+const STUDY_STEPS: QuestionStep[] = ["grade", "stream", "subjects"];
+// Students without a phone number (e.g. signed up with Google) are asked for one first; it can be skipped.
+const PHONE_STEPS: QuestionStep[] = ["phone", ...STUDY_STEPS];
 
 const popSpring = { type: "spring", stiffness: 260, damping: 24 } as const;
 
@@ -119,25 +124,39 @@ function optionClass(selected: boolean) {
   );
 }
 
-export default function OnboardingFlow({ grades, streams, subjects }: { grades: GradeDto[]; streams: StreamDto[]; subjects: SubjectDto[] }) {
+export default function OnboardingFlow({ grades, streams, subjects, ownerId, needsPhone = false, initialProfile = null }: {
+  grades: GradeDto[];
+  streams: StreamDto[];
+  subjects: SubjectDto[];
+  /** The signed-in student's id: a device draft belongs to them only. */
+  ownerId?: number;
+  needsPhone?: boolean;
+  /** The profile saved on the backend, used to start from earlier answers. */
+  initialProfile?: StudentProfileDto | null;
+}) {
   const t = useTranslations("onboarding");
   const locale = useLocale();
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const questionSteps = needsPhone ? PHONE_STEPS : STUDY_STEPS;
   const [step, setStep] = useState<Step>("welcome");
   const [direction, setDirection] = useState(1);
-  const [gradeId, setGradeId] = useState<number | null>(null);
-  const [streamId, setStreamId] = useState<number | null>(null);
-  const [subjectIds, setSubjectIds] = useState<number[]>([]);
+  const [phone, setPhone] = useState("");
+  const [gradeId, setGradeId] = useState<number | null>(initialProfile?.grade_id ?? null);
+  const [streamId, setStreamId] = useState<number | null>(initialProfile?.grade_id != null ? initialProfile.stream_id : null);
+  const [subjectIds, setSubjectIds] = useState<number[]>(initialProfile?.grade_id != null ? initialProfile.subject_ids : []);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(false);
-  const [outcome, setOutcome] = useState<SaveOutcome | null>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const BackIcon = locale === "ar" ? ArrowRight : ArrowLeft;
   const NextIcon = locale === "ar" ? ArrowLeft : ArrowRight;
+  const validPhone = PHONE_PATTERN.test(phone);
 
-  // Returning to onboarding (e.g. from the dashboard) starts from the saved answers.
+  // Returning to onboarding (e.g. from the dashboard) starts from the saved answers;
+  // without a backend profile, from this student's device draft.
   useEffect(() => {
-    const draft = readOnboardingDraft();
+    if (initialProfile?.grade_id != null) return;
+    const draft = readOnboardingDraft(ownerId);
     if (!draft) return;
     const timer = window.setTimeout(() => {
       setGradeId(draft.grade_id);
@@ -145,7 +164,7 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
       setSubjectIds(draft.subject_ids);
     }, 0);
     return () => window.clearTimeout(timer);
-  }, []);
+  }, [initialProfile, ownerId]);
 
   // Move focus to the new step's heading so screen readers announce it.
   useEffect(() => {
@@ -158,9 +177,13 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
   const chosenSubjects = relevantSubjects.filter((subject) => subjectIds.includes(subject.id));
 
   const goTo = (next: Step) => {
-    const order: Step[] = ["welcome", ...QUESTION_STEPS, "done"];
+    const order: Step[] = ["welcome", ...questionSteps, "done"];
     setDirection(order.indexOf(next) >= order.indexOf(step) ? 1 : -1);
     setStep(next);
+  };
+  const skipPhone = () => {
+    setPhone("");
+    goTo("grade");
   };
 
   const chooseGrade = (id: number) => {
@@ -185,7 +208,16 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
     setSaving(true);
     setSaveError(false);
     try {
-      setOutcome(await saveStudentOnboarding({ grade_id: gradeId, stream_id: streamId, subject_ids: chosenSubjects.map((subject) => subject.id) }));
+      await saveStudentOnboarding({
+        grade_id: gradeId,
+        stream_id: streamId,
+        subject_ids: chosenSubjects.map((subject) => subject.id),
+        ...(needsPhone && validPhone ? { phone_number: phone } : {}),
+      }, ownerId);
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: studentQueryKeys.profile() }),
+        queryClient.invalidateQueries({ queryKey: studentQueryKeys.me() }),
+      ]);
       goTo("done");
     } catch {
       setSaveError(true);
@@ -196,8 +228,8 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
 
   const gradeKeys = useRadioKeys(grades, gradeId, chooseGrade);
   const streamKeys = useRadioKeys(streams, streamId, chooseStream);
-  const questionIndex = QUESTION_STEPS.indexOf(step as QuestionStep);
-  const canReach = (target: QuestionStep) => target === "grade" || (target === "stream" && Boolean(gradeId)) || (target === "subjects" && Boolean(gradeId && streamId));
+  const questionIndex = questionSteps.indexOf(step as QuestionStep);
+  const canReach = (target: QuestionStep) => target === "phone" || target === "grade" || (target === "stream" && Boolean(gradeId)) || (target === "subjects" && Boolean(gradeId && streamId));
 
   const heading = (text: ReactNode, body: string) => (
     <div className="mb-6">
@@ -208,25 +240,29 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
     </div>
   );
 
-  const footerNav = (onNext: () => void, nextDisabled: boolean, nextLabel: string, busy = false) => (
+  /** Back, then Next; `onNext: null` submits the surrounding form instead. */
+  const footerNav = (onNext: (() => void) | null, nextDisabled: boolean, nextLabel: string, busy = false, extra?: ReactNode) => (
     <div className="mt-8 flex items-center justify-between gap-3 border-t-2 border-dashed border-ink/10 pt-5 dark:border-white/10">
       <button
         type="button"
-        onClick={() => goTo(step === "grade" ? "welcome" : step === "stream" ? "grade" : "stream")}
+        onClick={() => goTo(questionIndex > 0 ? questionSteps[questionIndex - 1] : "welcome")}
         className="inline-flex min-h-11 items-center gap-1.5 rounded-xl px-2 text-sm font-bold text-muted transition hover:text-brand-700 dark:text-slate-400 dark:hover:text-brand-300"
       >
         <BackIcon className="size-4" aria-hidden="true" />
         {t("back")}
       </button>
-      <button
-        type="button"
-        onClick={onNext}
-        disabled={nextDisabled || busy}
-        aria-busy={busy || undefined}
-        className="sticker-btn inline-flex min-h-12 items-center gap-2 px-7 font-black text-white disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
-      >
-        {busy ? <><LoaderCircle className="size-5 animate-spin" aria-hidden="true" />{t("saving")}</> : <>{nextLabel}<NextIcon className="size-4" aria-hidden="true" /></>}
-      </button>
+      <div className="flex flex-wrap items-center justify-end gap-2">
+        {extra}
+        <button
+          type={onNext ? "button" : "submit"}
+          onClick={onNext ?? undefined}
+          disabled={nextDisabled || busy}
+          aria-busy={busy || undefined}
+          className="sticker-btn inline-flex min-h-12 items-center gap-2 px-7 font-black text-white disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
+        >
+          {busy ? <><LoaderCircle className="size-5 animate-spin" aria-hidden="true" />{t("saving")}</> : <>{nextLabel}<NextIcon className="size-4" aria-hidden="true" /></>}
+        </button>
+      </div>
     </div>
   );
 
@@ -236,6 +272,7 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
       <p className="mt-1 text-xs font-black tracking-wide text-brand-700 dark:text-brand-300">{t("card.title")}</p>
       <dl className="mt-4 space-y-3 text-sm">
         {([
+          ...(needsPhone ? [["phone", validPhone ? phone : undefined] as const] : []),
           ["grade", grade?.name],
           ["stream", stream?.name],
         ] as const).map(([key, value]) => (
@@ -243,7 +280,7 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
             <dt className="font-bold text-muted dark:text-slate-400">{t(`card.${key}`)}</dt>
             <dd className="min-w-0 truncate font-black text-ink dark:text-slate-100">
               <AnimatePresence mode="wait" initial={false}>
-                <m.span key={value ?? "none"} className="inline-block" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.18 }}>
+                <m.span key={value ?? "none"} dir={key === "phone" && value ? "ltr" : undefined} className="inline-block" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.18 }}>
                   {value ?? t("card.pending")}
                 </m.span>
               </AnimatePresence>
@@ -289,9 +326,9 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
 
           {questionIndex >= 0 && (
             <nav aria-label={t("steps.label")} className="mt-6">
-              <p className="sr-only" aria-live="polite">{t("steps.progress", { current: questionIndex + 1, total: QUESTION_STEPS.length })}</p>
-              <ol className="grid grid-cols-3 gap-2 sm:gap-3">
-                {QUESTION_STEPS.map((item, index) => {
+              <p className="sr-only" aria-live="polite">{t("steps.progress", { current: questionIndex + 1, total: questionSteps.length })}</p>
+              <ol className={cn("grid gap-2 sm:gap-3", questionSteps.length === 4 ? "grid-cols-4" : "grid-cols-3")}>
+                {questionSteps.map((item, index) => {
                   const state = index < questionIndex ? "done" : index === questionIndex ? "current" : "todo";
                   const reachable = index < questionIndex && canReach(item);
                   const content = (
@@ -343,7 +380,7 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
                     </div>
                     <h1 className="text-3xl font-black tracking-tight text-brand-700 sm:text-4xl dark:text-brand-300"><MarkerHighlight color="yellow" variant={1}>{t("welcome.title")}</MarkerHighlight></h1>
                     <p className="mt-3 text-lg font-black text-ink dark:text-slate-50">{t("welcome.subtitle")}</p>
-                    <p className="mx-auto mt-2 max-w-[30rem] text-sm leading-6 font-medium text-muted dark:text-slate-400">{t("welcome.body")}</p>
+                    <p className="mx-auto mt-2 max-w-[30rem] text-sm leading-6 font-medium text-muted dark:text-slate-400">{t("welcome.body", { count: questionSteps.length })}</p>
                     <ul className="mx-auto my-7 grid max-w-[30rem] gap-2 text-start text-sm font-black sm:grid-cols-3">
                       {([[UserRoundCheck, "perk1"], [BookOpen, "perk2"], [Target, "perk3"]] as const).map(([Icon, key], index) => (
                         <m.li key={key} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ ...popSpring, delay: 0.1 + index * 0.06 }} className="flex items-center gap-2.5 rounded-xl border-2 border-ink/10 p-3 sm:flex-col sm:text-center dark:border-white/10">
@@ -352,11 +389,38 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
                         </m.li>
                       ))}
                     </ul>
-                    <button type="button" onClick={() => goTo("grade")} className="sticker-btn inline-flex min-h-13 w-full max-w-[20rem] items-center justify-center gap-2 py-3.5 font-black text-white">
+                    <button type="button" onClick={() => goTo(questionSteps[0])} className="sticker-btn inline-flex min-h-13 w-full max-w-[20rem] items-center justify-center gap-2 py-3.5 font-black text-white">
                       {t("welcome.start")}
                       <NextIcon className="size-4" aria-hidden="true" />
                     </button>
                   </div>
+                )}
+
+                {step === "phone" && (
+                  <form noValidate onSubmit={(event) => { event.preventDefault(); if (validPhone) goTo("grade"); }}>
+                    {heading(t("phone.title"), t("phone.body"))}
+                    <label htmlFor="onboarding-phone" className="mb-2 block text-sm font-black text-ink dark:text-slate-100">{t("phone.label")}</label>
+                    <div className={cn(optionClass(false), "cursor-text gap-3 p-0 focus-within:border-ink focus-within:ring-4 focus-within:ring-brand-600/30 sm:p-0 dark:focus-within:border-brand-300")}>
+                      <span aria-hidden="true" className="sticker-badge ms-3 grid size-10 shrink-0 place-items-center bg-brand-100 text-brand-700 dark:bg-slate-800 dark:text-brand-300"><Smartphone className="size-5" /></span>
+                      <input
+                        id="onboarding-phone"
+                        type="tel"
+                        inputMode="tel"
+                        autoComplete="tel"
+                        dir="ltr"
+                        value={phone}
+                        onChange={(event) => setPhone(event.target.value)}
+                        placeholder={t("phone.placeholder")}
+                        aria-invalid={phone !== "" && !validPhone}
+                        aria-describedby="onboarding-phone-hint"
+                        className="min-h-14 min-w-0 flex-1 bg-transparent pe-4 text-start text-lg font-black tracking-wide text-ink tabular-nums outline-none placeholder:font-bold placeholder:text-muted/60 dark:text-slate-50"
+                      />
+                    </div>
+                    <p id="onboarding-phone-hint" className={cn("mt-2 text-xs font-bold", phone !== "" && !validPhone ? "text-amber-700 dark:text-amber-300" : "text-muted dark:text-slate-400")}>{t("phone.hint")}</p>
+                    {footerNav(null, !validPhone, t("next"), false, (
+                      <button type="button" onClick={skipPhone} className="min-h-11 rounded-xl px-3 text-sm font-bold text-brand-700 hover:underline dark:text-brand-300">{t("phone.skip")}</button>
+                    ))}
+                  </form>
                 )}
 
                 {step === "grade" && (
@@ -506,7 +570,6 @@ export default function OnboardingFlow({ grades, streams, subjects }: { grades: 
                     <p className="mx-auto mt-3 max-w-[30rem] text-sm leading-6 font-medium text-muted dark:text-slate-400">
                       {t("done.body", { profile: [grade?.name, stream?.name].filter(Boolean).join(" · ") })}
                     </p>
-                    {outcome === "saved_locally" && <p className="mt-2 text-xs font-bold text-muted dark:text-slate-500">{t("done.local")}</p>}
                     <div className="mx-auto mt-7 flex max-w-[34rem] flex-col gap-3 sm:flex-row">
                       <Link href={`/explore?grade=${gradeId ?? ""}&stream=${streamId ?? ""}`} className="sticker-btn inline-flex min-h-12 flex-1 items-center justify-center gap-2 px-5 font-black whitespace-nowrap text-white">
                         {t("done.explore")}

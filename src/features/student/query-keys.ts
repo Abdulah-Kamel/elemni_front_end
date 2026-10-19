@@ -1,6 +1,7 @@
 export const studentQueryKeys = {
   all: ["student"] as const,
   me: () => [...studentQueryKeys.all, "me"] as const,
+  profile: () => [...studentQueryKeys.all, "profile"] as const,
   myCourses: () => [...studentQueryKeys.all, "my-courses"] as const,
   coursePrefix: (courseId: number) => [...studentQueryKeys.all, "course", courseId] as const,
   course: (courseId: number, teacherSlug?: string) =>

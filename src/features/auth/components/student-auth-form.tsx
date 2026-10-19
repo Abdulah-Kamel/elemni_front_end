@@ -12,6 +12,7 @@ import {
   Phone,
   UserRound,
 } from "lucide-react";
+import { GoogleSignInButton } from "@/src/features/auth/components/google-sign-in-button";
 import { Link, useRouter } from "@/src/i18n/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { getTeacherDashboardSignInUrl } from "@/src/lib/teacher-dashboard";
@@ -133,6 +134,8 @@ export default function StudentAuthForm({ mode, returnTo }: { mode: AuthMode; re
               : t("loginSubtitle")}
           </p>
         </div>
+
+        <GoogleSignInButton returnTo={returnTo} />
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {isRegister && (
