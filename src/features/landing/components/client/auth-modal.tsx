@@ -10,7 +10,6 @@ import type { UserDto } from "@/src/lib/student-api/contract";
 import { cn } from "@/src/lib/cn";
 import { notifyStudentSessionChanged } from "@/src/lib/student-api/session-events";
 import logoMark from "@/src/assets/logo-icon.png";
-import { useTranslations } from "next-intl";
 
 interface AuthModalProps {
   isOpen: boolean;
