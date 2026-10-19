@@ -149,6 +149,10 @@ export interface LoginDto {
   name: string;
 }
 
+export interface GoogleLoginDto extends LoginDto {
+  is_new_user: boolean;
+}
+
 export interface TokenDto {
   access_token: string;
   refresh_token: string;
