@@ -1,4 +1,14 @@
 {
+  "auth": {
+    "google": {
+      "divider": "or",
+      "error": "Could not sign in with Google. Please try again.",
+      "notStudent": "Only student accounts can sign in here.",
+      "unavailable": "Google sign-in is currently unavailable. Try signing in with email.",
+      "studentName": "Student",
+      "credentialRequired": "A Google sign-in credential is required."
+    }
+  },
   "brand": {
     "name": "Elemni",
     "tagline": "Smart learning platform"
