@@ -125,4 +125,71 @@ describe("GET /api/student/my-courses/[courseId]", () => {
     });
     expect(mocks.authenticatedBackendFetch).toHaveBeenCalledTimes(2);
   });
+
+  const enrolledIn = (course: typeof publicCourse | (Omit<typeof publicCourse, "teacher_slug"> & { teacher_slug: null })) => ({
+    id: 9,
+    course_id: 12,
+    purchased_at: "2026-08-01T00:00:00Z",
+    expires_at: "2026-09-01T00:00:00Z",
+    course_price: "250.00",
+    total_paid: "250.00",
+    currency: "EGP",
+    payment_status: "completed",
+    progress: {
+      completion_percent: 0,
+      completed_item_ids: [],
+      last_item_id: null,
+      last_lesson_id: null,
+      next_item_id: 101,
+      next_lesson_id: null,
+      last_opened_at: null,
+    },
+    course,
+  });
+  const detailed = { ...publicCourse, is_subscribed: true, chapters: [{ id: 0, title: "", order: 0, lessons: [] }] };
+
+  it("uses the teacher_slug from my courses instead of searching teachers", async () => {
+    mocks.getAccessToken.mockResolvedValue("access-token");
+    mocks.authenticatedBackendFetch
+      .mockResolvedValueOnce({ ok: true, status: 200, data: { items: [enrolledIn(publicCourse)] } })
+      .mockResolvedValueOnce({ ok: true, status: 200, data: detailed });
+    mocks.backendFetch.mockImplementation((path: string) =>
+      Promise.resolve(
+        path === "/api/v1/teachers/ahmad-ali"
+          ? { ok: true, status: 200, data: { name: "أحمد علي", slug: "ahmad-ali", img: "a.png" } }
+          : { ok: false, error: { status: 404, code: "NOT_FOUND" } },
+      ),
+    );
+
+    const response = await GET(new Request("http://localhost/api/student/my-courses/12"), {
+      params: Promise.resolve({ courseId: "12" }),
+    });
+
+    await expect(response.json()).resolves.toMatchObject({
+      course: { chapters: [{ id: 0 }] },
+      teacher: { name: "أحمد علي", slug: "ahmad-ali", img: "a.png" },
+    });
+    expect(mocks.authenticatedBackendFetch).toHaveBeenLastCalledWith("/api/v1/teachers/ahmad-ali/courses/12", { cache: "no-store" });
+    expect(mocks.backendFetch.mock.calls.map(([path]) => path)).not.toContainEqual(expect.stringMatching(/^\/api\/v1\/teachers\?/));
+  });
+
+  it("still finds the owner when my courses has no teacher_slug (older backend)", async () => {
+    mocks.getAccessToken.mockResolvedValue("access-token");
+    mocks.authenticatedBackendFetch
+      .mockResolvedValueOnce({ ok: true, status: 200, data: { items: [enrolledIn({ ...publicCourse, teacher_slug: null })] } })
+      .mockResolvedValueOnce({ ok: true, status: 200, data: detailed });
+    mocks.backendFetch.mockImplementation((path: string) =>
+      Promise.resolve(
+        path.startsWith("/api/v1/teachers?")
+          ? { ok: true, status: 200, data: [{ name: "أحمد علي", slug: "ahmad-ali", img: null }] }
+          : { ok: true, status: 200, data: publicCourse },
+      ),
+    );
+
+    const response = await GET(new Request("http://localhost/api/student/my-courses/12"), {
+      params: Promise.resolve({ courseId: "12" }),
+    });
+
+    await expect(response.json()).resolves.toMatchObject({ teacher: { slug: "ahmad-ali" }, course: { chapters: [{ id: 0 }] } });
+  });
 });

@@ -40,6 +40,21 @@ async function findCourseOwner(course: PublicCourseDto) {
   return null;
 }
 
+// The backend now sends teacher_slug on my courses; findCourseOwner stays for older backends.
+async function knownCourseOwner(slug: string, course: PublicCourseDto) {
+  const teacher = await backendFetch<PublicTeacherDto>(
+    `/api/v1/teachers/${encodeURIComponent(slug)}`,
+    discoveryCache,
+  );
+  return {
+    teacher: teacher.ok
+      ? teacher.data
+      : { name: course.teacher_name ?? "", slug, img: null },
+    path: `/api/v1/teachers/${encodeURIComponent(slug)}/courses/${course.id}`,
+    publicCourse: course,
+  };
+}
+
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ courseId: string }> },
@@ -91,7 +106,9 @@ export async function GET(
     return Response.json(response);
   }
 
-  const owner = await findCourseOwner(enrollment.course);
+  const owner = enrollment.course.teacher_slug
+    ? await knownCourseOwner(enrollment.course.teacher_slug, enrollment.course)
+    : await findCourseOwner(enrollment.course);
   let detailedCourse = enrollment.course;
   if (owner) {
     const subscribedDetail = await authenticatedBackendFetch<PublicCourseDto>(owner.path, {
